@@ -1,5 +1,4 @@
 import React from "react";
-import heroImage from "../assets/hero.jpg";
 
 const HomePage = () => {
   return (
@@ -13,7 +12,7 @@ const HomePage = () => {
       }}
     >
       <img
-        src={heroImage}
+        src="/hero.jpg"
         alt="Hero"
         style={{
           position: "absolute",
@@ -22,7 +21,7 @@ const HomePage = () => {
           transform: "translate(-50%, -50%)",
           width: "100%",
           height: "100%",
-          objectFit: "contain", // ⬅️ This is the key
+          objectFit: "contain", // Shows the full image without zoom
           zIndex: -1,
         }}
       />
@@ -52,4 +51,5 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 
