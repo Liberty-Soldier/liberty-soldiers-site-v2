@@ -7,18 +7,18 @@ const HomePage = () => {
       style={{
         backgroundImage: `url(${heroImage})`,
         backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        backgroundSize: "cover", // Ensures full screen and no zoom effect
+        backgroundPosition: "center top",
+        backgroundSize: "cover", // FULL WIDTH WITHOUT ZOOM
         backgroundColor: "black",
-        height: "100vh",
-        width: "100vw",
+        minHeight: "100vh",
+        width: "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
+        justifyContent: "flex-start",
         alignItems: "center",
         textAlign: "center",
-        margin: 0,
-        padding: 0,
+        paddingTop: "40px",
+        boxSizing: "border-box",
       }}
     >
       <h1 style={{ fontSize: "3rem", color: "tan", textShadow: "2px 2px black" }}>
