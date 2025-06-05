@@ -8,14 +8,17 @@ import "./index.css";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
-      <nav style={{ display: "flex", gap: "20px", padding: "10px", backgroundColor: "#111", color: "white" }}>
-        <Link to="/" style={{ color: "white" }}>Home</Link>
-        <Link to="/news" style={{ color: "white" }}>News</Link>
-        <Link to="/devotional" style={{ color: "white" }}>Devotional</Link>
-        <Link to="/persecution-map" style={{ color: "white" }}>Persecution Map</Link>
-        <Link to="/media" style={{ color: "white" }}>Media</Link>
-        <Link to="/community" style={{ color: "white" }}>Community</Link>
-      </nav>
+      <nav
+  style={{
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: "10px",
+    padding: "10px",
+    backgroundColor: "#111",
+    color: "white",
+  }}
+>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/news" element={<ComingSoon title="News & Alerts" />} />

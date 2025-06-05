@@ -7,8 +7,8 @@ const HomePage = () => {
   style={{
     backgroundImage: `url(${heroImage})`,
     backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    backgroundSize: "contain", // Key: this prevents zooming
+    backgroundPosition: "center top",
+    backgroundSize: "100% auto", // Key: this prevents zooming
     backgroundColor: "black",
     height: "100vh",
     width: "100vw", // Full screen width
