@@ -3,16 +3,15 @@ import heroImage from "/public/hero.jpg";
 
 const HomePage = () => {
   return (
-    <div
+<div
   style={{
     backgroundImage: `url(${heroImage})`,
     backgroundRepeat: "no-repeat",
-    backgroundPosition: "center top",
-    backgroundSize: "100% auto", // Key: this prevents zooming
+    backgroundPosition: "top center",
+    backgroundSize: "cover",
     backgroundColor: "black",
     height: "100vh",
-    width: "100vw", // Full screen width
-    overflow: "hidden",
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
@@ -21,7 +20,7 @@ const HomePage = () => {
     paddingTop: "40px",
     boxSizing: "border-box",
   }}
->
+>    
       <h1
         style={{
           fontSize: "4rem",
