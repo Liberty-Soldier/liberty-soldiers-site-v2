@@ -1,19 +1,28 @@
 import React from "react";
-import heroImage from "../assets/hero.jpg"; // Make sure the path matches your file location
+import heroImage from "../assets/hero.jpg";
 
 const HomePage = () => {
   return (
-    <div style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}>
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100vh",
+        backgroundColor: "black",
+        overflow: "hidden",
+      }}
+    >
       <img
         src={heroImage}
         alt="Hero"
         style={{
           position: "absolute",
-          top: 0,
-          left: 0,
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
           width: "100%",
           height: "100%",
-          objectFit: "cover",
+          objectFit: "contain", // ⬅️ This is the key
           zIndex: -1,
         }}
       />
@@ -43,3 +52,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
