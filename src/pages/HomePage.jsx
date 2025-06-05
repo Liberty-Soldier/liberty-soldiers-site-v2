@@ -1,5 +1,6 @@
+
 import React from "react";
-import heroImage from "../assets/hero.jpg"; // or wherever it's located
+import heroImage from "../public/hero.jpg"; 
 
 const HomePage = () => {
   return (
