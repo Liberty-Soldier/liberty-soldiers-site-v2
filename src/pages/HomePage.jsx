@@ -7,19 +7,18 @@ const HomePage = () => {
       style={{
         backgroundImage: `url(${heroImage})`,
         backgroundRepeat: "no-repeat",
-        backgroundPosition: "center top",
-        backgroundSize: "cover",
-        backgroundAttachment: "fixed",
+        backgroundPosition: "center",
+        backgroundSize: "cover", // Ensures full screen and no zoom effect
         backgroundColor: "black",
         height: "100vh",
-        width: "100%",
+        width: "100vw",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-start",
+        justifyContent: "center",
         alignItems: "center",
         textAlign: "center",
-        paddingTop: "40px",
-        boxSizing: "border-box",
+        margin: 0,
+        padding: 0,
       }}
     >
       <h1 style={{ fontSize: "3rem", color: "tan", textShadow: "2px 2px black" }}>
@@ -33,4 +32,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
