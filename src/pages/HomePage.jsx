@@ -1,32 +1,34 @@
 import React from "react";
-import heroImage from "../assets/hero.jpg"; // Make sure the path is correct
+import heroImage from "../assets/hero.jpg"; // Make sure the path matches your file location
 
 const HomePage = () => {
   return (
-    <div
-      style={{
-        background: "linear-gradient(to right, #000000, #222222, #000000)",
-        height: "100vh",
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
+    <div style={{ position: "relative", width: "100%", height: "100vh", overflow: "hidden" }}>
+      <img
+        src={heroImage}
+        alt="Hero"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: -1,
+        }}
+      />
       <div
         style={{
-          backgroundImage: `url(${heroImage})`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "top center",
-          backgroundSize: "contain",
-          backgroundColor: "black",
-          height: "100vh",
+          position: "relative",
+          zIndex: 1,
           width: "100%",
-          maxWidth: "1200px",
+          height: "100%",
           display: "flex",
           flexDirection: "column",
+          justifyContent: "flex-start",
           alignItems: "center",
           paddingTop: "40px",
+          textAlign: "center",
         }}
       >
         <h1 style={{ fontSize: "3rem", color: "tan", textShadow: "2px 2px black" }}>
@@ -41,5 +43,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
