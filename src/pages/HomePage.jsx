@@ -7,11 +7,11 @@ const HomePage = () => {
   style={{
     backgroundImage: `url(${heroImage})`,
     backgroundRepeat: "no-repeat",
-    backgroundPosition: "top center",
-    backgroundSize: "cover",
+    backgroundPosition: "center center",
+    backgroundSize: "contain",
     backgroundColor: "black",
     height: "100vh",
-    width: "100%",
+    width: "100vw",
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
@@ -19,6 +19,7 @@ const HomePage = () => {
     textAlign: "center",
     paddingTop: "40px",
     boxSizing: "border-box",
+    backgroundAttachment: "fixed"	
   }}
 >    
       <h1
