@@ -1,6 +1,6 @@
 
 import React from "react";
-import heroImage from "../public/hero.jpg"; 
+import heroImage from "..C:\Users\mklrs\Desktop\LibertySoldiers_Final_Fixed\public; 
 
 const HomePage = () => {
   return (
