@@ -21,7 +21,7 @@ const HomePage = () => {
           transform: "translate(-50%, -50%)",
           width: "100%",
           height: "100%",
-          objectFit: "contain", // Shows the full image without zoom
+          objectFit: "contain",
           zIndex: -1,
         }}
       />
@@ -51,5 +51,6 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 
 
