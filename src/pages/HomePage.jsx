@@ -7,10 +7,10 @@ const HomePage = () => {
       style={{
         backgroundImage: `url(${heroImage})`,
         backgroundRepeat: "no-repeat",
-        backgroundPosition: "center top",
-        backgroundSize: "cover", // FULL WIDTH WITHOUT ZOOM
+        backgroundPosition: "top center",
+        backgroundSize: "contain",
         backgroundColor: "black",
-        minHeight: "100vh",
+        height: "100vh",
         width: "100%",
         display: "flex",
         flexDirection: "column",
@@ -32,3 +32,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
