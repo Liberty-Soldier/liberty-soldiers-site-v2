@@ -1,7 +1,5 @@
 import React from 'react';
 
-import React from 'react';
-
 const HomePage = () => {
   return (
     <div style={{ backgroundColor: "#1a1a1a", minHeight: "100vh", fontFamily: "sans-serif" }}>
