@@ -15,7 +15,8 @@ const HomePage = () => {
           justifyContent: "flex-start",
           alignItems: "center",
           textAlign: "center",
-          paddingTop: "10vh"
+          paddingTop: "10vh",
+          position: "relative",
         }}
       >
         <h1 style={{
@@ -27,8 +28,25 @@ const HomePage = () => {
           Liberty Soldiers
         </h1>
 
-        <p style={{ fontSize: "1.5rem", color: "white", marginTop: "1rem" }}>
+        <p style={{
+          fontSize: "1.5rem",
+          color: "white",
+          marginTop: "1rem",
+          textShadow: "1px 1px black"
+        }}>
           Seeking truth, defending Torah, fighting deception.
+        </p>
+
+        {/* Verse Overlay */}
+        <p style={{
+          marginTop: "2rem",
+          fontSize: "1rem",
+          color: "#f0f0f0",
+          maxWidth: "80%",
+          textShadow: "1px 1px #000",
+          fontStyle: "italic"
+        }}>
+          “Be strong and courageous. Do not be afraid or terrified because of them, for Yahweh your Elohim is the one who goes with you; He will not leave you or forsake you.” — Deuteronomy 31:6
         </p>
       </div>
 
