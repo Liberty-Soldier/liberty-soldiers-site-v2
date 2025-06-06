@@ -6,7 +6,7 @@ const HomePage = () => {
       {/* Hero Image Section */}
       <div
         style={{
-          backgroundImage: "url('/your-hero-image.jpg')", // <-- Replace with your actual image path
+          backgroundImage: "url('/hero.jpg')", // <-- update with your actual image path if needed
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "100vh",
@@ -68,3 +68,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
