@@ -22,7 +22,7 @@ const HomePage = () => {
           boxSizing: "border-box",
         }}
       >
-        <h1 style={{ fontSize: "3rem", color: "tan", textShadow: "2px 2px black" }}>
+        <h1 style={{ font family: Stencil, fontSize: "4rem", color: "tan", textShadow: "2px 2px black" }}>
           Liberty Soldiers
         </h1>
         <p style={{ fontSize: "1.5rem", color: "white", marginTop: "1rem" }}>
@@ -34,7 +34,7 @@ const HomePage = () => {
       <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem", fontSize: "1.2rem", lineHeight: "1.8" }}>
         <h2 style={{ color: "tan", textAlign: "center", marginBottom: "1rem" }}>Welcome</h2>
         <p><strong>“And you will know the truth, and the truth will set you free.”</strong> — <em>John 8:32 (LEB)</em></p>
-        <p>Welcome to <strong>Liberty Soldiers</strong>. Our mission is to bring liberty from deception, fear, and misinformation passed down by mainstream religion for nearly 2000 years. These teachings were shaped more by councils and empires than Scripture itself.</p>
+        <p>Welcome to <strong>Liberty Soldiers</strong>. Our mission is to bring you liberty from deception, fear, and misinformation passed down by mainstream religion for nearly 2000 years. These teachings were shaped more by councils and empires than Scripture itself.</p>
         <p>Since 325 AD at the First Council of Nicaea, man-made doctrines infused with paganism and Greek philosophy have been enforced by religious and political systems. Doctrines such as the Trinity, abolished Torah, and heaven-at-death theology were never taught by the Messiah or His disciples.</p>
         <p><strong>“And in vain do they worship me, teaching as doctrines the commandments of men.”</strong> — <em>Matthew 15:9 (LEB)</em></p>
         <p>We aim to return to what the Scriptures actually say — exposing false doctrines like:</p>
