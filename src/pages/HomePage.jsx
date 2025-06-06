@@ -22,18 +22,25 @@ const HomePage = () => {
           boxSizing: "border-box",
         }}
       >
-     <h1 style={{ fontFamily: "Staatliches, sans-serif", fontSize: "4rem", color: "tan", textShadow: "2px 2px black" }}>
-     Liberty Soldiers
+     <div style={{ textAlign: "center", paddingTop: "3rem" }}>
+  <h1 style={{ fontFamily: "Staatliches, sans-serif", fontSize: "4rem", color: "tan", textShadow: "2px 2px black" }}>
+    Liberty Soldiers
+  </h1>
 
-     <p style={{ fontSize: "1.5rem", color: "white", marginTop: "1rem" }}>
-     Seeking truth, defending Torah, fighting deception.
-     </p>
+  <p style={{ fontSize: "1.5rem", color: "white", marginTop: "1rem" }}>
+    Seeking truth, defending Torah, fighting deception.
+  </p>
+</div>
 
-     {/* Welcome Message */}
-     <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem", fontSize: "1.2rem", lineHeight: "1.8" }}>
-     <h2 style={{ color: "tan", textAlign: "center", marginBottom: "1rem" }}>Welcome</h2>
-     {/* Your welcome message content goes here */}
-     </div>
+{/* Welcome Message */}
+<div style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem", fontSize: "1.2rem", lineHeight: "1.8" }}>
+  <h2 style={{ color: "tan", textAlign: "center", marginBottom: "1rem" }}>Welcome</h2>
+  <p style={{ color: "white" }}>
+    Our mission is to give you liberty from the lies, deception, and misinformation that the mainstream church has pushed for nearly 2,000 years.
+    These distortions began early and were institutionalized by religious and political powers—especially at the Council of Nicaea in 325 AD.
+    Our goal is to cut through these traditions and return to the truth of Scripture.
+  </p>
+</div>
 
       {/* Welcome Message */}
       <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem", fontSize: "1.2rem", lineHeight: "1.8" }}>
