@@ -24,20 +24,20 @@
 
 .overlay h1 {
   font-family: Stencil, sans-serif;
-  font-size: 3rem;
+  font-size: 4rem;
   color: tan;
   text-shadow: 2px 2px black;
 }
 
 .overlay p {
   font-family: Stencil, sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   margin-top: 1rem;
 }
 .verses {
   margin-top: 2rem;
   font-family: Stencil, sans-serif;
-  font-size: .75rem;
+  font-size: .5rem;
   color: #ddd;
   max-width: 600px;
   margin-left: auto;
