@@ -1,32 +1,27 @@
 import React from "react";
+import "./HomePage.css";
 import heroImage from "../assets/hero.jpg";
 
 const HomePage = () => {
   return (
-    <div
-      style={{
-        backgroundImage: `url(${heroImage})`,
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-        backgroundColor: "black",
-        height: "100vh",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        textAlign: "center",
-        padding: "0 20px",
-        boxSizing: "border-box",
-      }}
-    >
-      <h1 style={{ fontSize: "3rem", color: "tan", textShadow: "2px 2px black" }}>
-        Liberty Soldiers
-      </h1>
-      <p style={{ fontSize: "1.5rem", color: "white", marginTop: "1rem" }}>
-        Seeking truth, defending Torah, fighting deception.
-      </p>
+    <div className="hero">
+      <div className="overlay">
+        <h1>Liberty Soldiers</h1>
+        <p>Seeking truth, defending Torah, fighting deception.</p>
+        <div className="verses">
+          <p>
+            “And you will know the truth, and the truth will set you free.”
+            <br />
+            <span className="verse-ref">— John 8:32</span>
+          </p>
+          <p>
+            “Be strong and courageous. Do not be afraid or terrified because of them,
+            for Yahweh your Elohim goes with you; He will never leave you nor forsake you.”
+            <br />
+            <span className="verse-ref">— Deuteronomy 31:6</span>
+          </p>
+        </div>
+      </div>
     </div>
   );
 };
