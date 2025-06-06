@@ -1,12 +1,14 @@
 import React from 'react';
 
+import React from 'react';
+
 const HomePage = () => {
   return (
     <div style={{ backgroundColor: "#1a1a1a", minHeight: "100vh", fontFamily: "sans-serif" }}>
       {/* Hero Image Section */}
       <div
         style={{
-          backgroundImage: "url('/hero.jpg')", // <-- update with your actual image path if needed
+          backgroundImage: "url('/hero.jpg')", // update path if needed
           backgroundSize: "cover",
           backgroundPosition: "center",
           height: "100vh",
@@ -32,25 +34,31 @@ const HomePage = () => {
         </p>
       </div>
 
-{/* Welcome Message */}
+      {/* Welcome Message */}
       <div
-  style={{
-    maxWidth: "900px",
-    margin: "0 auto",
-    padding: "2rem",
-    fontSize: "1.2rem",
-    lineHeight: "1.8",
-    color: "white", // ✅ Make all text white by default
-  }}
->
-      <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem", fontSize: "1.2rem", lineHeight: "1.8" }}>
+        style={{
+          maxWidth: "900px",
+          margin: "0 auto",
+          padding: "2rem",
+          fontSize: "1.2rem",
+          lineHeight: "1.8",
+          color: "white"
+        }}
+      >
         <h2 style={{ color: "tan", textAlign: "center", marginBottom: "1rem" }}>Welcome</h2>
         <p><strong>“And you will know the truth, and the truth will set you free.”</strong> — <em>John 8:32 (LEB)</em></p>
-        <p>Welcome to <strong>Liberty Soldiers</strong>. Our mission is to bring liberty from deception, fear, and misinformation passed down by mainstream religion for nearly 2000 years. These teachings were shaped more by councils and empires than Scripture itself.</p>
-        <p>Since 325 AD at the First Council of Nicaea, man-made doctrines infused with paganism and Greek philosophy have been enforced by religious and political systems. Doctrines such as the Trinity, abolished Torah, and heaven-at-death theology were never taught by the Messiah or His disciples.</p>
+        <p>
+          Welcome to <strong>Liberty Soldiers</strong>. Our mission is to bring liberty from deception, fear, and misinformation
+          passed down by mainstream religion for nearly 2000 years. These teachings were shaped more by councils and empires than Scripture itself.
+        </p>
+        <p>
+          Since 325 AD at the First Council of Nicaea, man-made doctrines infused with paganism and Greek philosophy have been enforced
+          by religious and political systems. Doctrines such as the Trinity, abolished Torah, and heaven-at-death theology were never taught
+          by the Messiah or His disciples.
+        </p>
         <p><strong>“And in vain do they worship me, teaching as doctrines the commandments of men.”</strong> — <em>Matthew 15:9 (LEB)</em></p>
         <p>We aim to return to what the Scriptures actually say — exposing false doctrines like:</p>
-        <ul>
+        <ul style={{ paddingLeft: "1.5rem" }}>
           <li>The Trinity</li>
           <li>The Rapture</li>
           <li>The Law Is Abolished</li>
@@ -69,4 +77,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-     
