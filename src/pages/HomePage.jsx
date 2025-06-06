@@ -33,14 +33,16 @@ const HomePage = () => {
       </div>
 
 {/* Welcome Message */}
-      <div style={{
-        maxWidth: "900px",
-        margin: "0 auto",
-        padding: "2rem",
-        fontSize: "1.2rem",
-        lineHeight: "1.8",
-        color: "white"
-      }}>
+      <div
+  style={{
+    maxWidth: "900px",
+    margin: "0 auto",
+    padding: "2rem",
+    fontSize: "1.2rem",
+    lineHeight: "1.8",
+    color: "white", // ✅ Make all text white by default
+  }}
+>
       <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem", fontSize: "1.2rem", lineHeight: "1.8" }}>
         <h2 style={{ color: "tan", textAlign: "center", marginBottom: "1rem" }}>Welcome</h2>
         <p><strong>“And you will know the truth, and the truth will set you free.”</strong> — <em>John 8:32 (LEB)</em></p>
