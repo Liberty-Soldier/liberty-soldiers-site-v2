@@ -31,13 +31,13 @@
 
 .overlay p {
   font-family: Stencil, sans-serif;
-  font-size: 1rem;
+  font-size: 1.25rem;
   margin-top: 1rem;
 }
 .verses {
   margin-top: 2rem;
   font-family: Stencil, sans-serif;
-  font-size: 1rem;
+  font-size: .75rem;
   color: #ddd;
   max-width: 600px;
   margin-left: auto;
