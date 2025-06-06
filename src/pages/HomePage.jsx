@@ -22,8 +22,9 @@ const HomePage = () => {
           boxSizing: "border-box",
         }}
       >
-        <h1 style={{ FontFamily: "Stencil", fontSize: "4rem", color: "tan", textShadow: "2px 2px black" }}>
-          Liberty Soldiers
+        <h1 style={{ fontFamily: "Staatliches, sans-serif", fontSize: "4rem", color: "tan", textShadow: "2px 2px black" }}>
+        Liberty Soldiers
+        </h1>
         </h1>
         <p style={{ fontSize: "1.5rem", color: "white", marginTop: "1rem" }}>
           Seeking truth, defending Torah, fighting deception.
