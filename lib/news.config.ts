@@ -8,15 +8,13 @@ export const NEWS_FEEDS: string[] = [
   "https://www.infowars.com/feed/",
   "https://rss.infowars.com/TNT.xml",
   "https://www.israel365news.com/feed/",
-  "https://www.timesofisrael.com/feed/",
+  "https://www.timesofisrael.com/feed/"
 ];
 
 export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
-  // Example:
   // { title: "Pinned example story", url: "https://example.com/article", source: "Example" },
 ];
 
 export const BLACKLIST: string[] = [
-  // e.g. "example.com"
+  // "example.com"
 ];
-
