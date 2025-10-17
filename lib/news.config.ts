@@ -1,16 +1,17 @@
-// lib/news.config.ts
 export const NEWS_FEEDS: string[] = [
-  // Add your favorite RSS feeds here (Torah, prophecy, end-times, etc.)
-  // Example:
-  // 'https://www.jpost.com/rss/rss.xml',
-  // 'https://allisrael.com/rss',
+  "https://www.jpost.com/rss/rss.xml",
+  "https://www.allisrael.com/rss",
+  "https://www.israeltoday.co.il/feed/"
+  "https://www.prophecynewswatch.com/rss.xml"
+  "https://www.theguardian.com/world/rss"
+  "https://www.infowars.com/rss.xml"
+  "https://rss.infowars.com/TNT.xml"
 ];
 
 export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
-  // Example pinned articles
-  // { title: 'Torah Keepers Face Rising Censorship', url: 'https://example.com/article', source: 'Example Source' },
+  // { title: "Pinned example story", url: "https://example.com/article", source: "Example" },
 ];
 
 export const BLACKLIST: string[] = [
-  // Add any site domains you want to exclude from feed results
+  // add domains you want to exclude, e.g. "example.com"
 ];
