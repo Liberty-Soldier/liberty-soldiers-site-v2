@@ -1,3 +1,4 @@
+import ClearSW from '../components/ClearSW';
 import "../styles/globals.css";
 import React from "react";
 
@@ -44,7 +45,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
         </footer>
+        <ClearSW />
       </body>
     </html>
   );
 }
+
