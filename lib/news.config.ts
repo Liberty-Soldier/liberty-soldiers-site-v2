@@ -8,7 +8,7 @@ export const NEWS_FEEDS: string[] = [
   "https://www.infowars.com/feed/",
   "https://rss.infowars.com/TNT.xml",
   "https://www.israel365news.com/feed/",
-  "https://www.timesofisrael.com/feed/"
+  "https://www.timesofisrael.com/feed/",
 ];
 
 export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
@@ -19,3 +19,4 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // e.g. "example.com"
 ];
+
