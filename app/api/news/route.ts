@@ -1,7 +1,6 @@
 export const runtime = 'nodejs';
 import { NextResponse } from 'next/server';
-import { NEWS_FEEDS, PINNED_LINKS, BLACKLIST } from '@/lib/news.config';
-
+import { NEWS_FEEDS, PINNED_LINKS, BLACKLIST } from '../../../lib/news.config';
 function domainFromUrl(url: string) {
   try { return new URL(url).hostname.replace('www.', ''); } catch { return ''; }
 }

@@ -6,56 +6,26 @@ export default function AboutPage() {
       {/* EDIT THIS COPY ANYTIME */}
       <p className="text-white/80 mt-2 max-w-3xl">
         Liberty Soldiers is an investigative project committed to Scripture-first reporting and analysis.
-        We expose deception and call people back to obedience to the Father through the example of the Messiah.
       </p>
 
-      {/* Resources */}
       <section className="mt-10">
         <h2 className="text-2xl font-bold">Resources</h2>
         <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <li className="rounded-xl border border-white/10 p-4 bg-white/5">Study Tools</li>
-          <li className="rounded-xl border border-white/10 p-4 bg-white/5">Primary Texts</li>
-          <li className="rounded-xl border border-white/10 p-4 bg-white/5">Historical Archives</li>
-          <li className="rounded-xl border border-white/10 p-4 bg-white/5">Recommended Channels</li>
+          {["Study Tools", "Primary Texts", "Historical Archives", "Recommended Channels"].map((r, i) => (
+            <li key={i} className="rounded-xl border border-white/10 p-4 bg-white/5">{r}</li>
+          ))}
         </ul>
       </section>
 
-      {/* Support */}
-      <section className="mt-10">
-        <h2 className="text-2xl font-bold">Support</h2>
-        <p className="text-white/80 mt-2">If you find value in our work, consider supporting it.</p>
-        <div className="mt-4 flex flex-wrap gap-3">
-          <a href="#" className="px-4 py-2 rounded-xl border border-white/20 hover:border-white/50">Donate</a>
-          <a href="#" className="px-4 py-2 rounded-xl border border-white/20 hover:border-white/50">Buy Me a Coffee</a>
-        </div>
-      </section>
-
-      {/* Contact */}
       <section id="contact" className="mt-10">
         <h2 className="text-2xl font-bold">Contact</h2>
         <form method="post" action="/api/contact" className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <input
-            name="name"
-            required
-            placeholder="Name"
-            className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50"
-          />
-          <input
-            name="email"
-            type="email"
-            required
-            placeholder="Email"
-            className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50"
-          />
-          <textarea
-            name="message"
-            required
-            placeholder="Message"
-            className="sm:col-span-2 px-4 py-3 rounded-xl bg-white text-black placeholder-black/50 min-h-[120px]"
-          />
-          <button className="sm:col-span-2 px-5 py-3 rounded-xl border border-white/20 hover:border-white/50">
-            Send
-          </button>
+          <input name="name" required placeholder="Name" className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50" />
+          <input name="email" type="email" required placeholder="Email" className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50" />
+          <textarea name="message" required placeholder="Message" className="sm:col-span-2 px-4 py-3 rounded-xl bg-white text-black placeholder-black/50 min-h-[120px]" />
+          <button className="sm:col-span-2 px-5 py-3 rounded-xl border border-white/20 hover:border-white/50">Send</button>
         </form>
-        <p className="text-xs text-white/60 mt-2">
-          Tip: add <code>CONTACT_WEBHOOK_URL</co
+      </section>
+    </div>
+  );
+}
