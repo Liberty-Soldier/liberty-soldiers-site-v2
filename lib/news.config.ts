@@ -13,9 +13,14 @@ export const NEWS_FEEDS: string[] = [
   "https://www.theguardian.com/world/rss",
   "https://www.infowars.com/feed/",
   "https://www.israel365news.com/feed/",
-  "https://www.timesofisrael.com/feed/",
+  "https://www.timesofisrael.com/feed/"
 ];
 
-export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [];
+export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
+  // Example:
+  // { title: "Pinned example", url: "https://example.com/article", source: "Example" },
+];
 
-export const BLACKLIST: string[] = [];
+export const BLACKLIST: string[] = [
+  // Add blocked domains like "example.com"
+];
