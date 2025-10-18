@@ -38,16 +38,47 @@ function pickDate(item: any) {
   return Number.isFinite(ms) ? ms : 0;
 }
 
-function normalizeItems(feed: any): Headline[] {
-  // RSS 2.0: rss.channel.item
-  const channel = feed?.rss?.channel;
-  const items = channel?.item
-    // Atom: feed.entry
-    || feed?.feed?.entry
-    // Some weird variants just have .item
-    || feed?.item
-    || [];
+// Helper: fix URLs missing https:// or using //
+function normalizeUrl(raw: any): string {
+  const s0 = String(raw ?? "").trim();
+  if (!s0) return "";
+  if (s0.startsWith("//")) return "https:" + s0;
+  if (/^https?:\/\//i.test(s0)) return s0;
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s0)) return "https://" + s0;
+  return "";
+}
+
+function normalize(feed: any): Headline[] {
+  const ch = feed?.rss?.channel;
+  const items = ch?.item || feed?.feed?.entry || feed?.item || [];
   const arr = Array.isArray(items) ? items : [items];
+
+  return arr
+    .map((it: any) => {
+      const link =
+        it?.link?.["@_href"] ||
+        it?.link?.[0]?.["@_href"] ||
+        it?.link?.[0] ||
+        it?.link ||
+        it?.guid ||
+        it?.url ||
+        it?.["dc:identifier"];
+
+      const url = normalizeUrl(Array.isArray(link) ? link[0] : link);
+      const title = String(it?.title ?? "").trim();
+      const source =
+        host(url || "") ||
+        String(feed?.feed?.title || ch?.title || "").trim();
+
+      return { title, url, source, publishedAt: pickDate(it) };
+    })
+    .filter(
+      (h) =>
+        h.title &&
+        h.url &&
+        !BLACKLIST.some((b) => host(h.url).includes(b))
+    );
+}
 
   return arr.map((it: any) => {
     const link = it?.link?.["@_href"] || it?.link?.[0]?.["@_href"] || it?.link?.[0] || it?.link || it?.guid || it?.url;
