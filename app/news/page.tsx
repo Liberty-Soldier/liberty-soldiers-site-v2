@@ -20,7 +20,7 @@ export default async function NewsPage() {
       <div className="mb-6 flex items-end justify-between">
         <div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-  News Feed — LS TEST 987
+  News Feed
 </h1>
           <p className="text-white/70 mt-1">Live headlines relevant to end times & Torah keeping.</p>
         </div>
@@ -49,4 +49,5 @@ export default async function NewsPage() {
   );
 }
  
+
 
