@@ -16,11 +16,6 @@ export const NEWS_FEEDS: string[] = [
   "https://www.timesofisrael.com/feed/",
 ];
 
-export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
-  // Example:
-  // { title: "Pinned example story", url: "https://example.com/article", source: "Example" },
-];
+export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [];
 
-export const BLACKLIST: string[] = [
-  // Add blocked domains like "example.com"
-];
+export const BLACKLIST: string[] = [];
