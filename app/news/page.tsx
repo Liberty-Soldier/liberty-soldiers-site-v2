@@ -6,13 +6,18 @@ type Item = { title: string; url: string; source: string; publishedAt?: number }
 
 import { fetchAllHeadlines } from "@/lib/rss"; // use "../../lib/rss" if alias not set
 
-function humanAgo(ms: number) {
-  if (!ms) return "";
-  const diff = Math.max(0, Date.now() - ms);
-  const h = Math.floor(diff / 3.6e6);
-  if (h < 1) return "Just now";
-  if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
+function humanAgo(input?: number | string | Date): string {
+  if (!input) return 'Just now';
+  const ts = typeof input === 'number' ? input : new Date(input).getTime();
+  if (!Number.isFinite(ts)) return 'Just now';
+  const diff = Date.now() - ts;
+  const sec = Math.max(1, Math.floor(diff / 1000));
+  if (sec < 60) return `${sec}s ago`;
+  const min = Math.floor(sec / 60);
+  if (min < 60) return `${min}m ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr}h ago`;
+  const d = Math.floor(hr / 24);
   return `${d}d ago`;
 }
 
@@ -60,4 +65,5 @@ export default async function NewsPage() {
     </div>
   );
 }
+
 
