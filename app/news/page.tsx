@@ -1,6 +1,5 @@
 export const revalidate = 600; // ISR every 10 min
-import { fetchAllHeadlines } from "@/lib/rss";
-
+import { fetchAllHeadlines } from "../../lib/rss";
 function humanAgo(ms: number) {
   if (!ms) return "";
   const diff = Math.max(0, Date.now() - ms);
