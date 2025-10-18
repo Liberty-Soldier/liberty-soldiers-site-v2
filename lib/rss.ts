@@ -37,17 +37,17 @@ function pickDate(item: any) {
   const ms = Date.parse(String(t || ""));
   return Number.isFinite(ms) ? ms : 0;
 }
-
-// Helper: fix URLs missing https:// or using //
+// Fix URLs missing protocol (e.g., "site.com/x") or using protocol-relative ("//site.com/x")
 function normalizeUrl(raw: any): string {
   const s0 = String(raw ?? "").trim();
   if (!s0) return "";
-  if (s0.startsWith("//")) return "https:" + s0;
-  if (/^https?:\/\//i.test(s0)) return s0;
-  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s0)) return "https://" + s0;
+  if (s0.startsWith("//")) return "https:" + s0;            // //example.com → https://example.com
+  if (/^https?:\/\//i.test(s0)) return s0;                  // already http/https
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s0)) return "https://" + s0; // looks like a domain/path
   return "";
 }
 
+// Turn a parsed feed object into our Headline[]
 function normalize(feed: any): Headline[] {
   const ch = feed?.rss?.channel;
   const items = ch?.item || feed?.feed?.entry || feed?.item || [];
@@ -55,6 +55,7 @@ function normalize(feed: any): Headline[] {
 
   return arr
     .map((it: any) => {
+      // Try the usual link shapes found across RSS/Atom variants
       const link =
         it?.link?.["@_href"] ||
         it?.link?.[0]?.["@_href"] ||
@@ -66,27 +67,13 @@ function normalize(feed: any): Headline[] {
 
       const url = normalizeUrl(Array.isArray(link) ? link[0] : link);
       const title = String(it?.title ?? "").trim();
-      const source =
-        host(url || "") ||
-        String(feed?.feed?.title || ch?.title || "").trim();
+      const source = host(url || "") || String(feed?.feed?.title || ch?.title || "").trim();
 
       return { title, url, source, publishedAt: pickDate(it) };
     })
     .filter(
-      (h) =>
-        h.title &&
-        h.url &&
-        !BLACKLIST.some((b) => host(h.url).includes(b))
+      (h) => h.title && h.url && !BLACKLIST.some((b) => host(h.url).includes(b))
     );
-}
-
-  return arr.map((it: any) => {
-    const link = it?.link?.["@_href"] || it?.link?.[0]?.["@_href"] || it?.link?.[0] || it?.link || it?.guid || it?.url;
-    const url = Array.isArray(link) ? link[0] : link;
-    const title = String(it?.title ?? "").trim();
-    const source = getHostname(url || "") || String(feed?.feed?.title || channel?.title || "").trim();
-    return { title, url, source, publishedAt: pickDate(it) };
-  }).filter(h => h.title && h.url && !BLACKLIST.some(b => getHostname(h.url).includes(b)));
 }
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
