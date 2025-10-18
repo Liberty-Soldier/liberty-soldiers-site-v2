@@ -1,5 +1,5 @@
 export const revalidate = 600; // ISR every 10 min
-import { fetchAllHeadlines } from "@/lib/rss"; or "../../lib/rss";
+import { fetchAllHeadlines } from "../../lib/rss";
 function humanAgo(ms: number) {
   if (!ms) return "";
   const diff = Math.max(0, Date.now() - ms);
@@ -19,7 +19,9 @@ export default async function NewsPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="mb-6 flex items-end justify-between">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">News Feed</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+  News Feed — LS TEST 987
+</h1>
           <p className="text-white/70 mt-1">Live headlines relevant to end times & Torah keeping.</p>
         </div>
         <a href="/" className="text-sm hover:text-white/80">← Home</a>
@@ -46,3 +48,4 @@ export default async function NewsPage() {
     </div>
   );
 }
+
