@@ -1,14 +1,5 @@
-export const revalidate = 600; // static regen every 10 min
-
-type Item = { title: string; url: string; source: string; publishedAt: number };
-
-async function getData(): Promise<Item[]> {
-  // Prefer internal call to avoid external URL issues at build/runtime
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || ""}/api/news`, { next: { revalidate: 600 } });
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.items as Item[];
-}
+export const revalidate = 600; // ISR every 10 min
+import { fetchAllHeadlines } from "@/lib/rss";
 
 function humanAgo(ms: number) {
   if (!ms) return "";
@@ -21,9 +12,8 @@ function humanAgo(ms: number) {
 }
 
 export default async function NewsPage() {
-  const items = await getData();
+  const items = await fetchAllHeadlines();
 
-  // Split into 3 roughly even columns
   const colSize = Math.ceil(items.length / 3);
   const cols = [items.slice(0, colSize), items.slice(colSize, colSize * 2), items.slice(colSize * 2)];
 
