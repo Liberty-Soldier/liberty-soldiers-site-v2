@@ -1,5 +1,17 @@
 import { XMLParser } from "fast-xml-parser";
 import { NEWS_FEEDS, PINNED_LINKS, BLACKLIST } from "./news.config";
+// add near the top, below the imports
+function normalizeUrl(raw: any): string {
+  const s0 = String(raw ?? "").trim();
+  if (!s0) return "";
+  // protocol-relative → add https:
+  if (s0.startsWith("//")) return "https:" + s0;
+  // already absolute http(s)
+  if (/^https?:\/\//i.test(s0)) return s0;
+  // looks like a domain/path → prepend https://
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s0)) return "https://" + s0;
+  return ""; // anything else: treat as invalid for safety
+}
 
 export type Headline = {
   title: string;
