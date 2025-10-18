@@ -15,7 +15,6 @@ export default async function NewsPage() {
 
   const colSize = Math.ceil(items.length / 3);
   const cols = [items.slice(0, colSize), items.slice(colSize, colSize * 2), items.slice(colSize * 2)];
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="mb-6 flex items-end justify-between">
