@@ -2,7 +2,7 @@
 export const NEWS_FEEDS: string[] = [
   "https://www.jpost.com/rss/rss.xml",
   "https://endtimeheadlines.org/feed/",
-  "https://www.biometricupdate.com/feed",
+  "https://www.biometricupdate.com/feed/",
   "https://expose-news.com/feed/",
   "https://www.nowtheendbegins.com/feed/",
   "https://reclaimthenet.org/feed/",
@@ -17,10 +17,10 @@ export const NEWS_FEEDS: string[] = [
 ];
 
 export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
+  // Example:
   // { title: "Pinned example story", url: "https://example.com/article", source: "Example" },
 ];
 
 export const BLACKLIST: string[] = [
-  // "example.com"
+  // Add blocked domains like "example.com"
 ];
-
