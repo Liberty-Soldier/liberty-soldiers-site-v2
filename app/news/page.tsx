@@ -1,8 +1,10 @@
-export const revalidate = 600; // rebuild every 10 min (ISR)
+// app/news/page.tsx
+export const revalidate = 600;
 
-import { fetchAllHeadlines } from "@/lib/rss"; // if alias fails, use "../../lib/rss"
+// If you defined a local Item type, make the date optional:
+type Item = { title: string; url: string; source: string; publishedAt?: number };
 
-type Item = { title: string; url: string; source: string; publishedAt: number };
+import { fetchAllHeadlines } from "@/lib/rss"; // use "../../lib/rss" if alias not set
 
 function humanAgo(ms: number) {
   if (!ms) return "";
@@ -58,3 +60,4 @@ export default async function NewsPage() {
     </div>
   );
 }
+
