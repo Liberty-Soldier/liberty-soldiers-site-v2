@@ -1,15 +1,15 @@
-export const runtime = "edge";
-export const revalidate = 600; // seconds
+export const runtime = "nodejs";       // ← switch from "edge"
+export const revalidate = 600;         // seconds
 
 import { NextResponse } from "next/server";
-import { fetchAllHeadlines } from "../../../lib/rss";
+import { fetchAllHeadlines } from "@/lib/rss"; // if alias fails: "../../../lib/rss"
 
 export async function GET() {
   try {
     const items = await fetchAllHeadlines();
-    // Simple shape for the client
+
     return NextResponse.json(
-      { ok: true, items },
+      { ok: true, count: items.length, items },
       {
         headers: {
           "Cache-Control": "s-maxage=600, stale-while-revalidate=300",
@@ -17,8 +17,10 @@ export async function GET() {
       }
     );
   } catch (e: any) {
+    // This will show in Vercel function logs
+    console.error("API /news error:", e);
     return NextResponse.json(
-      { ok: false, error: e?.message || "Failed to load feeds" },
+      { ok: false, error: e?.message || String(e) },
       { status: 500 }
     );
   }
