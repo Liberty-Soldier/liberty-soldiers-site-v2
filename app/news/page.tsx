@@ -1,5 +1,9 @@
-export const revalidate = 600; // ISR every 10 min
-import { fetchAllHeadlines } from "../../lib/rss";
+export const revalidate = 600; // rebuild every 10 min (ISR)
+
+import { fetchAllHeadlines } from "@/lib/rss"; // if alias fails, use "../../lib/rss"
+
+type Item = { title: string; url: string; source: string; publishedAt: number };
+
 function humanAgo(ms: number) {
   if (!ms) return "";
   const diff = Math.max(0, Date.now() - ms);
@@ -11,24 +15,30 @@ function humanAgo(ms: number) {
 }
 
 export default async function NewsPage() {
-  const items = await fetchAllHeadlines();
+  let items: Item[] = [];
+  try {
+    items = await fetchAllHeadlines();
+  } catch {
+    items = [];
+  }
 
-  const colSize = Math.ceil(items.length / 3);
+  const colSize = Math.ceil(items.length / 3) || 0;
   const cols = [items.slice(0, colSize), items.slice(colSize, colSize * 2), items.slice(colSize * 2)];
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="mb-6 flex items-end justify-between">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-  News Feed
-</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">News Feed</h1>
           <p className="text-white/70 mt-1">Live headlines relevant to end times & Torah keeping.</p>
         </div>
         <a href="/" className="text-sm hover:text-white/80">← Home</a>
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-xl border border-white/10 p-6 text-white/70">No headlines yet. Try again shortly.</div>
+        <div className="rounded-xl border border-white/10 p-6 text-white/70">
+          No headlines yet. If this persists, check <code>lib/news.config.ts</code> has feeds and that deployment finished.
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {cols.map((col, i) => (
@@ -48,6 +58,3 @@ export default async function NewsPage() {
     </div>
   );
 }
- 
-
-
