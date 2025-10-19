@@ -12,7 +12,13 @@ export const metadata = {
     url: "https://libertysoldiers.com",
     siteName: "Liberty Soldiers",
   },
+  icons: {
+    icon: "/icon.png", // main favicon / PWA icon
+    apple: "/apple-touch-icon.png", // icon for iPhone/iPad
+  },
+  manifest: "/manifest.json", // manifest tells phones what to show when "Add to Home Screen"
 };
+
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -57,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
 
 
 
