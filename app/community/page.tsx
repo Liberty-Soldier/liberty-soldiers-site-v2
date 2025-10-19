@@ -1,4 +1,11 @@
+// app/community/page.tsx
 import HyvorComments from "../../components/HyvorComments";
+
+export const metadata = {
+  title: "Community | Liberty Soldiers",
+  description:
+    "Discuss Scripture, share insight, and connect with others pursuing truth and obedience.",
+};
 
 export default function CommunityPage() {
   const HYVOR_ID = process.env.NEXT_PUBLIC_HYVOR_TALK_WEBSITE_ID || "";
@@ -45,6 +52,12 @@ export default function CommunityPage() {
               className="rounded-xl border border-white/10 bg-white/[0.03] py-4 px-2 text-white/80 hover:bg-white/[0.06] transition"
             >
               {title}
-              <div className="mt-1 text-xs te
-
+              <div className="mt-1 text-xs text-white/40">(coming soon)</div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
 
