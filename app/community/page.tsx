@@ -1,5 +1,5 @@
 import Link from "next/link";
-import HyvorComments from "../components/HyvorComments";
+import HyvorComments from "../../components/HyvorComments";
 
 // ----- Newsletter + Volunteer server actions (simple "log + thank you")
 async function submitNewsletter(formData: FormData) {
