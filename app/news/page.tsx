@@ -37,7 +37,7 @@ export default async function NewsPage() {
       <div className="mb-6 flex items-end justify-between">
         <div>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">News Feed</h1>
-          <p className="text-white/70 mt-1">Live headlines relevant to end times & Torah keeping.</p>
+          <p className="text-white/70 mt-1">Live headlines relevant to world events and prophetic times.</p>
         </div>
         <a href="/" className="text-sm hover:text-white/80">← Home</a>
       </div>
@@ -65,5 +65,6 @@ export default async function NewsPage() {
     </div>
   );
 }
+
 
 
