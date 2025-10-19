@@ -1,6 +1,7 @@
 import ClearSW from '../components/ClearSW';
 import "../styles/globals.css";
 import React from "react";
+import Image from "next/image"; // ✅ default import (no curly braces)
 
 export const metadata = {
   title: "Liberty Soldiers",
@@ -56,5 +57,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
 
 
