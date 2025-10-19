@@ -1,5 +1,5 @@
 import Link from "next/link";
-import HyvorComments from "@/app/components/HyvorComments";
+import HyvorComments from "../components/HyvorComments";
 
 // ----- Newsletter + Volunteer server actions (simple "log + thank you")
 async function submitNewsletter(formData: FormData) {
@@ -172,4 +172,5 @@ export default function CommunityPage() {
     </div>
   );
 }
+
 
