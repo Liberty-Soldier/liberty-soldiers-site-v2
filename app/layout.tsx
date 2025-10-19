@@ -20,7 +20,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="sticky top-0 z-50 backdrop-blur bg-black/60 border-b border-white/10">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <a href="/" className="flex items-center gap-3 group">
-              <div className="h-8 w-8 rounded-full bg-white/10 group-hover:bg-white/20 transition" />
+              <Image
+  src="/liberty-logo.png"
+  alt="Liberty Soldiers Logo"
+  width={48}
+  height={48}
+  className="rounded-full"
+/>
               <span className="font-extrabold tracking-widest text-lg sm:text-xl">LIBERTY SOLDIERS</span>
             </a>
             <nav className="hidden md:flex items-center gap-6 text-sm">
@@ -50,4 +56,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
 
