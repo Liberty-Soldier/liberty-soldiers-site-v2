@@ -8,7 +8,7 @@ export default function Home() {
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="max-w-3xl">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">LIBERTY SOLDIERS</h1>
-            <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">Seeking truth, defending Torah, and fighting deception.</p>
+            <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">Waging War Against Lies, Standing For Truth, and Fighting Deception.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="/news" className="px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90">Read the News Feed</a>
               <a href="/community" className="px-5 py-3 rounded-xl border border-white/30 hover:border-white/60">Join the Community</a>
@@ -48,4 +48,5 @@ export default function Home() {
       </section>
     </div>
   );
+
 }
