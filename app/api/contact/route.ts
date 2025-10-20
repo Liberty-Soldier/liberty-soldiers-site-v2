@@ -1,40 +1,41 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { appendFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
+// app/api/contact/route.ts
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
-export async function POST(req: NextRequest) {
+const resend = new Resend(process.env.RESEND_API_KEY!);
+const FROM = process.env.MAIL_FROM!;
+const TO = process.env.MAIL_TO!;
+
+export async function POST(req: Request) {
   try {
     const form = await req.formData();
-    const name = String(form.get('name') || '').trim();
-    const email = String(form.get('email') || '').trim();
-    const message = String(form.get('message') || '').trim();
+    const name = String(form.get("name") || "");
+    const email = String(form.get("email") || "");
+    const message = String(form.get("message") || "");
 
     if (!name || !email || !message) {
-      return NextResponse.json({ ok: false, error: 'Missing fields' }, { status: 400 });
+      return NextResponse.json({ ok: false, error: "Missing fields" }, { status: 400 });
     }
 
-    const payload = { name, email, message, ts: new Date().toISOString() };
+    // Send you a notification
+    await resend.emails.send({
+      from: FROM,
+      to: TO,
+      subject: "New Contact Message — Liberty Soldiers",
+      text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
+    });
 
-    // Optional: Forward to a webhook (Zapier, Make, etc.) if CONTACT_WEBHOOK_URL is set
-    const webhook = process.env.CONTACT_WEBHOOK_URL;
-    if (webhook) {
-      await fetch(webhook, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      return NextResponse.redirect(new URL('/about#contact?sent=1', req.url));
-    }
+    // Auto-reply to the sender (optional)
+    await resend.emails.send({
+      from: FROM,
+      to: email,
+      subject: "We received your message",
+      text: `Thanks ${name}, we received your message and will reply soon.\n— Liberty Soldiers`,
+    });
 
-    // Fallback: save locally to CSV in /tmp
-    const dir = '/tmp/liberty-contact';
-    if (!existsSync(dir)) await mkdir(dir, { recursive: true });
-    const safe = (s: string) => `"${s.replaceAll('"', '""')}"`;
-    const line = `${payload.ts},${safe(name)},${safe(email)},${safe(message)}\n`;
-    await appendFile(`${dir}/contact.csv`, line, 'utf8');
-
-    return NextResponse.redirect(new URL('/about#contact?sent=1', req.url));
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message || 'Unknown error' }, { status: 500 });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
   }
 }
+
