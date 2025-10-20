@@ -1,3 +1,4 @@
+export const runtime = "nodejs";
 // app/api/contact/route.ts
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
@@ -38,4 +39,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Server error" }, { status: 500 });
   }
 }
+
 
