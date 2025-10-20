@@ -1,4 +1,5 @@
 export default function AboutPage() {
+  
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">About</h1>
@@ -17,15 +18,63 @@ export default function AboutPage() {
         </ul>
       </section>
 
-      <section id="contact" className="mt-10">
-        <h2 className="text-2xl font-bold">Contact</h2>
-        <form method="post" action="/api/contact" className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <input name="name" required placeholder="Name" className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50" />
-          <input name="email" type="email" required placeholder="Email" className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50" />
-          <textarea name="message" required placeholder="Message" className="sm:col-span-2 px-4 py-3 rounded-xl bg-white text-black placeholder-black/50 min-h-[120px]" />
-          <button className="sm:col-span-2 px-5 py-3 rounded-xl border border-white/20 hover:border-white/50">Send</button>
-        </form>
-      </section>
+<section id="contact" className="mt-10">
+  <h2 className="text-2xl font-bold">Contact</h2>
+
+  {/* Success or error messages */}
+  {searchParams?.sent === "1" && (
+    <p className="text-green-400 mt-2">✅ Message sent successfully!</p>
+  )}
+  {searchParams?.error && (
+    <p className="text-red-400 mt-2">⚠️ {searchParams.error}</p>
+  )}
+
+  <form
+    onSubmit={async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget as HTMLFormElement;
+      const data = new FormData(form);
+      const res = await fetch("/api/contact", { method: "POST", body: data });
+      if (res.ok) {
+        window.location.href = "/about?sent=1#contact";
+      } else {
+        const j = await res.json().catch(() => ({}));
+        window.location.href = `/about?error=${encodeURIComponent(
+          j?.error || "Unable to send message"
+        )}#contact`;
+      }
+    }}
+    className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3"
+  >
+    <input
+      name="name"
+      required
+      placeholder="Name"
+      className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50"
+    />
+    <input
+      name="email"
+      type="email"
+      required
+      placeholder="Email"
+      className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50"
+    />
+    <textarea
+      name="message"
+      required
+      placeholder="Message"
+      className="sm:col-span-2 px-4 py-3 rounded-xl bg-white text-black placeholder-black/50 min-h-[120px]"
+    />
+    <button
+      type="submit"
+      className="sm:col-span-2 px-5 py-3 rounded-xl border border-white/20 hover:border-white/50"
+    >
+      Send
+    </button>
+  </form>
+</section>
+
     </div>
   );
 }
+
