@@ -1,4 +1,4 @@
-export default function AboutPage() {
+export default function AboutPage({ searchParams }: { searchParams?: { sent?: string; error?: string } }) {
   
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -77,4 +77,5 @@ export default function AboutPage() {
     </div>
   );
 }
+
 
