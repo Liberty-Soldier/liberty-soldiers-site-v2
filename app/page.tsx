@@ -11,7 +11,6 @@ export default function Home() {
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">Waging War Against Lies, Standing For Truth, and Fighting Deception.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="/news" className="px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90">Read the News Feed</a>
-              <a href="/community" className="px-5 py-3 rounded-xl border border-white/30 hover:border-white/60">Join the Community</a>
             </div>
           </div>
         </div>
@@ -23,7 +22,9 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold">Who is Liberty Soldiers</h2>
           <p className="mt-3 text-white/90 leading-relaxed">
             {/* EDIT THIS COPY */}
-            We publish tight, investigative reports—Scripture first—exposing deception and calling people back to obedience.
+            We publish investigative reports—Scripture first—exposing deception and calling people out of man-made constructs of the mind and back to truth.
+            Liberty Soldiers exists to challenge false doctrine, manufactured narratives, and modern religious compromise.
+            We prioritize documented sources, Scripture, and accountability over opinion, tradition, or consensus.
           </p>
         </div>
       </section>
@@ -50,6 +51,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
