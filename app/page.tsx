@@ -38,7 +38,7 @@ export default function Home() {
           <div className="aspect-video w-full rounded-2xl overflow-hidden border border-white/10">
             <iframe
               className="w-full h-full"
-              src="https://www.youtube-nocookie.com/embed/v=WeFeWyonzgc"
+              src="https://www.youtube.com/embed/WeFeWyonzgc"
               title="Latest Liberty Soldiers Video"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
@@ -50,6 +50,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
