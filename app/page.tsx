@@ -10,7 +10,7 @@ export default function Home() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight">LIBERTY SOLDIERS</h1>
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">Waging War Against Lies, Standing For Truth, and Fighting Deception.</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <a href="/news" className="px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90">Read the News Feed</a>
+              <a href="/news" className="px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90">News Feed</a>
             </div>
           </div>
         </div>
@@ -51,6 +51,7 @@ export default function Home() {
   );
 
 }
+
 
 
 
