@@ -2,18 +2,5 @@
   "version": 2,
   "framework": "nextjs",
   "buildCommand": "next build",
-  "outputDirectory": ".next",
-  "redirects": [
-    {
-      "source": "/(.*)",
-      "has": [
-        {
-          "type": "host",
-          "value": "www.libertysoldiers.com"
-        }
-      ],
-      "destination": "https://libertysoldiers.com/$1",
-      "permanent": true
-    }
-  ]
+  "outputDirectory": ".next"
 }
