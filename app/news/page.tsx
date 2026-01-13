@@ -7,9 +7,9 @@ type Item = { title: string; url: string; source: string; publishedAt?: number }
 import { fetchAllHeadlines } from "@/lib/rss"; // use "../../lib/rss" if alias not set
 
 function humanAgo(input?: number | string | Date): string {
-  if (!input) return 'Just now';
-  const ts = typeof input === 'number' ? input : new Date(input).getTime();
-  if (!Number.isFinite(ts)) return 'Just now';
+  if (!input) return "Just now";
+  const ts = typeof input === "number" ? input : new Date(input).getTime();
+  if (!Number.isFinite(ts)) return "Just now";
   const diff = Date.now() - ts;
   const sec = Math.max(1, Math.floor(diff / 1000));
   if (sec < 60) return `${sec}s ago`;
@@ -42,6 +42,33 @@ export default async function NewsPage() {
         <a href="/" className="text-sm hover:text-white/80">← Home</a>
       </div>
 
+      {/* ✅ Liberty Soldiers Reports (your own content) */}
+      <section className="mb-10">
+        <div className="flex items-end justify-between gap-6">
+          <div>
+            <h2 className="text-xl sm:text-2xl font-bold">Liberty Soldiers Reports</h2>
+            <p className="text-white/70 mt-1">Original investigative reports and analysis.</p>
+          </div>
+          <a href="/news/first-report" className="text-sm hover:text-white/80">
+            View report →
+          </a>
+        </div>
+
+        <a
+          href="/news/first-report"
+          className="mt-4 block rounded-2xl border border-white/10 bg-white/5 p-6 hover:border-white/30 transition"
+        >
+          <div className="flex items-center justify-between gap-4">
+            <h3 className="text-xl font-bold">The Mechanism of Alignment</h3>
+            <span className="text-sm text-white/70">Read →</span>
+          </div>
+          <p className="mt-2 text-white/80 max-w-3xl">
+            How truth is neutralized through agreement, conformity, and manufactured consensus.
+          </p>
+        </a>
+      </section>
+
+      {/* Live RSS headlines */}
       {items.length === 0 ? (
         <div className="rounded-xl border border-white/10 p-6 text-white/70">
           No headlines yet. If this persists, check <code>lib/news.config.ts</code> has feeds and that deployment finished.
@@ -51,8 +78,13 @@ export default async function NewsPage() {
           {cols.map((col, i) => (
             <div key={i} className="space-y-3">
               {col.map((h, idx) => (
-                <a key={idx} href={h.url} target="_blank" rel="noreferrer"
-                   className="block rounded-xl border border-white/10 p-4 bg-white/5 hover:border-white/30 transition">
+                <a
+                  key={idx}
+                  href={h.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block rounded-xl border border-white/10 p-4 bg-white/5 hover:border-white/30 transition"
+                >
                   <span className="text-[11px] uppercase tracking-wide text-white/60">{h.source}</span>
                   <h3 className="mt-1 font-semibold leading-snug hover:underline">{h.title}</h3>
                   <span className="text-xs text-white/50">{humanAgo(h.publishedAt)}</span>
@@ -65,6 +97,3 @@ export default async function NewsPage() {
     </div>
   );
 }
-
-
-
