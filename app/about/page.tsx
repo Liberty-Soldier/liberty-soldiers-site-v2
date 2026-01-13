@@ -10,7 +10,6 @@ export default function AboutPage() {
           Liberty Soldiers publishes tight, investigative reports—Scripture first—exposing deception and calling people out of man-made constructs of the mind and back to truth.
           Our work focuses on documented sources, historical context, and direct engagement with Scripture.
           We reject consensus, tradition, and institutional authority as substitutes for truth.
-
         </p>
 
         <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-6">
@@ -23,5 +22,6 @@ export default function AboutPage() {
     </main>
   );
 }
+
 
 
