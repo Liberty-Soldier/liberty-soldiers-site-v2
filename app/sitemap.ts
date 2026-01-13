@@ -1,36 +1,13 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = "https://libertysoldiers.com";
+
   return [
-    {
-      url: "https://libertysoldiers.com/",
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 1,
-    },
-    {
-      url: "https://libertysoldiers.com/news",
-      lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
-    },
-    {
-      url: "https://libertysoldiers.com/about",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: "https://libertysoldiers.com/store",
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: "https://libertysoldiers.com/privacy-terms",
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
+    { url: `${baseUrl}/`, lastModified: new Date() },
+    { url: `${baseUrl}/news`, lastModified: new Date() },
+    { url: `${baseUrl}/store`, lastModified: new Date() },
+    { url: `${baseUrl}/about`, lastModified: new Date() },
+    { url: `${baseUrl}/privacy-terms`, lastModified: new Date() },
   ];
 }
