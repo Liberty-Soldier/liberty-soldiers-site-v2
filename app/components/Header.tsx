@@ -28,7 +28,6 @@ export default function Header() {
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6 text-sm">
           <Link href="/news" className="hover:text-white/80">News</Link>
-          <Link href="/community" className="hover:text-white/80">Community</Link>
           <Link href="/store" className="hover:text-white/80">Store</Link>
           <Link href="/about" className="hover:text-white/80">About</Link>
         </nav>
@@ -53,7 +52,6 @@ export default function Header() {
           onClick={() => setOpen(false)} // close after tapping a link
         >
           <Link href="/news" className="hover:text-white/80">News</Link>
-          <Link href="/community" className="hover:text-white/80">Community</Link>
           <Link href="/store" className="hover:text-white/80">Store</Link>
           <Link href="/about" className="hover:text-white/80">About</Link>
         </nav>
