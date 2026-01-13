@@ -1,13 +1,12 @@
+import type { Metadata } from "next";
 import Header from "./components/Header";
 import ClearSW from "../components/ClearSW";
 import "../styles/globals.css";
 import React from "react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Liberty Soldiers",
   description: "Investigative reports. Scripture-first.",
-
-  // ✅ ensures /og.jpg becomes an absolute URL for crawlers
   metadataBase: new URL("https://libertysoldiers.com"),
 
   openGraph: {
@@ -26,7 +25,6 @@ export const metadata = {
     ],
   },
 
-  // ✅ this is what fixes the X preview
   twitter: {
     card: "summary_large_image",
     title: "Liberty Soldiers",
@@ -35,8 +33,8 @@ export const metadata = {
   },
 
   icons: {
-    icon: "/icon.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/icon.png", // main favicon / PWA icon
+    apple: "/apple-touch-icon.png", // icon for iPhone/iPad
   },
 
   manifest: "/manifest.json",
