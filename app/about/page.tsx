@@ -1,80 +1,26 @@
-export default function AboutPage({ searchParams }: { searchParams?: { sent?: string; error?: string } }) {
-  
+export default function AboutPage() {
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">About</h1>
+    <main className="min-h-[70vh] px-6 py-16">
+      <div className="mx-auto max-w-4xl">
+        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white">
+          About
+        </h1>
 
-      {/* EDIT THIS COPY ANYTIME */}
-      <p className="text-white/80 mt-2 max-w-3xl">
-        Liberty Soldiers is an investigative project committed to Scripture-first reporting and analysis.
-      </p>
+        <p className="mt-4 text-white/80 max-w-2xl">
+          Liberty Soldiers publishes tight, investigative reports—Scripture first—exposing deception and calling people out of man-made constructs of the mind and back to truth.
+          Our work focuses on documented sources, historical context, and direct engagement with Scripture.
+          We reject consensus, tradition, and institutional authority as substitutes for truth.
 
-      <section className="mt-10">
-        <h2 className="text-2xl font-bold">Resources</h2>
-        <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {["Study Tools", "Primary Texts", "Historical Archives", "Recommended Channels"].map((r, i) => (
-            <li key={i} className="rounded-xl border border-white/10 p-4 bg-white/5">{r}</li>
-          ))}
-        </ul>
-      </section>
+        </p>
 
-<section id="contact" className="mt-10">
-  <h2 className="text-2xl font-bold">Contact</h2>
-
-  {/* Success or error messages */}
-  {searchParams?.sent === "1" && (
-    <p className="text-green-400 mt-2">✅ Message sent successfully!</p>
-  )}
-  {searchParams?.error && (
-    <p className="text-red-400 mt-2">⚠️ {searchParams.error}</p>
-  )}
-
-  <form
-    onSubmit={async (e) => {
-      e.preventDefault();
-      const form = e.currentTarget as HTMLFormElement;
-      const data = new FormData(form);
-      const res = await fetch("/api/contact", { method: "POST", body: data });
-      if (res.ok) {
-        window.location.href = "/about?sent=1#contact";
-      } else {
-        const j = await res.json().catch(() => ({}));
-        window.location.href = `/about?error=${encodeURIComponent(
-          j?.error || "Unable to send message"
-        )}#contact`;
-      }
-    }}
-    className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3"
-  >
-    <input
-      name="name"
-      required
-      placeholder="Name"
-      className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50"
-    />
-    <input
-      name="email"
-      type="email"
-      required
-      placeholder="Email"
-      className="px-4 py-3 rounded-xl bg-white text-black placeholder-black/50"
-    />
-    <textarea
-      name="message"
-      required
-      placeholder="Message"
-      className="sm:col-span-2 px-4 py-3 rounded-xl bg-white text-black placeholder-black/50 min-h-[120px]"
-    />
-    <button
-      type="submit"
-      className="sm:col-span-2 px-5 py-3 rounded-xl border border-white/20 hover:border-white/50"
-    >
-      Send
-    </button>
-  </form>
-</section>
-
-    </div>
+        <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-6">
+          <h2 className="text-xl font-bold text-white">More coming soon</h2>
+          <p className="mt-2 text-white/80">
+            This page will expand with mission details, contact options, and a clear publishing standard.
+          </p>
+        </div>
+      </div>
+    </main>
   );
 }
 
