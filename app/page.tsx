@@ -214,8 +214,6 @@ export default async function Home() {
           </div>
 
           <Suspense fallback={<HeadlinesFallback />}>
-            {/* Async Server Component */}
-            {/* @ts-expect-error Async Server Component */}
             <HomeHeadlines />
           </Suspense>
 
@@ -250,6 +248,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
