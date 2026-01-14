@@ -49,7 +49,7 @@ export default async function Home() {
               LIBERTY SOLDIERS
             </h1>
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
-              Waging War Against Lies, Standing For Truth, and Fighting Deception.
+              Exposing deception. Standing For Truth.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a
@@ -118,7 +118,7 @@ export default async function Home() {
             <span className="text-[11px] uppercase tracking-wide text-white/60">YouTube</span>
             <h3 className="mt-2 text-xl font-bold leading-snug">{VIDEO_TITLE}</h3>
             <p className="mt-2 text-white/80 max-w-3xl">
-              Watch the latest report. Opens on YouTube.
+              Primary video briefing. External playback.
             </p>
             <div className="mt-4 text-sm text-white/70">Watch →</div>
           </a>
@@ -129,14 +129,23 @@ export default async function Home() {
       <section className="py-12 sm:py-16 border-t border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between gap-6">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold">Latest Headlines</h2>
-              <p className="mt-1 text-white/70">Live headlines relevant to world events and prophetic times.</p>
-            </div>
-            <a href="/news" className="text-sm hover:text-white/80">
-              Full feed →
-            </a>
-          </div>
+  <div>
+    <h2 className="text-2xl sm:text-3xl font-bold">Latest Headlines</h2>
+
+    <p className="mt-1 text-white/70">
+      Live headlines relevant to world events and prophetic times.
+    </p>
+
+    <p className="mt-1 text-xs text-white/40">
+      External sources for situational awareness. Not endorsements.
+    </p>
+  </div>
+
+  <a href="/news" className="text-sm hover:text-white/80">
+    Full feed →
+  </a>
+</div>
+
 
           {top.length === 0 ? (
             <div className="mt-6 rounded-xl border border-white/10 p-6 text-white/70">
