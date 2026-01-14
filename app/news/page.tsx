@@ -34,13 +34,26 @@ export default async function NewsPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="mb-6 flex items-end justify-between">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">News Feed</h1>
-          <p className="text-white/70 mt-1">Live headlines relevant to world events and prophetic times.</p>
-        </div>
-        <a href="/" className="text-sm hover:text-white/80">← Home</a>
-      </div>
+  <div className="mb-6 flex items-end justify-between">
+    <div>
+      <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+        News Feed
+      </h1>
+
+      <p className="text-white/70 mt-1">
+        Live headlines relevant to world events and prophetic times.
+      </p>
+
+      <p className="mt-1 text-xs text-white/40">
+        External sources for situational awareness. Not endorsements.
+      </p>
+    </div>
+
+    <a href="/" className="text-sm hover:text-white/80">
+      ← Home
+    </a>
+  </div>
+</div>
 
       {/* ✅ Liberty Soldiers Reports (your own content) */}
       <section className="mb-10">
@@ -97,3 +110,4 @@ export default async function NewsPage() {
     </div>
   );
 }
+
