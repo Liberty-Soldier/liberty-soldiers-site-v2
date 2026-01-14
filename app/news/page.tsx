@@ -66,49 +66,50 @@ export default async function NewsPage() {
         </div>
 
         {/* Liberty Soldiers Reports */}
-       <section className="mb-10 w-full block">
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold">
-                Liberty Soldiers Reports
-              </h2>
-              <p className="mt-1 text-white/70">
-                Original investigative reports and analysis.
-              </p>
-            </div>
-            <a
-              href="/news/dispensationalism-middle-east"
-              className="mt-4 block rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <h3 className="text-xl font-bold">How Dispensationalism Scripts the Middle East</h3>
-                <span className="text-sm text-white/70">Read →</span>
-              </div>
-              <p className="mt-2 text-white/80 max-w-3xl">
-                From Sunday sermons to congressional votes, a theology that reshapes foreign policy.
-              </p>
-            </a>
+      {/* Liberty Soldiers Reports */}
+<section className="mb-10">
+  <div className="flex items-end justify-between gap-6">
+    <div>
+      <h2 className="text-xl sm:text-2xl font-bold">Liberty Soldiers Reports</h2>
+      <p className="mt-1 text-white/70">Original investigative reports and analysis.</p>
+    </div>
 
-            <a href="/news/first-report" className="text-sm hover:text-white/80">
-              View report →
-            </a>
-          </div>
+    <a href="/news" className="text-sm hover:text-white/80">
+      View all →
+    </a>
+  </div>
 
-          <a
-            href="/news/first-report"
-            className="mt-4 block rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30"
-          >
-            <div className="flex items-center justify-between gap-4">
-              <h3 className="text-xl font-bold">The Mechanism of Alignment</h3>
-              <span className="text-sm text-white/70">Read →</span>
-            </div>
+  {/* Small tiles (same style as RSS cards) */}
+  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <a
+      href="/news/dispensationalism-middle-east"
+      className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30"
+    >
+      <span className="text-[11px] uppercase tracking-wide text-white/60">Report</span>
+      <h3 className="mt-1 font-semibold leading-snug hover:underline">
+        How Dispensationalism Scripts the Middle East
+      </h3>
+      <p className="mt-2 text-sm text-white/70">
+        From Sunday sermons to congressional votes, a theology that reshapes foreign policy.
+      </p>
+      <span className="mt-3 inline-block text-xs text-white/50">Read →</span>
+    </a>
 
-            <p className="mt-2 max-w-3xl text-white/80">
-              How truth is neutralized through agreement, conformity, and
-              manufactured consensus.
-            </p>
-          </a>
-        </section>
+    <a
+      href="/news/first-report"
+      className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30"
+    >
+      <span className="text-[11px] uppercase tracking-wide text-white/60">Report</span>
+      <h3 className="mt-1 font-semibold leading-snug hover:underline">
+        The Mechanism of Alignment
+      </h3>
+      <p className="mt-2 text-sm text-white/70">
+        How truth is neutralized through agreement, conformity, and manufactured consensus.
+      </p>
+      <span className="mt-3 inline-block text-xs text-white/50">Read →</span>
+    </a>
+  </div>
+</section>
 
         {/* Live RSS headlines */}
         {items.length === 0 ? (
@@ -150,6 +151,7 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
 
 
