@@ -58,7 +58,7 @@ export default async function NewsPage() {
         </div>
 
         {/* Liberty Soldiers Reports */}
-        <section className="mb-10">
+        <section className="mb-10 w-full block">
   {/* Section header */}
   <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
     <div>
@@ -72,7 +72,7 @@ export default async function NewsPage() {
   </div>
 
   {/* Cards (MUST be outside the flex header div) */}
-  <div className="mt-4 grid gap-4">
+  <div className="mt-4 flex flex-col gap-4 w-full">
     <a
       href="/news/dispensationalism-middle-east"
       className="block w-full rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30"
@@ -139,4 +139,5 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
