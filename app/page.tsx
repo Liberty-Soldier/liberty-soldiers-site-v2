@@ -69,7 +69,9 @@ export default async function Home() {
     <div className="flex items-end justify-between gap-6">
       <div>
         <h2 className="text-2xl sm:text-3xl font-bold">Latest Report</h2>
-        <p className="mt-1 text-white/70">Original Liberty Soldiers investigative reports.</p>
+        <p className="mt-1 text-white/70">
+          Original Liberty Soldiers investigative reports.
+        </p>
       </div>
 
       <a href="/news" className="text-sm hover:text-white/80">
@@ -77,38 +79,24 @@ export default async function Home() {
       </a>
     </div>
 
-    {/* Small tiles like headlines */}
-    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-      <a
-        href="/news/dispensationalism-middle-east"
-        className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:border-white/30 transition"
-      >
-        <span className="text-[11px] uppercase tracking-wide text-white/60">Report</span>
-        <h3 className="mt-1 font-semibold leading-snug hover:underline">
+    <a
+      href="/news/dispensationalism-middle-east"
+      className="mt-6 block w-full rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30"
+    >
+      <div className="flex items-center justify-between gap-4">
+        <h3 className="text-xl font-bold">
           How Dispensationalism Scripts the Middle East
         </h3>
-        <p className="mt-2 text-sm text-white/70">
-          From Sunday sermons to congressional votes, a theology that reshapes foreign policy.
-        </p>
-        <span className="mt-3 inline-block text-xs text-white/50">Read →</span>
-      </a>
+        <span className="text-sm text-white/70">Read →</span>
+      </div>
 
-      <a
-        href="/news/first-report"
-        className="block rounded-xl border border-white/10 bg-white/5 p-4 hover:border-white/30 transition"
-      >
-        <span className="text-[11px] uppercase tracking-wide text-white/60">Report</span>
-        <h3 className="mt-1 font-semibold leading-snug hover:underline">
-          The Mechanism of Alignment
-        </h3>
-        <p className="mt-2 text-sm text-white/70">
-          How truth is neutralized through agreement, conformity, and manufactured consensus.
-        </p>
-        <span className="mt-3 inline-block text-xs text-white/50">Read →</span>
-      </a>
-    </div>
+      <p className="mt-2 max-w-3xl text-white/80">
+        From Sunday sermons to congressional votes, a theology that reshapes foreign policy.
+      </p>
+    </a>
   </div>
 </section>
+
 
       {/* Featured Video (card style like news links) */}
       <section className="py-12 sm:py-16 border-t border-white/10">
@@ -214,6 +202,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
