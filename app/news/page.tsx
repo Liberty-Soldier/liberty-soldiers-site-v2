@@ -66,7 +66,7 @@ export default async function NewsPage() {
         </div>
 
         {/* Liberty Soldiers Reports */}
-        <section className="mb-10">
+       <section className="mb-10 w-full block">
           <div className="flex items-end justify-between gap-6">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold">
@@ -150,5 +150,6 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
 
