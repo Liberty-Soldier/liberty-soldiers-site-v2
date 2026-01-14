@@ -54,7 +54,6 @@ export default async function NewsPage() {
     </a>
   </div>
 </div>
-
       {/* ✅ Liberty Soldiers Reports (your own content) */}
       <section className="mb-10">
         <div className="flex items-end justify-between gap-6">
@@ -110,4 +109,5 @@ export default async function NewsPage() {
     </div>
   );
 }
+
 
