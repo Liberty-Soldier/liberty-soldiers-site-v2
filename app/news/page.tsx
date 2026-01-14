@@ -59,15 +59,6 @@ export default async function NewsPage() {
               News Feed
             </h1>
 
-            <p className="mt-1 text-white/70">
-              Live headlines relevant to world events and prophetic times.
-            </p>
-
-            <p className="mt-1 text-xs text-white/40">
-              External sources for situational awareness. Not endorsements.
-            </p>
-          </div>
-
           <a href="/" className="text-sm hover:text-white/80">
             ← Home
           </a>
@@ -118,6 +109,14 @@ export default async function NewsPage() {
     </a>
   </div>
 </section>
+ <p className="mt-1 text-white/70">
+              Live headlines relevant to world events and prophetic times.
+            </p>
+
+            <p className="mt-1 text-xs text-white/40">
+              External sources for situational awareness. Not endorsements.
+            </p>
+          </div>
 
         {/* Live RSS headlines */}
         {items.length === 0 ? (
@@ -159,6 +158,7 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
 
 
