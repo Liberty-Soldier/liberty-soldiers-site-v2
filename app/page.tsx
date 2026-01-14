@@ -1,6 +1,6 @@
 // app/page.tsx
 import { Suspense } from "react";
-import HomeHeadlines from "./components/HomeHeadlines";
+import HomeHeadlines from "./components/Headlines";
 
 export const revalidate = 600;
 
@@ -250,6 +250,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
