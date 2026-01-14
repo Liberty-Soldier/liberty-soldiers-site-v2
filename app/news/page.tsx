@@ -76,6 +76,18 @@ export default async function NewsPage() {
                 Original investigative reports and analysis.
               </p>
             </div>
+            <a
+              href="/news/dispensationalism-middle-east"
+              className="mt-4 block rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30"
+            >
+              <div className="flex items-center justify-between gap-4">
+                <h3 className="text-xl font-bold">How Dispensationalism Scripts the Middle East</h3>
+                <span className="text-sm text-white/70">Read →</span>
+              </div>
+              <p className="mt-2 text-white/80 max-w-3xl">
+                From Sunday sermons to congressional votes, a theology that reshapes foreign policy.
+              </p>
+            </a>
 
             <a href="/news/first-report" className="text-sm hover:text-white/80">
               View report →
@@ -138,4 +150,5 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
