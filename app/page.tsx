@@ -1,8 +1,8 @@
+// app/page.tsx
+import { Suspense } from "react";
+import HomeHeadlines from "@/app/components/HomeHeadlines";
+
 export const revalidate = 600;
-
-type Item = { title: string; url: string; source: string; publishedAt?: number };
-
-import { fetchAllHeadlines } from "@/lib/rss";
 
 // ✅ Add metadata + canonical for homepage clarity
 export const metadata = {
@@ -28,31 +28,15 @@ export const metadata = {
   },
 };
 
-function humanAgo(input?: number | string | Date): string {
-  if (!input) return "Just now";
-  const ts = typeof input === "number" ? input : new Date(input).getTime();
-  if (!Number.isFinite(ts)) return "Just now";
-  const diff = Date.now() - ts;
-  const sec = Math.max(1, Math.floor(diff / 1000));
-  if (sec < 60) return `${sec}s ago`;
-  const min = Math.floor(sec / 60);
-  if (min < 60) return `${min}m ago`;
-  const hr = Math.floor(min / 60);
-  if (hr < 24) return `${hr}h ago`;
-  const d = Math.floor(hr / 24);
-  return `${d}d ago`;
+function HeadlinesFallback() {
+  return (
+    <div className="mt-6 rounded-xl border border-white/10 p-6 text-white/70">
+      Loading headlines…
+    </div>
+  );
 }
 
 export default async function Home() {
-  let items: Item[] = [];
-  try {
-    items = await fetchAllHeadlines();
-  } catch {
-    items = [];
-  }
-
-  const top = items.slice(0, 6);
-
   // ✅ Update this title text anytime you publish a new video
   const VIDEO_ID = "WeFeWyonzgc";
   const VIDEO_TITLE = "Latest Liberty Soldiers Video";
@@ -113,14 +97,19 @@ export default async function Home() {
       {/* ✅ Entity definition block (static, crawlable, early on page) */}
       <section className="py-10 sm:py-12 border-t border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold">What is Liberty Soldiers?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold">
+            What is Liberty Soldiers?
+          </h2>
           <p className="mt-3 text-white/90 leading-relaxed">
-            Liberty Soldiers is an independent investigative media project focused on analyzing geopolitics, power, 
-            and belief systems — and how ideas shape law, culture, and conflict in the modern world.
+            Liberty Soldiers is an independent investigative media project
+            focused on analyzing geopolitics, power, and belief systems — and
+            how ideas shape law, culture, and conflict in the modern world.
           </p>
           <p className="mt-3 text-white/80 leading-relaxed">
-            The site publishes original reports and briefings designed for clarity and accountability, connecting current world events with historical patterns 
-            and ideological frameworks to provide situational awareness.
+            The site publishes original reports and briefings designed for
+            clarity and accountability, connecting current world events with
+            historical patterns and ideological frameworks to provide
+            situational awareness.
           </p>
         </div>
       </section>
@@ -131,7 +120,9 @@ export default async function Home() {
           <div className="flex items-end justify-between gap-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold">Latest Report</h2>
-              <p className="mt-1 text-white/70">Original Liberty Soldiers investigative reports.</p>
+              <p className="mt-1 text-white/70">
+                Original Liberty Soldiers investigative reports.
+              </p>
             </div>
 
             <a href="/news" className="text-sm hover:text-white/80">
@@ -144,12 +135,15 @@ export default async function Home() {
             className="mt-6 block w-full rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30"
           >
             <div className="flex items-center justify-between gap-4">
-              <h3 className="text-xl font-bold">How Dispensationalism Scripts the Middle East</h3>
+              <h3 className="text-xl font-bold">
+                How Dispensationalism Scripts the Middle East
+              </h3>
               <span className="text-sm text-white/70">Read →</span>
             </div>
 
             <p className="mt-2 max-w-3xl text-white/80">
-              From Sunday sermons to congressional votes, a theology that reshapes foreign policy.
+              From Sunday sermons to congressional votes, a theology that
+              reshapes foreign policy.
             </p>
           </a>
         </div>
@@ -161,7 +155,9 @@ export default async function Home() {
           <div className="flex items-end justify-between gap-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold">Featured Video</h2>
-              <p className="mt-1 text-white/70">Latest release from Liberty Soldiers.</p>
+              <p className="mt-1 text-white/70">
+                Latest release from Liberty Soldiers.
+              </p>
             </div>
             <a
               href="https://www.youtube.com/@LibertySoldiers/videos"
@@ -179,9 +175,15 @@ export default async function Home() {
             rel="noreferrer"
             className="mt-6 block rounded-2xl border border-white/10 bg-white/5 p-6 hover:border-white/30 transition"
           >
-            <span className="text-[11px] uppercase tracking-wide text-white/60">YouTube</span>
-            <h3 className="mt-2 text-xl font-bold leading-snug">{VIDEO_TITLE}</h3>
-            <p className="mt-2 text-white/80 max-w-3xl">Primary video briefing. External playback.</p>
+            <span className="text-[11px] uppercase tracking-wide text-white/60">
+              YouTube
+            </span>
+            <h3 className="mt-2 text-xl font-bold leading-snug">
+              {VIDEO_TITLE}
+            </h3>
+            <p className="mt-2 text-white/80 max-w-3xl">
+              Primary video briefing. External playback.
+            </p>
             <div className="mt-4 text-sm text-white/70">Watch →</div>
           </a>
         </div>
@@ -192,12 +194,17 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between gap-6">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold">Latest Headlines</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold">
+                Latest Headlines
+              </h2>
 
-              <p className="mt-1 text-white/70">External headlines for situational awareness.</p>
+              <p className="mt-1 text-white/70">
+                External headlines for situational awareness.
+              </p>
 
               <p className="mt-1 text-xs text-white/40">
-                External sources are not endorsements. Liberty Soldiers publishes original reporting above.
+                External sources are not endorsements. Liberty Soldiers
+                publishes original reporting above.
               </p>
             </div>
 
@@ -206,25 +213,11 @@ export default async function Home() {
             </a>
           </div>
 
-          {top.length === 0 ? (
-            <div className="mt-6 rounded-xl border border-white/10 p-6 text-white/70">No headlines yet.</div>
-          ) : (
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {top.map((h, idx) => (
-                <a
-                  key={idx}
-                  href={h.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="block rounded-xl border border-white/10 p-4 bg-white/5 hover:border-white/30 transition"
-                >
-                  <span className="text-[11px] uppercase tracking-wide text-white/60">{h.source}</span>
-                  <h3 className="mt-1 font-semibold leading-snug hover:underline">{h.title}</h3>
-                  <span className="text-xs text-white/50">{humanAgo(h.publishedAt)}</span>
-                </a>
-              ))}
-            </div>
-          )}
+          <Suspense fallback={<HeadlinesFallback />}>
+            {/* Async Server Component */}
+            {/* @ts-expect-error Async Server Component */}
+            <HomeHeadlines />
+          </Suspense>
 
           <div className="mt-8">
             <a
@@ -240,20 +233,23 @@ export default async function Home() {
       {/* Who we are */}
       <section className="py-12 sm:py-16 border-t border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold">Who is Liberty Soldiers</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold">
+            Who is Liberty Soldiers
+          </h2>
           <p className="mt-3 text-white/90 leading-relaxed">
-            Liberty Soldiers publishes independent investigative reports examining geopolitics, power, 
-            and belief systems — with a focus on how ideas influence law, culture, and global events.
-            Our work prioritizes documented sources, historical context, and accountability over opinion or consensus, 
-            connecting present-day developments to deeper ideological and historical patterns to support situational awareness.
+            Liberty Soldiers publishes independent investigative reports
+            examining geopolitics, power, and belief systems — with a focus on
+            how ideas influence law, culture, and global events. Our work
+            prioritizes documented sources, historical context, and
+            accountability over opinion or consensus, connecting present-day
+            developments to deeper ideological and historical patterns to
+            support situational awareness.
           </p>
         </div>
       </section>
     </div>
   );
 }
-
-
 
 
 
