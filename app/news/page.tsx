@@ -1,28 +1,33 @@
 // app/news/page.tsx
-export const revalidate = 600;
-
 import { fetchAllHeadlines } from "@/lib/rss"; // use "../../lib/rss" if alias not set
 
-// If you defined a local Item type, make the date optional:
+export const revalidate = 600;
+
+// RSS item type
 type Item = { title: string; url: string; source: string; publishedAt?: number };
 
 function humanAgo(input?: number | string | Date): string {
   if (!input) return "Just now";
   const ts = typeof input === "number" ? input : new Date(input).getTime();
   if (!Number.isFinite(ts)) return "Just now";
+
   const diff = Date.now() - ts;
   const sec = Math.max(1, Math.floor(diff / 1000));
   if (sec < 60) return `${sec}s ago`;
+
   const min = Math.floor(sec / 60);
   if (min < 60) return `${min}m ago`;
+
   const hr = Math.floor(min / 60);
   if (hr < 24) return `${hr}h ago`;
+
   const d = Math.floor(hr / 24);
   return `${d}d ago`;
 }
 
 export default async function NewsPage() {
   let items: Item[] = [];
+
   try {
     items = await fetchAllHeadlines();
   } catch {
@@ -38,15 +43,15 @@ export default async function NewsPage() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      {/* Page header */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* Header */}
         <div className="mb-6 flex items-end justify-between">
           <div>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               News Feed
             </h1>
 
-            <p className="text-white/70 mt-1">
+            <p className="mt-1 text-white/70">
               Live headlines relevant to world events and prophetic times.
             </p>
 
@@ -60,14 +65,14 @@ export default async function NewsPage() {
           </a>
         </div>
 
-        {/* ✅ Liberty Soldiers Reports (your own content) */}
+        {/* Liberty Soldiers Reports */}
         <section className="mb-10">
           <div className="flex items-end justify-between gap-6">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold">
                 Liberty Soldiers Reports
               </h2>
-              <p className="text-white/70 mt-1">
+              <p className="mt-1 text-white/70">
                 Original investigative reports and analysis.
               </p>
             </div>
@@ -79,14 +84,14 @@ export default async function NewsPage() {
 
           <a
             href="/news/first-report"
-            className="mt-4 block rounded-2xl border border-white/10 bg-white/5 p-6 hover:border-white/30 transition"
+            className="mt-4 block rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-white/30"
           >
             <div className="flex items-center justify-between gap-4">
               <h3 className="text-xl font-bold">The Mechanism of Alignment</h3>
               <span className="text-sm text-white/70">Read →</span>
             </div>
 
-            <p className="mt-2 text-white/80 max-w-3xl">
+            <p className="mt-2 max-w-3xl text-white/80">
               How truth is neutralized through agreement, conformity, and
               manufactured consensus.
             </p>
@@ -101,7 +106,7 @@ export default async function NewsPage() {
             and that deployment finished.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {cols.map((col, i) => (
               <div key={i} className="space-y-3">
                 {col.map((h, idx) => (
@@ -110,7 +115,7 @@ export default async function NewsPage() {
                     href={h.url}
                     target="_blank"
                     rel="noreferrer"
-                    className="block rounded-xl border border-white/10 p-4 bg-white/5 hover:border-white/30 transition"
+                    className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30"
                   >
                     <span className="text-[11px] uppercase tracking-wide text-white/60">
                       {h.source}
@@ -133,3 +138,4 @@ export default async function NewsPage() {
     </main>
   );
 }
+
