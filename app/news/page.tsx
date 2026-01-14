@@ -1,5 +1,13 @@
 // app/news/page.tsx
 import { fetchAllHeadlines } from "@/lib/rss"; // use "../../lib/rss" if alias not set
+export const metadata = {
+  title: "News Feed | Liberty Soldiers",
+  description:
+    "Live headlines for situational awareness plus original Liberty Soldiers reports and analysis.",
+  alternates: {
+    canonical: "https://libertysoldiers.com/news",
+  },
+};
 
 export const revalidate = 600;
 
@@ -151,6 +159,7 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
 
 
