@@ -115,12 +115,12 @@ export default async function Home() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold">What is Liberty Soldiers?</h2>
           <p className="mt-3 text-white/90 leading-relaxed">
-            Liberty Soldiers is an independent investigative media project focused on exposing doctrinal deception,
-            manufactured narratives, and religious compromise through scripture-first analysis.
+            Liberty Soldiers is an independent investigative media project focused on analyzing geopolitics, power, 
+            and belief systems — and how ideas shape law, culture, and conflict in the modern world.
           </p>
           <p className="mt-3 text-white/80 leading-relaxed">
-            The site publishes original reports and briefings—built for clarity and accountability—while tracking
-            external headlines for situational awareness.
+            The site publishes original reports and briefings designed for clarity and accountability, connecting current world events with historical patterns 
+            and ideological frameworks to provide situational awareness.
           </p>
         </div>
       </section>
@@ -242,16 +242,17 @@ export default async function Home() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold">Who is Liberty Soldiers</h2>
           <p className="mt-3 text-white/90 leading-relaxed">
-            We publish investigative reports—Scripture first—exposing deception and calling people out of man-made
-            constructs of the mind and back to truth. Liberty Soldiers exists to challenge false doctrine,
-            manufactured narratives, and modern religious compromise. We prioritize documented sources, Scripture,
-            and accountability over opinion, tradition, or consensus.
+            Liberty Soldiers publishes independent investigative reports examining geopolitics, power, 
+            and belief systems — with a focus on how ideas influence law, culture, and global events.
+            Our work prioritizes documented sources, historical context, and accountability over opinion or consensus, 
+            connecting present-day developments to deeper ideological and historical patterns to support situational awareness.
           </p>
         </div>
       </section>
     </div>
   );
 }
+
 
 
 
