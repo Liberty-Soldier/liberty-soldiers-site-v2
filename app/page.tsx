@@ -4,7 +4,6 @@ import HomeHeadlines from "./components/Headlines";
 
 export const revalidate = 600;
 
-// ✅ Add metadata + canonical for homepage clarity
 export const metadata = {
   title: "Liberty Soldiers | Scripture-First Investigative Reports",
   description:
@@ -37,12 +36,10 @@ function HeadlinesFallback() {
 }
 
 export default async function Home() {
-  // ✅ Update this title text anytime you publish a new video
   const VIDEO_ID = "WeFeWyonzgc";
   const VIDEO_TITLE = "Latest Liberty Soldiers Video";
   const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
 
-  // ✅ JSON-LD: helps Google understand what this site IS
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -55,7 +52,6 @@ export default async function Home() {
 
   return (
     <div>
-      {/* ✅ Structured data for homepage */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -88,12 +84,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ✅ Entity definition block (static, crawlable, early on page) */}
-      <section className="py-10 sm:py-12 border-t border-white/10">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold">
-        </div>
-          
       {/* Latest Report (your own content) */}
       <section className="py-12 sm:py-16 border-t border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -158,9 +148,7 @@ export default async function Home() {
             <span className="text-[11px] uppercase tracking-wide text-white/60">
               YouTube
             </span>
-            <h3 className="mt-2 text-xl font-bold leading-snug">
-              {VIDEO_TITLE}
-            </h3>
+            <h3 className="mt-2 text-xl font-bold leading-snug">{VIDEO_TITLE}</h3>
             <p className="mt-2 text-white/80 max-w-3xl">
               Primary video briefing. External playback.
             </p>
@@ -174,17 +162,15 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between gap-6">
             <div>
-              <h2 className="text-2xl sm:text-3xl font-bold">
-                Latest Headlines
-              </h2>
+              <h2 className="text-2xl sm:text-3xl font-bold">Latest Headlines</h2>
 
               <p className="mt-1 text-white/70">
                 External headlines for situational awareness.
               </p>
 
               <p className="mt-1 text-xs text-white/40">
-                External sources are not endorsements. Liberty Soldiers
-                publishes original reporting above.
+                External sources are not endorsements. Liberty Soldiers publishes
+                original reporting above.
               </p>
             </div>
 
@@ -208,26 +194,28 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Who we are */}
+      {/* Bottom context (optional, not redundant) */}
       <section className="py-12 sm:py-16 border-t border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold">
-            Liberty Soldiers is an independent investigative media project
+            Reporting designed for clarity, not consensus
           </h2>
+
           <p className="mt-3 text-white/90 leading-relaxed">
-            We analyze geopolitics, power structures, and belief systems shaping 
-            modern conflict — separating narrative from reality and context from propaganda.
-            </p>
-            Our reports connect current events to historical patterns and ideological frameworks 
-            to provide situational awareness, not opinion.
+            We analyze geopolitics, power structures, and belief systems shaping
+            modern conflict — separating narrative from reality and context from
+            propaganda.
+          </p>
+
+          <p className="mt-3 text-white/80 leading-relaxed">
+            Our reports connect current events to historical patterns and
+            ideological frameworks to support situational awareness, not opinion.
           </p>
         </div>
       </section>
     </div>
   );
 }
-
-
 
 
 
