@@ -130,7 +130,7 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
         </div>
 
         {/* Embedded view by default */}
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+        <div className="mt-6 -mx-4 sm:-mx-6 lg:-mx-8 rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
           <div className="px-6 py-4 border-b border-white/10">
             <p className="text-sm text-white/70">
               Embedded view (may be blocked by the source)
@@ -141,7 +141,7 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
             <iframe
               src={url}
               title={title}
-              className="w-full h-[75vh]"
+              className="w-full h-[85vh] md:h-[90vh]"
               loading="lazy"
               referrerPolicy="no-referrer"
             />
