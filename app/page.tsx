@@ -74,7 +74,7 @@ export default async function Home() {
               LIBERTY SOLDIERS
             </h1>
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
-              Exposing deception. Standing for truth. Scripture first.
+              Independent investigative reporting and situational awareness
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a
@@ -82,12 +82,6 @@ export default async function Home() {
                 className="px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90"
               >
                 News Feed
-              </a>
-              <a
-                href="/about"
-                className="px-5 py-3 rounded-xl border border-white/20 text-white font-semibold hover:border-white/40"
-              >
-                About
               </a>
             </div>
           </div>
@@ -248,6 +242,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
