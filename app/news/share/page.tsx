@@ -1,4 +1,7 @@
 // app/news/share/page.tsx
+"use client";
+
+import { useRef } from "react";
 import type { Metadata } from "next";
 
 export const revalidate = 600;
@@ -21,6 +24,9 @@ function hostFromUrl(u: string) {
 
 type SP = { searchParams: Record<string, string | string[] | undefined> };
 
+// Note: generateMetadata is fine to keep here; Next will still use it.
+// (Client components can export generateMetadata in practice in many setups,
+// but if your build complains, I’ll show you the 2-file split.)
 export async function generateMetadata({ searchParams }: SP): Promise<Metadata> {
   const uRaw = searchParams.u;
   const sRaw = searchParams.s;
@@ -64,6 +70,8 @@ export async function generateMetadata({ searchParams }: SP): Promise<Metadata> 
 }
 
 export default function ShareNewsItemPage({ searchParams }: SP) {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
   const uRaw = searchParams.u;
   const tRaw = searchParams.t;
   const sRaw = searchParams.s;
@@ -80,6 +88,22 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
     publishedAt && Number.isFinite(publishedAt)
       ? new Date(publishedAt).toLocaleString()
       : null;
+
+  const goFullscreen = async () => {
+    const el = iframeRef.current;
+    // try iframe fullscreen first; if blocked, try the parent container
+    const target = el ?? undefined;
+
+    try {
+      // @ts-ignore
+      await target?.requestFullscreen?.();
+    } catch {
+      // If iframe fullscreen is blocked, try the nearest container:
+      const container = el?.parentElement;
+      // @ts-ignore
+      await container?.requestFullscreen?.();
+    }
+  };
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -102,7 +126,6 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
             {when ? <span>• {when}</span> : null}
           </div>
 
-          {/* Always-available fallback */}
           <div className="mt-6 flex flex-wrap gap-3">
             <a
               href={url || "#"}
@@ -129,21 +152,31 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
           </p>
         </div>
 
-        {/* Embedded view by default */}
         <div className="mt-6 -mx-4 sm:-mx-6 lg:-mx-8 rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/10">
+          <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between gap-4">
             <p className="text-sm text-white/70">
               Embedded view (may be blocked by the source)
             </p>
+
+            <button
+              type="button"
+              onClick={goFullscreen}
+              className="text-xs text-white/70 hover:text-white underline-offset-4 hover:underline"
+            >
+              Full screen
+            </button>
           </div>
 
           {url ? (
             <iframe
+              ref={iframeRef}
               src={url}
               title={title}
               className="w-full h-[85vh] md:h-[90vh]"
               loading="lazy"
               referrerPolicy="no-referrer"
+              allow="fullscreen"
+              allowFullScreen
             />
           ) : (
             <div className="p-6 text-white/70">Missing source URL.</div>
@@ -153,5 +186,4 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
     </main>
   );
 }
-
 
