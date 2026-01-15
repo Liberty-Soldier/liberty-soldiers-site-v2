@@ -121,7 +121,7 @@ export default function ShareClient({ searchParams }: SP) {
               ref={iframeRef}
               src={url}
               title={title}
-              className="w-full h-[85vh] md:h-[92vh]"
+              className="w-full h-[95vh] md:h-[98vh]"
               loading="lazy"
               referrerPolicy="no-referrer"
               allow="fullscreen"
