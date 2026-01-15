@@ -147,7 +147,6 @@ async function fetchOneFeed(feedUrl: string): Promise<Headline[]> {
   },
   next: { revalidate: 600 },
 });
-    });
     const xml = await res.text();
     if (!res.ok || !xml) return [];
 
