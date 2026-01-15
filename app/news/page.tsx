@@ -1,5 +1,6 @@
 // app/news/page.tsx
 import { fetchAllHeadlines } from "@/lib/rss";
+import ShareButton from "./ShareButton";
 
 export const metadata = {
   title: "News Feed | Liberty Soldiers",
@@ -152,8 +153,11 @@ export default async function NewsPage() {
               {cols.map((col, i) => (
                 <div key={i} className="space-y-3">
                   {col.map((h, idx) => {
+                    // Absolute URL is best for sharing
                     const shareHref =
-                      `/news/share?u=${encodeURIComponent(h.url)}` +
+                      `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
+                        h.url
+                      )}` +
                       `&t=${encodeURIComponent(h.title)}` +
                       `&s=${encodeURIComponent(h.source)}` +
                       (h.publishedAt
@@ -186,13 +190,8 @@ export default async function NewsPage() {
                             {humanAgo(h.publishedAt)}
                           </span>
 
-                          {/* Share LS link (internal) */}
-                          <a
-                            href={shareHref}
-                            className="text-xs text-white/70 hover:text-white underline-offset-4 hover:underline"
-                          >
-                            Share LS link
-                          </a>
+                          {/* Real share UX (no navigation) */}
+                          <ShareButton url={shareHref} title={h.title} />
                         </div>
                       </div>
                     );
@@ -206,6 +205,7 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
 
 
