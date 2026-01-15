@@ -12,26 +12,35 @@ export default function ShareButton({
   const [copied, setCopied] = useState(false);
 
   async function onShare() {
-    // Native share sheet (mobile, some desktop browsers)
+    const nav = (globalThis as any).navigator as any;
+
+    // Native share sheet (mobile + some desktop browsers)
     try {
-      if (typeof navigator !== "undefined" && "share" in navigator) {
-        // @ts-ignore
-        await navigator.share({ title, url });
+      if (nav && typeof nav.share === "function") {
+        await nav.share({ title, url });
         return;
       }
     } catch {
-      // user canceled share sheet; do nothing
+      // user cancelled share sheet; do nothing
       return;
     }
 
-    // Fallback: copy link
+    // Fallback: copy link (runtime-safe)
     try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
+      if (nav?.clipboard?.writeText) {
+        await nav.clipboard.writeText(url);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+        return;
+      }
+      throw new Error("clipboard not available");
     } catch {
       // Last resort prompt
-      window.prompt("Copy this Liberty Soldiers link:", url);
+      try {
+        (globalThis as any).prompt?.("Copy this Liberty Soldiers link:", url);
+      } catch {
+        // ignore
+      }
     }
   }
 
