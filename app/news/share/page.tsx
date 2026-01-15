@@ -137,18 +137,21 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
             </p>
           </div>
 
-        {url ? (
-          <iframe
-            src={url}
-            title={title}
-            className="w-full h-[75vh]"
-            loading="lazy"
-            referrerPolicy="no-referrer"
-          />
-        ) : (
-          <div className="p-6 text-white/70">
-            Missing source URL.
-          </div>
-        )}
+          {url ? (
+            <iframe
+              src={url}
+              title={title}
+              className="w-full h-[75vh]"
+              loading="lazy"
+              referrerPolicy="no-referrer"
+            />
+          ) : (
+            <div className="p-6 text-white/70">Missing source URL.</div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
 
 
