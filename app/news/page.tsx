@@ -100,8 +100,8 @@ export default async function NewsPage() {
                 How Dispensationalism Scripts the Middle East
               </h3>
               <p className="mt-2 text-sm text-white/70">
-                From Sunday sermons to congressional votes, a theology that reshapes
-                foreign policy.
+                From Sunday sermons to congressional votes, a theology that
+                reshapes foreign policy.
               </p>
               <span className="mt-3 inline-block text-xs text-white/50">
                 Read →
@@ -151,25 +151,52 @@ export default async function NewsPage() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {cols.map((col, i) => (
                 <div key={i} className="space-y-3">
-                  {col.map((h, idx) => (
-                    <a
-                      key={`${h.url}-${idx}`}
-                      href={h.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30"
-                    >
-                      <span className="text-[11px] uppercase tracking-wide text-white/60">
-                        {h.source}
-                      </span>
-                      <h3 className="mt-1 font-semibold leading-snug hover:underline">
-                        {h.title}
-                      </h3>
-                      <span className="text-xs text-white/50">
-                        {humanAgo(h.publishedAt)}
-                      </span>
-                    </a>
-                  ))}
+                  {col.map((h, idx) => {
+                    const shareHref =
+                      `/news/share?u=${encodeURIComponent(h.url)}` +
+                      `&t=${encodeURIComponent(h.title)}` +
+                      `&s=${encodeURIComponent(h.source)}` +
+                      (h.publishedAt
+                        ? `&p=${encodeURIComponent(String(h.publishedAt))}`
+                        : "");
+
+                    return (
+                      <div
+                        key={`${h.url}-${idx}`}
+                        className="rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30"
+                      >
+                        <span className="text-[11px] uppercase tracking-wide text-white/60">
+                          {h.source}
+                        </span>
+
+                        {/* Read source (external) */}
+                        <a
+                          href={h.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block mt-1"
+                        >
+                          <h3 className="font-semibold leading-snug hover:underline">
+                            {h.title}
+                          </h3>
+                        </a>
+
+                        <div className="mt-2 flex items-center justify-between gap-3">
+                          <span className="text-xs text-white/50">
+                            {humanAgo(h.publishedAt)}
+                          </span>
+
+                          {/* Share LS link (internal) */}
+                          <a
+                            href={shareHref}
+                            className="text-xs text-white/70 hover:text-white underline-offset-4 hover:underline"
+                          >
+                            Share LS link
+                          </a>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ))}
             </div>
