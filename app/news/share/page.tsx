@@ -27,21 +27,26 @@ export async function generateMetadata({ searchParams }: SP): Promise<Metadata> 
   const tRaw = searchParams.t;
 
   const u = typeof uRaw === "string" ? safeDecode(uRaw) : "";
-  const source =
-    typeof sRaw === "string" ? safeDecode(sRaw) : hostFromUrl(u);
+  const source = typeof sRaw === "string" ? safeDecode(sRaw) : hostFromUrl(u);
   const title =
     typeof tRaw === "string" ? safeDecode(tRaw) : "Shared Headline";
 
   const pageTitle = `${title} | Liberty Soldiers`;
   const desc = source
-    ? `Headline shared via Liberty Soldiers (source: ${source}).`
-    : "Headline shared via Liberty Soldiers.";
+    ? `Shared for situational awareness (source: ${source}).`
+    : "Shared for situational awareness.";
 
   const canonical =
-    u && title
-      ? `https://libertysoldiers.com/news/share?u=${encodeURIComponent(u)}&t=${encodeURIComponent(
-          title
-        )}&s=${encodeURIComponent(source)}`
+    u
+      ? `https://libertysoldiers.com/news/share?u=${encodeURIComponent(u)}${
+          typeof tRaw === "string" ? `&t=${encodeURIComponent(title)}` : ""
+        }${
+          typeof sRaw === "string"
+            ? `&s=${encodeURIComponent(source)}`
+            : source
+            ? `&s=${encodeURIComponent(source)}`
+            : ""
+        }`
       : "https://libertysoldiers.com/news";
 
   return {
@@ -54,13 +59,13 @@ export async function generateMetadata({ searchParams }: SP): Promise<Metadata> 
       url: canonical,
       siteName: "Liberty Soldiers",
       type: "article",
-      images: ["/og.jpg"], // change if your OG image path differs
+      images: ["/og.jpg"], // update if needed
     },
     twitter: {
       card: "summary_large_image",
       title: pageTitle,
       description: desc,
-      images: ["/og.jpg"], // change if your OG image path differs
+      images: ["/og.jpg"], // update if needed
     },
   };
 }
@@ -70,11 +75,11 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
   const tRaw = searchParams.t;
   const sRaw = searchParams.s;
   const pRaw = searchParams.p;
+  const embedRaw = searchParams.embed;
 
   const url = typeof uRaw === "string" ? safeDecode(uRaw) : "";
   const title = typeof tRaw === "string" ? safeDecode(tRaw) : "Shared Headline";
-  const source =
-    typeof sRaw === "string" ? safeDecode(sRaw) : hostFromUrl(url);
+  const source = typeof sRaw === "string" ? safeDecode(sRaw) : hostFromUrl(url);
 
   const publishedAt =
     typeof pRaw === "string" ? Number(safeDecode(pRaw)) : undefined;
@@ -84,9 +89,21 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
       ? new Date(publishedAt).toLocaleString()
       : null;
 
+  const showEmbed = embedRaw === "1";
+
+  // keep the existing query string and just toggle embed=1
+  const shareBase =
+    `/news/share?u=${encodeURIComponent(url)}` +
+    (title ? `&t=${encodeURIComponent(title)}` : "") +
+    (source ? `&s=${encodeURIComponent(source)}` : "") +
+    (publishedAt ? `&p=${encodeURIComponent(String(publishedAt))}` : "");
+
+  const embedHref = `${shareBase}&embed=1`;
+  const normalHref = shareBase;
+
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <a href="/news" className="text-sm hover:text-white/80">
           ← Back to News
         </a>
@@ -105,31 +122,66 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
             {when ? <span>• {when}</span> : null}
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 flex flex-wrap gap-3">
             <a
               href={url || "#"}
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-black/40 px-4 py-2 text-sm hover:border-white/30"
             >
-              Read original source →
+              Open original →
             </a>
 
-            <p className="mt-4 text-xs text-white/40">
-              External sources are provided for situational awareness. Not endorsements.
-            </p>
+            {!showEmbed ? (
+              <a
+                href={embedHref}
+                className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:border-white/30"
+              >
+                View inside →
+              </a>
+            ) : (
+              <a
+                href={normalHref}
+                className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:border-white/30"
+              >
+                Hide embed →
+              </a>
+            )}
           </div>
+
+          <p className="mt-4 text-xs text-white/40">
+            External sources are provided for situational awareness. If a source
+            blocks embedding, use “Open original”.
+          </p>
         </div>
 
         <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-lg font-bold">Liberty Soldiers note</h2>
+          <h2 className="text-lg font-bold">Liberty Soldiers Context</h2>
           <p className="mt-2 text-sm text-white/70">
-            This headline is presented for situational awareness. Liberty Soldiers provides
-            independent analysis and original reporting to help readers interpret events
-            beyond surface narratives.
+            This headline is presented for situational awareness. Liberty
+            Soldiers provides independent analysis and original reporting to
+            help readers interpret events beyond surface narratives.
           </p>
         </div>
+
+        {showEmbed ? (
+          <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
+            <div className="px-6 py-4 border-b border-white/10">
+              <p className="text-sm text-white/70">
+                Embedded view (may be blocked by the source)
+              </p>
+            </div>
+
+            <iframe
+              src={url}
+              title={title}
+              className="w-full h-[75vh]"
+              loading="lazy"
+            />
+          </div>
+        ) : null}
       </div>
     </main>
   );
 }
+
