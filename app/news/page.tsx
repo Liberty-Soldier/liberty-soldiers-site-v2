@@ -153,11 +153,20 @@ export default async function NewsPage() {
               {cols.map((col, i) => (
                 <div key={i} className="space-y-3">
                   {col.map((h, idx) => {
-                    // Absolute URL is best for sharing
-                    const shareHref =
+                    // Share wrapper URL (absolute for sharing)
+                    const shareHrefAbs =
                       `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
                         h.url
                       )}` +
+                      `&t=${encodeURIComponent(h.title)}` +
+                      `&s=${encodeURIComponent(h.source)}` +
+                      (h.publishedAt
+                        ? `&p=${encodeURIComponent(String(h.publishedAt))}`
+                        : "");
+
+                    // Internal wrapper link (relative for navigation inside your site)
+                    const wrapperHrefRel =
+                      `/news/share?u=${encodeURIComponent(h.url)}` +
                       `&t=${encodeURIComponent(h.title)}` +
                       `&s=${encodeURIComponent(h.source)}` +
                       (h.publishedAt
@@ -173,13 +182,8 @@ export default async function NewsPage() {
                           {h.source}
                         </span>
 
-                        {/* Read source (external) */}
-                        <a
-                          href={h.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="block mt-1"
-                        >
+                        {/* Default click goes to Liberty Soldiers wrapper */}
+                        <a href={wrapperHrefRel} className="block mt-1">
                           <h3 className="font-semibold leading-snug hover:underline">
                             {h.title}
                           </h3>
@@ -190,8 +194,21 @@ export default async function NewsPage() {
                             {humanAgo(h.publishedAt)}
                           </span>
 
-                          {/* Real share UX (no navigation) */}
-                          <ShareButton url={shareHref} title={h.title} />
+                          <div className="flex items-center gap-3">
+                            {/* Always allow direct source */}
+                            <a
+                              href={h.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="text-xs text-white/60 hover:text-white underline-offset-4 hover:underline"
+                              aria-label="Open original source in a new tab"
+                            >
+                              Open original
+                            </a>
+
+                            {/* Real share UX */}
+                            <ShareButton url={shareHrefAbs} title={h.title} />
+                          </div>
                         </div>
                       </div>
                     );
@@ -205,6 +222,7 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
 
 
