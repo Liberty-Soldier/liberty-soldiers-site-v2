@@ -46,10 +46,16 @@ export default async function HomeHeadlines() {
   return (
     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {top.map((h, idx) => {
-        const shareHref =
+        const shareHrefAbs =
           `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
             h.url
           )}` +
+          `&t=${encodeURIComponent(h.title)}` +
+          `&s=${encodeURIComponent(h.source)}` +
+          (h.publishedAt ? `&p=${encodeURIComponent(String(h.publishedAt))}` : "");
+
+        const wrapperHrefRel =
+          `/news/share?u=${encodeURIComponent(h.url)}` +
           `&t=${encodeURIComponent(h.title)}` +
           `&s=${encodeURIComponent(h.source)}` +
           (h.publishedAt ? `&p=${encodeURIComponent(String(h.publishedAt))}` : "");
@@ -63,25 +69,28 @@ export default async function HomeHeadlines() {
               {h.source}
             </span>
 
-            {/* Read source (external) */}
-            <a
-              href={h.url}
-              target="_blank"
-              rel="noreferrer"
-              className="block mt-1"
-            >
+            {/* Default click goes to Liberty Soldiers wrapper */}
+            <a href={wrapperHrefRel} className="block mt-1">
               <h3 className="font-semibold leading-snug hover:underline">
                 {h.title}
               </h3>
             </a>
 
             <div className="mt-2 flex items-center justify-between gap-3">
-              <span className="text-xs text-white/50">
-                {humanAgo(h.publishedAt)}
-              </span>
+              <span className="text-xs text-white/50">{humanAgo(h.publishedAt)}</span>
 
-              {/* Real share UX (no navigation) */}
-              <ShareButton url={shareHref} title={h.title} />
+              <div className="flex items-center gap-3">
+                <a
+                  href={h.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-white/60 hover:text-white underline-offset-4 hover:underline"
+                >
+                  Open original
+                </a>
+
+                <ShareButton url={shareHrefAbs} title={h.title} />
+              </div>
             </div>
           </div>
         );
