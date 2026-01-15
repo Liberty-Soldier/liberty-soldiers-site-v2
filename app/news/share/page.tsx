@@ -124,8 +124,9 @@ export default function ShareNewsItemPage({ searchParams }: SP) {
         <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
           <h2 className="text-lg font-bold">Liberty Soldiers note</h2>
           <p className="mt-2 text-sm text-white/70">
-            This is a shareable Liberty Soldiers URL so you can post your link instead of
-            the publisher’s. You can add summary/analysis here later.
+            This headline is presented for situational awareness. Liberty Soldiers provides
+            independent analysis and original reporting to help readers interpret events
+            beyond surface narratives.
           </p>
         </div>
       </div>
