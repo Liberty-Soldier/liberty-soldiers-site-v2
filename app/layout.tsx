@@ -53,9 +53,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               © {new Date().getFullYear()} Liberty Soldiers. All rights reserved.
             </p>
             <div className="flex items-center gap-4 text-sm">
-              <a href="/about" className="hover:text-white/80">
-                About
-              </a>
               <a href="/about#contact" className="hover:text-white/80">
                 Contact
               </a>
@@ -71,6 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
 
 
 
