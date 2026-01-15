@@ -141,11 +141,12 @@ function normalizeFeed(feedJson: any, feedUrl: string): Headline[] {
 async function fetchOneFeed(feedUrl: string): Promise<Headline[]> {
   try {
     const res = await fetch(feedUrl, {
-      headers: {
-        "user-agent": "Mozilla/5.0 (LibertySoldiersBot)",
-        "accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
-      },
-      cache: "no-store",
+  headers: {
+    "user-agent": "Mozilla/5.0 (LibertySoldiersBot)",
+    "accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+  },
+  next: { revalidate: 600 },
+});
     });
     const xml = await res.text();
     if (!res.ok || !xml) return [];
