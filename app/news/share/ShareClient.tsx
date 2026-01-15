@@ -91,15 +91,6 @@ export default function ShareClient({ searchParams }: SP) {
           </p>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-lg font-bold">Liberty Soldiers Context</h2>
-          <p className="mt-2 text-sm text-white/70">
-            This headline is presented for situational awareness. Liberty
-            Soldiers provides independent analysis and original reporting to
-            help readers interpret events beyond surface narratives.
-          </p>
-        </div>
-
         {/* Embedded view by default */}
         <div className="mt-6 -mx-4 sm:-mx-6 lg:-mx-8 rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
           <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between gap-4">
