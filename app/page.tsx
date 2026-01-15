@@ -198,7 +198,7 @@ export default async function Home() {
       <section className="py-12 sm:py-16 border-t border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold">
-            Reporting designed for clarity, not consensus
+            Liberty Soldiers is an independent investigative media project.
           </h2>
 
           <p className="mt-3 text-white/90 leading-relaxed">
@@ -216,6 +216,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
