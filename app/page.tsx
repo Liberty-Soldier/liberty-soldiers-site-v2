@@ -92,21 +92,6 @@ export default async function Home() {
       <section className="py-10 sm:py-12 border-t border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold">
-            What is Liberty Soldiers?
-          </h2>
-          <p className="mt-3 text-white/90 leading-relaxed">
-            Liberty Soldiers is an independent investigative media project
-            focused on analyzing geopolitics, power, and belief systems — and
-            how ideas shape law, culture, and conflict in the modern world.
-          </p>
-          <p className="mt-3 text-white/80 leading-relaxed">
-            The site publishes original reports and briefings designed for
-            clarity and accountability, connecting current world events with
-            historical patterns and ideological frameworks to provide
-            situational awareness.
-          </p>
-        </div>
-      </section>
 
       {/* Latest Report (your own content) */}
       <section className="py-12 sm:py-16 border-t border-white/10">
@@ -226,22 +211,21 @@ export default async function Home() {
       <section className="py-12 sm:py-16 border-t border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold">
-            Who is Liberty Soldiers
+            Liberty Soldiers is an independent investigative media project
           </h2>
           <p className="mt-3 text-white/90 leading-relaxed">
-            Liberty Soldiers publishes independent investigative reports
-            examining geopolitics, power, and belief systems — with a focus on
-            how ideas influence law, culture, and global events. Our work
-            prioritizes documented sources, historical context, and
-            accountability over opinion or consensus, connecting present-day
-            developments to deeper ideological and historical patterns to
-            support situational awareness.
+            We analyze geopolitics, power structures, and belief systems shaping 
+            modern conflict — separating narrative from reality and context from propaganda.
+            </p>
+            Our reports connect current events to historical patterns and ideological frameworks 
+            to provide situational awareness, not opinion.
           </p>
         </div>
       </section>
     </div>
   );
 }
+
 
 
 
