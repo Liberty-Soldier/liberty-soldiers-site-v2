@@ -29,7 +29,6 @@ export default function Header() {
         <nav className="hidden md:flex items-center gap-6 text-sm">
           <Link href="/news" className="hover:text-white/80">News</Link>
           <Link href="/store" className="hover:text-white/80">Store</Link>
-          <Link href="/about" className="hover:text-white/80">About</Link>
         </nav>
 
         {/* Mobile button */}
@@ -53,7 +52,6 @@ export default function Header() {
         >
           <Link href="/news" className="hover:text-white/80">News</Link>
           <Link href="/store" className="hover:text-white/80">Store</Link>
-          <Link href="/about" className="hover:text-white/80">About</Link>
         </nav>
       )}
     </header>
