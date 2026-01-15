@@ -92,7 +92,8 @@ export default async function Home() {
       <section className="py-10 sm:py-12 border-t border-white/10">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold">
-
+        </div>
+          
       {/* Latest Report (your own content) */}
       <section className="py-12 sm:py-16 border-t border-white/10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -225,6 +226,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
