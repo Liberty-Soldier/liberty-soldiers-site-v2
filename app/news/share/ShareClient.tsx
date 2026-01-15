@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 function safeDecode(input: string) {
   try {
@@ -22,6 +22,7 @@ type SP = { searchParams: Record<string, string | string[] | undefined> };
 
 export default function ShareClient({ searchParams }: SP) {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const uRaw = searchParams.u;
   const tRaw = searchParams.t;
@@ -46,10 +47,44 @@ export default function ShareClient({ searchParams }: SP) {
       // @ts-ignore
       await el?.requestFullscreen?.();
     } catch {
-      // fallback: try container
       const container = el?.parentElement;
-      // @ts-ignore
-      await container?.requestFullscreen?.();
+      try {
+        // @ts-ignore
+        await container?.requestFullscreen?.();
+      } catch {
+        // ignore
+      }
+    }
+  };
+
+  const doShare = async () => {
+    try {
+      const href = window.location.href;
+
+      // native share sheet (mobile)
+      const shareData: any = {
+        title: "Shared via Liberty Soldiers",
+        text: title,
+        url: href,
+      };
+
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+
+      // fallback: copy link
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+        return;
+      }
+
+      // last fallback: prompt
+      window.prompt("Copy this link:", href);
+    } catch {
+      // user cancelled share sheet or blocked — do nothing
     }
   };
 
@@ -83,6 +118,14 @@ export default function ShareClient({ searchParams }: SP) {
             >
               Open original →
             </a>
+
+            <button
+              type="button"
+              onClick={doShare}
+              className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm hover:border-white/30"
+            >
+              {copied ? "Copied ✓" : "Share"}
+            </button>
           </div>
 
           <p className="mt-4 text-xs text-white/40">
