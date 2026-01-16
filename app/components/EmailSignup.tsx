@@ -36,36 +36,68 @@ export default function EmailSignup({
       <div ref={mountRef} className="mt-3" />
 
       {/* Scoped Kit cleanup */}
-      <style jsx global>{`
-        /* Hide branding */
-        .ck-powered-by {
-          display: none !important;
-        }
+     <style jsx global>{`
+  /* --- HARD REMOVE KIT BRANDING --- */
+  .ck-powered-by,
+  .ck-form .ck-powered-by,
+  .formkit-powered-by,
+  .formkit-powered-by-container,
+  a[href*="kit.com"],
+  a[href*="convertkit"],
+  a[href*="ck.page"] {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
-        /* Tighten form spacing */
-        .ck-form {
-          margin-top: 0.25rem !important;
-        }
+  /* --- FORM WRAPPER TIGHTEN --- */
+  .ck-form {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
-        .ck-form > div {
-          margin-bottom: 0.25rem !important;
-        }
+  .ck-form > div {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
-        /* Input */
-        .ck-form input[type="email"] {
-          min-height: 40px !important;
-          padding: 8px 10px !important;
-          font-size: 14px !important;
-        }
+  /* --- INPUT + BUTTON ROW --- */
+  .ck-form form {
+    display: flex !important;
+    gap: 8px !important;
+    align-items: center !important;
+  }
 
-        /* Button */
-        .ck-form button,
-        .ck-form input[type="submit"] {
-          min-height: 40px !important;
-          padding: 8px 14px !important;
-          font-size: 14px !important;
-        }
-      `}</style>
+  /* --- EMAIL INPUT --- */
+  .ck-form input[type="email"] {
+    height: 40px !important;
+    padding: 8px 10px !important;
+    font-size: 14px !important;
+    border-radius: 10px !important;
+    margin: 0 !important;
+  }
+
+  /* --- SUBSCRIBE BUTTON --- */
+  .ck-form button,
+  .ck-form input[type="submit"] {
+    height: 40px !important;
+    padding: 8px 14px !important;
+    font-size: 14px !important;
+    border-radius: 10px !important;
+    white-space: nowrap !important;
+    margin: 0 !important;
+  }
+
+  /* --- MOBILE STACK --- */
+  @media (max-width: 640px) {
+    .ck-form form {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+  }
+`}</style>
     </section>
   );
 }
