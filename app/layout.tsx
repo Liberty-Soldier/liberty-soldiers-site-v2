@@ -40,11 +40,11 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-return (
-  <html lang="en" className="bg-zinc-50 text-zinc-900">
-    <body className="min-h-screen bg-zinc-50 text-zinc-900">
-      <Header />
-      <main>{children}</main>
+      return (
+        <html lang="en" className="bg-zinc-50 text-zinc-900">
+          <body className="min-h-screen bg-zinc-50 text-zinc-900">
+            <Header />
+            <main>{children}</main>
 
       <footer className="border-t border-zinc-200 py-8 mt-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -56,6 +56,7 @@ return (
     </body>
   </html>
 );
+
 
 
 
