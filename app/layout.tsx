@@ -16,12 +16,7 @@ export const metadata: Metadata = {
     siteName: "Liberty Soldiers",
     type: "website",
     images: [
-      {
-        url: "/og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Liberty Soldiers",
-      },
+      { url: "/og.jpg", width: 1200, height: 630, alt: "Liberty Soldiers" },
     ],
   },
 
@@ -33,40 +28,36 @@ export const metadata: Metadata = {
   },
 
   icons: {
-    icon: "/icon.png", // main favicon / PWA icon
-    apple: "/apple-touch-icon.png", // icon for iPhone/iPad
+    icon: "/icon.png",
+    apple: "/apple-touch-icon.png",
   },
 
   manifest: "/manifest.json",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className="bg-black text-white">
-      <body className="min-h-screen">
+    <html lang="en" className="bg-zinc-50 text-zinc-900">
+      <body className="min-h-screen bg-zinc-50 text-zinc-900">
+        <ClearSW />
         <Header />
         <main>{children}</main>
 
-        <footer className="border-t border-white/10 py-8 mt-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-white/60 text-sm">
+        <footer className="border-t border-zinc-200 py-8 mt-12">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p className="text-sm text-zinc-600">
               © {new Date().getFullYear()} Liberty Soldiers. All rights reserved.
             </p>
-            <div className="flex items-center gap-4 text-sm">
-              <a href="/legal" className="hover:text-white/80">
-                Privacy & Terms
-              </a>
-            </div>
           </div>
         </footer>
-
-        <ClearSW />
       </body>
     </html>
   );
 }
-
-
 
 
 
