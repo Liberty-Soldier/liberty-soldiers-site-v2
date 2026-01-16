@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaXTwitter, FaYoutube, FaRumble } from "react-icons/fa6";
+import { FaXTwitter, FaYoutube, FaPlay } from "react-icons/fa6";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
