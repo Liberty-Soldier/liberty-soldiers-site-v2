@@ -40,31 +40,23 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-<html lang="en" className="bg-zinc-50 text-zinc-900">
-  <body className="min-h-screen bg-zinc-50 text-zinc-900">
-    <Header />
-    <main>{children}</main>
-  </body>
-</html>
+return (
+  <html lang="en" className="bg-zinc-50 text-zinc-900">
+    <body className="min-h-screen bg-zinc-50 text-zinc-900">
+      <Header />
+      <main>{children}</main>
 
-        <footer className="border-t border-white/10 py-8 mt-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-white/60 text-sm">
-              © {new Date().getFullYear()} Liberty Soldiers. All rights reserved.
-            </p>
-            <div className="flex items-center gap-4 text-sm">
-              <a href="/legal" className="hover:text-white/80">
-                Privacy & Terms
-              </a>
-            </div>
-          </div>
-        </footer>
+      <footer className="border-t border-zinc-200 py-8 mt-12">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-sm text-zinc-600">
+            © {new Date().getFullYear()} Liberty Soldiers. All rights reserved.
+          </p>
+        </div>
+      </footer>
+    </body>
+  </html>
+);
 
-        <ClearSW />
-      </body>
-    </html>
-  );
-}
 
 
 
