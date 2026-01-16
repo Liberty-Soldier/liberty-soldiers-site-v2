@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import React from "react";
+
 import Header from "./components/Header";
+import EmailSignup from "./components/EmailSignup";
 import ClearSW from "../components/ClearSW";
 import "../styles/globals.css";
-import React from "react";
-import EmailSignup from "./components/EmailSignup";
 
 export const metadata: Metadata = {
   title: "Liberty Soldiers",
@@ -46,25 +47,30 @@ export default function RootLayout({
       <body className="min-h-screen bg-zinc-50 text-zinc-900">
         <ClearSW />
         <Header />
+
         <main>{children}</main>
 
-<footer className="border-t border-zinc-200 py-8 mt-12">
-  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div className="mb-6">
-      <EmailSignup
-        title="Get Liberty Soldiers briefings"
-        subtitle="Email only when new reports publish. No spam."
-      />
-    </div>
+        <footer className="border-t border-zinc-200 py-8 mt-12">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-6">
+              <EmailSignup
+                title="Get Liberty Soldiers briefings"
+                subtitle="Email only when new reports publish. No spam."
+              />
+            </div>
 
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-      <p className="text-sm text-zinc-600">
-        © {new Date().getFullYear()} Liberty Soldiers. All rights reserved.
-      </p>
-    </div>
-  </div>
-</footer>
-
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <p className="text-sm text-zinc-600">
+                © {new Date().getFullYear()} Liberty Soldiers. All rights
+                reserved.
+              </p>
+            </div>
+          </div>
+        </footer>
+      </body>
+    </html>
+  );
+}
 
 
 
