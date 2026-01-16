@@ -19,7 +19,6 @@ export const NEWS_FEEDS: string[] = [
   "https://www.reuters.com/world/rss",
   "https://apnews.com/apf-topnews?format=rss",
   "https://feeds.bbci.co.uk/news/world/rss.xml",
-  "https://www.ft.com/world?format=rss",
   "https://foreignpolicy.com/feed/",
   "https://www.economist.com/the-world-this-week/rss.xml"
 ];
@@ -32,5 +31,6 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
