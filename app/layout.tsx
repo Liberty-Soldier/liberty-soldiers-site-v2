@@ -51,7 +51,12 @@ export default function RootLayout({
         <ClearSW />
         <Header />
 
-        <main>{children}</main>
+        <main>
+        <div className="mx-auto max-w-7xl px-4 py-2 text-xs text-red-600">
+          BRANCH TEST: LIGHT THEME BUILD
+        </div>
+        {children}
+      </main>
 
         <footer className="border-t border-zinc-200 py-8 mt-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -64,6 +69,7 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 
 
