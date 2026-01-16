@@ -8,7 +8,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 backdrop-blur bg-black/60 border-b border-white/10">
+    <header className="sticky top-0 z-50 backdrop-blur bg-black/60 border-b border-zinc-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-3 group">
@@ -27,8 +27,8 @@ export default function Header() {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center gap-6 text-sm">
-          <Link href="/news" className="hover:text-white/80">News</Link>
-          <Link href="/store" className="hover:text-white/80">Store</Link>
+          <Link href="/news" className="hover:text-zinc-700">News</Link>
+          <Link href="/store" className="hover:text-zinc-700">Store</Link>
         </nav>
 
         {/* Mobile button */}
@@ -47,11 +47,11 @@ export default function Header() {
       {open && (
         <nav
           id="mobile-nav"
-          className="md:hidden bg-black border-t border-white/10 px-4 py-4 flex flex-col gap-4 text-base"
+          className="md:hidden bg-black border-t border-zinc-200 px-4 py-4 flex flex-col gap-4 text-base"
           onClick={() => setOpen(false)} // close after tapping a link
         >
-          <Link href="/news" className="hover:text-white/80">News</Link>
-          <Link href="/store" className="hover:text-white/80">Store</Link>
+          <Link href="/news" className="hover:text-zinc-700">News</Link>
+          <Link href="/store" className="hover:text-zinc-700">Store</Link>
         </nav>
       )}
     </header>
