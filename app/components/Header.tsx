@@ -57,7 +57,7 @@ export default function Header() {
               aria-label="Liberty Soldiers on Rumble"
               className="text-zinc-600 hover:text-zinc-900"
             >
-              <FaRumble className="h-4 w-4" />
+              <FaPlay className="h-4 w-4" />
             </a>
           </div>
 
@@ -115,7 +115,7 @@ export default function Header() {
               rel="noreferrer"
               className="text-zinc-600 hover:text-zinc-900"
             >
-              <FaRumble />
+              <FaPlay />
             </a>
           </div>
 
