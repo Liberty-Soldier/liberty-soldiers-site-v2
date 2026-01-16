@@ -31,7 +31,7 @@ export default function Header() {
           {/* Social icons */}
           <div className="flex items-center gap-4">
             <a
-              href="https://x.com/LibertySoldiers"
+              href="https://x.com/LibertySoldierz"
               target="_blank"
               rel="noreferrer"
               aria-label="Liberty Soldiers on X"
