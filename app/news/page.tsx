@@ -51,7 +51,7 @@ export default async function NewsPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-zinc-50 text-zinc-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Header */}
         <div className="mb-8 flex items-end justify-between gap-6">
@@ -59,15 +59,18 @@ export default async function NewsPage() {
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               News Feed
             </h1>
-            <p className="mt-1 text-white/70">
+            <p className="mt-1 text-zinc-600">
               Live headlines relevant to world events and prophetic times.
             </p>
-            <p className="mt-1 text-xs text-white/40">
+            <p className="mt-1 text-xs text-zinc-500">
               External sources for situational awareness. Not endorsements.
             </p>
           </div>
 
-          <a href="/" className="text-sm hover:text-white/80 whitespace-nowrap">
+          <a
+            href="/"
+            className="text-sm text-zinc-700 hover:text-zinc-900 whitespace-nowrap"
+          >
             ← Home
           </a>
         </div>
@@ -79,12 +82,12 @@ export default async function NewsPage() {
               <h2 className="text-xl sm:text-2xl font-bold">
                 Liberty Soldiers Reports
               </h2>
-              <p className="mt-1 text-white/70">
+              <p className="mt-1 text-zinc-600">
                 Original investigative reports and analysis.
               </p>
             </div>
 
-            <a href="/news" className="text-sm hover:text-white/80">
+            <a href="/news" className="text-sm text-zinc-700 hover:text-zinc-900">
               View all →
             </a>
           </div>
@@ -92,60 +95,60 @@ export default async function NewsPage() {
           <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <a
               href="/news/dispensationalism-middle-east"
-              className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30"
+              className="block rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300"
             >
-              <span className="text-[11px] uppercase tracking-wide text-white/60">
+              <span className="text-[11px] uppercase tracking-wide text-zinc-500">
                 Report
               </span>
               <h3 className="mt-1 font-semibold leading-snug hover:underline">
                 How Dispensationalism Scripts the Middle East
               </h3>
-              <p className="mt-2 text-sm text-white/70">
-                From Sunday sermons to congressional votes, a theology that
-                reshapes foreign policy.
+              <p className="mt-2 text-sm text-zinc-700">
+                From Sunday sermons to congressional votes, a theology that reshapes
+                foreign policy.
               </p>
-              <span className="mt-3 inline-block text-xs text-white/50">
+              <span className="mt-3 inline-block text-xs text-zinc-600">
                 Read →
               </span>
             </a>
 
             <a
               href="/news/first-report"
-              className="block rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30"
+              className="block rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300"
             >
-              <span className="text-[11px] uppercase tracking-wide text-white/60">
+              <span className="text-[11px] uppercase tracking-wide text-zinc-500">
                 Report
               </span>
               <h3 className="mt-1 font-semibold leading-snug hover:underline">
                 The Mechanism of Alignment
               </h3>
-              <p className="mt-2 text-sm text-white/70">
+              <p className="mt-2 text-sm text-zinc-700">
                 How truth is neutralized through agreement, conformity, and
                 manufactured consensus.
               </p>
-              <span className="mt-3 inline-block text-xs text-white/50">
+              <span className="mt-3 inline-block text-xs text-zinc-600">
                 Read →
               </span>
             </a>
           </div>
         </section>
 
-        {/* Live RSS headlines (below reports) */}
-        <section className="border-t border-white/10 pt-10">
+        {/* Live RSS headlines */}
+        <section className="border-t border-zinc-200 pt-10">
           <div className="mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold">Latest Headlines</h2>
-            <p className="mt-1 text-white/70">
+            <p className="mt-1 text-zinc-600">
               External headlines for situational awareness.
             </p>
-            <p className="mt-1 text-xs text-white/40">
+            <p className="mt-1 text-xs text-zinc-500">
               External sources are not endorsements.
             </p>
           </div>
 
           {items.length === 0 ? (
-            <div className="rounded-xl border border-white/10 p-6 text-white/70">
+            <div className="rounded-xl border border-zinc-200 bg-white p-6 text-zinc-700">
               No headlines yet. If this persists, check{" "}
-              <code className="text-white/80">lib/news.config.ts</code> has feeds
+              <code className="text-zinc-900">lib/news.config.ts</code> has feeds
               and that deployment finished.
             </div>
           ) : (
@@ -153,7 +156,6 @@ export default async function NewsPage() {
               {cols.map((col, i) => (
                 <div key={i} className="space-y-3">
                   {col.map((h, idx) => {
-                    // Share wrapper URL (absolute for sharing)
                     const shareHrefAbs =
                       `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
                         h.url
@@ -164,7 +166,6 @@ export default async function NewsPage() {
                         ? `&p=${encodeURIComponent(String(h.publishedAt))}`
                         : "");
 
-                    // Internal wrapper link (relative for navigation inside your site)
                     const wrapperHrefRel =
                       `/news/share?u=${encodeURIComponent(h.url)}` +
                       `&t=${encodeURIComponent(h.title)}` +
@@ -176,13 +177,13 @@ export default async function NewsPage() {
                     return (
                       <div
                         key={`${h.url}-${idx}`}
-                        className="rounded-xl border border-white/10 bg-white/5 p-4 transition hover:border-white/30"
+                        className="rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300"
                       >
-                        <span className="text-[11px] uppercase tracking-wide text-white/60">
+                        <span className="text-[11px] uppercase tracking-wide text-zinc-500">
                           {h.source}
                         </span>
 
-                        {/* Default click goes to Liberty Soldiers wrapper */}
+                        {/* Default click goes to Liberty Soldiers wrapper (we'll revert next step if you want) */}
                         <a href={wrapperHrefRel} className="block mt-1">
                           <h3 className="font-semibold leading-snug hover:underline">
                             {h.title}
@@ -190,23 +191,21 @@ export default async function NewsPage() {
                         </a>
 
                         <div className="mt-2 flex items-center justify-between gap-3">
-                          <span className="text-xs text-white/50">
+                          <span className="text-xs text-zinc-500">
                             {humanAgo(h.publishedAt)}
                           </span>
 
                           <div className="flex items-center gap-3">
-                            {/* Always allow direct source */}
                             <a
                               href={h.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-xs text-white/60 hover:text-white underline-offset-4 hover:underline"
+                              className="text-xs text-zinc-600 hover:text-zinc-900 underline-offset-4 hover:underline"
                               aria-label="Open original source in a new tab"
                             >
                               Open original
                             </a>
 
-                            {/* Real share UX */}
                             <ShareButton url={shareHrefAbs} title={h.title} />
                           </div>
                         </div>
