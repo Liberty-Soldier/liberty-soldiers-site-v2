@@ -94,7 +94,7 @@ export default function Header() {
           {/* Socials (mobile) */}
           <div className="flex items-center gap-5">
             <a
-              href="https://x.com/LibertySoldiers"
+              href="https://x.com/LibertySoldierz"
               target="_blank"
               rel="noreferrer"
               className="text-zinc-600 hover:text-zinc-900"
