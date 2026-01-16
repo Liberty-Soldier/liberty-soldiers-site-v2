@@ -48,7 +48,7 @@ export default function ShareButton({
     <button
       type="button"
       onClick={onShare}
-      className="text-xs text-white/70 hover:text-white underline-offset-4 hover:underline"
+      className="text-xs text-zinc-700 hover:text-zinc-900 underline-offset-4 hover:underline"
       aria-label="Share Liberty Soldiers link"
     >
       {copied ? "Copied" : "Share"}
