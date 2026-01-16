@@ -17,7 +17,6 @@ export default function EmailSignup({
   useEffect(() => {
     if (!mountRef.current) return;
 
-    // If already mounted, do nothing
     if (mountRef.current.querySelector(`script[data-uid="${UID}"]`)) return;
 
     const s = document.createElement("script");
@@ -29,68 +28,44 @@ export default function EmailSignup({
   }, []);
 
   return (
-    <section className="rounded-2xl border border-zinc-200 bg-white p-6">
-      <h3 className="text-lg font-bold text-zinc-900">{title}</h3>
-      <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>
+    <section className="rounded-xl border border-zinc-200 bg-white px-5 py-4">
+      <h3 className="text-base font-semibold text-zinc-900">{title}</h3>
+      <p className="mt-0.5 text-sm text-zinc-600">{subtitle}</p>
 
-      {/* Kit form renders here */}
-     {/* Kit style patch (scoped) */}
-<style jsx global>{`
-  /* Scope to our signup box only */
-  .ck-form,
-  .ck-form * {
-    font-family: inherit !important;
-  }
+      {/* Kit embed */}
+      <div ref={mountRef} className="mt-3" />
 
-  /* Make sure inputs actually show */
-  .ck-form input[type="email"],
-  .ck-form input[type="text"] {
-    display: block !important;
-    width: 100% !important;
-    min-height: 44px !important;
-    padding: 10px 12px !important;
-    border: 1px solid #d4d4d8 !important; /* zinc-300 */
-    border-radius: 12px !important;
-    background: #ffffff !important;
-    color: #18181b !important; /* zinc-900 */
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
+      {/* Scoped Kit cleanup */}
+      <style jsx global>{`
+        /* Hide branding */
+        .ck-powered-by {
+          display: none !important;
+        }
 
-  .ck-form input::placeholder {
-    color: #71717a !important; /* zinc-500 */
-    opacity: 1 !important;
-  }
+        /* Tighten form spacing */
+        .ck-form {
+          margin-top: 0.25rem !important;
+        }
 
-  /* Button visible + clickable */
-  .ck-form button,
-  .ck-form input[type="submit"] {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    min-height: 44px !important;
-    padding: 10px 16px !important;
-    border-radius: 12px !important;
-    border: 1px solid #d4d4d8 !important;
-    background: #18181b !important; /* zinc-900 */
-    color: #ffffff !important;
-    cursor: pointer !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
+        .ck-form > div {
+          margin-bottom: 0.25rem !important;
+        }
 
-  .ck-form button:hover,
-  .ck-form input[type="submit"]:hover {
-    background: #000000 !important;
-  }
+        /* Input */
+        .ck-form input[type="email"] {
+          min-height: 40px !important;
+          padding: 8px 10px !important;
+          font-size: 14px !important;
+        }
 
-  /* Remove the big 'Built with Kit' footer if you want */
-  .ck-powered-by {
-    display: none !important;
-  }
-`}</style>
-
-      <div ref={mountRef} className="mt-4" />
+        /* Button */
+        .ck-form button,
+        .ck-form input[type="submit"] {
+          min-height: 40px !important;
+          padding: 8px 14px !important;
+          font-size: 14px !important;
+        }
+      `}</style>
     </section>
   );
 }
