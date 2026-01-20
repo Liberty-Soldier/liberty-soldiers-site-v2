@@ -116,15 +116,16 @@ export default function ShareClient({ searchParams }: SP) {
   const copyTarget = url || wrapperUrl || "";
 
   const doCopy = async () => {
-    const textToCopy = copyTarget || window.location.href;
-    const ok = await copyText(textToCopy);
-    if (ok) {
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1200);
-    } else {
-      window.prompt("Copy this link:", textToCopy);
-    }
-  };
+  const textToCopy = window.location.href;
+
+  const ok = await copyText(textToCopy);
+  if (ok) {
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 1200);
+  } else {
+    window.prompt("Copy this link:", textToCopy);
+  }
+};
 
   // ✅ X SHARE: use x.com intent + put URL inside text for best mobile behavior
   const xIntentUrl = useMemo(() => {
