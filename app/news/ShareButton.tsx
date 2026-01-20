@@ -5,27 +5,26 @@ import { copyText } from "@/lib/copy";
 
 export default function ShareButton({
   wrapperUrl,
-  sourceUrl,
   title,
+  label = "Copy link",
 }: {
-  wrapperUrl: string; // Liberty Soldiers wrapper link
-  sourceUrl: string;  // Original article link
+  wrapperUrl: string;
   title?: string;
+  label?: string;
 }) {
-  const [copied, setCopied] = useState<"source" | null>(null);
+  const [copied, setCopied] = useState(false);
 
-  const copySource = async () => {
-    const ok = await copyText(sourceUrl);
+  const doCopy = async () => {
+    const ok = await copyText(wrapperUrl);
     if (ok) {
-      setCopied("source");
-      window.setTimeout(() => setCopied(null), 1200);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
     } else {
-      window.prompt("Copy this link:", sourceUrl);
+      window.prompt("Copy this link:", wrapperUrl);
     }
   };
 
-  // Mobile-friendly X intent:
-  // Put the URL inside text for best compatibility.
+  // Mobile-safe X share: use twitter.com intent + put URL in text
   const xIntent = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     `${title || "Shared via Liberty Soldiers"} ${wrapperUrl}`
   )}`;
@@ -43,10 +42,10 @@ export default function ShareButton({
 
       <button
         type="button"
-        onClick={copySource}
+        onClick={doCopy}
         className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-800 hover:border-zinc-300"
       >
-        {copied === "source" ? "Copied ✓" : "Copy source"}
+        {copied ? "Copied ✓" : label}
       </button>
     </div>
   );
