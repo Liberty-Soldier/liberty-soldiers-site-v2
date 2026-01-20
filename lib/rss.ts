@@ -63,21 +63,17 @@ function categorize(title: string, summary?: string, src?: string): string {
   const t = `${title} ${summary ?? ""}`.toLowerCase();
   const s = (src ?? "").toLowerCase();
 
-      // Strong source-based hints (safe defaults)
-    if (s.includes("biometricupdate")) return "Control Systems";
-    if (s.includes("reclaimthenet")) return "Censorship & Speech";
-    if (s.includes("expose-news")) return "Control Systems";
-    if (s.includes("endtimeheadlines")) return "Persecution Watch";
-    if (s.includes("prophecynewswatch")) return "Persecution Watch";
-    if (s.includes("israel365news")) return "Geopolitics & War";
-    if (s.includes("timesofisrael")) return "Geopolitics & War";
-    if (s.includes("reuters")) return "Geopolitics & War";
-   
-    let fallback: string | undefined;
+  // --------------------------------------------------
+  // Source-based fallback (NOT a return)
+  // --------------------------------------------------
+  let fallback: string | undefined;
 
-    // Mainstream baseline briefing sources
-    if (s.includes("bbc")) fallback = "World Briefing";
-    if (s.includes("aljazeera")) fallback = "World Briefing";
+  if (s.includes("bbc")) fallback = "World Briefing";
+  if (s.includes("aljazeera")) fallback = "World Briefing";
+
+  // --------------------------------------------------
+  // High-signal categories (ALWAYS win)
+  // --------------------------------------------------
 
   // Persecution / suppression
   if (
@@ -93,8 +89,9 @@ function categorize(title: string, summary?: string, src?: string): string {
     t.includes("hate speech") ||
     t.includes("blasphemy") ||
     t.includes("persecution")
-  )
+  ) {
     return "Persecution Watch";
+  }
 
   // Control systems / surveillance / ID / CBDC
   if (
@@ -109,8 +106,9 @@ function categorize(title: string, summary?: string, src?: string): string {
     t.includes("social credit") ||
     t.includes("vaccine passport") ||
     t.includes("qr code")
-  )
+  ) {
     return "Control Systems";
+  }
 
   // Censorship / information control
   if (
@@ -121,8 +119,9 @@ function categorize(title: string, summary?: string, src?: string): string {
     t.includes("misinformation") ||
     t.includes("disinformation") ||
     (t.includes("speech") && t.includes("law"))
-  )
+  ) {
     return "Censorship & Speech";
+  }
 
   // Biosecurity / emergency powers
   if (
@@ -134,8 +133,9 @@ function categorize(title: string, summary?: string, src?: string): string {
     t.includes("public health") ||
     t.includes("who") ||
     t.includes("bird flu")
-  )
+  ) {
     return "Biosecurity";
+  }
 
   // War / geopolitics
   if (
@@ -151,13 +151,26 @@ function categorize(title: string, summary?: string, src?: string): string {
     t.includes("ceasefire") ||
     t.includes("nato") ||
     t.includes("war")
-  )
+  ) {
     return "Geopolitics & War";
+  }
 
-  // Source hints (optional)
+  // --------------------------------------------------
+  // Source-only defaults (low-signal)
+  // --------------------------------------------------
   if (s.includes("biometricupdate")) return "Control Systems";
+  if (s.includes("reclaimthenet")) return "Censorship & Speech";
+  if (s.includes("expose-news")) return "Control Systems";
+  if (s.includes("endtimeheadlines")) return "Persecution Watch";
+  if (s.includes("prophecynewswatch")) return "Persecution Watch";
+  if (s.includes("israel365news")) return "Geopolitics & War";
+  if (s.includes("timesofisrael")) return "Geopolitics & War";
+  if (s.includes("reuters")) return "Geopolitics & War";
 
-  return "General";
+  // --------------------------------------------------
+  // Final fallback
+  // --------------------------------------------------
+  return fallback || "General";
 }
 
 function stripHtml(s: any): string {
