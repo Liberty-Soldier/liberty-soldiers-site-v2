@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 function safeDecode(input: string) {
   try {
@@ -18,16 +18,81 @@ function hostFromUrl(u: string) {
   }
 }
 
+function faviconFromUrl(articleUrl: string): string {
+  try {
+    const u = new URL(articleUrl);
+    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(
+      u.hostname
+    )}&sz=128`;
+  } catch {
+    return "/briefing-fallback.jpg";
+  }
+}
+
+function humanWhen(publishedAt?: number) {
+  if (!publishedAt || !Number.isFinite(publishedAt)) return null;
+  try {
+    return new Date(publishedAt).toLocaleString();
+  } catch {
+    return null;
+  }
+}
+
+function cleanSummary(summary?: string): string {
+  if (!summary) return "";
+  return summary
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\u00A0/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function bulletsFromSummary(summary?: string): string[] {
+  const clean = cleanSummary(summary);
+  if (!clean) return [];
+
+  // If the feed already includes bullet separators
+  const preBullets = clean
+    .split(/(?:•|·|\u2022|\s-\s|\s—\s)/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  if (preBullets.length >= 3) {
+    return preBullets
+      .slice(0, 2)
+      .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
+  }
+
+  // Sentence split
+  const parts = clean
+    .split(/(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  if (parts.length >= 2) return parts.slice(0, 2);
+
+  // Fallback chunking
+  const chunk1 = clean.slice(0, 95).trim();
+  const chunk2 = clean.slice(95, 190).trim();
+
+  return [chunk1, chunk2]
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
+}
+
 type SP = { searchParams: Record<string, string | string[] | undefined> };
 
 export default function ShareClient({ searchParams }: SP) {
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [copied, setCopied] = useState(false);
 
   const uRaw = searchParams.u;
   const tRaw = searchParams.t;
   const sRaw = searchParams.s;
   const pRaw = searchParams.p;
+  const iRaw = searchParams.i; // image
+  const xRaw = searchParams.x; // summary
 
   const url = typeof uRaw === "string" ? safeDecode(uRaw) : "";
   const title = typeof tRaw === "string" ? safeDecode(tRaw) : "Shared Headline";
@@ -36,32 +101,32 @@ export default function ShareClient({ searchParams }: SP) {
   const publishedAt =
     typeof pRaw === "string" ? Number(safeDecode(pRaw)) : undefined;
 
-  const when =
-    publishedAt && Number.isFinite(publishedAt)
-      ? new Date(publishedAt).toLocaleString()
-      : null;
+  const when = humanWhen(publishedAt);
 
-  const goFullscreen = async () => {
-    const el = iframeRef.current;
+  const image = typeof iRaw === "string" ? safeDecode(iRaw) : "";
+  const summary = typeof xRaw === "string" ? safeDecode(xRaw) : "";
+
+  const thumb = image || (url ? faviconFromUrl(url) : "/briefing-fallback.jpg");
+  const bullets = bulletsFromSummary(summary);
+
+  const copyLink = async () => {
     try {
-      // @ts-ignore
-      await el?.requestFullscreen?.();
-    } catch {
-      const container = el?.parentElement;
-      try {
-        // @ts-ignore
-        await container?.requestFullscreen?.();
-      } catch {
-        // ignore
+      const href = window.location.href;
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+        await navigator.clipboard.writeText(href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1200);
+        return;
       }
+      window.prompt("Copy this link:", href);
+    } catch {
+      // ignore
     }
   };
 
   const doShare = async () => {
     try {
       const href = window.location.href;
-
-      // native share sheet (mobile)
       const shareData: any = {
         title: "Shared via Liberty Soldiers",
         text: title,
@@ -73,30 +138,37 @@ export default function ShareClient({ searchParams }: SP) {
         return;
       }
 
-      // fallback: copy link
-      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-        await navigator.clipboard.writeText(href);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1200);
-        return;
-      }
-
-      // last fallback: prompt
-      window.prompt("Copy this link:", href);
+      await copyLink();
     } catch {
-      // user cancelled share sheet or blocked — do nothing
+      // ignore
     }
   };
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <a href="/news" className="text-sm hover:text-white/80">
-          ← Back to News
-        </a>
+    <main className="min-h-screen bg-zinc-50 text-zinc-900">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="flex items-center justify-between gap-4">
+          <a href="/news" className="text-sm text-zinc-700 hover:text-zinc-900">
+            ← Back to News
+          </a>
 
-        <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-6">
-          <p className="text-[11px] uppercase tracking-wide text-white/60">
+          <a href="/" className="text-sm text-zinc-700 hover:text-zinc-900">
+            Home →
+          </a>
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-6">
+          {/* Thumbnail */}
+          <div className="mb-4 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+            <img
+              src={thumb}
+              alt=""
+              className="h-44 w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+
+          <p className="text-[11px] uppercase tracking-wide text-zinc-500">
             Shared via Liberty Soldiers
           </p>
 
@@ -104,66 +176,71 @@ export default function ShareClient({ searchParams }: SP) {
             {title}
           </h1>
 
-          <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/60">
-            {source ? <span>Source: {source}</span> : null}
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-600">
+            {source ? (
+              <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5">
+                Source: {source}
+              </span>
+            ) : null}
+
             {when ? <span>• {when}</span> : null}
           </div>
+
+          {/* Bullets */}
+          {bullets.length > 0 && (
+            <ul className="mt-4 space-y-1 text-sm text-zinc-700">
+              {bullets.map((b, i) => (
+                <li key={i} className="flex gap-2">
+                  <span className="text-zinc-400">•</span>
+                  <span className="leading-snug">{b}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <p className="mt-4 text-sm text-zinc-700">
+            This link is shared for situational awareness. External sources are not
+            endorsements. Liberty Soldiers provides context and analysis.
+          </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
             <a
               href={url || "#"}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-black/40 px-4 py-2 text-sm hover:border-white/30"
+              className="inline-flex items-center justify-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800"
             >
-              Open original →
+              Open original source →
             </a>
 
             <button
               type="button"
               onClick={doShare}
-              className="inline-flex items-center justify-center rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-sm hover:border-white/30"
+              className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
             >
-              {copied ? "Copied ✓" : "Share"}
+              Share
             </button>
-          </div>
-
-          <p className="mt-4 text-xs text-white/40">
-            Some sources block embedding. If the page below is blank or shows an
-            error, use “Open original”.
-          </p>
-        </div>
-
-        {/* Embedded view by default */}
-        <div className="mt-6 -mx-4 sm:-mx-6 lg:-mx-8 rounded-2xl border border-white/10 bg-white/5 overflow-hidden">
-          <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between gap-4">
-            <p className="text-sm text-white/70">
-            </p>
 
             <button
               type="button"
-              onClick={goFullscreen}
-              className="text-xs text-white/70 hover:text-white underline-offset-4 hover:underline"
+              onClick={copyLink}
+              className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
             >
-              Full screen
+              {copied ? "Copied ✓" : "Copy link"}
             </button>
           </div>
 
-          {url ? (
-            <iframe
-              ref={iframeRef}
-              src={url}
-              title={title}
-              className="w-full h-[95vh] md:h-[98vh]"
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              allow="fullscreen"
-              allowFullScreen
-            />
-          ) : (
-            <div className="p-6 text-white/70">Missing source URL.</div>
-          )}
+          {!url ? (
+            <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+              Missing source URL. Go back and try sharing again.
+            </div>
+          ) : null}
         </div>
+
+        <p className="mt-6 text-xs text-zinc-500">
+          Tip: use “Open original source” for the full article. This page exists to
+          preserve context when shared on social platforms.
+        </p>
       </div>
     </main>
   );
