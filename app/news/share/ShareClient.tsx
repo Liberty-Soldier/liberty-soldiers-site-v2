@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { copyText } from "@/lib/copy";
 
 function safeDecode(input: string) {
   try {
@@ -83,10 +84,10 @@ type SP = { searchParams: Record<string, string | string[] | undefined> };
 
 export default function ShareClient({ searchParams }: SP) {
   const [copied, setCopied] = useState(false);
-  const [shareUrl, setShareUrl] = useState("");
+  const [wrapperUrl, setWrapperUrl] = useState("");
 
   useEffect(() => {
-    setShareUrl(window.location.href);
+    setWrapperUrl(window.location.href);
   }, []);
 
   const uRaw = searchParams.u;
@@ -111,53 +112,26 @@ export default function ShareClient({ searchParams }: SP) {
   const thumb = image || (url ? faviconFromUrl(url) : "/briefing-fallback.jpg");
   const bullets = bulletsFromSummary(summary);
 
-  const copyLink = async () => {
-    const href = shareUrl || window.location.href;
+  // ✅ COPY SHOULD COPY THE ORIGINAL SOURCE URL (clean + short)
+  const copyTarget = url || wrapperUrl || "";
 
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(href);
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), 1200);
-        return;
-      }
-    } catch {
-      // ignore and fall through to prompt
+  const doCopy = async () => {
+    const textToCopy = copyTarget || window.location.href;
+    const ok = await copyText(textToCopy);
+    if (ok) {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } else {
+      window.prompt("Copy this link:", textToCopy);
     }
-
-    window.prompt("Copy this link:", href);
   };
 
-  const doShare = async () => {
-    const href = shareUrl || window.location.href;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "Shared via Liberty Soldiers",
-          text: title,
-          url: href,
-        } as any);
-        return;
-      } catch {
-        // user cancelled; fall back to copy
-      }
-    }
-
-    await copyLink();
-  };
-
- const postToX = () => {
-  const href = window.location.href;
-  const text = title || "Shared via Liberty Soldiers";
-  const intent =
-    "https://twitter.com/intent/tweet?text=" +
-    encodeURIComponent(text) +
-    "&url=" +
-    encodeURIComponent(href);
-
-  window.open(intent, "_blank", "noopener,noreferrer");
-};
+  // ✅ X SHARE: use x.com intent + put URL inside text for best mobile behavior
+  const xIntentUrl = useMemo(() => {
+    const shareLink = wrapperUrl || (typeof window !== "undefined" ? window.location.href : "");
+    const shareText = title ? `${title} ${shareLink}` : `Shared via Liberty Soldiers ${shareLink}`;
+    return `https://x.com/intent/post?text=${encodeURIComponent(shareText)}`;
+  }, [wrapperUrl, title]);
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -228,30 +202,23 @@ export default function ShareClient({ searchParams }: SP) {
               Open original source →
             </a>
 
-            <button
-              type="button"
-              onClick={postToX}
+            {/* ✅ Use anchor link for mobile reliability */}
+            <a
+              href={xIntentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
             >
               Post to X
-            </button>
+            </a>
 
             <button
               type="button"
-              onClick={copyLink}
+              onClick={doCopy}
               className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
             >
               {copied ? "Copied ✓" : "Copy link"}
             </button>
-
-            <button
-              type="button"
-              onClick={copyLink}
-              className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
-            >
-              {copied ? "Copied ✓" : "Copy link"}
-            </button>
-
           </div>
 
           {!url ? (
@@ -269,4 +236,3 @@ export default function ShareClient({ searchParams }: SP) {
     </main>
   );
 }
-
