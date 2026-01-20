@@ -36,12 +36,9 @@ export async function generateMetadata({ searchParams }: SP): Promise<Metadata> 
     ? `Shared for situational awareness (source: ${source}).`
     : "Shared for situational awareness.";
 
-  const canonical =
-    u
-      ? `https://libertysoldiers.com/news/share?u=${encodeURIComponent(u)}&t=${encodeURIComponent(
-          title
-        )}&s=${encodeURIComponent(source)}`
-      : "https://libertysoldiers.com/news";
+  // ✅ IMPORTANT: do NOT include huge query params in canonical/OG url
+  // Keep it clean so shared links don’t turn into massive encoded URLs.
+  const canonical = "https://libertysoldiers.com/news/share";
 
   return {
     title: pageTitle,
