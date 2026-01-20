@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 function safeDecode(input: string) {
   try {
@@ -83,8 +83,7 @@ type SP = { searchParams: Record<string, string | string[] | undefined> };
 
 export default function ShareClient({ searchParams }: SP) {
   const [copied, setCopied] = useState(false);
-
-    const [shareUrl, setShareUrl] = useState("");
+  const [shareUrl, setShareUrl] = useState("");
 
   useEffect(() => {
     setShareUrl(window.location.href);
@@ -113,13 +112,10 @@ export default function ShareClient({ searchParams }: SP) {
   const bullets = bulletsFromSummary(summary);
 
   const copyLink = async () => {
-    const href = window.location.href;
+    const href = shareUrl || window.location.href;
 
     try {
-      if (
-        navigator.clipboard &&
-        typeof navigator.clipboard.writeText === "function"
-      ) {
+      if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(href);
         setCopied(true);
         window.setTimeout(() => setCopied(false), 1200);
@@ -133,7 +129,7 @@ export default function ShareClient({ searchParams }: SP) {
   };
 
   const doShare = async () => {
-    const href = window.location.href;
+    const href = shareUrl || window.location.href;
 
     if (navigator.share) {
       try {
@@ -151,14 +147,27 @@ export default function ShareClient({ searchParams }: SP) {
     await copyLink();
   };
 
- const postToX = () => {
-  const href = shareUrl || window.location.href;
-  const msg = "Shared for situational awareness:\n" + title + "\n" + href;
-  const intent = "https://x.com/intent/post?text=" + encodeURIComponent(msg);
+  // Mobile-proof: copy the full post payload first, then open X compose.
+  const postToX = async () => {
+    const href = shareUrl || window.location.href;
+    const msg = "Shared for situational awareness:\n" + title + "\n" + href;
 
-  // Use location instead of popup (works even when popups are blocked)
-  window.location.href = intent;
-}; 
+    // Copy first (so if X opens blank, user can paste)
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(msg);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 1200);
+      }
+    } catch {
+      // ignore
+    }
+
+    const intent = "https://x.com/intent/post?text=" + encodeURIComponent(msg);
+
+    // Use same-tab navigation (avoids popup blockers / app-handlers weirdness)
+    window.location.href = intent;
+  };
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -229,7 +238,7 @@ export default function ShareClient({ searchParams }: SP) {
               Open original source →
             </a>
 
-           <button
+            <button
               type="button"
               onClick={postToX}
               className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
@@ -243,6 +252,14 @@ export default function ShareClient({ searchParams }: SP) {
               className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
             >
               {copied ? "Copied ✓" : "Copy link"}
+            </button>
+
+            <button
+              type="button"
+              onClick={doShare}
+              className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
+            >
+              Share…
             </button>
           </div>
 
@@ -261,3 +278,4 @@ export default function ShareClient({ searchParams }: SP) {
     </main>
   );
 }
+
