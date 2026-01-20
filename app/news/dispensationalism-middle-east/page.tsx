@@ -1,17 +1,22 @@
 // app/news/dispensationalism-middle-east/page.tsx
 
 export const metadata = {
-  title: "How Dispensationalism Scripts the Middle East | Liberty Soldiers",
-  description:
-    "An investigative report on how dispensational theology shapes public perception and U.S. foreign policy toward the Middle East—making escalation feel inevitable and diplomacy feel suspect.",
+  title: "...",
+  description: "...",
   openGraph: {
-    title: "How Dispensationalism Scripts the Middle East",
-    description:
-      "From Sunday sermons to congressional votes, a theology that reshapes foreign policy—and how Iran fits the script.",
+    title: "...",
+    description: "...",
     url: "https://libertysoldiers.com/news/dispensationalism-middle-east",
-    type: "article",
+    images: ["https://libertysoldiers.com/og/dispensationalism.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "...",
+    description: "...",
+    images: ["https://libertysoldiers.com/og/dispensationalism.jpg"],
   },
 };
+
 
 export default function DispensationalismMiddleEastReportPage() {
   return (
