@@ -145,7 +145,7 @@ export default async function HomeHeadlines() {
 
               <div className="flex items-center gap-3">
                 {/* Share uses Liberty Soldiers wrapper for X-friendly previews */}
-                <ShareButton url={shareHrefAbs} title={h.title} />
+                <ShareButton wrapperUrl={shareHrefAbs} sourceUrl={h.url} title={h.title} />
               </div>
             </div>
           </div>
