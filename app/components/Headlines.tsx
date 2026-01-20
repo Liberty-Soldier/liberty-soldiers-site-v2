@@ -109,8 +109,6 @@ export default async function HomeHeadlines() {
             {/* Headline click goes to original source */}
             <a
               href={h.url}
-              target="_blank"
-              rel="noreferrer"
               className="block mt-1"
             >
               <h3 className="font-semibold leading-snug hover:underline">
