@@ -197,10 +197,12 @@ items.forEach((it, idx) => {
                 <div key={i} className="space-y-3">
                   {col.map((h, idx) => {
                     const shareHrefAbs =
+                   const shareHrefAbs =
                     `https://libertysoldiers.com/news/share?u=${encodeURIComponent(h.url)}` +
                     `&t=${encodeURIComponent(h.title)}` +
                     `&s=${encodeURIComponent(h.source)}` +
-                    (h.publishedAt ? `&p=${encodeURIComponent(String(h.publishedAt))}` : "") +
+                    (h.publishedAt ? `&p=${encodeURIComponent(String(h.publishedAt))}` : "");
+
                     (h.image ? `&i=${encodeURIComponent(h.image)}` : "") +
                     (h.summary ? `&x=${encodeURIComponent(h.summary)}` : "");
 
@@ -279,6 +281,7 @@ items.forEach((it, idx) => {
     </main>
   );
 }
+
 
 
 
