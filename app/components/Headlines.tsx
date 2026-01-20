@@ -99,7 +99,7 @@ export default async function HomeHeadlines() {
               />
             </div>
 
-            <span className="text-[11px] uppercase tracking-wide text-zinc-400">
+            <span className="text-[11px] uppercase tracking-wide text-zinc-700">
               {h.source}
             </span>
 
@@ -128,7 +128,7 @@ export default async function HomeHeadlines() {
             )}
 
             <div className="mt-3 flex items-center justify-between gap-3">
-              <span className="text-xs text-zinc-400">
+              <span className="text-xs text-zinc-700">
                 {humanAgo(h.publishedAt)}
               </span>
 
