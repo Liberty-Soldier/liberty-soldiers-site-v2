@@ -125,13 +125,25 @@ export default function ShareClient({ searchParams }: SP) {
   };
 
   const doShare = async () => {
+  const href = window.location.href;
+
+  // Mobile share sheet when available
+  if (navigator.share) {
     try {
-      const href = window.location.href;
-      const shareData: any = {
+      await navigator.share({
         title: "Shared via Liberty Soldiers",
         text: title,
         url: href,
-      };
+      } as any);
+      return;
+    } catch {
+      // user canceled — fall through to copy
+    }
+  }
+
+  // Desktop fallback: always copy
+  await copyLink();
+};
 
       if (navigator.share) {
         await navigator.share(shareData);
