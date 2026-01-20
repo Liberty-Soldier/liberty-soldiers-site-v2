@@ -58,7 +58,7 @@ export default async function Home() {
       />
 
       {/* Hero (keep dark overlay for readability on image) */}
-      <section className="relative h-[70vh] sm:h-[80vh] w-full flex items-center">
+      <section className="relative h-[40vh] sm:h-[50vh] w-full flex items-center">
         <div
           className="absolute inset-0 bg-center bg-cover"
           style={{ backgroundImage: "url('/hero.jpg')" }}
@@ -73,14 +73,45 @@ export default async function Home() {
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
               Independent investigative reporting and situational awareness
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="/news"
-                className="px-5 py-3 rounded-xl bg-white text-zinc-900 font-semibold hover:bg-white/90"
-              >
-                News Feed
-              </a>
+          </div>
+        </div>
+      </section>
+
+       {/* Latest Headlines (external preview) */}
+      <section className="py-12 sm:py-16 border-t border-zinc-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between gap-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
+                Latest Headlines
+              </h2>
+
+              <p className="mt-1 text-zinc-600">
+                External headlines for situational awareness.
+              </p>
+
+              <p className="mt-1 text-xs text-zinc-500">
+                External sources are not endorsements. Liberty Soldiers publishes
+                original reporting above.
+              </p>
             </div>
+
+            <a href="/news" className="text-sm text-zinc-700 hover:text-zinc-900">
+              Full feed →
+            </a>
+          </div>
+
+          <Suspense fallback={<HeadlinesFallback />}>
+            <HomeHeadlines />
+          </Suspense>
+
+          <div className="mt-8">
+            <a
+              href="/news"
+              className="inline-flex items-center rounded-xl border border-zinc-200 bg-white px-5 py-3 text-sm text-zinc-800 hover:border-zinc-300 transition"
+            >
+              View the full News Feed →
+            </a>
           </div>
         </div>
       </section>
@@ -164,45 +195,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Latest Headlines (external preview) */}
-      <section className="py-12 sm:py-16 border-t border-zinc-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
-                Latest Headlines
-              </h2>
-
-              <p className="mt-1 text-zinc-600">
-                External headlines for situational awareness.
-              </p>
-
-              <p className="mt-1 text-xs text-zinc-500">
-                External sources are not endorsements. Liberty Soldiers publishes
-                original reporting above.
-              </p>
-            </div>
-
-            <a href="/news" className="text-sm text-zinc-700 hover:text-zinc-900">
-              Full feed →
-            </a>
-          </div>
-
-          <Suspense fallback={<HeadlinesFallback />}>
-            <HomeHeadlines />
-          </Suspense>
-
-          <div className="mt-8">
-            <a
-              href="/news"
-              className="inline-flex items-center rounded-xl border border-zinc-200 bg-white px-5 py-3 text-sm text-zinc-800 hover:border-zinc-300 transition"
-            >
-              View the full News Feed →
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* Bottom context */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -225,6 +217,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
