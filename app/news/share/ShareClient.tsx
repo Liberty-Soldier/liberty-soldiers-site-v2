@@ -237,14 +237,6 @@ export default function ShareClient({ searchParams }: SP) {
               Post to X
             </button>
 
-            {shareUrl ? (
-              <p className="mt-3 break-words text-xs text-zinc-500">
-                X intent: {"https://x.com/intent/post?text=" + encodeURIComponent("Shared for situational awareness:\n" + title + "\n" + (shareUrl || ""))}
-              </p>
-            ) : (
-              <p className="mt-3 text-xs text-zinc-500">Loading share URL…</p>
-            )}
-
             <button
               type="button"
               onClick={copyLink}
