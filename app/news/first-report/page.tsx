@@ -1,7 +1,18 @@
 export const metadata = {
-  title: "The Mechanism of Betrayal | Liberty Soldiers",
-  description:
-    "An investigative report on how truth is abandoned through agreement, conformity, and manufactured consensus.",
+  title: "...",
+  description: "...",
+  openGraph: {
+    title: "...",
+    description: "...",
+    url: "https://libertysoldiers.com/news/dispensationalism-middle-east",
+    images: ["https://libertysoldiers.com/og/dispensationalism.jpg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "...",
+    description: "...",
+    images: ["https://libertysoldiers.com/og/dispensationalism.jpg"],
+  },
 };
 
 export default function NewsArticle() {
