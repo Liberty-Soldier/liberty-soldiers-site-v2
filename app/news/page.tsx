@@ -84,12 +84,10 @@ export default async function NewsPage() {
     items = [];
   }
 
-  const colSize = Math.ceil(items.length / 3) || 0;
-  const cols: Item[][] = [
-    items.slice(0, colSize),
-    items.slice(colSize, colSize * 2),
-    items.slice(colSize * 2),
-  ];
+const cols: Item[][] = [[], [], []];
+items.forEach((it, idx) => {
+  cols[idx % 3].push(it);
+});
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -274,3 +272,4 @@ export default async function NewsPage() {
     </main>
   );
 }
+
