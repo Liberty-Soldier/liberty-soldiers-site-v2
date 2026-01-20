@@ -9,6 +9,7 @@ export type Headline = {
   publishedAt?: number;
   image?: string;
   summary?: string;
+  category?: string;
 };
 
 const parser = new XMLParser({
@@ -56,6 +57,91 @@ function pickDate(it: any): number | undefined {
   if (!t) return undefined;
   const ms = Date.parse(String(t));
   return Number.isFinite(ms) ? ms : undefined;
+}
+
+function categorize(title: string, summary?: string, src?: string): string {
+  const t = `${title} ${summary ?? ""}`.toLowerCase();
+  const s = (src ?? "").toLowerCase();
+
+  // Persecution / suppression
+  if (
+    t.includes("church") ||
+    t.includes("christian") ||
+    t.includes("jewish") ||
+    t.includes("synagogue") ||
+    t.includes("mosque") ||
+    t.includes("pastor") ||
+    t.includes("arrested") ||
+    t.includes("ban") ||
+    t.includes("banned") ||
+    t.includes("hate speech") ||
+    t.includes("blasphemy") ||
+    t.includes("persecution")
+  )
+    return "Persecution Watch";
+
+  // Control systems / surveillance / ID / CBDC
+  if (
+    t.includes("cbdc") ||
+    t.includes("digital currency") ||
+    t.includes("cashless") ||
+    t.includes("biometric") ||
+    t.includes("digital id") ||
+    (t.includes("digital") && t.includes("id")) ||
+    t.includes("facial recognition") ||
+    t.includes("surveillance") ||
+    t.includes("social credit") ||
+    t.includes("vaccine passport") ||
+    t.includes("qr code")
+  )
+    return "Control Systems";
+
+  // Censorship / information control
+  if (
+    t.includes("censorship") ||
+    t.includes("censor") ||
+    t.includes("deplatform") ||
+    t.includes("content moderation") ||
+    t.includes("misinformation") ||
+    t.includes("disinformation") ||
+    (t.includes("speech") && t.includes("law"))
+  )
+    return "Censorship & Speech";
+
+  // Biosecurity / emergency powers
+  if (
+    t.includes("pandemic") ||
+    t.includes("outbreak") ||
+    t.includes("lockdown") ||
+    t.includes("quarantine") ||
+    t.includes("emergency powers") ||
+    t.includes("public health") ||
+    t.includes("who") ||
+    t.includes("bird flu")
+  )
+    return "Biosecurity";
+
+  // War / geopolitics
+  if (
+    t.includes("gaza") ||
+    t.includes("israel") ||
+    t.includes("iran") ||
+    t.includes("russia") ||
+    t.includes("ukraine") ||
+    t.includes("china") ||
+    t.includes("taiwan") ||
+    t.includes("missile") ||
+    t.includes("strike") ||
+    t.includes("ceasefire") ||
+    t.includes("nato") ||
+    t.includes("war")
+  )
+    return "Geopolitics & War";
+
+  // Source hints (optional)
+  if (s.includes("biometricupdate")) return "Control Systems";
+
+  return "General";
 }
 
 function stripHtml(s: any): string {
@@ -194,8 +280,9 @@ function normalizeFeed(feedJson: any, feedUrl: string): Headline[] {
       
       const image = extractImage(it) || undefined;
       const summary = extractSummary(it) || undefined;
+      const category = categorize(title, summary, source);
 
-      return { title, url, source, publishedAt: pickDate(it), image, summary };
+      return { title, url, source, publishedAt: pickDate(it), image, summary, category };
     })
     
     .filter(
