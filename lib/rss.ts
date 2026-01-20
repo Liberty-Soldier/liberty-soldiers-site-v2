@@ -73,9 +73,11 @@ function categorize(title: string, summary?: string, src?: string): string {
     if (s.includes("timesofisrael")) return "Geopolitics & War";
     if (s.includes("reuters")) return "Geopolitics & War";
    
-    // Mainstream baseline briefing sources
-    if (s.includes("bbc")) return "World Briefing";
+    let fallback: string | undefined;
 
+    // Mainstream baseline briefing sources
+    if (s.includes("bbc")) fallback = "World Briefing";
+    if (s.includes("aljazeera")) fallback = "World Briefing";
 
   // Persecution / suppression
   if (
