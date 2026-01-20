@@ -58,7 +58,7 @@ export default async function Home() {
       />
 
       {/* Hero (keep dark overlay for readability on image) */}
-      <section className="relative h-[30vh] sm:h-[38vh] w-full flex items-center">
+      <section className="relative h-[25vh] sm:h-[32vh] w-full flex items-center">
         <div
           className="absolute inset-0 bg-center bg-cover"
           style={{ backgroundImage: "url('/hero.jpg')" }}
@@ -217,6 +217,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
