@@ -13,7 +13,14 @@ export const metadata = {
 
 export const revalidate = 600;
 
-type Item = { title: string; url: string; source: string; publishedAt?: number };
+type Item = {
+  title: string;
+  url: string;
+  source: string;
+  publishedAt?: number;
+  image?: string;
+  summary?: string;
+};
 
 function humanAgo(input?: number | string | Date): string {
   if (!input) return "Just now";
@@ -34,11 +41,45 @@ function humanAgo(input?: number | string | Date): string {
   return `${d}d ago`;
 }
 
+function faviconFromUrl(articleUrl: string): string {
+  try {
+    const u = new URL(articleUrl);
+    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(
+      u.hostname
+    )}&sz=128`;
+  } catch {
+    return "/briefing-fallback.jpg";
+  }
+}
+
+function bulletsFromSummary(summary?: string): string[] {
+  if (!summary) return [];
+  const clean = summary.replace(/\s+/g, " ").trim();
+  if (!clean) return [];
+
+  // Try sentence split first
+  const parts = clean
+    .split(/(?:\.|\!|\?)\s+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  if (parts.length >= 2) {
+    return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
+  }
+
+  // Fallback: split into chunks (~90 chars) if no punctuation
+  const chunk1 = clean.slice(0, 90).trim();
+  const chunk2 = clean.slice(90, 180).trim();
+  const out = [chunk1, chunk2].filter(Boolean);
+
+  return out.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
+}
+
 export default async function NewsPage() {
   let items: Item[] = [];
 
   try {
-    items = await fetchAllHeadlines();
+    items = (await fetchAllHeadlines()) as Item[];
   } catch {
     items = [];
   }
@@ -60,10 +101,10 @@ export default async function NewsPage() {
               News Feed
             </h1>
             <p className="mt-1 text-zinc-600">
-              Live headlines relevant to world events and prophetic times.
+              External headlines for situational awareness.
             </p>
             <p className="mt-1 text-xs text-zinc-500">
-              External sources for situational awareness. Not endorsements.
+              External sources are not endorsements.
             </p>
           </div>
 
@@ -87,8 +128,8 @@ export default async function NewsPage() {
               </p>
             </div>
 
-            <a href="/news" className="text-sm text-zinc-700 hover:text-zinc-900">
-              View all →
+            <a href="/" className="text-sm text-zinc-700 hover:text-zinc-900">
+              Home →
             </a>
           </div>
 
@@ -104,8 +145,8 @@ export default async function NewsPage() {
                 How Dispensationalism Scripts the Middle East
               </h3>
               <p className="mt-2 text-sm text-zinc-700">
-                From Sunday sermons to congressional votes, a theology that reshapes
-                foreign policy.
+                From Sunday sermons to congressional votes, a theology that
+                reshapes foreign policy.
               </p>
               <span className="mt-3 inline-block text-xs text-zinc-600">
                 Read →
@@ -138,10 +179,10 @@ export default async function NewsPage() {
           <div className="mb-6">
             <h2 className="text-2xl sm:text-3xl font-bold">Latest Headlines</h2>
             <p className="mt-1 text-zinc-600">
-              External headlines for situational awareness.
+              Click a headline to open the original source.
             </p>
             <p className="mt-1 text-xs text-zinc-500">
-              External sources are not endorsements.
+              Use Share to post an X-friendly Liberty Soldiers link.
             </p>
           </div>
 
@@ -166,48 +207,60 @@ export default async function NewsPage() {
                         ? `&p=${encodeURIComponent(String(h.publishedAt))}`
                         : "");
 
-                    const wrapperHrefRel =
-                      `/news/share?u=${encodeURIComponent(h.url)}` +
-                      `&t=${encodeURIComponent(h.title)}` +
-                      `&s=${encodeURIComponent(h.source)}` +
-                      (h.publishedAt
-                        ? `&p=${encodeURIComponent(String(h.publishedAt))}`
-                        : "");
+                    const thumb = h.image || faviconFromUrl(h.url);
+                    const bullets = bulletsFromSummary(h.summary);
 
                     return (
                       <div
                         key={`${h.url}-${idx}`}
                         className="rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300"
                       >
-                        <span className="text-[11px] uppercase tracking-wide text-zinc-500">
-                          {h.source}
-                        </span>
+                        {/* Thumbnail */}
+                        <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
+                          <img
+                            src={thumb}
+                            alt=""
+                            className="h-32 w-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
 
-                        {/* Default click goes to Liberty Soldiers wrapper (we'll revert next step if you want) */}
-                        <a href={wrapperHrefRel} className="block mt-1">
+                        <div className="flex items-start justify-between gap-3">
+                          <span className="text-[11px] uppercase tracking-wide text-zinc-500">
+                            {h.source}
+                          </span>
+
+                          <span className="text-xs text-zinc-500 whitespace-nowrap">
+                            {humanAgo(h.publishedAt)}
+                          </span>
+                        </div>
+
+                        {/* Headline click goes to original */}
+                        <a
+                          href={h.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block mt-1"
+                        >
                           <h3 className="font-semibold leading-snug hover:underline">
                             {h.title}
                           </h3>
                         </a>
 
-                        <div className="mt-2 flex items-center justify-between gap-3">
-                          <span className="text-xs text-zinc-500">
-                            {humanAgo(h.publishedAt)}
-                          </span>
+                        {/* 2 bullets from RSS summary/description */}
+                        {bullets.length > 0 && (
+                          <ul className="mt-3 space-y-1 text-sm text-zinc-700">
+                            {bullets.map((b, ii) => (
+                              <li key={ii} className="flex gap-2">
+                                <span className="text-zinc-400">•</span>
+                                <span className="leading-snug">{b}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
 
-                          <div className="flex items-center gap-3">
-                            <a
-                              href={h.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-xs text-zinc-600 hover:text-zinc-900 underline-offset-4 hover:underline"
-                              aria-label="Open original source in a new tab"
-                            >
-                              Open original
-                            </a>
-
-                            <ShareButton url={shareHrefAbs} title={h.title} />
-                          </div>
+                        <div className="mt-3 flex items-center justify-end">
+                          <ShareButton url={shareHrefAbs} title={h.title} />
                         </div>
                       </div>
                     );
@@ -221,8 +274,3 @@ export default async function NewsPage() {
     </main>
   );
 }
-
-
-
-
-
