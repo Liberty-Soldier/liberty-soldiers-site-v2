@@ -1,69 +1,53 @@
 "use client";
 
 import { useState } from "react";
+import { copyText } from "@/lib/copy";
 
 export default function ShareButton({
-  url,
+  wrapperUrl,
+  sourceUrl,
   title,
 }: {
-  url: string;
+  wrapperUrl: string; // Liberty Soldiers wrapper link
+  sourceUrl: string;  // Original article link
   title?: string;
 }) {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<"source" | null>(null);
 
-  const copy = async () => {
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), 1200);
-        return;
-      }
-    } catch {
-      // ignore
+  const copySource = async () => {
+    const ok = await copyText(sourceUrl);
+    if (ok) {
+      setCopied("source");
+      window.setTimeout(() => setCopied(null), 1200);
+    } else {
+      window.prompt("Copy this link:", sourceUrl);
     }
-    window.prompt("Copy this link:", url);
   };
 
-  const share = async () => {
-    // Desktop: don't use share sheet (Windows targets are flaky)
-    // Detect "desktop-ish" by the lack of touch.
-    const isDesktop =
-      typeof window !== "undefined" &&
-      !("ontouchstart" in window) &&
-      (navigator.maxTouchPoints ?? 0) === 0;
-
-    if (isDesktop) {
-      await copy();
-      return;
-    }
-
-    // Mobile: try native share sheet
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: title || "Liberty Soldiers",
-          text: title || "Shared for situational awareness",
-          url,
-        } as any);
-        return;
-      } catch {
-        // user cancelled or share failed → fall back to copy
-      }
-    }
-
-    await copy();
-  };
+  // Mobile-friendly X intent:
+  // Put the URL inside text for best compatibility.
+  const xIntent = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    `${title || "Shared via Liberty Soldiers"} ${wrapperUrl}`
+  )}`;
 
   return (
-    <button
-      type="button"
-      onClick={share}
-      className="inline-flex items-center rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-800 hover:border-zinc-300"
-      aria-label={title ? `Share: ${title}` : "Share"}
-    >
-      {copied ? "Copied ✓" : "Share"}
-    </button>
+    <div className="flex items-center gap-2">
+      <a
+        href={xIntent}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-800 hover:border-zinc-300"
+      >
+        Post to X
+      </a>
+
+      <button
+        type="button"
+        onClick={copySource}
+        className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-800 hover:border-zinc-300"
+      >
+        {copied === "source" ? "Copied ✓" : "Copy source"}
+      </button>
+    </div>
   );
 }
-
