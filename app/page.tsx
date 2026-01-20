@@ -274,6 +274,9 @@ export default async function Home() {
         </div>
       </div>
     </div>
+  </div>
+</section>
+
 
       {/* Bottom context */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
@@ -297,6 +300,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
