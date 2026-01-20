@@ -67,7 +67,7 @@ export default async function HomeHeadlines() {
 
   if (top.length === 0) {
     return (
-      <div className="mt-6 rounded-xl border border-white/10 p-6 text-zinc/700">
+      <div className="mt-6 rounded-xl border border-zinc-400 p-6 text-zinc/700">
         No headlines yet.
       </div>
     );
@@ -88,10 +88,10 @@ export default async function HomeHeadlines() {
         return (
           <div
             key={`${h.url}-${idx}`}
-            className="rounded-xl border border-white/10 p-4 bg-white/5 hover:border-white/30 transition"
+            className="rounded-xl border border-zinc-400 p-4 bg-zinc-400 hover:border-zinc-400 transition"
           >
             {/* Thumbnail */}
-            <div className="mb-3 overflow-hidden rounded-lg border border-white/10 bg-black/20">
+            <div className="mb-3 overflow-hidden rounded-lg border border-zinc-400 bg-black/20">
               <img
                 src={thumb}
                 alt=""
