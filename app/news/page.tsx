@@ -263,7 +263,7 @@ items.forEach((it, idx) => {
                         )}
 
                         <div className="mt-3 flex items-center justify-end">
-                          <ShareButton url={shareHrefAbs} title={h.title} />
+                          <ShareButton wrapperUrl={shareHrefAbs} sourceUrl={h.url} title={h.title} />
                         </div>
                       </div>
                     );
@@ -277,6 +277,7 @@ items.forEach((it, idx) => {
     </main>
   );
 }
+
 
 
 
