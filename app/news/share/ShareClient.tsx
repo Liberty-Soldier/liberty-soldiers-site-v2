@@ -145,6 +145,15 @@ export default function ShareClient({ searchParams }: SP) {
     await copyLink();
   };
 
+  const xIntentUrl = () => {
+  const href =
+    typeof window !== "undefined" ? window.location.href : "";
+  const text = "Shared for situational awareness";
+  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    text
+  )}&url=${encodeURIComponent(href)}`;
+};
+
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -214,13 +223,14 @@ export default function ShareClient({ searchParams }: SP) {
               Open original source →
             </a>
 
-            <button
-              type="button"
-              onClick={doShare}
-              className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
-            >
-              Share
-            </button>
+           <a
+            href={xIntentUrl()}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
+          >
+            Post to X
+          </a>
 
             <button
               type="button"
