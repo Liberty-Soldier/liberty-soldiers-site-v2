@@ -35,7 +35,7 @@ const LATEST_REPORT = {
   href: "/news/dispensationalism-middle-east",
   desc:
     "From Sunday sermons to congressional votes, a theology that reshapes foreign policy.",
-  thumb: "/og/dispensationalism.jpg", // put file in /public/og/
+  thumb: "/dispensationalism.jpg", // put file in /public/og/
 };
 
 function HeadlinesFallback() {
@@ -52,7 +52,7 @@ export default async function Home() {
   const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
 
   // Option A (recommended): use a local thumbnail you control
-  const VIDEO_THUMB = "/og/video.jpg"; // put file in /public/og/
+  const VIDEO_THUMB = "/video.jpg"; // put file in /public/og/
 
   // Option B (no file needed): YouTube thumbnail (swap in if you want)
   // const VIDEO_THUMB = `https://img.youtube.com/vi/${VIDEO_ID}/hqdefault.jpg`;
@@ -295,6 +295,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
