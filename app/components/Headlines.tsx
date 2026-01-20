@@ -76,13 +76,8 @@ export default async function HomeHeadlines() {
   return (
     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {top.map((h, idx) => {
-        const shareHrefAbs =
-          `https://libertysoldiers.com/news/share?u=${encodeURIComponent(h.url)}` +
-          `&t=${encodeURIComponent(h.title)}` +
-          `&s=${encodeURIComponent(h.source)}` +
-          (h.publishedAt ? `&p=${encodeURIComponent(String(h.publishedAt))}` : "") +
-          (h.image ? `&i=${encodeURIComponent(h.image)}` : "") +
-          (h.summary ? `&x=${encodeURIComponent(h.summary)}` : "");
+       const shareHrefAbs =
+        `https://libertysoldiers.com/news/share?u=${encodeURIComponent(h.url)}`;
 
         const thumb = h.image || faviconFromUrl(h.url);
         const bullets = bulletsFromSummary(h.summary);
