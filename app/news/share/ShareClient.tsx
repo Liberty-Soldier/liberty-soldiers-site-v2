@@ -151,14 +151,15 @@ export default function ShareClient({ searchParams }: SP) {
     await copyLink();
   };
 
-  const xIntentUrl = () => {
-  const href = shareUrl || "";
+  const postToX = () => {
+  const href = shareUrl || window.location.href;
 
-  const text = "Shared for situational awareness";
+  // Put the link directly in the text so it ALWAYS shows
+  const msg = `Shared for situational awareness:\n${title}\n${href}`;
 
-  return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-    text
-  )}&url=${encodeURIComponent(href)}`;
+  const intent = `https://x.com/intent/post?text=${encodeURIComponent(msg)}`;
+
+  window.open(intent, "_blank", "noopener,noreferrer");
 };
 
   return (
@@ -230,14 +231,13 @@ export default function ShareClient({ searchParams }: SP) {
               Open original source →
             </a>
 
-           <a
-            href={xIntentUrl()}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
-          >
-            Post to X
-          </a>
+           <button
+              type="button"
+              onClick={postToX}
+              className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
+            >
+              Post to X
+            </button>
 
             <button
               type="button"
