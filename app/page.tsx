@@ -108,8 +108,7 @@ export default async function Home() {
               </p>
 
               <p className="mt-1 text-xs text-zinc-500">
-                External sources are not endorsements. Liberty Soldiers publishes
-                original reporting above.
+                External sources are not endorsements.
               </p>
             </div>
 
@@ -295,6 +294,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
