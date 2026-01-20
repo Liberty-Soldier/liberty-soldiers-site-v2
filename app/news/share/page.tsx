@@ -53,13 +53,13 @@ export async function generateMetadata({ searchParams }: SP): Promise<Metadata> 
       url: canonical,
       siteName: "Liberty Soldiers",
       type: "article",
-      images: ["/og.jpg"],
+      images: ["https://libertysoldiers.com/og.jpg"],
     },
     twitter: {
       card: "summary_large_image",
       title: pageTitle,
       description: desc,
-      images: ["/og.jpg"],
+      images: ["https://libertysoldiers.com/og.jpg"],
     },
   };
 }
