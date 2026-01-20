@@ -66,7 +66,7 @@ export default async function HomeHeadlines() {
 
   if (top.length === 0) {
     return (
-      <div className="mt-6 rounded-xl border border-white/10 p-6 text-white/70">
+      <div className="mt-6 rounded-xl border border-white/10 p-6 text-zinc/700">
         No headlines yet.
       </div>
     );
@@ -99,7 +99,7 @@ export default async function HomeHeadlines() {
               />
             </div>
 
-            <span className="text-[11px] uppercase tracking-wide text-white/60">
+            <span className="text-[11px] uppercase tracking-wide text-zinc-400">
               {h.source}
             </span>
 
@@ -117,10 +117,10 @@ export default async function HomeHeadlines() {
 
             {/* 2 bullets from RSS summary/description (free) */}
             {bullets.length > 0 && (
-              <ul className="mt-3 space-y-1 text-sm text-white/75">
+              <ul className="mt-3 space-y-1 text-sm text-zinc-400">
                 {bullets.map((b, i) => (
                   <li key={i} className="flex gap-2">
-                    <span className="text-white/40">•</span>
+                    <span className="text-zinc-400">•</span>
                     <span className="leading-snug">{b}</span>
                   </li>
                 ))}
@@ -128,7 +128,7 @@ export default async function HomeHeadlines() {
             )}
 
             <div className="mt-3 flex items-center justify-between gap-3">
-              <span className="text-xs text-white/50">
+              <span className="text-xs text-zinc-400">
                 {humanAgo(h.publishedAt)}
               </span>
 
