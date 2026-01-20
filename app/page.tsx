@@ -1,6 +1,7 @@
 // app/page.tsx
 import { Suspense } from "react";
 import HomeHeadlines from "./components/Headlines";
+import ShareButton from "./news/ShareButton";
 
 export const revalidate = 600;
 
@@ -27,6 +28,16 @@ export const metadata = {
   },
 };
 
+const SITE = "https://libertysoldiers.com";
+
+const LATEST_REPORT = {
+  title: "How Dispensationalism Scripts the Middle East",
+  href: "/news/dispensationalism-middle-east",
+  desc:
+    "From Sunday sermons to congressional votes, a theology that reshapes foreign policy.",
+  thumb: "/og/dispensationalism.jpg", // put file in /public/og/
+};
+
 function HeadlinesFallback() {
   return (
     <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 text-zinc-600">
@@ -39,6 +50,12 @@ export default async function Home() {
   const VIDEO_ID = "WeFeWyonzgc";
   const VIDEO_TITLE = "Latest Liberty Soldiers Video";
   const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
+
+  // Option A (recommended): use a local thumbnail you control
+  const VIDEO_THUMB = "/og/video.jpg"; // put file in /public/og/
+
+  // Option B (no file needed): YouTube thumbnail (swap in if you want)
+  // const VIDEO_THUMB = `https://img.youtube.com/vi/${VIDEO_ID}/hqdefault.jpg`;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -77,7 +94,7 @@ export default async function Home() {
         </div>
       </section>
 
-       {/* Latest Headlines (external preview) */}
+      {/* Latest Headlines (external preview) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between gap-6">
@@ -134,22 +151,50 @@ export default async function Home() {
             </a>
           </div>
 
-          <a
-            href="/news/dispensationalism-middle-east"
-            className="mt-6 block w-full rounded-2xl border border-zinc-200 bg-white p-6 transition hover:border-zinc-300"
-          >
-            <div className="flex items-center justify-between gap-4">
-              <h3 className="text-xl font-bold text-zinc-900">
-                How Dispensationalism Scripts the Middle East
-              </h3>
-              <span className="text-sm text-zinc-600">Read →</span>
-            </div>
+          <div className="mt-6 block w-full rounded-2xl border border-zinc-200 bg-white p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <img
+                  src={LATEST_REPORT.thumb}
+                  alt=""
+                  className="h-20 w-32 rounded-xl border border-zinc-200 object-cover bg-zinc-100"
+                  loading="lazy"
+                />
 
-            <p className="mt-2 max-w-3xl text-zinc-700">
-              From Sunday sermons to congressional votes, a theology that reshapes
-              foreign policy.
-            </p>
-          </a>
+                <div>
+                  <a href={LATEST_REPORT.href} className="block">
+                    <h3 className="text-xl font-bold text-zinc-900 hover:underline">
+                      {LATEST_REPORT.title}
+                    </h3>
+                  </a>
+
+                  <p className="mt-2 max-w-3xl text-zinc-700">
+                    {LATEST_REPORT.desc}
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <a
+                      href={LATEST_REPORT.href}
+                      className="text-sm font-medium text-zinc-900 hover:underline"
+                    >
+                      Read →
+                    </a>
+
+                    {/* Native share (short URL) */}
+                    <ShareButton
+                      wrapperUrl={`${SITE}${LATEST_REPORT.href}`}
+                      title={LATEST_REPORT.title}
+                      label="Copy link"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="hidden sm:block text-sm text-zinc-600">
+                Latest →
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -175,23 +220,56 @@ export default async function Home() {
             </a>
           </div>
 
-          <a
-            href={VIDEO_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-6 block rounded-2xl border border-zinc-200 bg-white p-6 hover:border-zinc-300 transition"
-          >
-            <span className="text-[11px] uppercase tracking-wide text-zinc-500">
-              YouTube
-            </span>
-            <h3 className="mt-2 text-xl font-bold leading-snug text-zinc-900">
-              {VIDEO_TITLE}
-            </h3>
-            <p className="mt-2 text-zinc-700 max-w-3xl">
-              Primary video briefing. External playback.
-            </p>
-            <div className="mt-4 text-sm text-zinc-600">Watch →</div>
-          </a>
+          <div className="mt-6 block rounded-2xl border border-zinc-200 bg-white p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <img
+                  src={VIDEO_THUMB}
+                  alt=""
+                  className="h-20 w-32 rounded-xl border border-zinc-200 object-cover bg-zinc-100"
+                  loading="lazy"
+                />
+
+                <div>
+                  <span className="text-[11px] uppercase tracking-wide text-zinc-500">
+                    YouTube
+                  </span>
+
+                  <a href={VIDEO_URL} target="_blank" rel="noreferrer" className="block">
+                    <h3 className="mt-2 text-xl font-bold leading-snug text-zinc-900 hover:underline">
+                      {VIDEO_TITLE}
+                    </h3>
+                  </a>
+
+                  <p className="mt-2 text-zinc-700 max-w-3xl">
+                    Primary video briefing. External playback.
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <a
+                      href={VIDEO_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-medium text-zinc-900 hover:underline"
+                    >
+                      Watch →
+                    </a>
+
+                    {/* Share your site page (recommended) OR the YouTube URL */}
+                    <ShareButton
+                      wrapperUrl={`${SITE}/videos`}
+                      title={VIDEO_TITLE}
+                      label="Copy link"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="hidden sm:block text-sm text-zinc-600">
+                Featured →
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -217,17 +295,6 @@ export default async function Home() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
