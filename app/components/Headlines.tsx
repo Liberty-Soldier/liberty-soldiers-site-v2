@@ -33,7 +33,7 @@ export default async function HomeHeadlines() {
     items = [];
   }
 
-  const top = items.slice(0, 14);
+  const top = items.slice(0, 15);
 
   if (top.length === 0) {
     return (
@@ -80,14 +80,6 @@ export default async function HomeHeadlines() {
               <span className="text-xs text-white/50">{humanAgo(h.publishedAt)}</span>
 
               <div className="flex items-center gap-3">
-                <a
-                  href={h.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-xs text-white/60 hover:text-white underline-offset-4 hover:underline"
-                >
-                  Open original
-                </a>
 
                 <ShareButton url={shareHrefAbs} title={h.title} />
               </div>
