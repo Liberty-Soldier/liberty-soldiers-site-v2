@@ -246,11 +246,12 @@ export default function ShareClient({ searchParams }: SP) {
 
             <button
               type="button"
-              onClick={doShare}
+              onClick={copyLink}
               className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm text-zinc-800 hover:border-zinc-300"
             >
-              Share…
+              {copied ? "Copied ✓" : "Copy link"}
             </button>
+
           </div>
 
           {!url ? (
