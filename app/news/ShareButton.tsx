@@ -7,51 +7,32 @@ export default function ShareButton({
   title,
 }: {
   url: string;
-  title: string;
+  title?: string;
 }) {
   const [copied, setCopied] = useState(false);
 
-  async function onShare() {
-    const nav = (globalThis as any).navigator as any;
-
-    // Native share sheet (mobile + some desktop browsers)
+  const copy = async () => {
     try {
-      if (nav && typeof nav.share === "function") {
-        await nav.share({ title, url });
-        return;
-      }
-    } catch {
-      // user cancelled share sheet; do nothing
-      return;
-    }
-
-    // Fallback: copy link (runtime-safe)
-    try {
-      if (nav?.clipboard?.writeText) {
-        await nav.clipboard.writeText(url);
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
         setCopied(true);
-        setTimeout(() => setCopied(false), 1200);
+        window.setTimeout(() => setCopied(false), 1200);
         return;
       }
-      throw new Error("clipboard not available");
     } catch {
-      // Last resort prompt
-      try {
-        (globalThis as any).prompt?.("Copy this Liberty Soldiers link:", url);
-      } catch {
-        // ignore
-      }
+      // ignore
     }
-  }
+    window.prompt("Copy this link:", url);
+  };
 
   return (
     <button
       type="button"
-      onClick={onShare}
-      className="text-xs text-zinc-700 hover:text-zinc-900 underline-offset-4 hover:underline"
-      aria-label="Share Liberty Soldiers link"
+      onClick={copy}
+      className="inline-flex items-center rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-800 hover:border-zinc-300"
+      aria-label={title ? `Copy share link for: ${title}` : "Copy share link"}
     >
-      {copied ? "Copied" : "Share"}
+      {copied ? "Copied ✓" : "Share"}
     </button>
   );
 }
