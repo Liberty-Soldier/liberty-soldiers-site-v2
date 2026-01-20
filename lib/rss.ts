@@ -63,6 +63,20 @@ function categorize(title: string, summary?: string, src?: string): string {
   const t = `${title} ${summary ?? ""}`.toLowerCase();
   const s = (src ?? "").toLowerCase();
 
+      // Strong source-based hints (safe defaults)
+    if (s.includes("biometricupdate")) return "Control Systems";
+    if (s.includes("reclaimthenet")) return "Censorship & Speech";
+    if (s.includes("expose-news")) return "Control Systems";
+    if (s.includes("endtimeheadlines")) return "Persecution Watch";
+    if (s.includes("prophecynewswatch")) return "Persecution Watch";
+    if (s.includes("israel365news")) return "Geopolitics & War";
+    if (s.includes("timesofisrael")) return "Geopolitics & War";
+    if (s.includes("reuters")) return "Geopolitics & War";
+   
+    // Mainstream baseline briefing sources
+    if (s.includes("bbc")) return "World Briefing";
+
+
   // Persecution / suppression
   if (
     t.includes("church") ||
