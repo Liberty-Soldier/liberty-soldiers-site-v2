@@ -11,22 +11,7 @@ export default function ShareButton({
 }) {
   const [copied, setCopied] = useState(false);
 
-  const share = async () => {
-    // Try native share first (mobile)
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: title || "Liberty Soldiers",
-          text: title || "Shared for situational awareness",
-          url,
-        });
-        return;
-      } catch {
-        // user cancelled or share failed — fall through to copy
-      }
-    }
-
-    // Fallback: copy link
+  const copy = async () => {
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(url);
@@ -37,9 +22,37 @@ export default function ShareButton({
     } catch {
       // ignore
     }
-
-    // Last fallback
     window.prompt("Copy this link:", url);
+  };
+
+  const share = async () => {
+    // Desktop: don't use share sheet (Windows targets are flaky)
+    // Detect "desktop-ish" by the lack of touch.
+    const isDesktop =
+      typeof window !== "undefined" &&
+      !("ontouchstart" in window) &&
+      (navigator.maxTouchPoints ?? 0) === 0;
+
+    if (isDesktop) {
+      await copy();
+      return;
+    }
+
+    // Mobile: try native share sheet
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title || "Liberty Soldiers",
+          text: title || "Shared for situational awareness",
+          url,
+        } as any);
+        return;
+      } catch {
+        // user cancelled or share failed → fall back to copy
+      }
+    }
+
+    await copy();
   };
 
   return (
@@ -53,3 +66,4 @@ export default function ShareButton({
     </button>
   );
 }
+
