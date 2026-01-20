@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function safeDecode(input: string) {
   try {
@@ -84,6 +84,12 @@ type SP = { searchParams: Record<string, string | string[] | undefined> };
 export default function ShareClient({ searchParams }: SP) {
   const [copied, setCopied] = useState(false);
 
+    const [shareUrl, setShareUrl] = useState("");
+
+  useEffect(() => {
+    setShareUrl(window.location.href);
+  }, []);
+
   const uRaw = searchParams.u;
   const tRaw = searchParams.t;
   const sRaw = searchParams.s;
@@ -146,9 +152,10 @@ export default function ShareClient({ searchParams }: SP) {
   };
 
   const xIntentUrl = () => {
-  const href =
-    typeof window !== "undefined" ? window.location.href : "";
+  const href = shareUrl || "";
+
   const text = "Shared for situational awareness";
+
   return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     text
   )}&url=${encodeURIComponent(href)}`;
