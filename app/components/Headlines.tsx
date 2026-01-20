@@ -33,7 +33,7 @@ export default async function HomeHeadlines() {
     items = [];
   }
 
-  const top = items.slice(0, 6);
+  const top = items.slice(0, 14);
 
   if (top.length === 0) {
     return (
@@ -70,7 +70,7 @@ export default async function HomeHeadlines() {
             </span>
 
             {/* Default click goes to Liberty Soldiers wrapper */}
-            <a href={wrapperHrefRel} className="block mt-1">
+            <a href=href={h.url} className="block mt-1">
               <h3 className="font-semibold leading-snug hover:underline">
                 {h.title}
               </h3>
