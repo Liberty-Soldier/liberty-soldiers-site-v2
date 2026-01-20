@@ -147,27 +147,17 @@ export default function ShareClient({ searchParams }: SP) {
     await copyLink();
   };
 
-  // Mobile-proof: copy the full post payload first, then open X compose.
-  const postToX = async () => {
-    const href = shareUrl || window.location.href;
-    const msg = "Shared for situational awareness:\n" + title + "\n" + href;
+ const postToX = () => {
+  const href = window.location.href;
+  const text = title || "Shared via Liberty Soldiers";
+  const intent =
+    "https://twitter.com/intent/tweet?text=" +
+    encodeURIComponent(text) +
+    "&url=" +
+    encodeURIComponent(href);
 
-    // Copy first (so if X opens blank, user can paste)
-    try {
-      if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(msg);
-        setCopied(true);
-        window.setTimeout(() => setCopied(false), 1200);
-      }
-    } catch {
-      // ignore
-    }
-
-    const intent = "https://x.com/intent/post?text=" + encodeURIComponent(msg);
-
-    // Use same-tab navigation (avoids popup blockers / app-handlers weirdness)
-    window.location.href = intent;
-  };
+  window.open(intent, "_blank", "noopener,noreferrer");
+};
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
