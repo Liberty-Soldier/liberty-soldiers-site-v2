@@ -7,6 +7,8 @@ export type Headline = {
   url: string;
   source: string;
   publishedAt?: number;
+  image?: string;
+  summary?: string;
 };
 
 const parser = new XMLParser({
@@ -54,6 +56,71 @@ function pickDate(it: any): number | undefined {
   if (!t) return undefined;
   const ms = Date.parse(String(t));
   return Number.isFinite(ms) ? ms : undefined;
+}
+
+function stripHtml(s: any): string {
+  const raw = String(s ?? "");
+  // remove tags + decode common entities minimally
+  return raw
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<\/?[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractSummary(it: any): string {
+  // Prefer short description/summary first
+  const cand =
+    it?.description ??
+    it?.summary ??
+    it?.["content:encoded"] ??
+    it?.content ??
+    "";
+
+  const text = stripHtml(Array.isArray(cand) ? cand[0] : cand);
+  // keep it reasonably short so cards don’t blow up
+  if (!text) return "";
+  return text.length > 360 ? text.slice(0, 357).trimEnd() + "…" : text;
+}
+
+function extractImage(it: any): string {
+  // RSS enclosure: <enclosure url="..." type="image/jpeg" />
+  const enc = it?.enclosure;
+  const encUrl = enc?.["@_url"] || enc?.url;
+  const encType = enc?.["@_type"] || enc?.type;
+  if (encUrl && (!encType || String(encType).startsWith("image/"))) {
+    const u = normalizeUrl(encUrl);
+    if (u) return u;
+  }
+
+  // Media RSS: <media:thumbnail url="..." />
+  const mt = it?.["media:thumbnail"];
+  const mtArr = arrify(mt);
+  for (const m of mtArr) {
+    const u = normalizeUrl(m?.["@_url"] || m?.url);
+    if (u) return u;
+  }
+
+  // Media RSS: <media:content url="..." />
+  const mc = it?.["media:content"];
+  const mcArr = arrify(mc);
+  for (const m of mcArr) {
+    const u = normalizeUrl(m?.["@_url"] || m?.url);
+    const t = String(m?.["@_type"] || m?.type || "");
+    if (u && (!t || t.startsWith("image/"))) return u;
+  }
+
+  // Some feeds include <image><url>…</url></image> inside item
+  const img = it?.image?.url || it?.image;
+  const u2 = normalizeUrl(img);
+  if (u2) return u2;
+
+  return "";
 }
 
 /* -------------------------------------------------- */
@@ -124,8 +191,13 @@ function normalizeFeed(feedJson: any, feedUrl: string): Headline[] {
       const rawLink = extractLink(it);
       const url = normalizeUrl(rawLink);
       const source = host(url) || sourceFallback;
-      return { title, url, source, publishedAt: pickDate(it) };
+      
+      const image = extractImage(it) || undefined;
+      const summary = extractSummary(it) || undefined;
+
+      return { title, url, source, publishedAt: pickDate(it), image, summary };
     })
+    
     .filter(
       (h) =>
         h.title &&
@@ -170,25 +242,36 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
     }
   }
 
-  // pinned first
-  const pinned: Headline[] = PINNED_LINKS.map((p) => ({
-    title: p.title,
-    url: p.url,
-    source: p.source ? String(p.source) : host(p.url),
-    publishedAt: undefined,
-  }));
+// pinned first (always stay on top)
+const pinned: Headline[] = PINNED_LINKS.map((p) => ({
+  title: p.title,
+  url: p.url,
+  source: p.source ? String(p.source) : host(p.url),
+  publishedAt: undefined,
+  image: undefined,
+  summary: undefined,
+}));
 
-  // de-dup by URL
-  const seen = new Set<string>();
-  const unique = [...pinned, ...all].filter((h) => {
-    const key = h.url.trim();
-    if (!key || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+// de-dup by URL (pinned take priority)
+const seen = new Set<string>();
 
-  // sort newest → oldest (pinned without dates remain at top)
-  unique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+const pinnedUnique = pinned.filter((h) => {
+  const key = h.url.trim();
+  if (!key || seen.has(key)) return false;
+  seen.add(key);
+  return true;
+});
 
-  return unique;
+const restUnique = all.filter((h) => {
+  const key = h.url.trim();
+  if (!key || seen.has(key)) return false;
+  seen.add(key);
+  return true;
+});
+
+// sort only non-pinned items newest → oldest
+restUnique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+
+// pinned always first, then sorted feed
+return [...pinnedUnique, ...restUnique];
 }
