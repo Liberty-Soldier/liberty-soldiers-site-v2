@@ -20,6 +20,7 @@ type Item = {
   publishedAt?: number;
   image?: string;
   summary?: string;
+  category?: string;
 };
 
 function humanAgo(input?: number | string | Date): string {
@@ -233,6 +234,14 @@ items.forEach((it, idx) => {
                           </span>
                         </div>
 
+                        {h.category && (
+                          <div className="mt-2">
+                            <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-700">
+                              {h.category}
+                            </span>
+                          </div>
+                          )}
+
                         {/* Headline click goes to original */}
                         <a
                           href={h.url}
@@ -272,4 +281,5 @@ items.forEach((it, idx) => {
     </main>
   );
 }
+
 
