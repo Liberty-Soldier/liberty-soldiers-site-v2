@@ -70,7 +70,7 @@ export default async function HomeHeadlines() {
             </span>
 
             {/* Default click goes to Liberty Soldiers wrapper */}
-            <a href=href={h.url} className="block mt-1">
+            <a href={h.url} target="_blank" rel="noreferrer" className="block mt-1">
               <h3 className="font-semibold leading-snug hover:underline">
                 {h.title}
               </h3>
