@@ -241,8 +241,6 @@ items.forEach((it, idx) => {
                         {/* Headline click goes to original */}
                         <a
                           href={h.url}
-                          target="_blank"
-                          rel="noreferrer"
                           className="block mt-1"
                         >
                           <h3 className="font-semibold leading-snug hover:underline">
@@ -277,6 +275,7 @@ items.forEach((it, idx) => {
     </main>
   );
 }
+
 
 
 
