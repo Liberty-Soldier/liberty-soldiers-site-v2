@@ -52,7 +52,6 @@ function bulletsFromSummary(summary?: string): string[] {
   const clean = cleanSummary(summary);
   if (!clean) return [];
 
-  // If the feed already includes bullet separators
   const preBullets = clean
     .split(/(?:•|·|\u2022|\s-\s|\s—\s)/)
     .map((s) => s.trim())
@@ -64,7 +63,6 @@ function bulletsFromSummary(summary?: string): string[] {
       .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
   }
 
-  // Sentence split
   const parts = clean
     .split(/(?<=[.!?])\s+/)
     .map((s) => s.trim())
@@ -72,7 +70,6 @@ function bulletsFromSummary(summary?: string): string[] {
 
   if (parts.length >= 2) return parts.slice(0, 2);
 
-  // Fallback chunking
   const chunk1 = clean.slice(0, 95).trim();
   const chunk2 = clean.slice(95, 190).trim();
 
@@ -110,50 +107,42 @@ export default function ShareClient({ searchParams }: SP) {
   const bullets = bulletsFromSummary(summary);
 
   const copyLink = async () => {
+    const href = window.location.href;
+
     try {
-      const href = window.location.href;
-      if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      if (
+        navigator.clipboard &&
+        typeof navigator.clipboard.writeText === "function"
+      ) {
         await navigator.clipboard.writeText(href);
         setCopied(true);
-        setTimeout(() => setCopied(false), 1200);
+        window.setTimeout(() => setCopied(false), 1200);
         return;
       }
-      window.prompt("Copy this link:", href);
     } catch {
-      // ignore
+      // ignore and fall through to prompt
     }
+
+    window.prompt("Copy this link:", href);
   };
 
   const doShare = async () => {
-  const href = window.location.href;
+    const href = window.location.href;
 
-  // Mobile share sheet when available
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: "Shared via Liberty Soldiers",
-        text: title,
-        url: href,
-      } as any);
-      return;
-    } catch {
-      // user canceled — fall through to copy
-    }
-  }
-
-  // Desktop fallback: always copy
-  await copyLink();
-};
-
-      if (navigator.share) {
-        await navigator.share(shareData);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "Shared via Liberty Soldiers",
+          text: title,
+          url: href,
+        } as any);
         return;
+      } catch {
+        // user cancelled; fall back to copy
       }
-
-      await copyLink();
-    } catch {
-      // ignore
     }
+
+    await copyLink();
   };
 
   return (
@@ -211,8 +200,8 @@ export default function ShareClient({ searchParams }: SP) {
           )}
 
           <p className="mt-4 text-sm text-zinc-700">
-            This link is shared for situational awareness. External sources are not
-            endorsements. Liberty Soldiers provides context and analysis.
+            This link is shared for situational awareness. External sources are
+            not endorsements. Liberty Soldiers provides context and analysis.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -250,8 +239,8 @@ export default function ShareClient({ searchParams }: SP) {
         </div>
 
         <p className="mt-6 text-xs text-zinc-500">
-          Tip: use “Open original source” for the full article. This page exists to
-          preserve context when shared on social platforms.
+          Tip: use “Open original source” for the full article. This page exists
+          to preserve context when shared on social platforms.
         </p>
       </div>
     </main>
