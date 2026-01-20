@@ -151,16 +151,14 @@ export default function ShareClient({ searchParams }: SP) {
     await copyLink();
   };
 
-  const postToX = () => {
+ const postToX = () => {
   const href = shareUrl || window.location.href;
+  const msg = "Shared for situational awareness:\n" + title + "\n" + href;
+  const intent = "https://x.com/intent/post?text=" + encodeURIComponent(msg);
 
-  // Put the link directly in the text so it ALWAYS shows
-  const msg = `Shared for situational awareness:\n${title}\n${href}`;
-
-  const intent = `https://x.com/intent/post?text=${encodeURIComponent(msg)}`;
-
-  window.open(intent, "_blank", "noopener,noreferrer");
-};
+  // Use location instead of popup (works even when popups are blocked)
+  window.location.href = intent;
+}; 
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -238,6 +236,14 @@ export default function ShareClient({ searchParams }: SP) {
             >
               Post to X
             </button>
+
+            {shareUrl ? (
+              <p className="mt-3 break-words text-xs text-zinc-500">
+                X intent: {"https://x.com/intent/post?text=" + encodeURIComponent("Shared for situational awareness:\n" + title + "\n" + (shareUrl || ""))}
+              </p>
+            ) : (
+              <p className="mt-3 text-xs text-zinc-500">Loading share URL…</p>
+            )}
 
             <button
               type="button"
