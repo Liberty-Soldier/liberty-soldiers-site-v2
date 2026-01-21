@@ -6,13 +6,17 @@ import { copyText } from "@/lib/copy";
 export default function ShareButton({
   wrapperUrl,
   title,
-  copyLabel = "Copy link",
+  label, // ✅ legacy prop support
+  copyLabel,
   shareLabel = "Share",
 }: {
   wrapperUrl: string;
   title?: string;
-  copyLabel?: string;
+  label?: string;      // ✅ old prop
+  copyLabel?: string;  // ✅ new prop
   shareLabel?: string;
+}) {
+  const finalCopyLabel = copyLabel ?? label ?? "Copy link";
 }) {
   const [copied, setCopied] = useState(false);
 
