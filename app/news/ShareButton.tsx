@@ -19,7 +19,7 @@ export default function ShareButton({
   const [copied, setCopied] = useState(false);
 
   const finalCopyLabel = copyLabel ?? label ?? "Copy link";
-  const text = `${title || "Shared via Liberty Soldiers"} ${wrapperUrl}`;
+  const text = `${title || "Shared via Liberty Soldiers"};
 
   // ---------- COPY ----------
   const doCopy = async () => {
