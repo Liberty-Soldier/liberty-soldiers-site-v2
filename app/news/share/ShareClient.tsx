@@ -187,11 +187,15 @@ export default function ShareClient({ searchParams }: SP) {
               ))}
             </ul>
           )}
-
-          <p className="mt-4 text-sm text-zinc-700">
-            This link is shared for situational awareness. External sources are
-            not endorsements. Liberty Soldiers provides context and analysis.
-          </p>
+        
+       <h3 className="mt-4 text-sm font-semibold uppercase tracking-wide text-zinc-900">
+          Defending Truth in the Information War
+        </h3>
+        
+        <p className="mt-2 text-sm text-zinc-700">
+          This link is shared for situational awareness. External sources are
+          not endorsements. Liberty Soldiers provides context and analysis.
+        </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
             <a
