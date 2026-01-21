@@ -6,20 +6,22 @@ import { copyText } from "@/lib/copy";
 export default function ShareButton({
   wrapperUrl,
   title,
-  label,        // legacy support
+  label, // legacy support
   copyLabel,
   shareLabel = "Share",
 }: {
   wrapperUrl: string;
   title?: string;
-  label?: string;       // legacy
-  copyLabel?: string;   // preferred
+  label?: string; // legacy
+  copyLabel?: string; // preferred
   shareLabel?: string;
 }) {
   const [copied, setCopied] = useState(false);
 
   const finalCopyLabel = copyLabel ?? label ?? "Copy link";
-  const text = `${title || "Shared via Liberty Soldiers"};
+
+  // ✅ X text = headline only (no URL in the tweet text)
+  const headline = (title && title.trim()) ? title.trim() : "Shared via Liberty Soldiers";
 
   // ---------- COPY ----------
   const doCopy = async () => {
@@ -32,27 +34,28 @@ export default function ShareButton({
     }
   };
 
-  // ---------- NATIVE SHARE (mobile) ----------
+  // ---------- NATIVE SHARE (mobile share sheet) ----------
   const doNativeShare = async () => {
     if (typeof navigator !== "undefined" && "share" in navigator) {
       try {
         await navigator.share({
-          title: title || "Liberty Soldiers",
-          text: title || "Shared via Liberty Soldiers",
+          title: headline,
+          text: headline,
           url: wrapperUrl,
         });
         return;
       } catch {
-        // user canceled → fall back
+        // user canceled / failed -> fall back to copy
       }
     }
     await doCopy();
   };
 
   // ---------- X (mobile-safe intent) ----------
-  const xIntent = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-    text
-  )}`;
+  // Put ONLY headline in text; X preview will come from the URL param
+  const xIntent =
+    `https://twitter.com/intent/tweet?text=${encodeURIComponent(headline)}` +
+    `&url=${encodeURIComponent(wrapperUrl)}`;
 
   const postToX = () => {
     const w = window.open(xIntent, "_blank", "noopener,noreferrer");
