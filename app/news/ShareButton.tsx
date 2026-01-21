@@ -6,20 +6,22 @@ import { copyText } from "@/lib/copy";
 export default function ShareButton({
   wrapperUrl,
   title,
-  label, // ✅ legacy prop support
+  label,        // legacy support
   copyLabel,
   shareLabel = "Share",
 }: {
   wrapperUrl: string;
   title?: string;
-  label?: string;      // ✅ old prop
-  copyLabel?: string;  // ✅ new prop
+  label?: string;       // legacy
+  copyLabel?: string;   // preferred
   shareLabel?: string;
-}) {
-  const finalCopyLabel = copyLabel ?? label ?? "Copy link";
 }) {
   const [copied, setCopied] = useState(false);
 
+  const finalCopyLabel = copyLabel ?? label ?? "Copy link";
+  const text = `${title || "Shared via Liberty Soldiers"} ${wrapperUrl}`;
+
+  // ---------- COPY ----------
   const doCopy = async () => {
     const ok = await copyText(wrapperUrl);
     if (ok) {
@@ -30,43 +32,35 @@ export default function ShareButton({
     }
   };
 
+  // ---------- NATIVE SHARE (mobile) ----------
   const doNativeShare = async () => {
-    // Mobile share sheet (Android/iOS). If unavailable or cancelled, fall back to copy.
-    const nav: any = typeof navigator !== "undefined" ? navigator : null;
-
-    if (nav?.share) {
+    if (typeof navigator !== "undefined" && "share" in navigator) {
       try {
-        await nav.share({
+        await navigator.share({
           title: title || "Liberty Soldiers",
           text: title || "Shared via Liberty Soldiers",
           url: wrapperUrl,
         });
         return;
       } catch {
-        // user cancelled / failed -> fall back to copy
+        // user canceled → fall back
       }
     }
-
     await doCopy();
   };
 
-  const text = `${title || "Shared via Liberty Soldiers"} ${wrapperUrl}`;
-
-  // ✅ tends to be more consistent across Android Chrome + desktop
+  // ---------- X (mobile-safe intent) ----------
   const xIntent = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     text
   )}`;
 
   const postToX = () => {
-    // ✅ open in a new tab/window from a user gesture (prevents "bounce back")
     const w = window.open(xIntent, "_blank", "noopener,noreferrer");
-    // If blocked, fall back to same-tab navigation
     if (!w) window.location.href = xIntent;
   };
 
   return (
-    <div className="flex items-center gap-2">
-      {/* Post to X (unchanged) */}
+    <div className="flex flex-wrap items-center gap-2">
       <button
         type="button"
         onClick={postToX}
@@ -75,7 +69,6 @@ export default function ShareButton({
         Post to X
       </button>
 
-      {/* NEW: native Share sheet */}
       <button
         type="button"
         onClick={doNativeShare}
@@ -84,13 +77,12 @@ export default function ShareButton({
         {shareLabel}
       </button>
 
-      {/* Copy link (unchanged) */}
       <button
         type="button"
         onClick={doCopy}
         className="inline-flex items-center justify-center rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-800 hover:border-zinc-300"
       >
-        {copied ? "Copied ✓" : copyLabel}
+        {copied ? "Copied ✓" : finalCopyLabel}
       </button>
     </div>
   );
