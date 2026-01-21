@@ -196,7 +196,7 @@ items.forEach((it, idx) => {
               {cols.map((col, i) => (
                 <div key={i} className="space-y-3">
                   {col.map((h, idx) => {
-                   const shareHrefAbs =
+                  const shareHrefAbs =
                     `https://libertysoldiers.com/news/share?u=${encodeURIComponent(h.url)}`;
 
                     const thumb = h.image || faviconFromUrl(h.url);
@@ -272,6 +272,7 @@ items.forEach((it, idx) => {
     </main>
   );
 }
+
 
 
 
