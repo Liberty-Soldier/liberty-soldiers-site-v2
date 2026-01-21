@@ -24,21 +24,37 @@ type SP = { searchParams: Record<string, string | string[] | undefined> };
 
 export async function generateMetadata({ searchParams }: SP): Promise<Metadata> {
   const uRaw = searchParams.u;
-  const sRaw = searchParams.s;
   const tRaw = searchParams.t;
+  const sRaw = searchParams.s;
+  const iRaw = searchParams.i; // optional image URL
 
   const u = typeof uRaw === "string" ? safeDecode(uRaw) : "";
-  const source = typeof sRaw === "string" ? safeDecode(sRaw) : hostFromUrl(u);
   const title = typeof tRaw === "string" ? safeDecode(tRaw) : "Shared Headline";
+
+  // If s is missing, infer from u
+  const source =
+    typeof sRaw === "string" ? safeDecode(sRaw) : hostFromUrl(u);
+
+  // Optional image passed in
+  const img = typeof iRaw === "string" ? safeDecode(iRaw) : "";
 
   const pageTitle = `${title} | Liberty Soldiers`;
   const desc = source
     ? `Shared for situational awareness (source: ${source}).`
     : "Shared for situational awareness.";
 
-  // ✅ IMPORTANT: do NOT include huge query params in canonical/OG url
-  // Keep it clean so shared links don’t turn into massive encoded URLs.
-  const canonical = "https://libertysoldiers.com/news/share";
+  // Canonical should be your wrapper URL (not the original article)
+  const canonical =
+    u
+      ? `https://libertysoldiers.com/news/share?u=${encodeURIComponent(u)}&t=${encodeURIComponent(
+          title
+        )}&s=${encodeURIComponent(source)}${img ? `&i=${encodeURIComponent(img)}` : ""}`
+      : "https://libertysoldiers.com/news";
+
+  // Use article image if provided; otherwise fallback to your default OG image
+  const ogImage = img && /^https?:\/\//i.test(img)
+    ? img
+    : "https://libertysoldiers.com/og.jpg";
 
   return {
     title: pageTitle,
@@ -50,13 +66,13 @@ export async function generateMetadata({ searchParams }: SP): Promise<Metadata> 
       url: canonical,
       siteName: "Liberty Soldiers",
       type: "article",
-      images: ["https://libertysoldiers.com/og.jpg"],
+      images: [{ url: ogImage }],
     },
     twitter: {
       card: "summary_large_image",
       title: pageTitle,
       description: desc,
-      images: ["https://libertysoldiers.com/og.jpg"],
+      images: [ogImage],
     },
   };
 }
