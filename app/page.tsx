@@ -8,14 +8,14 @@ export const revalidate = 600;
 export const metadata = {
   title: "Liberty Soldiers | Scripture-First Investigative Reports",
   description:
-    "Liberty Soldiers is an independent investigative media project exposing doctrinal deception, manufactured narratives, and end-time propaganda through scripture-first analysis.",
+   "Independent situational awareness and investigative analysis examining power, perception, media narratives, and emerging systems shaping the world.",
   alternates: {
     canonical: "https://libertysoldiers.com/",
   },
   openGraph: {
     title: "Liberty Soldiers",
     description:
-      "Investigative reports. Scripture-first. Exposing doctrinal deception and manufactured narratives.",
+      "Independent analysis of power, perception, and emerging systems shaping the world.",
     url: "https://libertysoldiers.com/",
     siteName: "Liberty Soldiers",
     type: "website",
@@ -24,7 +24,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Liberty Soldiers",
     description:
-      "Scripture-first investigative reports exposing deception and manufactured narratives.",
+     "Independent analysis of power, perception, and emerging systems shaping the world.",
   },
 };
 
@@ -63,7 +63,7 @@ export default async function Home() {
     name: "Liberty Soldiers",
     url: "https://libertysoldiers.com/",
     description:
-      "Independent scripture-first investigative media exposing doctrinal deception, manufactured narratives, and religious compromise.",
+      "Independent situational awareness and investigative analysis examining power, perception, media narratives, and emerging systems shaping the world.",
     sameAs: ["https://www.youtube.com/@LibertySoldiers"],
   };
 
@@ -300,6 +300,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
