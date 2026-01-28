@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
   openGraph: {
     title: "Liberty Soldiers",
-    description: "Investigative reports. Scripture-first.",
+    description: "Independent situational awareness and investigative analysis of power, perception, and emerging systems shaping the world.",
     url: "https://libertysoldiers.com",
     siteName: "Liberty Soldiers",
     type: "website",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Liberty Soldiers",
-    description: "Investigative reports. Scripture-first.",
+    description: "Independent situational awareness and investigative analysis of power, perception, and emerging systems shaping the world.",
     images: ["/og.jpg"],
   },
 
@@ -75,6 +75,7 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 
 
