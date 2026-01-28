@@ -8,7 +8,7 @@ import "../styles/globals.css";
 
 export const metadata: Metadata = {
   title: "Liberty Soldiers",
-  description: "Investigative reports. Scripture-first.",
+  description: "Independent situational awareness and investigative analysis of power, perception, and emerging systems shaping the world.",
   metadataBase: new URL("https://libertysoldiers.com"),
 
   openGraph: {
@@ -75,6 +75,7 @@ export default function RootLayout({
     </html>
   );
 }
+
 
 
 
