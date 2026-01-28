@@ -6,7 +6,7 @@ import ShareButton from "./news/ShareButton";
 export const revalidate = 600;
 
 export const metadata = {
-  title: "Liberty Soldiers | Scripture-First Investigative Reports",
+  title: "Liberty Soldiers | Situational awareness for a world shaped by power and perception",
   description:
    "Independent situational awareness and investigative analysis examining power, perception, media narratives, and emerging systems shaping the world.",
   alternates: {
@@ -300,6 +300,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
