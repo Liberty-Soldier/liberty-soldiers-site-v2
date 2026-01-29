@@ -3,9 +3,32 @@
 export const metadata = {
   title: "U.S.–Iran Escalation and the Abrahamic End-Time Lens | Liberty Soldiers",
   description:
-    "After prior U.S. strikes on Iranian nuclear facilities and amid renewed threats and force build-up, competing end-times frameworks are being activated across Judaism, Christianity, and Islam.",
+    "After prior U.S. strikes and amid renewed escalation signals, competing end-time frameworks across Judaism, Christianity, and Islam shape public perception.",
   alternates: {
     canonical: "https://libertysoldiers.com/news/us-iran-abrahamic-endtimes",
+  },
+  openGraph: {
+    title: "U.S.–Iran Escalation and the Abrahamic End-Time Lens",
+    description:
+      "After prior U.S. strikes and amid renewed escalation signals, competing end-time frameworks across Judaism, Christianity, and Islam shape public perception.",
+    url: "https://libertysoldiers.com/news/us-iran-abrahamic-endtimes",
+    siteName: "Liberty Soldiers",
+    images: [
+      {
+        url: "/IRAN.jpg",
+        width: 1200,
+        height: 630,
+        alt: "U.S.–Iran escalation and end-time frameworks across Abrahamic religions",
+      },
+    ],
+    type: "article",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "U.S.–Iran Escalation and the Abrahamic End-Time Lens",
+    description:
+      "How U.S.–Iran escalation is interpreted through competing Abrahamic end-time frameworks.",
+    images: ["/IRAN.jpg"],
   },
 };
 
