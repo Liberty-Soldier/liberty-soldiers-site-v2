@@ -1,6 +1,8 @@
 // app/news/page.tsx
 import { fetchAllHeadlines } from "@/lib/rss";
 import ShareButton from "./ShareButton";
+import Link from "next/link";
+import { getLatestReports } from "@/lib/reports";
 
 export const metadata = {
   title: "News Feed | Liberty Soldiers",
@@ -58,7 +60,6 @@ function bulletsFromSummary(summary?: string): string[] {
   const clean = summary.replace(/\s+/g, " ").trim();
   if (!clean) return [];
 
-  // Try sentence split first
   const parts = clean
     .split(/(?:\.|\!|\?)\s+/)
     .map((s) => s.trim())
@@ -68,12 +69,17 @@ function bulletsFromSummary(summary?: string): string[] {
     return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
   }
 
-  // Fallback: split into chunks (~90 chars) if no punctuation
   const chunk1 = clean.slice(0, 90).trim();
   const chunk2 = clean.slice(90, 180).trim();
   const out = [chunk1, chunk2].filter(Boolean);
 
   return out.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
+}
+
+function formatDate(iso: string) {
+  const [y, m, d] = iso.split("-").map((v) => Number(v));
+  const dt = new Date(y, (m ?? 1) - 1, d ?? 1);
+  return dt.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }
 
 export default async function NewsPage() {
@@ -85,10 +91,12 @@ export default async function NewsPage() {
     items = [];
   }
 
-const cols: Item[][] = [[], [], []];
-items.forEach((it, idx) => {
-  cols[idx % 3].push(it);
-});
+  const cols: Item[][] = [[], [], []];
+  items.forEach((it, idx) => {
+    cols[idx % 3].push(it);
+  });
+
+  const latestReports = getLatestReports(10);
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -107,12 +115,12 @@ items.forEach((it, idx) => {
             </p>
           </div>
 
-          <a
+          <Link
             href="/"
             className="text-sm text-zinc-700 hover:text-zinc-900 whitespace-nowrap"
           >
             ← Home
-          </a>
+          </Link>
         </div>
 
         {/* Liberty Soldiers Reports */}
@@ -127,50 +135,53 @@ items.forEach((it, idx) => {
               </p>
             </div>
 
-            <a href="/" className="text-sm text-zinc-700 hover:text-zinc-900">
-              Home →
-            </a>
+            <Link
+              href="/reports"
+              className="text-sm text-zinc-700 hover:text-zinc-900 whitespace-nowrap"
+            >
+              View all reports →
+            </Link>
           </div>
 
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <a
-              href="/news/dispensationalism-middle-east"
-              className="block rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300"
-            >
-              <span className="text-[11px] uppercase tracking-wide text-zinc-500">
-                Report
-              </span>
-              <h3 className="mt-1 font-semibold leading-snug hover:underline">
-                How Dispensationalism Scripts the Middle East
-              </h3>
-              <p className="mt-2 text-sm text-zinc-700">
-                From Sunday sermons to congressional votes, a theology that
-                reshapes foreign policy.
-              </p>
-              <span className="mt-3 inline-block text-xs text-zinc-600">
-                Read →
-              </span>
-            </a>
+          {latestReports.length === 0 ? (
+            <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-6 text-zinc-700">
+              No reports published yet.
+            </div>
+          ) : (
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {latestReports.map((r) => (
+                <Link
+                  key={r.slug}
+                  href={`/news/${r.slug}`}
+                  className="block rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <span className="text-[11px] uppercase tracking-wide text-zinc-500">
+                      Report
+                    </span>
+                    <span className="text-xs text-zinc-500 whitespace-nowrap">
+                      {formatDate(r.dateISO)}
+                    </span>
+                  </div>
 
-            <a
-              href="/news/first-report"
-              className="block rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300"
-            >
-              <span className="text-[11px] uppercase tracking-wide text-zinc-500">
-                Report
-              </span>
-              <h3 className="mt-1 font-semibold leading-snug hover:underline">
-                The Mechanism of Alignment
-              </h3>
-              <p className="mt-2 text-sm text-zinc-700">
-                How truth is neutralized through agreement, conformity, and
-                manufactured consensus.
-              </p>
-              <span className="mt-3 inline-block text-xs text-zinc-600">
-                Read →
-              </span>
-            </a>
-          </div>
+                  <h3 className="mt-1 font-semibold leading-snug hover:underline">
+                    {r.title}
+                  </h3>
+
+                  <p className="mt-2 text-sm text-zinc-700">{r.excerpt}</p>
+
+                  <div className="mt-3 text-xs text-zinc-600">
+                    By{" "}
+                    <span className="font-medium text-zinc-800">{r.byline}</span>
+                  </div>
+
+                  <span className="mt-3 inline-block text-xs text-zinc-600">
+                    Read →
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Live RSS headlines */}
@@ -196,8 +207,9 @@ items.forEach((it, idx) => {
               {cols.map((col, i) => (
                 <div key={i} className="space-y-3">
                   {col.map((h, idx) => {
-                  const shareHrefAbs =
-                    `https://libertysoldiers.com/news/share?u=${encodeURIComponent(h.url)}`;
+                    const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
+                      h.url
+                    )}`;
 
                     const thumb = h.image || faviconFromUrl(h.url);
                     const bullets = bulletsFromSummary(h.summary);
@@ -207,7 +219,6 @@ items.forEach((it, idx) => {
                         key={`${h.url}-${idx}`}
                         className="rounded-xl border border-zinc-200 bg-white p-4 transition hover:border-zinc-300"
                       >
-                        {/* Thumbnail */}
                         <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
                           <img
                             src={thumb}
@@ -233,19 +244,14 @@ items.forEach((it, idx) => {
                               {h.category}
                             </span>
                           </div>
-                          )}
+                        )}
 
-                        {/* Headline click goes to original */}
-                        <a
-                          href={h.url}
-                          className="block mt-1"
-                        >
+                        <a href={h.url} className="block mt-1">
                           <h3 className="font-semibold leading-snug hover:underline">
                             {h.title}
                           </h3>
                         </a>
 
-                        {/* 2 bullets from RSS summary/description */}
                         {bullets.length > 0 && (
                           <ul className="mt-3 space-y-1 text-sm text-zinc-700">
                             {bullets.map((b, ii) => (
@@ -272,13 +278,3 @@ items.forEach((it, idx) => {
     </main>
   );
 }
-
-
-
-
-
-
-
-
-
-
