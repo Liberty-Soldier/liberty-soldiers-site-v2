@@ -10,6 +10,15 @@ export type Report = {
 };
 
 export const REPORTS: Report[] = [
+{
+  slug: "us-iran-abrahamic-endtimes",
+  title: "U.S.–Iran Escalation and the Abrahamic End-Time Lens",
+  excerpt:
+    "After prior U.S. strikes and amid renewed escalation signals, competing end-time frameworks across Judaism, Christianity, and Islam shape public perception.",
+  dateISO: "2026-01-29",
+  byline: "Dead Reckoning",
+},
+  
   {
     slug: "dispensationalism-middle-east",
     title: "How Dispensationalism Scripts the Middle East",
