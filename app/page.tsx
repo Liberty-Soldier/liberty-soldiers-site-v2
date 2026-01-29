@@ -2,13 +2,14 @@
 import { Suspense } from "react";
 import HomeHeadlines from "./components/Headlines";
 import ShareButton from "./news/ShareButton";
+import { getLatestReport } from "../../lib/reports";
 
 export const revalidate = 600;
 
 export const metadata = {
   title: "Liberty Soldiers | Situational awareness for a world shaped by power and perception",
   description:
-   "Independent situational awareness and investigative analysis examining power, perception, media narratives, and emerging systems shaping the world.",
+    "Independent situational awareness and investigative analysis examining power, perception, media narratives, and emerging systems shaping the world.",
   alternates: {
     canonical: "https://libertysoldiers.com/",
   },
@@ -24,19 +25,11 @@ export const metadata = {
     card: "summary_large_image",
     title: "Liberty Soldiers",
     description:
-     "Independent analysis of power, perception, and emerging systems shaping the world.",
+      "Independent analysis of power, perception, and emerging systems shaping the world.",
   },
 };
 
 const SITE = "https://libertysoldiers.com";
-
-const LATEST_REPORT = {
-  title: "How Dispensationalism Scripts the Middle East",
-  href: "/news/dispensationalism-middle-east",
-  desc:
-    "From Sunday sermons to congressional votes, a theology that reshapes foreign policy.",
-  thumb: "/dispensationalism.jpg", // put file in /public/og/
-};
 
 function HeadlinesFallback() {
   return (
@@ -54,8 +47,10 @@ export default async function Home() {
   // Option A (recommended): use a local thumbnail you control
   const VIDEO_THUMB = "/video.jpg"; // put file in /public/og/
 
-  // Option B (no file needed): YouTube thumbnail (swap in if you want)
-  // const VIDEO_THUMB = `https://img.youtube.com/vi/${VIDEO_ID}/hqdefault.jpg`;
+  // Latest report (auto)
+  const latest = getLatestReport();
+  const latestHref = latest ? `/news/${latest.slug}` : "/reports";
+  const latestThumb = "/briefing-fallback.jpg"; // optional upgrade later: add coverImage to reports.ts
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -145,138 +140,153 @@ export default async function Home() {
               </p>
             </div>
 
-            <a href="/news" className="text-sm text-zinc-700 hover:text-zinc-900">
+            <a href="/reports" className="text-sm text-zinc-700 hover:text-zinc-900">
               View all →
             </a>
           </div>
 
-{/* Latest Report card (mobile-safe) */}
-<div className="mt-6 w-full rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
-  <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-    <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
-      <img
-        src={LATEST_REPORT.thumb}
-        alt=""
-        className="w-full sm:w-36 h-44 sm:h-24 rounded-xl border border-zinc-200 object-cover bg-zinc-100"
-        loading="lazy"
-      />
+          {/* Latest Report card (mobile-safe) */}
+          <div className="mt-6 w-full rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
+            {latest ? (
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+                  <img
+                    src={latestThumb}
+                    alt=""
+                    className="w-full sm:w-36 h-44 sm:h-24 rounded-xl border border-zinc-200 object-cover bg-zinc-100"
+                    loading="lazy"
+                  />
 
-      <div className="min-w-0">
-        <a href={LATEST_REPORT.href} className="block">
-          <h3 className="text-lg sm:text-xl font-bold text-zinc-900 hover:underline break-words">
-            {LATEST_REPORT.title}
-          </h3>
-        </a>
+                  <div className="min-w-0">
+                    <a href={latestHref} className="block">
+                      <h3 className="text-lg sm:text-xl font-bold text-zinc-900 hover:underline break-words">
+                        {latest.title}
+                      </h3>
+                    </a>
 
-        <p className="mt-2 text-sm sm:text-base text-zinc-700 break-words">
-          {LATEST_REPORT.desc}
-        </p>
+                    <p className="mt-2 text-sm sm:text-base text-zinc-700 break-words">
+                      {latest.excerpt}
+                    </p>
 
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <a
-            href={LATEST_REPORT.href}
-            className="text-sm font-medium text-zinc-900 hover:underline"
-          >
-            Read →
-          </a>
+                    <p className="mt-2 text-xs text-zinc-600">
+                      By{" "}
+                      <span className="font-medium text-zinc-800">
+                        {latest.byline}
+                      </span>
+                    </p>
 
-          <ShareButton
-            wrapperUrl={`${SITE}${LATEST_REPORT.href}`}
-            title={LATEST_REPORT.title}
-            label="Copy link"
-          />
+                    <div className="mt-4 flex flex-wrap items-center gap-3">
+                      <a
+                        href={latestHref}
+                        className="text-sm font-medium text-zinc-900 hover:underline"
+                      >
+                        Read →
+                      </a>
+
+                      <ShareButton
+                        wrapperUrl={`${SITE}${latestHref}`}
+                        title={latest.title}
+                        label="Copy link"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="hidden sm:block text-sm text-zinc-600 whitespace-nowrap">
+                  Latest →
+                </div>
+              </div>
+            ) : (
+              <div className="text-zinc-700">
+                No reports published yet.{" "}
+                <a href="/reports" className="font-medium text-zinc-900 hover:underline">
+                  View reports →
+                </a>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
 
-    <div className="hidden sm:block text-sm text-zinc-600 whitespace-nowrap">
-      Latest →
-    </div>
-  </div>
-</div>
-</div>
-</section>
-
-{/* Featured Video */}
-<section className="py-12 sm:py-16 border-t border-zinc-200">
-  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="flex items-end justify-between gap-6">
-      <div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
-          Featured Video
-        </h2>
-        <p className="mt-1 text-zinc-600">
-          Latest release from Liberty Soldiers.
-        </p>
-      </div>
-      <a
-        href="https://www.youtube.com/@LibertySoldiers/videos"
-        target="_blank"
-        rel="noreferrer"
-        className="text-sm text-zinc-700 hover:text-zinc-900"
-      >
-        All videos →
-      </a>
-    </div>
-
-    {/* Featured Video card (mobile-safe) */}
-    <div className="mt-6 w-full rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
-          <img
-            src={VIDEO_THUMB}
-            alt=""
-            className="w-full sm:w-36 h-44 sm:h-24 rounded-xl border border-zinc-200 object-cover bg-zinc-100"
-            loading="lazy"
-          />
-
-          <div className="min-w-0">
-            <span className="text-[11px] uppercase tracking-wide text-zinc-500">
-              YouTube
-            </span>
-
+      {/* Featured Video */}
+      <section className="py-12 sm:py-16 border-t border-zinc-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between gap-6">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
+                Featured Video
+              </h2>
+              <p className="mt-1 text-zinc-600">
+                Latest release from Liberty Soldiers.
+              </p>
+            </div>
             <a
-              href={VIDEO_URL}
+              href="https://www.youtube.com/@LibertySoldiers/videos"
               target="_blank"
               rel="noreferrer"
-              className="block"
+              className="text-sm text-zinc-700 hover:text-zinc-900"
             >
-              <h3 className="mt-2 text-lg sm:text-xl font-bold leading-snug text-zinc-900 hover:underline break-words">
-                {VIDEO_TITLE}
-              </h3>
+              All videos →
             </a>
+          </div>
 
-            <p className="mt-2 text-sm sm:text-base text-zinc-700 break-words">
-              Primary video briefing. External playback.
-            </p>
+          {/* Featured Video card (mobile-safe) */}
+          <div className="mt-6 w-full rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+                <img
+                  src={VIDEO_THUMB}
+                  alt=""
+                  className="w-full sm:w-36 h-44 sm:h-24 rounded-xl border border-zinc-200 object-cover bg-zinc-100"
+                  loading="lazy"
+                />
 
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <a
-                href={VIDEO_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="text-sm font-medium text-zinc-900 hover:underline"
-              >
-                Watch →
-              </a>
+                <div className="min-w-0">
+                  <span className="text-[11px] uppercase tracking-wide text-zinc-500">
+                    YouTube
+                  </span>
 
-              <ShareButton
-                wrapperUrl={`${SITE}/videos`}
-                title={VIDEO_TITLE}
-                label="Copy link"
-              />
+                  <a
+                    href={VIDEO_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block"
+                  >
+                    <h3 className="mt-2 text-lg sm:text-xl font-bold leading-snug text-zinc-900 hover:underline break-words">
+                      {VIDEO_TITLE}
+                    </h3>
+                  </a>
+
+                  <p className="mt-2 text-sm sm:text-base text-zinc-700 break-words">
+                    Primary video briefing. External playback.
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap items-center gap-3">
+                    <a
+                      href={VIDEO_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-medium text-zinc-900 hover:underline"
+                    >
+                      Watch →
+                    </a>
+
+                    <ShareButton
+                      wrapperUrl={`${SITE}/videos`}
+                      title={VIDEO_TITLE}
+                      label="Copy link"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="hidden sm:block text-sm text-zinc-600 whitespace-nowrap">
+                Featured →
+              </div>
             </div>
           </div>
         </div>
-
-        <div className="hidden sm:block text-sm text-zinc-600 whitespace-nowrap">
-          Featured →
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
+      </section>
 
       {/* Bottom context */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
@@ -300,10 +310,6 @@ export default async function Home() {
     </div>
   );
 }
-
-
-
-
 
 
 
