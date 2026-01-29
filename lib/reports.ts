@@ -17,7 +17,7 @@ export const REPORTS: Report[] = [
     "After prior U.S. strikes and amid renewed escalation signals, competing end-time frameworks across Judaism, Christianity, and Islam shape public perception.",
   dateISO: "2026-01-29",
   byline: "Dead Reckoning",
-  coverImage?: "/IRAN.jpg",
+  coverImage: "/IRAN.jpg",
 },
   
   {
