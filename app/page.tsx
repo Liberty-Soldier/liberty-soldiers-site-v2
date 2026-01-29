@@ -2,7 +2,7 @@
 import { Suspense } from "react";
 import HomeHeadlines from "./components/Headlines";
 import ShareButton from "./news/ShareButton";
-import { getLatestReport } from "../../lib/reports";
+import { getLatestReport } from "../lib/reports";
 
 export const revalidate = 600;
 
@@ -310,6 +310,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
