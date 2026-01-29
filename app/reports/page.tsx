@@ -1,6 +1,6 @@
 // app/reports/page.tsx
 import Link from "next/link";
-import { getAllReports } from "@lib/reports";
+import { getAllReports } from "@/lib/reports";
 
 export const metadata = {
   title: "Reports | Liberty Soldiers",
