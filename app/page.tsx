@@ -50,7 +50,7 @@ export default async function Home() {
   // Latest report (auto)
   const latest = getLatestReport();
   const latestHref = latest ? `/news/${latest.slug}` : "/reports";
-  const latestThumb = "/briefing-fallback.jpg"; // optional upgrade later: add coverImage to reports.ts
+  const latestThumb = latest?.coverImage ?? "/briefing-fallback.jpg";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -310,6 +310,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
