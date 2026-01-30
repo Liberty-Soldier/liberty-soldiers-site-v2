@@ -11,6 +11,16 @@ export type Report = {
 
 export const REPORTS: Report[] = [
 {
+  slug: "doomsday-clock",
+  title: "The Doomsday Clock Isn’t a Prediction — It’s a Psychological Instrument",
+  excerpt:
+    "The Doomsday Clock isn’t measuring time. It’s a psychological device used to manufacture urgency, suppress scrutiny, and condition populations to accept control as protection.",
+  dateISO: "2026-01-30",
+  byline: "D.U.M.B.",
+  coverImage: "doomsday-clock.png",
+},
+  
+  {
   slug: "us-iran-abrahamic-endtimes",
   title: "U.S.–Iran Escalation and the Abrahamic End-Time Lens",
   excerpt:
