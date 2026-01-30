@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     siteName: "Liberty Soldiers",
     images: [
       {
-        url: "https://libertysoldiers.com/og/doomsday-clock.png",
+        url: "https://libertysoldiers.com/doomsday-clock.png",
         width: 1200,
         height: 630,
         alt: "The Doomsday Clock Isn’t a Prediction",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: "The Doomsday Clock Isn’t a Prediction",
     description:
       "The Doomsday Clock isn’t about time — it’s about psychological control.",
-    images: ["https://libertysoldiers.com/og/doomsday-clock.png"],
+    images: ["https://libertysoldiers.com/doomsday-clock.png"],
   },
 };
 }
