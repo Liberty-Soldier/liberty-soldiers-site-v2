@@ -30,6 +30,13 @@ export const metadata: Metadata = {
     images: ["https://libertysoldiers.com/doomsday-clock.png"],
   },
 };
+
+export default function Report() {
+  return (
+    <main>
+      {/* your article JSX here */}
+    </main>
+  );
 }
 
 export default function Report() {
