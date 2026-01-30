@@ -257,6 +257,6 @@ export default function Report() {
         obedience as responsibility,
         and compliance as survival.
       </p>
-    </article>
+    <article className="prose prose-lg prose-neutral max-w-none">
   );
 }
