@@ -1,38 +1,35 @@
 import type { Metadata } from "next";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const title =
-    "The Doomsday Clock Isn’t a Prediction — It’s a Psychological Instrument";
-  const description =
-    "The Doomsday Clock isn’t measuring time. It’s a psychological device used to manufacture urgency, suppress scrutiny, and condition populations to accept control as protection.";
-  const url = "https://libertysoldiers.com/news/doomsday-clock";
+export const metadata: Metadata = {
+  title: "The Doomsday Clock Isn’t a Prediction",
+  description:
+    "The Doomsday Clock is a psychological instrument designed to manufacture fear and condition compliance.",
 
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      siteName: "Liberty Soldiers",
-      type: "article",
-      images: [
-        {
-          url: `${url}/opengraph-image`,
-          width: 1200,
-          height: 630,
-          alt: title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [`${url}/opengraph-image`],
-    },
-  };
+  openGraph: {
+    title: "The Doomsday Clock Isn’t a Prediction",
+    description:
+      "Manufactured crisis narratives, conditioning compliance, and control through fear.",
+    url: "https://libertysoldiers.com/news/doomsday-clock",
+    siteName: "Liberty Soldiers",
+    images: [
+      {
+        url: "https://libertysoldiers.com/og/doomsday-clock.png",
+        width: 1200,
+        height: 630,
+        alt: "The Doomsday Clock Isn’t a Prediction",
+      },
+    ],
+    type: "article",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "The Doomsday Clock Isn’t a Prediction",
+    description:
+      "The Doomsday Clock isn’t about time — it’s about psychological control.",
+    images: ["https://libertysoldiers.com/og/doomsday-clock.png"],
+  },
+};
 }
 
 export default function Report() {
