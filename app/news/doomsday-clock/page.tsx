@@ -37,6 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Report() {
   return (
+  <div className="mx-auto max-w-3xl px-4 py-10">
     <article className="prose prose-lg prose-neutral max-w-none">
       <h1>The Doomsday Clock Isn’t a Prediction — It’s a Psychological Instrument</h1>
       <p>
@@ -225,5 +226,6 @@ export default function Report() {
         survival.
       </p>
     </article>
+  </div>
   );
 }
