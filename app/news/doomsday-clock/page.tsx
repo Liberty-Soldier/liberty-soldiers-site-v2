@@ -2,6 +2,44 @@
 // Title: The Doomsday Clock Isn’t a Prediction — It’s a Psychological Instrument
 // Author: D.U.M.B.
 
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const title =
+    "The Doomsday Clock Isn’t a Prediction — It’s a Psychological Instrument";
+  const description =
+    "The Doomsday Clock isn’t measuring time. It’s a psychological device used to manufacture urgency, suppress scrutiny, and condition populations to accept control as protection.";
+
+  const url = "https://libertysoldiers.com/news/doomsday-clock";
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title,
+      description,
+      url,
+      siteName: "Liberty Soldiers",
+      type: "article",
+      images: [
+        {
+          url: `${url}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`${url}/opengraph-image`],
+    },
+  };
+}
+
 export default function Report() {
   return (
     <article>
