@@ -1,6 +1,6 @@
 // lib/rss.ts
 import { XMLParser } from "fast-xml-parser";
-import { NEWS_FEEDS, PINNED_LINKS, BLACKLIST, type FeedCategory } from "./news.config";
+import { NEWS_FEEDS, PINNED_LINKS, BLACKLIST } from "./news.config";
 
 export type Headline = {
   title: string;
@@ -12,6 +12,13 @@ export type Headline = {
   category?: string;
 };
 
+type FeedInput =
+  | string
+  | {
+      url: string;
+      category?: string; // e.g. "crypto" | "finance" | "world" | ...
+    };
+
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: "@_",
@@ -22,27 +29,6 @@ const parser = new XMLParser({
 /* -------------------------------------------------- */
 /* utils                                              */
 /* -------------------------------------------------- */
-
-function feedCategoryLabel(c?: string): string | undefined {
-  if (!c) return undefined;
-
-  switch (c) {
-    case "crypto":
-      return "Crypto";
-    case "finance":
-      return "Finance";
-    case "world":
-      return "World Briefing";
-    case "middle-east":
-      return "Middle East";
-    case "tech":
-      return "Control Systems";
-    case "prophecy":
-      return "Prophecy Watch";
-    default:
-      return undefined;
-  }
-}
 
 function arrify<T>(x: T | T[] | undefined | null): T[] {
   return x == null ? [] : Array.isArray(x) ? x : [x];
@@ -60,7 +46,7 @@ function normalizeUrl(raw: any): string {
   const s0 = String(raw ?? "").trim();
   if (!s0) return "";
   if (s0.startsWith("//")) return "https:" + s0; // protocol-relative → https
-  if (/^https?:\/\//i.test(s0)) return s0;      // already http/https
+  if (/^https?:\/\//i.test(s0)) return s0; // already http/https
   if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s0)) return "https://" + s0;
   return "";
 }
@@ -80,7 +66,32 @@ function pickDate(it: any): number | undefined {
   return Number.isFinite(ms) ? ms : undefined;
 }
 
-function categorize(title: string, summary?: string, src?: string): string {
+function toFeedInput(x: FeedInput): { url: string; category?: string } {
+  if (typeof x === "string") return { url: x };
+  return { url: x.url, category: x.category };
+}
+
+function feedCategoryLabel(cat?: string): string | undefined {
+  if (!cat) return undefined;
+  const c = String(cat).toLowerCase().trim();
+
+  // IMPORTANT: These labels are what shows in the badge (pill)
+  if (c === "crypto") return "Crypto";
+  if (c === "finance") return "Finance";
+  if (c === "world") return "World Briefing";
+  if (c === "middle-east" || c === "middleeast") return "Middle East";
+  if (c === "tech") return "Control Systems";
+  if (c === "prophecy") return "Prophecy Watch";
+
+  return undefined;
+}
+
+function categorize(
+  title: string,
+  summary?: string,
+  src?: string,
+  feedFallback?: string
+): string {
   const t = `${title} ${summary ?? ""}`.toLowerCase();
   const s = (src ?? "").toLowerCase();
 
@@ -152,7 +163,9 @@ function categorize(title: string, summary?: string, src?: string): string {
     t.includes("quarantine") ||
     t.includes("emergency powers") ||
     t.includes("public health") ||
-    t.includes("who") ||
+    t.includes(" who ") ||
+    t.startsWith("who ") ||
+    t.includes(" bird flu") ||
     t.includes("bird flu")
   ) {
     return "Biosecurity";
@@ -189,9 +202,9 @@ function categorize(title: string, summary?: string, src?: string): string {
   if (s.includes("reuters")) return "Geopolitics & War";
 
   // --------------------------------------------------
-  // Final fallback
+  // Final fallback (feed category beats "General")
   // --------------------------------------------------
-  return fallback || "General";
+  return fallback || feedFallback || "General";
 }
 
 function stripHtml(s: any): string {
@@ -289,7 +302,9 @@ function extractLink(it: any): string {
 
   //  - link: [{ rel, "@_href" }, …] → prefer rel="alternate", else first
   if (Array.isArray(it?.link)) {
-    const alt = it.link.find((l: any) => (l?.rel || l?.["@_rel"]) === "alternate");
+    const alt = it.link.find(
+      (l: any) => (l?.rel || l?.["@_rel"]) === "alternate"
+    );
     if (alt?.["@_href"]) return alt["@_href"];
     const first = it.link[0];
     if (first?.["@_href"]) return first["@_href"];
@@ -305,10 +320,7 @@ function extractLink(it: any): string {
 }
 
 function extractSource(feedJson: any, url: string): string {
-  const title =
-    feedJson?.rss?.channel?.title ||
-    feedJson?.feed?.title ||
-    "";
+  const title = feedJson?.rss?.channel?.title || feedJson?.feed?.title || "";
   const fromUrl = host(url);
   return String(title || fromUrl || "").trim();
 }
@@ -317,9 +329,14 @@ function extractSource(feedJson: any, url: string): string {
 /* normalize                                          */
 /* -------------------------------------------------- */
 
-function normalizeFeed(feedJson: any, feedUrl: string): Headline[] {
+function normalizeFeed(
+  feedJson: any,
+  feedUrl: string,
+  feedCategory?: string
+): Headline[] {
   const items = extractItems(feedJson);
   const sourceFallback = extractSource(feedJson, feedUrl);
+  const feedFallbackLabel = feedCategoryLabel(feedCategory);
 
   return items
     .map((it: any) => {
@@ -327,19 +344,24 @@ function normalizeFeed(feedJson: any, feedUrl: string): Headline[] {
       const rawLink = extractLink(it);
       const url = normalizeUrl(rawLink);
       const source = host(url) || sourceFallback;
-      
+
       const image = extractImage(it) || undefined;
       const summary = extractSummary(it) || undefined;
-      const category = categorize(title, summary, source);
 
-      return { title, url, source, publishedAt: pickDate(it), image, summary, category };
+      const category = categorize(title, summary, source, feedFallbackLabel);
+
+      return {
+        title,
+        url,
+        source,
+        publishedAt: pickDate(it),
+        image,
+        summary,
+        category,
+      };
     })
-    
     .filter(
-      (h) =>
-        h.title &&
-        h.url &&
-        !BLACKLIST.some((b) => host(h.url).includes(b))
+      (h) => h.title && h.url && !BLACKLIST.some((b) => host(h.url).includes(b))
     );
 }
 
@@ -347,20 +369,23 @@ function normalizeFeed(feedJson: any, feedUrl: string): Headline[] {
 /* fetch + parse                                      */
 /* -------------------------------------------------- */
 
-async function fetchOneFeed(feedUrl: string): Promise<Headline[]> {
+async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
+  const feed = toFeedInput(feedIn);
+
   try {
-    const res = await fetch(feedUrl, {
-  headers: {
-    "user-agent": "Mozilla/5.0 (LibertySoldiersBot)",
-    "accept": "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
-  },
-  next: { revalidate: 600 },
-});
+    const res = await fetch(feed.url, {
+      headers: {
+        "user-agent": "Mozilla/5.0 (LibertySoldiersBot)",
+        accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+      },
+      next: { revalidate: 600 },
+    });
+
     const xml = await res.text();
     if (!res.ok || !xml) return [];
 
     const json = parser.parse(xml);
-    return normalizeFeed(json, feedUrl);
+    return normalizeFeed(json, feed.url, feed.category);
   } catch {
     return [];
   }
@@ -371,7 +396,11 @@ async function fetchOneFeed(feedUrl: string): Promise<Headline[]> {
 /* -------------------------------------------------- */
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
-  const settled = await Promise.allSettled(NEWS_FEEDS.map(fetchOneFeed));
+  // Works with NEWS_FEEDS as string[] or {url, category}[]
+  const feeds = (NEWS_FEEDS as unknown as FeedInput[]) ?? [];
+
+  const settled = await Promise.allSettled(feeds.map(fetchOneFeed));
+
   const all: Headline[] = [];
   for (const r of settled) {
     if (r.status === "fulfilled" && Array.isArray(r.value)) {
@@ -379,36 +408,37 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
     }
   }
 
-// pinned first (always stay on top)
-const pinned: Headline[] = PINNED_LINKS.map((p) => ({
-  title: p.title,
-  url: p.url,
-  source: p.source ? String(p.source) : host(p.url),
-  publishedAt: undefined,
-  image: undefined,
-  summary: undefined,
-}));
+  // pinned first (always stay on top)
+  const pinned: Headline[] = PINNED_LINKS.map((p) => ({
+    title: p.title,
+    url: p.url,
+    source: p.source ? String(p.source) : host(p.url),
+    publishedAt: undefined,
+    image: undefined,
+    summary: undefined,
+    category: "Pinned",
+  }));
 
-// de-dup by URL (pinned take priority)
-const seen = new Set<string>();
+  // de-dup by URL (pinned take priority)
+  const seen = new Set<string>();
 
-const pinnedUnique = pinned.filter((h) => {
-  const key = h.url.trim();
-  if (!key || seen.has(key)) return false;
-  seen.add(key);
-  return true;
-});
+  const pinnedUnique = pinned.filter((h) => {
+    const key = h.url.trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
-const restUnique = all.filter((h) => {
-  const key = h.url.trim();
-  if (!key || seen.has(key)) return false;
-  seen.add(key);
-  return true;
-});
+  const restUnique = all.filter((h) => {
+    const key = h.url.trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
-// sort only non-pinned items newest → oldest
-restUnique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+  // sort only non-pinned items newest → oldest
+  restUnique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
 
-// pinned always first, then sorted feed
-return [...pinnedUnique, ...restUnique];
+  // pinned always first, then sorted feed
+  return [...pinnedUnique, ...restUnique];
 }
