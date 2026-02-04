@@ -1,6 +1,6 @@
 // lib/rss.ts
 import { XMLParser } from "fast-xml-parser";
-import { NEWS_FEEDS, PINNED_LINKS, BLACKLIST } from "./news.config";
+import { NEWS_FEEDS, PINNED_LINKS, BLACKLIST, type FeedCategory } from "./news.config";
 
 export type Headline = {
   title: string;
@@ -22,6 +22,27 @@ const parser = new XMLParser({
 /* -------------------------------------------------- */
 /* utils                                              */
 /* -------------------------------------------------- */
+
+function feedCategoryLabel(c?: string): string | undefined {
+  if (!c) return undefined;
+
+  switch (c) {
+    case "crypto":
+      return "Crypto";
+    case "finance":
+      return "Finance";
+    case "world":
+      return "World Briefing";
+    case "middle-east":
+      return "Middle East";
+    case "tech":
+      return "Control Systems";
+    case "prophecy":
+      return "Prophecy Watch";
+    default:
+      return undefined;
+  }
+}
 
 function arrify<T>(x: T | T[] | undefined | null): T[] {
   return x == null ? [] : Array.isArray(x) ? x : [x];
