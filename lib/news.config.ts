@@ -1,26 +1,38 @@
 // lib/news.config.ts
+
 export const NEWS_FEEDS: string[] = [
+  // --- Global / Wire ---
+  "https://feeds.reuters.com/Reuters/worldNews",
+  "https://www.reuters.com/business/rss",
+  "https://feeds.apnews.com/apf/world-news",
+  "https://rss.dw.com/rdf/rss-en-all",
+
+  // --- Middle East / Israel ---
   "https://www.jpost.com/rss/rss.xml",
-  "https://www.vomcanada.com/table/country-reports/country-reports/feed/rss/",
-  "https://endtimeheadlines.org/feed/",
-  "https://www.biometricupdate.com/feed/",
-  "https://expose-news.com/feed/",
-  "https://www.nowtheendbegins.com/feed/",
-  "https://reclaimthenet.org/feed/",
-  "https://olivetreeviews.org/feed/",
   "https://www.allisrael.com/rss",
   "https://www.israeltoday.co.il/feed/",
-  "https://www.prophecynewswatch.com/rss.xml",
-  "https://www.infowars.com/feed/custom_feed_rss",
   "https://www.israel365news.com/feed/",
-  "https://www.rt.com/rss/news/",
-  "https://feeds.feedburner.com/zerohedge/feed",
-  "https://www.theepochtimes.com/c-feed",
-  "https://www.reuters.com/world/rss",
-  "https://apnews.com/apf-topnews?format=rss",
-  "https://feeds.bbci.co.uk/news/world/rss.xml",
-  "https://foreignpolicy.com/feed/",
-  "https://www.aljazeera.com/xml/rss/all.xml"
+  "https://olivetreeviews.org/feed/",
+
+  // --- Alternative / Tech / Control Systems ---
+  "https://reclaimthenet.org/feed/",
+  "https://www.biometricupdate.com/feed/",
+  "https://www.expose-news.com/feed/",
+  "https://www.zerohedge.com/fullrss2.xml",
+
+  // --- Prophecy / Eschatology ---
+  "https://endtimeheadlines.org/feed/",
+  "https://www.prophecynewswatch.com/rss.xml",
+  "https://www.nowtheendbegins.com/feed/",
+
+  // --- Crypto / Finance ---
+  "https://cryptopotato.com/feed/",
+  "https://thedefiant.io/feed/",
+  "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml",
+
+  // --- Other World Coverage ---
+  "https://www.aljazeera.com/xml/rss/all.xml",
+  "https://feeds.foxnews.com/foxnews/world"
 ];
 
 export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
@@ -31,6 +43,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
