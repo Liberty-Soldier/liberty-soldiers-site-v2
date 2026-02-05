@@ -106,12 +106,6 @@ export default async function NewsPage() {
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               News Feed
             </h1>
-            <p className="mt-1 text-zinc-600">
-              External headlines for situational awareness.
-            </p>
-            <p className="mt-1 text-xs text-zinc-500">
-              External sources are not endorsements.
-            </p>
           </div>
 
           <Link
@@ -289,3 +283,4 @@ export default async function NewsPage() {
     </main>
   );
 }
+
