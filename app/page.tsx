@@ -102,7 +102,7 @@ export default async function Home() {
             </Suspense>
           </Carousel>
       
-          <div className="mt-6">
+         <div className="mt-3 sm:mt-6">
             <a
               href="/news"
               className="inline-flex items-center rounded-xl border border-zinc-200 bg-white px-5 py-3 text-sm text-zinc-800 hover:border-zinc-300 transition"
@@ -296,6 +296,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
