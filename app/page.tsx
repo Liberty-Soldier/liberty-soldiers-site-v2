@@ -1,4 +1,5 @@
 // app/page.tsx
+import Carousel from "./components/Carousel";
 import { Suspense } from "react";
 import HomeHeadlines from "./components/Headlines";
 import ShareButton from "./news/ShareButton";
@@ -89,34 +90,19 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Latest Headlines (external preview) */}
+           {/* Latest Headlines (carousel) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
-                Latest Headlines
-              </h2>
-
-              <p className="mt-1 text-zinc-600">
-                External headlines for situational awareness.
-              </p>
-
-              <p className="mt-1 text-xs text-zinc-500">
-                External sources are not endorsements.
-              </p>
-            </div>
-
-            <a href="/news" className="text-sm text-zinc-700 hover:text-zinc-900">
-              Full feed →
-            </a>
-          </div>
-
-          <Suspense fallback={<HeadlinesFallback />}>
-            <HomeHeadlines />
-          </Suspense>
-
-          <div className="mt-8">
+          <Carousel
+            title="Latest Headlines"
+            subtitle="External headlines for situational awareness. External sources are not endorsements."
+          >
+            <Suspense fallback={<HeadlinesFallback />}>
+              <HomeHeadlines />
+            </Suspense>
+          </Carousel>
+      
+          <div className="mt-6">
             <a
               href="/news"
               className="inline-flex items-center rounded-xl border border-zinc-200 bg-white px-5 py-3 text-sm text-zinc-800 hover:border-zinc-300 transition"
@@ -310,6 +296,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
