@@ -17,8 +17,7 @@ export default function Carousel({
     const el = ref.current;
     if (!el) return;
 
-    // IMPORTANT: children are direct slides (each has a fixed width)
-    const first = el.firstElementChild as HTMLElement | null;
+    const first = el.querySelector<HTMLElement>("[data-slide]");
     if (!first) return;
 
     const slideW = first.getBoundingClientRect().width;
@@ -27,16 +26,14 @@ export default function Carousel({
     const gapStr = styles.columnGap || styles.gap || "0px";
     const gap = Number.parseFloat(gapStr) || 0;
 
-    const step = slideW + gap;
-
     el.scrollBy({
-      left: dir === "left" ? -step : step,
+      left: dir === "left" ? -(slideW + gap) : slideW + gap,
       behavior: "smooth",
     });
   }
 
   return (
-    <section className="mt-4 sm:mt-6">
+    <div>
       <div className="mb-3 sm:mb-4 flex items-end justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
@@ -45,7 +42,6 @@ export default function Carousel({
           {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
         </div>
 
-        {/* Desktop arrows */}
         <div className="hidden md:flex gap-2">
           <button
             type="button"
@@ -66,26 +62,25 @@ export default function Carousel({
         </div>
       </div>
 
-      {/* Scroll area */}
       <div
         ref={ref}
         className="
           flex gap-4 md:gap-6
-          overflow-x-auto overflow-y-visible
+          overflow-x-auto
           pb-1 sm:pb-2
-          scroll-smooth
           snap-x snap-mandatory
+          scroll-smooth
           [-webkit-overflow-scrolling:touch]
           [scrollbar-width:none]
           [&::-webkit-scrollbar]:hidden
         "
         style={{
-          // Let vertical scrolling always work normally
+          // allow vertical page scroll; horizontal swipe still works
           touchAction: "pan-y",
         }}
       >
         {children}
       </div>
-    </section>
+    </div>
   );
 }
