@@ -76,8 +76,6 @@ export default async function HomeHeadlines({
       </div>
     );
   }
-
-  return (
    return (
       <div
         className={
