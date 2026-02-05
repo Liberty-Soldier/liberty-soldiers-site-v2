@@ -84,7 +84,7 @@ export default async function Home() {
               LIBERTY SOLDIERS
             </h1>
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
-              Situational awareness for a world shaped by power and perception
+              Independent analysis of power, perception, and control
             </p>
           </div>
         </div>
@@ -295,6 +295,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
