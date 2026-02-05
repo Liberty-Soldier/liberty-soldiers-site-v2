@@ -1,15 +1,16 @@
 "use client";
 
 import Script from "next/script";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   username: string;
-  height?: number; // px
+  height?: number;
 };
 
 export default function XFeed({ username, height = 520 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   const loadWidgets = () => {
     const w = window as any;
@@ -20,9 +21,18 @@ export default function XFeed({ username, height = 520 }: Props) {
 
   useEffect(() => {
     loadWidgets();
-    const t = setTimeout(loadWidgets, 600);
-    return () => clearTimeout(t);
+    const t1 = setTimeout(loadWidgets, 600);
+    const t2 = setTimeout(() => setAttempt((x) => x + 1), 1200); // re-render once
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    loadWidgets();
+  }, [attempt]);
 
   return (
     <section className="py-12 sm:py-16 border-t border-zinc-200">
@@ -47,13 +57,9 @@ export default function XFeed({ username, height = 520 }: Props) {
           </a>
         </div>
 
-        {/* IMPORTANT:
-            Do NOT use overflow-hidden here. It can clip the injected iframe.
-            We also give the container a minHeight so the embed has room to render.
-        */}
         <div
           ref={containerRef}
-          className="mt-6 rounded-2xl border border-zinc-200 bg-white"
+          className="mt-6 rounded-2xl border border-zinc-200 bg-white p-2"
           style={{ minHeight: height }}
         >
           <a
@@ -61,11 +67,28 @@ export default function XFeed({ username, height = 520 }: Props) {
             href={`https://x.com/${username}`}
             data-height={String(height)}
             data-theme="light"
-            data-chrome="noheader nofooter noborders transparent"
+            // Remove "transparent" here — it can cause blank rendering in some layouts
+            data-chrome="noheader nofooter noborders"
             data-dnt="true"
           >
             Posts by @{username}
           </a>
+
+          {/* Visible fallback if X refuses to render */}
+          <noscript>
+            <p className="p-4 text-sm text-zinc-700">
+              JavaScript is required to load the X feed.{" "}
+              <a
+                className="underline"
+                href={`https://x.com/${username}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View on X
+              </a>
+              .
+            </p>
+          </noscript>
         </div>
 
         <Script
