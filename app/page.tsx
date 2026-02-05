@@ -97,11 +97,10 @@ export default async function Home() {
             title="Latest Headlines"
             subtitle="External headlines for situational awareness. External sources are not endorsements."
           >
-            <Suspense fallback={<HeadlinesFallback />}>
-              <HomeHeadlines />
-            </Suspense>
-          </Carousel>
-      
+           <Suspense fallback={<HeadlinesFallback />}>
+            <HomeHeadlines variant="carousel" />
+          </Suspense>
+
           <div className="mt-6">
             <a
               href="/news"
@@ -296,6 +295,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
