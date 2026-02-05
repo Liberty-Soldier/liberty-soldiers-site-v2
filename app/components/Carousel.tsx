@@ -36,7 +36,7 @@ export default function Carousel({
           {subtitle && <p className="mt-1 text-zinc-600 text-sm">{subtitle}</p>}
         </div>
 
-        <div className="flex gap-2">
+        <div className="hidden md:flex gap-2">
           <button
             type="button"
             onClick={() => scroll("left")}
