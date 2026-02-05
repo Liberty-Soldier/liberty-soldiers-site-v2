@@ -1,4 +1,3 @@
-// app/components/HomeHeadlines.tsx
 import { fetchAllHeadlines } from "@/lib/rss";
 import ShareButton from "@/app/news/ShareButton";
 
@@ -42,21 +41,17 @@ function bulletsFromSummary(summary?: string): string[] {
   if (!summary) return [];
   const clean = summary.replace(/\s+/g, " ").trim();
   if (!clean) return [];
-
   const parts = clean
     .split(/(?:\.|\!|\?)\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
-
   return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
 }
 
 function pickThumb(h: Item): string {
   if (h.image && /^https?:\/\//i.test(h.image)) return h.image;
-
   const fav = faviconFromUrl(h.url);
   if (/^https?:\/\//i.test(fav)) return fav;
-
   return "/briefing-fallback.jpg";
 }
 
@@ -70,19 +65,14 @@ function HeadlineCard({ h }: { h: Item }) {
 
   return (
     <article className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 hover:border-zinc-300 transition">
-      {/* Image: blur-fill background + contain foreground (no stretching) */}
       <div className="mb-2 sm:mb-3 relative overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
-        {/* blurred background fill */}
         <img
           src={thumb}
           alt=""
           className="absolute inset-0 h-full w-full object-cover blur-xl opacity-25 scale-110"
           aria-hidden
         />
-        {/* readable overlay */}
         <div className="absolute inset-0 bg-white/55" aria-hidden />
-
-        {/* main image */}
         <img
           src={thumb}
           alt=""
@@ -122,10 +112,7 @@ function HeadlineCard({ h }: { h: Item }) {
 
       <div className="mt-4 flex items-center justify-between gap-3">
         <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
-
-        <div className="flex items-center gap-3">
-          <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
-        </div>
+        <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
       </div>
     </article>
   );
@@ -139,7 +126,6 @@ export default async function HomeHeadlines({
   maxItems?: number;
 }) {
   let items: Item[] = [];
-
   try {
     items = (await fetchAllHeadlines()) as Item[];
   } catch {
@@ -156,7 +142,6 @@ export default async function HomeHeadlines({
     );
   }
 
-  // grid mode (unchanged idea)
   if (variant === "grid") {
     return (
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -169,16 +154,14 @@ export default async function HomeHeadlines({
     );
   }
 
-  // carousel mode: IMPORTANT — slides are direct children
+  // CAROUSEL: slides only, direct children
   return (
     <>
       {top.map((h, idx) => (
         <div
           key={`${h.url}-${idx}`}
-          className="
-            snap-start shrink-0
-            w-[85%] sm:w-[420px]
-          "
+          data-slide
+          className="snap-start shrink-0 w-[85%] sm:w-[420px]"
           style={{ scrollSnapStop: "always" as any }}
         >
           <HeadlineCard h={h} />
