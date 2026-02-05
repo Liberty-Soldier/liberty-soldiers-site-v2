@@ -2,6 +2,7 @@
 import Carousel from "./components/Carousel";
 import { Suspense } from "react";
 import HomeHeadlines from "./components/Headlines";
+import XFeed from "./components/XFeed";
 import ShareButton from "./news/ShareButton";
 import { getLatestReport } from "../lib/reports";
 
@@ -295,6 +296,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
