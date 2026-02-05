@@ -74,13 +74,16 @@ export default async function HomeHeadlines({
     );
   }
 
+  // IMPORTANT:
+  // - In carousel mode, do NOT add overflow here.
+  // - Return direct slide items (shrink-0 + snap-start).
   return (
     <div
       className={
-      variant === "carousel"
-        ? "snap-start shrink-0 w-full rounded-xl border border-zinc-300 bg-white p-4 hover:border-zinc-400 transition"
-        : "rounded-xl border border-zinc-300 bg-white p-4 hover:border-zinc-400 transition"
-    }
+        variant === "carousel"
+          ? "mt-6 flex gap-6" // horizontal row of slides
+          : "mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+      }
     >
       {top.map((h, idx) => {
         const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
@@ -90,23 +93,21 @@ export default async function HomeHeadlines({
         const thumb = h.image || faviconFromUrl(h.url);
         const bullets = bulletsFromSummary(h.summary);
 
-        return (
+        const Card = (
           <article
-            key={`${h.url}-${idx}`}
-            className={
-              variant === "carousel"
-                ? // One-at-a-time feel: big card, snap per card
-                  "snap-start shrink-0 w-[85vw] sm:w-[520px] lg:w-[680px] rounded-xl border border-zinc-300 bg-white p-4 hover:border-zinc-400 transition"
-                : "rounded-xl border border-zinc-300 bg-white p-4 hover:border-zinc-400 transition"
-            }
+            className="rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 transition"
           >
             {/* Thumbnail */}
             <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
               <img
                 src={thumb}
                 alt=""
-                className="h-32 w-full object-cover"
+                className="h-44 w-full object-cover"
                 loading="lazy"
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).src =
+                    "/briefing-fallback.jpg";
+                }}
               />
             </div>
 
@@ -114,14 +115,12 @@ export default async function HomeHeadlines({
               {h.source}
             </span>
 
-            {/* Headline click goes to original source */}
             <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
               <h3 className="text-zinc-900 font-semibold leading-snug hover:underline">
                 {h.title}
               </h3>
             </a>
 
-            {/* 2 bullets from RSS summary/description */}
             {bullets.length > 0 && (
               <ul className="mt-3 space-y-1 text-sm text-zinc-600">
                 {bullets.map((b, i) => (
@@ -141,14 +140,35 @@ export default async function HomeHeadlines({
               </div>
             )}
 
-            <div className="mt-3 flex items-center justify-between gap-3">
-              <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
+            <div className="mt-4 flex items-center justify-between gap-3">
+              <span className="text-xs text-zinc-500">
+                {humanAgo(h.publishedAt)}
+              </span>
 
               <div className="flex items-center gap-3">
                 <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
               </div>
             </div>
           </article>
+        );
+
+        // In carousel mode, wrap each card as a “slide” that is one page wide
+        if (variant === "carousel") {
+          return (
+            <div
+              key={`${h.url}-${idx}`}
+              className="snap-start shrink-0 w-full"
+            >
+              {Card}
+            </div>
+          );
+        }
+
+        // In grid mode, just render the card
+        return (
+          <div key={`${h.url}-${idx}`}>
+            {Card}
+          </div>
         );
       })}
     </div>
