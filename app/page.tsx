@@ -112,6 +112,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      
+      {/* Live Intelligence (X Feed) */}
+      <XFeed username="LibertySoldierz" height={520} />
 
       {/* Latest Report (your own content) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
@@ -296,6 +299,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
