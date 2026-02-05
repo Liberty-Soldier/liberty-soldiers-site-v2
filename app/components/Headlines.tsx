@@ -30,7 +30,6 @@ function humanAgo(input?: number | string | Date): string {
 function faviconFromUrl(articleUrl: string): string {
   try {
     const u = new URL(articleUrl);
-    // Free favicon service (fast, consistent fallback)
     return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(
       u.hostname
     )}&sz=128`;
@@ -44,13 +43,11 @@ function bulletsFromSummary(summary?: string): string[] {
   const clean = summary.replace(/\s+/g, " ").trim();
   if (!clean) return [];
 
-  // Safer sentence split (no lookbehind)
   const parts = clean
     .split(/(?:\.|\!|\?)\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
 
-  // Ensure each bullet ends with punctuation for readability
   return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
 }
 
@@ -71,33 +68,41 @@ export default async function HomeHeadlines({
 
   if (top.length === 0) {
     return (
-      <div className="mt-6 rounded-xl border border-zinc-400 p-6 text-zinc/700">
+      <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 text-zinc-700">
         No headlines yet.
       </div>
     );
   }
-   return (
-      <div
-        className={
-          variant === "carousel"
-            ? "mt-6 flex gap-4 overflow-x-auto pb-2"
-            : "mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-        }
-      >
+
+  return (
+    <div
+      className={
+        variant === "carousel"
+          ? // IMPORTANT: no overflow here — Carousel.tsx is the *only* scroller
+            "mt-6 flex gap-4 snap-x snap-mandatory"
+          : "mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+      }
+    >
       {top.map((h, idx) => {
-       const shareHrefAbs =
-        `https://libertysoldiers.com/news/share?u=${encodeURIComponent(h.url)}`;
+        const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
+          h.url
+        )}`;
 
         const thumb = h.image || faviconFromUrl(h.url);
         const bullets = bulletsFromSummary(h.summary);
 
         return (
-          <div
+          <article
             key={`${h.url}-${idx}`}
-            className="min-w-[320px] max-w-[360px] rounded-xl border border-zinc-400 p-4 bg-white/10 hover:border-zinc-400 transition"
+            className={
+              variant === "carousel"
+                ? // One-at-a-time feel: big card, snap per card
+                  "snap-start shrink-0 w-[85vw] sm:w-[520px] lg:w-[680px] rounded-xl border border-zinc-300 bg-white p-4 hover:border-zinc-400 transition"
+                : "rounded-xl border border-zinc-300 bg-white p-4 hover:border-zinc-400 transition"
+            }
           >
             {/* Thumbnail */}
-            <div className="mb-3 overflow-hidden rounded-lg border border-zinc-400 bg-black/20">
+            <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
               <img
                 src={thumb}
                 alt=""
@@ -106,23 +111,20 @@ export default async function HomeHeadlines({
               />
             </div>
 
-            <span className="text-[11px] uppercase tracking-wide text-zinc-700">
+            <span className="text-[11px] uppercase tracking-wide text-zinc-500">
               {h.source}
             </span>
 
             {/* Headline click goes to original source */}
-            <a
-              href={h.url}
-              className="block mt-1"
-            >
-              <h3 className="font-semibold leading-snug hover:underline">
+            <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
+              <h3 className="text-zinc-900 font-semibold leading-snug hover:underline">
                 {h.title}
               </h3>
             </a>
 
-            {/* 2 bullets from RSS summary/description (free) */}
+            {/* 2 bullets from RSS summary/description */}
             {bullets.length > 0 && (
-              <ul className="mt-3 space-y-1 text-sm text-zinc-400">
+              <ul className="mt-3 space-y-1 text-sm text-zinc-600">
                 {bullets.map((b, i) => (
                   <li key={i} className="flex gap-2">
                     <span className="text-zinc-400">•</span>
@@ -138,19 +140,16 @@ export default async function HomeHeadlines({
                   {h.category}
                 </span>
               </div>
-              )}
+            )}
 
             <div className="mt-3 flex items-center justify-between gap-3">
-              <span className="text-xs text-zinc-700">
-                {humanAgo(h.publishedAt)}
-              </span>
+              <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
 
               <div className="flex items-center gap-3">
-                {/* Share uses Liberty Soldiers wrapper for X-friendly previews */}
                 <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
               </div>
             </div>
-          </div>
+          </article>
         );
       })}
     </div>
