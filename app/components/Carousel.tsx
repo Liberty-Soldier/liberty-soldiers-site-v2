@@ -13,72 +13,78 @@ export default function Carousel({
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  function getStep(el: HTMLDivElement): number {
-    const first = el.firstElementChild as HTMLElement | null;
-    if (!first) return el.clientWidth;
+  function scrollOne(dir: "left" | "right") {
+    const el = ref.current;
+    if (!el) return;
 
-    const slideWidth = first.getBoundingClientRect().width;
+    // IMPORTANT: children are direct slides (each has a fixed width)
+    const first = el.firstElementChild as HTMLElement | null;
+    if (!first) return;
+
+    const slideW = first.getBoundingClientRect().width;
 
     const styles = window.getComputedStyle(el);
     const gapStr = styles.columnGap || styles.gap || "0px";
     const gap = Number.parseFloat(gapStr) || 0;
 
-    return slideWidth + gap + 2;
-  }
-
-  function scroll(dir: "left" | "right") {
-    const el = ref.current;
-    if (!el) return;
-
-    const amount = getStep(el);
+    const step = slideW + gap;
 
     el.scrollBy({
-      left: dir === "left" ? -amount : amount,
+      left: dir === "left" ? -step : step,
       behavior: "smooth",
     });
   }
 
   return (
     <section className="mt-4 sm:mt-6">
-      <div className="mb-3 sm:mb-4">
-        <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">{title}</h2>
-        {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
+      <div className="mb-3 sm:mb-4 flex items-end justify-between gap-4">
+        <div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
+            {title}
+          </h2>
+          {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
+        </div>
+
+        {/* Desktop arrows */}
+        <div className="hidden md:flex gap-2">
+          <button
+            type="button"
+            onClick={() => scrollOne("left")}
+            className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
+            aria-label="Previous headline"
+          >
+            ◀
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollOne("right")}
+            className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
+            aria-label="Next headline"
+          >
+            ▶
+          </button>
+        </div>
       </div>
 
-      <div className="relative">
-        {/* Desktop arrows only */}
-        <button
-          type="button"
-          onClick={() => scroll("left")}
-          aria-label="Previous"
-          className="hidden md:inline-flex absolute left-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white/90 hover:bg-white shadow-sm"
-        >
-          ◀
-        </button>
-
-        <button
-          type="button"
-          onClick={() => scroll("right")}
-          aria-label="Next"
-          className="hidden md:inline-flex absolute right-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white/90 hover:bg-white shadow-sm"
-        >
-          ▶
-        </button>
-
-        {/* Scroll area */}
-        <div
-          ref={ref}
-          className="w-full flex gap-0 md:gap-6 overflow-x-auto pb-1 sm:pb-3 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            WebkitOverflowScrolling: "touch",
-            // IMPORTANT: let the browser handle touch naturally (no touch-pan-* here)
-            touchAction: "auto",
-          }}
-        >
-          {children}
-        </div>
+      {/* Scroll area */}
+      <div
+        ref={ref}
+        className="
+          flex gap-4 md:gap-6
+          overflow-x-auto overflow-y-visible
+          pb-1 sm:pb-2
+          scroll-smooth
+          snap-x snap-mandatory
+          [-webkit-overflow-scrolling:touch]
+          [scrollbar-width:none]
+          [&::-webkit-scrollbar]:hidden
+        "
+        style={{
+          // Let vertical scrolling always work normally
+          touchAction: "pan-y",
+        }}
+      >
+        {children}
       </div>
     </section>
   );
