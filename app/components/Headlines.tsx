@@ -53,58 +53,11 @@ function bulletsFromSummary(summary?: string): string[] {
 
 function pickThumb(h: Item): string {
   if (h.image && /^https?:\/\//i.test(h.image)) return h.image;
+
   const fav = faviconFromUrl(h.url);
   if (/^https?:\/\//i.test(fav)) return fav;
+
   return "/briefing-fallback.jpg";
-}
-
-export default async function HomeHeadlines({
-  variant = "grid",
-}: {
-  variant?: "grid" | "carousel";
-}) {
-  let items: Item[] = [];
-  try {
-    items = (await fetchAllHeadlines()) as Item[];
-  } catch {
-    items = [];
-  }
-
-  const top = items.slice(0, 15);
-
-  if (top.length === 0) {
-    return (
-      <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 text-zinc-700">
-        No headlines yet.
-      </div>
-    );
-  }
-
-  // GRID MODE: return a normal grid wrapper
-  if (variant === "grid") {
-    return (
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {top.map((h, idx) => (
-          <HeadlineCard key={`${h.url}-${idx}`} h={h} />
-        ))}
-      </div>
-    );
-  }
-
-  // CAROUSEL MODE: IMPORTANT — return slides as DIRECT CHILDREN (no wrapper div)
-  return (
-    <>
-      {top.map((h, idx) => (
-        <div
-          key={`${h.url}-${idx}`}
-          className="snap-start shrink-0 w-full"
-          style={{ scrollSnapStop: "always" as any }}
-        >
-          <HeadlineCard h={h} />
-        </div>
-      ))}
-    </>
-  );
 }
 
 function HeadlineCard({ h }: { h: Item }) {
@@ -116,17 +69,26 @@ function HeadlineCard({ h }: { h: Item }) {
   const bullets = bulletsFromSummary(h.summary);
 
   return (
-    <article className="rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 transition">
-      {/* Branded backdrop + contain: stops ugly stretching/cropping */}
-      <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-[url('/hero.jpg')] bg-cover bg-center">
-        <div className="bg-white/70">
-          <img
-            src={thumb}
-            alt=""
-            className="h-44 w-full object-contain"
-            loading="lazy"
-          />
-        </div>
+    <article className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 hover:border-zinc-300 transition">
+      {/* Image: blur-fill background + contain foreground (no stretching) */}
+      <div className="mb-2 sm:mb-3 relative overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+        {/* blurred background fill */}
+        <img
+          src={thumb}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover blur-xl opacity-25 scale-110"
+          aria-hidden
+        />
+        {/* readable overlay */}
+        <div className="absolute inset-0 bg-white/55" aria-hidden />
+
+        {/* main image */}
+        <img
+          src={thumb}
+          alt=""
+          className="relative h-36 sm:h-44 w-full object-contain"
+          loading="lazy"
+        />
       </div>
 
       <span className="text-[11px] uppercase tracking-wide text-zinc-500">
@@ -166,5 +128,62 @@ function HeadlineCard({ h }: { h: Item }) {
         </div>
       </div>
     </article>
+  );
+}
+
+export default async function HomeHeadlines({
+  variant = "grid",
+  maxItems = 15,
+}: {
+  variant?: "grid" | "carousel";
+  maxItems?: number;
+}) {
+  let items: Item[] = [];
+
+  try {
+    items = (await fetchAllHeadlines()) as Item[];
+  } catch {
+    items = [];
+  }
+
+  const top = items.slice(0, maxItems);
+
+  if (top.length === 0) {
+    return (
+      <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 text-zinc-700">
+        No headlines yet.
+      </div>
+    );
+  }
+
+  // grid mode (unchanged idea)
+  if (variant === "grid") {
+    return (
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {top.map((h, idx) => (
+          <div key={`${h.url}-${idx}`}>
+            <HeadlineCard h={h} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // carousel mode: IMPORTANT — slides are direct children
+  return (
+    <>
+      {top.map((h, idx) => (
+        <div
+          key={`${h.url}-${idx}`}
+          className="
+            snap-start shrink-0
+            w-[85%] sm:w-[420px]
+          "
+          style={{ scrollSnapStop: "always" as any }}
+        >
+          <HeadlineCard h={h} />
+        </div>
+      ))}
+    </>
   );
 }
