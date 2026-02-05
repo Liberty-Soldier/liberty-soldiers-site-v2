@@ -150,7 +150,7 @@ export default async function HomeHeadlines({
             key={`${h.url}-${idx}`}
             className="shrink-0 w-[88%] sm:w-[520px] lg:w-[640px]"
           >
-            <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5">
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
               <div className="mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
                 <img
                   src={thumb}
@@ -165,13 +165,13 @@ export default async function HomeHeadlines({
               </span>
 
               <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
-                <h3 className="text-zinc-900 font-semibold leading-snug hover:underline">
-                  {h.title}
-                </h3>
+                <h3 className="text-zinc-900 font-semibold leading-snug hover:underline line-clamp-2">
+                {h.title}
+              </h3>
               </a>
 
               {bullets.length > 0 && (
-                <ul className="mt-3 space-y-1 text-sm text-zinc-600">
+                <ul className="mt-3 space-y-1 text-sm text-zinc-600 line-clamp-3">
                   {bullets.map((b, i) => (
                     <li key={i} className="flex gap-2">
                       <span className="text-zinc-400">•</span>
@@ -189,7 +189,7 @@ export default async function HomeHeadlines({
                 </div>
               )}
 
-              <div className="mt-4 flex items-center justify-between gap-3">
+              <div className="mt-auto pt-4 flex items-center justify-between gap-3">
                 <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
                 <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
               </div>
