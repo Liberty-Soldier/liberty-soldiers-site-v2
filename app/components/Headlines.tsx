@@ -48,81 +48,10 @@ function bulletsFromSummary(summary?: string): string[] {
   return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
 }
 
-function pickThumb(h: Item): string {
-  if (h.image && /^https?:\/\//i.test(h.image)) return h.image;
-  const fav = faviconFromUrl(h.url);
-  if (/^https?:\/\//i.test(fav)) return fav;
-  return "/briefing-fallback.jpg";
-}
-
-function HeadlineCard({ h }: { h: Item }) {
-  const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
-    h.url
-  )}`;
-  const thumb = pickThumb(h);
-  const bullets = bulletsFromSummary(h.summary);
-
-  return (
-    <article className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 hover:border-zinc-300 transition">
-      <div className="mb-2 sm:mb-3 relative overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
-        <img
-          src={thumb}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover blur-xl opacity-25 scale-110"
-          aria-hidden
-        />
-        <div className="absolute inset-0 bg-white/55" aria-hidden />
-        <img
-          src={thumb}
-          alt=""
-          className="relative h-36 sm:h-44 w-full object-contain"
-          loading="lazy"
-        />
-      </div>
-
-      <span className="text-[11px] uppercase tracking-wide text-zinc-500">
-        {h.source}
-      </span>
-
-      <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
-        <h3 className="text-zinc-900 font-semibold leading-snug hover:underline">
-          {h.title}
-        </h3>
-      </a>
-
-      {bullets.length > 0 && (
-        <ul className="mt-3 space-y-1 text-sm text-zinc-600">
-          {bullets.map((b, i) => (
-            <li key={i} className="flex gap-2">
-              <span className="text-zinc-400">•</span>
-              <span className="leading-snug">{b}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {h.category && (
-        <div className="mt-2">
-          <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-700">
-            {h.category}
-          </span>
-        </div>
-      )}
-
-      <div className="mt-4 flex items-center justify-between gap-3">
-        <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
-        <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
-      </div>
-    </article>
-  );
-}
-
 export default async function HomeHeadlines({
   variant = "grid",
-  maxItems = 15,
 }: {
   variant?: "grid" | "carousel";
-  maxItems?: number;
 }) {
   let items: Item[] = [];
   try {
@@ -131,7 +60,7 @@ export default async function HomeHeadlines({
     items = [];
   }
 
-  const top = items.slice(0, maxItems);
+  const top = items.slice(0, 15);
 
   if (top.length === 0) {
     return (
@@ -141,32 +70,133 @@ export default async function HomeHeadlines({
     );
   }
 
-  // GRID = returns wrapper
+  // GRID (unchanged)
   if (variant === "grid") {
     return (
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {top.map((h, idx) => (
-          <div key={`${h.url}-${idx}`}>
-            <HeadlineCard h={h} />
-          </div>
-        ))}
+        {top.map((h, idx) => {
+          const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
+            h.url
+          )}`;
+          const thumb = h.image || faviconFromUrl(h.url);
+          const bullets = bulletsFromSummary(h.summary);
+
+          return (
+            <div
+              key={`${h.url}-${idx}`}
+              className="rounded-xl border border-zinc-200 bg-white p-4"
+            >
+              <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
+                <img
+                  src={thumb}
+                  alt=""
+                  className="h-32 w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+
+              <span className="text-[11px] uppercase tracking-wide text-zinc-500">
+                {h.source}
+              </span>
+
+              <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
+                <h3 className="font-semibold leading-snug text-zinc-900 hover:underline">
+                  {h.title}
+                </h3>
+              </a>
+
+              {bullets.length > 0 && (
+                <ul className="mt-3 space-y-1 text-sm text-zinc-600">
+                  {bullets.map((b, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="text-zinc-400">•</span>
+                      <span className="leading-snug">{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {h.category && (
+                <div className="mt-2">
+                  <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-700">
+                    {h.category}
+                  </span>
+                </div>
+              )}
+
+              <div className="mt-3 flex items-center justify-between gap-3">
+                <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
+                <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   }
 
-  // CAROUSEL = returns slides ONLY (NO wrapper div)
+  // CAROUSEL (slides only, no wrapper div)
   return (
     <>
-      {top.map((h, idx) => (
-        <div
-          key={`${h.url}-${idx}`}
-          data-slide
-          className="snap-start shrink-0 w-[85%] sm:w-[420px]"
-          style={{ scrollSnapStop: "always" as any }}
-        >
-          <HeadlineCard h={h} />
-        </div>
-      ))}
+      {top.map((h, idx) => {
+        const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
+          h.url
+        )}`;
+        const thumb = h.image || faviconFromUrl(h.url);
+        const bullets = bulletsFromSummary(h.summary);
+
+        return (
+          <div
+            key={`${h.url}-${idx}`}
+            className="shrink-0 w-[85%] sm:w-[420px]"
+          >
+            <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5">
+              <div className="mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
+                <img
+                  src={thumb}
+                  alt=""
+                  className="h-40 sm:h-44 w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+
+              <span className="text-[11px] uppercase tracking-wide text-zinc-500">
+                {h.source}
+              </span>
+
+              <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
+                <h3 className="text-zinc-900 font-semibold leading-snug hover:underline">
+                  {h.title}
+                </h3>
+              </a>
+
+              {bullets.length > 0 && (
+                <ul className="mt-3 space-y-1 text-sm text-zinc-600">
+                  {bullets.map((b, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span className="text-zinc-400">•</span>
+                      <span className="leading-snug">{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              {h.category && (
+                <div className="mt-2">
+                  <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-700">
+                    {h.category}
+                  </span>
+                </div>
+              )}
+
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
+                <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </>
   );
 }
