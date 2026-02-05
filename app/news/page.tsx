@@ -144,7 +144,7 @@ export default async function NewsPage() {
                 const thumb = h.image || faviconFromUrl(h.url);
                 const bullets = bulletsFromSummary(h.summary);
 
-                const INSERT_AFTER = 12; // after 12 headline cards
+                const INSERT_AFTER = 30; // after 30 headline cards
                 const shouldInsertReports = idx === INSERT_AFTER;
 
                 return (
@@ -283,4 +283,5 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
