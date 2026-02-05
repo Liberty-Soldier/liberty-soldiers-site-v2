@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
 import Script from "next/script";
+import { useEffect, useRef } from "react";
 
 type Props = {
   username: string;
@@ -9,11 +9,21 @@ type Props = {
 };
 
 export default function XFeed({ username, height = 520 }: Props) {
-  useEffect(() => {
-    // Force X widgets to re-scan after hydration
-    if ((window as any).twttr?.widgets) {
-      (window as any).twttr.widgets.load();
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const loadWidgets = () => {
+    const w = window as any;
+    if (w?.twttr?.widgets && containerRef.current) {
+      w.twttr.widgets.load(containerRef.current);
     }
+  };
+
+  // In case the script is already present (client nav back to home)
+  useEffect(() => {
+    loadWidgets();
+    // Try again shortly after hydration (covers timing edge cases)
+    const t = setTimeout(loadWidgets, 400);
+    return () => clearTimeout(t);
   }, []);
 
   return (
@@ -39,7 +49,10 @@ export default function XFeed({ username, height = 520 }: Props) {
           </a>
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+        <div
+          ref={containerRef}
+          className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white"
+        >
           <a
             className="twitter-timeline"
             href={`https://twitter.com/${username}`}
@@ -55,6 +68,7 @@ export default function XFeed({ username, height = 520 }: Props) {
         <Script
           src="https://platform.twitter.com/widgets.js"
           strategy="afterInteractive"
+          onLoad={loadWidgets}
         />
       </div>
     </section>
