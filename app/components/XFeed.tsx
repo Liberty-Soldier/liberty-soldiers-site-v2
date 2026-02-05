@@ -5,7 +5,7 @@ import { useEffect, useRef } from "react";
 
 type Props = {
   username: string;
-  height?: number;
+  height?: number; // px
 };
 
 export default function XFeed({ username, height = 520 }: Props) {
@@ -18,11 +18,9 @@ export default function XFeed({ username, height = 520 }: Props) {
     }
   };
 
-  // In case the script is already present (client nav back to home)
   useEffect(() => {
     loadWidgets();
-    // Try again shortly after hydration (covers timing edge cases)
-    const t = setTimeout(loadWidgets, 400);
+    const t = setTimeout(loadWidgets, 600);
     return () => clearTimeout(t);
   }, []);
 
@@ -49,13 +47,18 @@ export default function XFeed({ username, height = 520 }: Props) {
           </a>
         </div>
 
+        {/* IMPORTANT:
+            Do NOT use overflow-hidden here. It can clip the injected iframe.
+            We also give the container a minHeight so the embed has room to render.
+        */}
         <div
           ref={containerRef}
-          className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white"
+          className="mt-6 rounded-2xl border border-zinc-200 bg-white"
+          style={{ minHeight: height }}
         >
           <a
             className="twitter-timeline"
-            href={`https://twitter.com/${username}`}
+            href={`https://x.com/${username}`}
             data-height={String(height)}
             data-theme="light"
             data-chrome="noheader nofooter noborders transparent"
