@@ -54,7 +54,11 @@ function bulletsFromSummary(summary?: string): string[] {
   return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
 }
 
-export default async function HomeHeadlines() {
+export default async function HomeHeadlines({
+  variant = "grid",
+}: {
+  variant?: "grid" | "carousel";
+}) {
   let items: Item[] = [];
 
   try {
@@ -74,7 +78,14 @@ export default async function HomeHeadlines() {
   }
 
   return (
-    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+   return (
+      <div
+        className={
+          variant === "carousel"
+            ? "mt-6 flex gap-4 overflow-x-auto pb-2"
+            : "mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        }
+      >
       {top.map((h, idx) => {
        const shareHrefAbs =
         `https://libertysoldiers.com/news/share?u=${encodeURIComponent(h.url)}`;
@@ -85,7 +96,7 @@ export default async function HomeHeadlines() {
         return (
           <div
             key={`${h.url}-${idx}`}
-            className="rounded-xl border border-zinc-400 p-4 bg-white/10 hover:border-zinc-400 transition"
+            className="min-w-[320px] max-w-[360px] rounded-xl border border-zinc-400 p-4 bg-white/10 hover:border-zinc-400 transition"
           >
             {/* Thumbnail */}
             <div className="mb-3 overflow-hidden rounded-lg border border-zinc-400 bg-black/20">
