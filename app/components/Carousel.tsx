@@ -72,7 +72,7 @@ export default function Carousel({
         {/* Scroll area */}
         <div
           ref={ref}
-          className="w-full flex gap-6 overflow-x-auto pb-3 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+          className="w-full flex gap-0 md:gap-6 overflow-x-auto pb-3 scroll-smooth snap-x snap-mandatory touch-pan-x overscroll-x-contain [&::-webkit-scrollbar]:hidden"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {children}
