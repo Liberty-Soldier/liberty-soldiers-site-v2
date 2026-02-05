@@ -1,9 +1,7 @@
-import { VIDEOS } from "@/lib/videos";
-
 export const metadata = {
   title: "Videos | Liberty Soldiers",
   description:
-    "Investigative video reports, briefings, and short-form analysis from Liberty Soldiers.",
+    "Investigative video briefings and reports from Liberty Soldiers.",
 };
 
 export default function VideosPage() {
@@ -15,79 +13,54 @@ export default function VideosPage() {
         </h1>
 
         <p className="mt-3 max-w-2xl text-zinc-700">
-          Investigative video reports and briefings from Liberty Soldiers.
-          Videos are hosted externally for availability and distribution.
+          Liberty Soldiers video content is published externally to ensure
+          availability and reach. Use the links below to view the latest video
+          reports and briefings.
         </p>
 
-        {/* Featured videos */}
-        <div className="mt-8 space-y-4">
-          {VIDEOS.map((v) => (
-            <a
-              key={v.url}
-              href={v.url}
-              target="_blank"
-              rel="noreferrer"
-              className="flex gap-4 rounded-2xl border border-zinc-200 bg-white p-4 hover:border-zinc-300 transition"
-            >
-              {v.thumbnail ? (
-                <img
-                  src={v.thumbnail}
-                  alt=""
-                  className="h-24 w-40 rounded-lg object-cover bg-zinc-100"
-                />
-              ) : (
-                <div className="h-24 w-40 rounded-lg bg-zinc-100 flex items-center justify-center text-xs text-zinc-500">
-                  {v.platform}
-                </div>
-              )}
-
-              <div className="min-w-0">
-                <span className="text-xs uppercase tracking-wide text-zinc-500">
-                  {v.platform}
-                </span>
-                <h2 className="mt-1 font-semibold leading-snug">
-                  {v.title}
-                </h2>
-                <p className="mt-1 text-xs text-zinc-500">{v.date}</p>
-                <span className="mt-2 inline-block text-sm text-zinc-900 font-medium">
-                  Watch →
-                </span>
-              </div>
-            </a>
-          ))}
-        </div>
-
-        {/* Channel links */}
-        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* YouTube */}
           <a
             href="https://www.youtube.com/@LibertySoldiers/videos"
             target="_blank"
             rel="noreferrer"
-            className="rounded-2xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 transition"
+            className="rounded-2xl border border-zinc-200 bg-white p-6 hover:border-zinc-300 transition"
           >
-            <h3 className="font-semibold">YouTube</h3>
+            <h2 className="text-lg font-semibold">YouTube</h2>
             <p className="mt-1 text-sm text-zinc-700">
-              Primary video releases and briefings.
+             Video releases, investigative reports, and briefings.
             </p>
-            <span className="mt-3 inline-block text-sm font-medium">
+            <span className="mt-3 inline-block text-sm font-medium text-zinc-900">
               View channel →
             </span>
           </a>
 
+          {/* Rumble */}
           <a
             href="https://rumble.com/c/LibertySoldiers"
             target="_blank"
             rel="noreferrer"
-            className="rounded-2xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 transition"
+            className="rounded-2xl border border-zinc-200 bg-white p-6 hover:border-zinc-300 transition"
           >
-            <h3 className="font-semibold">Rumble</h3>
+            <h2 className="text-lg font-semibold">Rumble</h2>
             <p className="mt-1 text-sm text-zinc-700">
               Mirror uploads and extended availability.
             </p>
-            <span className="mt-3 inline-block text-sm font-medium">
+            <span className="mt-3 inline-block text-sm font-medium text-zinc-900">
               View channel →
             </span>
           </a>
+        </div>
+
+        <div className="mt-10 rounded-2xl border border-zinc-200 bg-white p-6">
+          <h3 className="font-semibold text-zinc-900">
+            Video index coming later
+          </h3>
+          <p className="mt-2 text-sm text-zinc-700 max-w-2xl">
+            This page will eventually host a searchable archive of Liberty
+            Soldiers video reports. For now, all videos are available on the
+            platforms above.
+          </p>
         </div>
       </div>
     </main>
