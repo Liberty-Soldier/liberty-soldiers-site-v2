@@ -164,7 +164,11 @@ export default async function HomeHeadlines({
         // Carousel mode: each item is a full “slide”
         if (variant === "carousel") {
           return (
-            <div key={`${h.url}-${idx}`} className="snap-start shrink-0 w-full">
+            <div
+              key={`${h.url}-${idx}`}
+              className="snap-start shrink-0 w-full"
+              style={{ scrollSnapStop: "always" as any }}
+            >
               {Card}
             </div>
           );
