@@ -51,6 +51,18 @@ function bulletsFromSummary(summary?: string): string[] {
   return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
 }
 
+function pickThumb(h: Item): string {
+  // Prefer feed image if it looks like a real URL
+  if (h.image && /^https?:\/\//i.test(h.image)) return h.image;
+
+  // Otherwise use a favicon based on domain (generally reliable)
+  const fav = faviconFromUrl(h.url);
+  if (/^https?:\/\//i.test(fav)) return fav;
+
+  // Final local fallback
+  return "/briefing-fallback.jpg";
+}
+
 export default async function HomeHeadlines({
   variant = "grid",
 }: {
@@ -74,14 +86,12 @@ export default async function HomeHeadlines({
     );
   }
 
-  // IMPORTANT:
-  // - In carousel mode, do NOT add overflow here.
-  // - Return direct slide items (shrink-0 + snap-start).
   return (
     <div
       className={
         variant === "carousel"
-          ? "mt-6 flex gap-6" // horizontal row of slides
+          ? // IMPORTANT: no overflow here — Carousel.tsx is the only scroller
+            "mt-6 flex gap-6"
           : "mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       }
     >
@@ -90,24 +100,18 @@ export default async function HomeHeadlines({
           h.url
         )}`;
 
-        const thumb = h.image || faviconFromUrl(h.url);
+        const thumb = pickThumb(h);
         const bullets = bulletsFromSummary(h.summary);
 
         const Card = (
-          <article
-            className="rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 transition"
-          >
-            {/* Thumbnail */}
+          <article className="rounded-xl border border-zinc-200 bg-white p-5 hover:border-zinc-300 transition">
+            {/* Thumbnail (server-safe: no onError handler) */}
             <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-100">
               <img
                 src={thumb}
                 alt=""
                 className="h-44 w-full object-cover"
                 loading="lazy"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).src =
-                    "/briefing-fallback.jpg";
-                }}
               />
             </div>
 
@@ -115,7 +119,12 @@ export default async function HomeHeadlines({
               {h.source}
             </span>
 
-            <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
+            <a
+              href={h.url}
+              className="block mt-1"
+              target="_blank"
+              rel="noreferrer"
+            >
               <h3 className="text-zinc-900 font-semibold leading-snug hover:underline">
                 {h.title}
               </h3>
@@ -152,24 +161,17 @@ export default async function HomeHeadlines({
           </article>
         );
 
-        // In carousel mode, wrap each card as a “slide” that is one page wide
+        // Carousel mode: each item is a full “slide”
         if (variant === "carousel") {
           return (
-            <div
-              key={`${h.url}-${idx}`}
-              className="snap-start shrink-0 w-full"
-            >
+            <div key={`${h.url}-${idx}`} className="snap-start shrink-0 w-full">
               {Card}
             </div>
           );
         }
 
-        // In grid mode, just render the card
-        return (
-          <div key={`${h.url}-${idx}`}>
-            {Card}
-          </div>
-        );
+        // Grid mode
+        return <div key={`${h.url}-${idx}`}>{Card}</div>;
       })}
     </div>
   );
