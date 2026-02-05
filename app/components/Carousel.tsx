@@ -17,7 +17,7 @@ export default function Carousel({
     const el = ref.current;
     if (!el) return;
 
-    // Scroll by the visible width of the carousel (one “page”)
+    // Scroll one "page" (one headline at a time with your wide cards)
     const amount = el.clientWidth;
 
     el.scrollBy({
@@ -28,39 +28,53 @@ export default function Carousel({
 
   return (
     <section className="mt-6">
-      <div className="mb-4 flex items-end justify-between gap-4">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
-            {title}
-          </h2>
-          {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
-        </div>
-
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => scroll("left")}
-            className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
-            aria-label="Previous"
-          >
-            ◀
-          </button>
-          <button
-            type="button"
-            onClick={() => scroll("right")}
-            className="rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm hover:bg-zinc-50"
-            aria-label="Next"
-          >
-            ▶
-          </button>
-        </div>
+      <div className="mb-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">{title}</h2>
+        {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
       </div>
 
-      <div
-        ref={ref}
-        className="flex gap-4 overflow-x-auto pb-3 scroll-smooth snap-x snap-mandatory"
-      >
-        {children}
+      {/* Slider frame */}
+      <div className="relative">
+        {/* Left arrow (desktop only) */}
+        <button
+          type="button"
+          onClick={() => scroll("left")}
+          aria-label="Previous"
+          className="hidden md:inline-flex absolute left-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white/90 hover:bg-white shadow-sm"
+        >
+          ◀
+        </button>
+
+        {/* Right arrow (desktop only) */}
+        <button
+          type="button"
+          onClick={() => scroll("right")}
+          aria-label="Next"
+          className="hidden md:inline-flex absolute right-2 top-1/2 -translate-y-1/2 z-10 h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white/90 hover:bg-white shadow-sm"
+        >
+          ▶
+        </button>
+
+        {/* Scroll area */}
+         <div
+          ref={ref}
+          className="flex gap-4 overflow-x-auto pb-3 scroll-smooth snap-x snap-mandatory
+                     [&::-webkit-scrollbar]:hidden"
+          style={{
+            scrollbarWidth: "none",     // Firefox
+            msOverflowStyle: "none",    // IE / Edge legacy
+          }}
+        >
+
+          {/* Hide scrollbars in WebKit */}
+          <style jsx>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+
+          {children}
+        </div>
       </div>
     </section>
   );
