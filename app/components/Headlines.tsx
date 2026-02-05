@@ -59,7 +59,6 @@ function HeadlineCard({ h }: { h: Item }) {
   const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
     h.url
   )}`;
-
   const thumb = pickThumb(h);
   const bullets = bulletsFromSummary(h.summary);
 
@@ -142,6 +141,7 @@ export default async function HomeHeadlines({
     );
   }
 
+  // GRID = returns wrapper
   if (variant === "grid") {
     return (
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -154,7 +154,7 @@ export default async function HomeHeadlines({
     );
   }
 
-  // CAROUSEL: slides only, direct children
+  // CAROUSEL = returns slides ONLY (NO wrapper div)
   return (
     <>
       {top.map((h, idx) => (
