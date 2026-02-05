@@ -95,7 +95,6 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Carousel
             title="Latest Headlines"
-            subtitle="External headlines for situational awareness. External sources are not endorsements."
           >
             <Suspense fallback={<HeadlinesFallback />}>
               <HomeHeadlines variant="carousel" />
@@ -296,6 +295,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
