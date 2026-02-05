@@ -1,21 +1,34 @@
 "use client";
 
+import { useEffect } from "react";
 import Script from "next/script";
 
 type Props = {
-  username: string; // e.g. "LibertySoldierz"
-  height?: number;  // px
+  username: string;
+  height?: number;
 };
 
 export default function XFeed({ username, height = 520 }: Props) {
-  // Use light theme because your site is light mode
+  useEffect(() => {
+    // Force X widgets to re-scan after hydration
+    if ((window as any).twttr?.widgets) {
+      (window as any).twttr.widgets.load();
+    }
+  }, []);
+
   return (
-    <section className="mt-10">
-      <div className="mx-auto max-w-6xl px-6">
+    <section className="py-12 sm:py-16 border-t border-zinc-200">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-zinc-900">
-            Live Intelligence
-          </h2>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-zinc-900">
+              Live Intelligence
+            </h2>
+            <p className="mt-1 text-sm text-zinc-600">
+              Real-time signals and observations from Liberty Soldiers.
+            </p>
+          </div>
+
           <a
             href={`https://x.com/${username}`}
             target="_blank"
@@ -26,12 +39,7 @@ export default function XFeed({ username, height = 520 }: Props) {
           </a>
         </div>
 
-        <p className="mt-1 text-sm text-zinc-600">
-          Real-time signals and observations from Liberty Soldiers.
-        </p>
-
-        <div className="mt-4 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-          {/* X Timeline Embed */}
+        <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
           <a
             className="twitter-timeline"
             href={`https://twitter.com/${username}`}
@@ -42,13 +50,12 @@ export default function XFeed({ username, height = 520 }: Props) {
           >
             Posts by @{username}
           </a>
-
-          {/* X Widgets Script */}
-          <Script
-            src="https://platform.twitter.com/widgets.js"
-            strategy="afterInteractive"
-          />
         </div>
+
+        <Script
+          src="https://platform.twitter.com/widgets.js"
+          strategy="afterInteractive"
+        />
       </div>
     </section>
   );
