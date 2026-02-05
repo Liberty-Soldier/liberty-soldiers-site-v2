@@ -90,17 +90,18 @@ export default async function Home() {
         </div>
       </section>
 
-           {/* Latest Headlines (carousel) */}
+      {/* Latest Headlines (carousel) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Carousel
             title="Latest Headlines"
             subtitle="External headlines for situational awareness. External sources are not endorsements."
           >
-           <Suspense fallback={<HeadlinesFallback />}>
-            <HomeHeadlines variant="carousel" />
-          </Suspense>
-
+            <Suspense fallback={<HeadlinesFallback />}>
+              <HomeHeadlines variant="carousel" />
+            </Suspense>
+          </Carousel>
+      
           <div className="mt-6">
             <a
               href="/news"
@@ -295,6 +296,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
