@@ -77,11 +77,10 @@ export default async function HomeHeadlines({
   return (
     <div
       className={
-        variant === "carousel"
-          ? // IMPORTANT: no overflow here — Carousel.tsx is the *only* scroller
-            "mt-6 flex gap-4 snap-x snap-mandatory"
-          : "mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-      }
+      variant === "carousel"
+        ? "snap-start shrink-0 w-full rounded-xl border border-zinc-300 bg-white p-4 hover:border-zinc-400 transition"
+        : "rounded-xl border border-zinc-300 bg-white p-4 hover:border-zinc-400 transition"
+    }
     >
       {top.map((h, idx) => {
         const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
