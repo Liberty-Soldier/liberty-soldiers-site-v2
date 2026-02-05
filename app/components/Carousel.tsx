@@ -13,12 +13,27 @@ export default function Carousel({
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
+  function getStep(el: HTMLDivElement): number {
+    const first = el.firstElementChild as HTMLElement | null;
+    if (!first) return el.clientWidth;
+
+    // The true step = slide width + flex gap
+    const slideWidth = first.getBoundingClientRect().width;
+
+    const styles = window.getComputedStyle(el);
+    // `columnGap` works for flex gap in modern browsers; fallback to `gap`
+    const gapStr = styles.columnGap || styles.gap || "0px";
+    const gap = Number.parseFloat(gapStr) || 0;
+
+    // A tiny fudge factor helps snapping land cleanly
+    return slideWidth + gap + 2;
+  }
+
   function scroll(dir: "left" | "right") {
     const el = ref.current;
     if (!el) return;
 
-    // Scroll one "page" (one headline at a time with your wide cards)
-    const amount = el.clientWidth;
+    const amount = getStep(el);
 
     el.scrollBy({
       left: dir === "left" ? -amount : amount,
@@ -33,7 +48,6 @@ export default function Carousel({
         {subtitle && <p className="mt-1 text-sm text-zinc-600">{subtitle}</p>}
       </div>
 
-      {/* Slider frame */}
       <div className="relative">
         {/* Left arrow (desktop only) */}
         <button
@@ -56,23 +70,11 @@ export default function Carousel({
         </button>
 
         {/* Scroll area */}
-         <div
+        <div
           ref={ref}
-          className="w-full flex gap-4 overflow-x-auto pb-3 scroll-smooth snap-x snap-mandatory
-                     [&::-webkit-scrollbar]:hidden"
-          style={{
-            scrollbarWidth: "none",     // Firefox
-            msOverflowStyle: "none",    // IE / Edge legacy
-          }}
+          className="w-full flex gap-6 overflow-x-auto pb-3 scroll-smooth snap-x snap-mandatory [&::-webkit-scrollbar]:hidden"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-
-          {/* Hide scrollbars in WebKit */}
-          <style jsx>{`
-            div::-webkit-scrollbar {
-              display: none;
-            }
-          `}</style>
-
           {children}
         </div>
       </div>
