@@ -506,6 +506,85 @@ function capBySource(items: Headline[]): Headline[] {
   return out;
 }
 
+const MIN_PER_CATEGORY = 6; // ✅ your request
+
+function selectWithCategoryMins(items: Headline[]): Headline[] {
+  const perSource = new Map<string, number>();
+  const perCat = new Map<string, number>();
+  const selected: Headline[] = [];
+
+  const catOf = (h: Headline) => (h.category || "General").trim();
+
+  // Categories we do NOT force-minimum for
+  const EXCLUDE = new Set(["Pinned", "General"]);
+
+  // Determine which categories are eligible (present + not excluded)
+  const eligibleCats = Array.from(
+    new Set(items.map(catOf).filter((c) => c && !EXCLUDE.has(c)))
+  );
+
+  const needMore = (c: string) => (perCat.get(c) || 0) < MIN_PER_CATEGORY;
+
+  const canTake = (h: Headline) => {
+    const s = (h.source || "unknown").toLowerCase().trim();
+    const sc = perSource.get(s) || 0;
+    return sc < MAX_PER_SOURCE;
+  };
+
+  const take = (h: Headline) => {
+    const s = (h.source || "unknown").toLowerCase().trim();
+    const c = catOf(h);
+    perSource.set(s, (perSource.get(s) || 0) + 1);
+    perCat.set(c, (perCat.get(c) || 0) + 1);
+    selected.push(h);
+  };
+
+  // PASS 1: satisfy category minimums (newest-first), respecting per-source cap
+  // We loop a few rounds so categories don't starve if early items hit source caps.
+  const alreadyPicked = new Set<string>();
+  const maxRounds = 4;
+
+  for (let round = 0; round < maxRounds; round++) {
+    let progressed = false;
+
+    for (const h of items) {
+      if (selected.length >= MAX_TOTAL) break;
+
+      const key = h.url.trim();
+      if (!key || alreadyPicked.has(key)) continue;
+
+      const c = catOf(h);
+      if (EXCLUDE.has(c)) continue;
+      if (!eligibleCats.includes(c)) continue;
+
+      if (needMore(c) && canTake(h)) {
+        take(h);
+        alreadyPicked.add(key);
+        progressed = true;
+      }
+    }
+
+    // stop early if all eligible categories met mins or no progress possible
+    const allMet = eligibleCats.every((c) => !needMore(c));
+    if (allMet || !progressed) break;
+  }
+
+  // PASS 2: fill remaining slots by recency, still respecting per-source cap
+  for (const h of items) {
+    if (selected.length >= MAX_TOTAL) break;
+
+    const key = h.url.trim();
+    if (!key || alreadyPicked.has(key)) continue;
+
+    if (!canTake(h)) continue;
+
+    take(h);
+    alreadyPicked.add(key);
+  }
+
+  return selected;
+}
+
 /* -------------------------------------------------- */
 /* public API                                         */
 /* -------------------------------------------------- */
@@ -533,12 +612,12 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
   unique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
 
   // ✅ conservative fuzzy title de-dupe
-  const fuzzyUnique = dedupeBySimilarTitle(unique);
+const fuzzyUnique = dedupeBySimilarTitle(unique);
 
-  // ✅ cap per source + cap total
-  const capped = capBySource(fuzzyUnique);
+// ✅ NEW: enforce 6-min per category (when available) + caps
+const balanced = selectWithCategoryMins(fuzzyUnique);
 
-  return capped;
+return balanced;
 }
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
