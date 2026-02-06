@@ -1,6 +1,6 @@
 // lib/rss.ts
 import { XMLParser } from "fast-xml-parser";
-import { NEWS_FEEDS, PINNED_LINKS, BLACKLIST } from "./news.config";
+import { NEWS_FEEDS, NOISE_FEEDS, PINNED_LINKS, BLACKLIST } from "./news.config";
 
 export type Headline = {
   title: string;
@@ -395,11 +395,8 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
 /* public API                                         */
 /* -------------------------------------------------- */
 
-export async function fetchAllHeadlines(): Promise<Headline[]> {
-  // Works with NEWS_FEEDS as string[] or {url, category}[]
-  const feeds = (NEWS_FEEDS as unknown as FeedInput[]) ?? [];
-
-  const settled = await Promise.allSettled(feeds.map(fetchOneFeed));
+async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]> {
+  const settled = await Promise.allSettled(feedsIn.map(fetchOneFeed));
 
   const all: Headline[] = [];
   for (const r of settled) {
@@ -407,6 +404,27 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
       all.push(...r.value);
     }
   }
+
+  // de-dup by URL
+  const seen = new Set<string>();
+  const unique = all.filter((h) => {
+    const key = h.url.trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  // sort newest → oldest
+  unique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+
+  return unique;
+}
+
+export async function fetchAllHeadlines(): Promise<Headline[]> {
+  // SIGNAL (your existing feeds)
+  const feeds = (NEWS_FEEDS as unknown as FeedInput[]) ?? [];
+
+  const headlines = await fetchHeadlinesFromFeeds(feeds);
 
   // pinned first (always stay on top)
   const pinned: Headline[] = PINNED_LINKS.map((p) => ({
@@ -419,7 +437,7 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
     category: "Pinned",
   }));
 
-  // de-dup by URL (pinned take priority)
+  // pinned take priority in de-dup
   const seen = new Set<string>();
 
   const pinnedUnique = pinned.filter((h) => {
@@ -429,16 +447,18 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
     return true;
   });
 
-  const restUnique = all.filter((h) => {
+  const restUnique = headlines.filter((h) => {
     const key = h.url.trim();
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 
-  // sort only non-pinned items newest → oldest
-  restUnique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
-
-  // pinned always first, then sorted feed
   return [...pinnedUnique, ...restUnique];
+}
+
+// ✅ New: fetch NOISE headlines (no pinned)
+export async function fetchNoiseHeadlines(): Promise<Headline[]> {
+  const feeds = (NOISE_FEEDS as unknown as FeedInput[]) ?? [];
+  return fetchHeadlinesFromFeeds(feeds);
 }
