@@ -21,7 +21,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://rss.dw.com/rdf/rss-en-all", category: "world" },
   { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "world" },
   { url: "https://feeds.foxnews.com/foxnews/world", category: "world" },
-  { url: "https://feeds.feedburner.com/zerohedge/feed", category: "finance" },
+  { url: "https://feeds.feedburner.com/zerohedge/feed", category: "world" },
 
   // --- MIDDLE EAST / ISRAEL ---
   { url: "https://www.jpost.com/rss/rss.xml", category: "middle-east" },
@@ -65,6 +65,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
