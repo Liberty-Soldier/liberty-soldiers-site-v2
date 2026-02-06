@@ -21,7 +21,6 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://rss.dw.com/rdf/rss-en-all", category: "world" },
   { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "world" },
   { url: "https://feeds.foxnews.com/foxnews/world", category: "world" },
-  { url: "https://feeds.feedburner.com/zerohedge/feed", category: "world" },
 
   // --- MIDDLE EAST / ISRAEL ---
   { url: "https://www.jpost.com/rss/rss.xml", category: "middle-east" },
@@ -34,7 +33,6 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://reclaimthenet.org/feed/", category: "tech" },
   { url: "https://www.biometricupdate.com/feed/", category: "tech" },
   { url: "https://www.expose-news.com/feed/", category: "tech" },
-  { url: "https://www.zerohedge.com/fullrss2.xml", category: "tech" },
 
   // --- PROPHECY / ESCHATOLOGY ---
   { url: "https://endtimeheadlines.org/feed/", category: "prophecy" },
@@ -43,6 +41,13 @@ export const NEWS_FEEDS: NewsFeed[] = [
 
   // --- FINANCE ---
   { url: "https://www.reuters.com/business/rss", category: "finance" },
+  { url: "https://feeds.apnews.com/apf/business", category: "finance" },
+  { url: "https://www.ft.com/rss/home", category: "finance" },
+  { url: "https://www.marketwatch.com/rss/topstories", category: "finance" },
+  { url: "https://www.investing.com/rss/news_25.rss", category: "finance" },
+  { url: "https://www.bis.org/rss/all.xml", category: "finance" },
+  { url: "https://www.imf.org/external/rss/feeds.aspx?feed=imf_blog", category: "finance" },
+  { url: "https://feeds.feedburner.com/zerohedge/feed", category: "finance" },
 
   // --- CRYPTO ---
   { url: "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml", category: "crypto" },
@@ -65,6 +70,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
