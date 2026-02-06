@@ -139,7 +139,7 @@ export default async function NewsPage() {
           ) : (
 
             <NewsFeedClient items={items} latestReports={latestReports} />
-
+            )}
                   {view === "cards" ? (
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {list.map((h, idx) => {
@@ -341,4 +341,5 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
