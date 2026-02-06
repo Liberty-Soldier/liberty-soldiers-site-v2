@@ -4,15 +4,6 @@ import Link from "next/link";
 import ShareButton from "./ShareButton";
 import { useEffect, useMemo, useState } from "react";
 
-  const [cat, setCat] = useState("All");
-  const [sort, setSort] = useState<"newest" | "signal">("newest");
-  const [view, setView] = useState<"cards" | "compact">("cards");
-
-  // ✅ Force Cards on mobile (Compact breaks on small screens)
-  useEffect(() => {
-    if (window.innerWidth < 640) setView("cards");
-  }, []);
-
 type Item = {
   title: string;
   url: string;
@@ -28,7 +19,7 @@ type Report = {
   title: string;
   excerpt: string;
   byline: string;
-  dateISO: string; // YYYY-MM-DD
+  dateISO: string;
 };
 
 function humanAgo(input?: number | string | Date): string {
@@ -134,23 +125,32 @@ export default function NewsFeedClient({
   const [sort, setSort] = useState<"newest" | "signal">("newest");
   const [view, setView] = useState<"cards" | "compact">("cards");
 
+  // Force "Cards" on mobile always (compact looked broken on mobile)
+  useEffect(() => {
+    const apply = () => {
+      if (window.innerWidth < 640) setView("cards");
+    };
+    apply();
+    window.addEventListener("resize", apply);
+    return () => window.removeEventListener("resize", apply);
+  }, []);
+
   const list = useMemo(() => {
     let out = items.filter((x) => x.category !== "Pinned");
     if (cat !== "All") out = out.filter((x) => (x.category || "General") === cat);
 
     if (sort === "newest") {
+      out = out.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+    } else {
       out = out
         .slice()
-        .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
-    } else {
-      out = out.slice().sort((a, b) => {
-        const wa = signalWeight(a.category);
-        const wb = signalWeight(b.category);
-        if (wa !== wb) return wa - wb;
-        return (b.publishedAt || 0) - (a.publishedAt || 0);
-      });
+        .sort((a, b) => {
+          const wa = signalWeight(a.category);
+          const wb = signalWeight(b.category);
+          if (wa !== wb) return wa - wb;
+          return (b.publishedAt || 0) - (a.publishedAt || 0);
+        });
     }
-
     return out;
   }, [items, cat, sort]);
 
@@ -176,17 +176,18 @@ export default function NewsFeedClient({
                 <option value="signal">Signal-first</option>
               </select>
 
+              {/* Desktop-only toggle (mobile forced to cards) */}
               <button
-              onClick={() => setView(view === "cards" ? "compact" : "cards")}
-              className="hidden sm:inline-flex rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800 hover:bg-zinc-50"
-            >
-              {view === "cards" ? "Compact" : "Cards"}
-            </button>
+                onClick={() => setView(view === "cards" ? "compact" : "cards")}
+                className="hidden sm:inline-flex rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800 hover:bg-zinc-50"
+              >
+                {view === "cards" ? "Compact" : "Cards"}
+              </button>
             </div>
           </div>
 
           {/* Category chips (scrollable on mobile) */}
-          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto pb-1">
+          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto pb-2">
             <div className="flex gap-2 w-max pr-4">
               {categories.map((c) => {
                 const active = c === cat;
@@ -195,9 +196,9 @@ export default function NewsFeedClient({
                     key={c}
                     onClick={() => setCat(c)}
                     className={
-                      (active
+                      active
                         ? "shrink-0 rounded-full border border-zinc-900 bg-zinc-900 px-3 py-1 text-xs font-semibold text-white"
-                        : "shrink-0 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-800 hover:bg-zinc-50")
+                        : "shrink-0 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-800 hover:bg-zinc-50"
                     }
                   >
                     {c}
@@ -210,7 +211,7 @@ export default function NewsFeedClient({
       </div>
 
       {/* Render */}
-      <div className="mt-6">
+      <div className="mt-6 pb-6">
         {view === "cards" ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {list.map((h, idx) => {
@@ -234,9 +235,6 @@ export default function NewsFeedClient({
                             <h2 className="text-xl sm:text-2xl font-bold">
                               Liberty Soldiers Reports
                             </h2>
-                            <p className="mt-1 text-zinc-600">
-                              Original investigative reports and analysis.
-                            </p>
                           </div>
 
                           <Link
@@ -322,12 +320,7 @@ export default function NewsFeedClient({
                       </div>
                     )}
 
-                    <a
-                      href={h.url}
-                      className="block mt-1"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
+                    <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
                       <h3 className="font-semibold leading-snug hover:underline">
                         {h.title}
                       </h3>
@@ -344,7 +337,8 @@ export default function NewsFeedClient({
                       </ul>
                     )}
 
-                    <div className="mt-3 flex items-center justify-end">
+                    {/* Extra bottom padding so buttons never clip */}
+                    <div className="mt-4 pb-1 flex items-center justify-end">
                       <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
                     </div>
                   </div>
@@ -358,12 +352,8 @@ export default function NewsFeedClient({
               const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
                 h.url
               )}`;
-
               return (
-                <div
-                  key={`${h.url}-${idx}`}
-                  className="p-3 sm:p-4 hover:bg-zinc-50 transition"
-                >
+                <div key={`${h.url}-${idx}`} className="p-3 sm:p-4 hover:bg-zinc-50 transition">
                   <div className="flex items-start justify-between gap-3 sm:gap-4">
                     <div className="min-w-0">
                       <div className="text-[11px] uppercase tracking-wide text-zinc-500">
@@ -376,13 +366,8 @@ export default function NewsFeedClient({
                         ) : null}
                       </div>
 
-                      <a
-                        href={h.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block mt-1"
-                      >
-                        <div className="font-semibold text-zinc-900 hover:underline line-clamp-2">
+                      <a href={h.url} target="_blank" rel="noreferrer" className="block mt-1">
+                        <div className="font-semibold text-zinc-900 hover:underline break-words">
                           {h.title}
                         </div>
                       </a>
