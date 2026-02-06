@@ -42,7 +42,7 @@ export default async function NewsPage() {
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               News Feed
             </h1>
-            <span className="text-zinc-300 hidden sm:inline">/</span>
+            <span className="hidden sm:inline text-zinc-300">/</span>
             <h2 className="hidden sm:block text-2xl font-extrabold tracking-tight text-red-600">
               Latest Headlines
             </h2>
