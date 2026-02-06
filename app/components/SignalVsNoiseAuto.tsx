@@ -3,7 +3,7 @@ import { fetchAllHeadlines, fetchNoiseHeadlines, Headline } from "@/lib/rss";
 
 export const revalidate = 300;
 
-// Tiny HTML entity cleanup (covers the common &#8216; &#8217; etc.)
+// Tiny HTML entity cleanup (covers common &#8216; &#8217; etc.)
 function decodeEntities(s: string) {
   if (!s) return s;
   return s
@@ -14,7 +14,7 @@ function decodeEntities(s: string) {
     .replace(/&nbsp;/g, " ");
 }
 
-function Column({
+function Panel({
   title,
   subtitle,
   items,
@@ -37,10 +37,8 @@ function Column({
 
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm overflow-hidden">
-      {/* Top accent bar */}
       <div className={`h-1.5 bg-gradient-to-r ${headerTone}`} />
 
-      {/* Sticky header so it feels like a “panel” */}
       <div className="sticky top-0 z-10 bg-white/95 backdrop-blur border-b border-zinc-100 px-4 sm:px-5 py-3">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
@@ -60,7 +58,6 @@ function Column({
         </div>
       </div>
 
-      {/* Scrollable list area so both columns “feel equal” */}
       <div className="max-h-[420px] sm:max-h-[520px] overflow-auto px-3 sm:px-4 py-3">
         <ul className="space-y-2">
           {items.slice(0, 10).map((h) => {
@@ -94,7 +91,6 @@ function Column({
         </ul>
       </div>
 
-      {/* Bottom hint (adds “dashboard” feel) */}
       <div className="border-t border-zinc-100 px-4 sm:px-5 py-2 text-[11px] sm:text-xs text-zinc-500">
         Showing newest items
       </div>
@@ -105,7 +101,6 @@ function Column({
 export default async function SignalVsNoiseAuto() {
   const signalAll = await fetchAllHeadlines();
   const signal = (signalAll || []).filter((h) => h.category !== "Pinned");
-
   const noise = await fetchNoiseHeadlines();
 
   return (
@@ -126,15 +121,15 @@ export default async function SignalVsNoiseAuto() {
           </div>
         </div>
 
-        {/* IMPORTANT: force 2 columns even on mobile */}
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-6">
-          <Column
+        {/* Desktop: side-by-side columns */}
+        <div className="mt-8 hidden sm:grid grid-cols-2 gap-6">
+          <Panel
             title="SIGNAL"
             subtitle="Structural events, policy shifts, systems."
             items={signal}
             tone="signal"
           />
-          <Column
+          <Panel
             title="NOISE"
             subtitle="Distraction, churn, attention sinks."
             items={noise}
@@ -142,10 +137,41 @@ export default async function SignalVsNoiseAuto() {
           />
         </div>
 
-        {/* Mobile note: two columns can be tight, so we keep things compact */}
-        <p className="mt-4 text-[11px] sm:hidden text-zinc-500">
-          Tip: Rotate your phone for a wider view.
-        </p>
+        {/* Mobile: swipeable panels */}
+        <div className="mt-8 sm:hidden">
+          <div className="flex items-center justify-between text-[11px] text-zinc-500">
+            <span>Swipe</span>
+            <span className="flex items-center gap-1">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-zinc-400" />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-zinc-300" />
+            </span>
+          </div>
+
+          <div className="mt-3 -mx-4 px-4 overflow-x-auto">
+            <div className="flex gap-4 snap-x snap-mandatory">
+              <div className="snap-start shrink-0 w-[92%]">
+                <Panel
+                  title="SIGNAL"
+                  subtitle="Structural events, policy shifts, systems."
+                  items={signal}
+                  tone="signal"
+                />
+              </div>
+              <div className="snap-start shrink-0 w-[92%]">
+                <Panel
+                  title="NOISE"
+                  subtitle="Distraction, churn, attention sinks."
+                  items={noise}
+                  tone="noise"
+                />
+              </div>
+            </div>
+          </div>
+
+          <p className="mt-3 text-[11px] text-zinc-500">
+            Tip: swipe horizontally to switch panels.
+          </p>
+        </div>
       </div>
     </section>
   );
