@@ -143,7 +143,9 @@ export default async function Home() {
                 <HomeHeadlines variant="grid" />
               </Suspense>
             </div>
-
+          </div>
+        </section>
+            
       {/* Signal vs Noise (auto) */}
       <SignalVsNoiseAuto />
 
@@ -330,6 +332,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
