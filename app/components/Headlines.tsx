@@ -62,8 +62,8 @@ export default async function HomeHeadlines({
 
   const top =
   variant === "grid"
-    ? items.slice(0, 6)
-    : items.slice(0, 15);
+    ? items.slice(0, 9)
+    : items.slice(0, 20);
 
 
   if (top.length === 0) {
