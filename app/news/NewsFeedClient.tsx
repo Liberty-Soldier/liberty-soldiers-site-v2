@@ -2,7 +2,16 @@
 
 import Link from "next/link";
 import ShareButton from "./ShareButton";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+  const [cat, setCat] = useState("All");
+  const [sort, setSort] = useState<"newest" | "signal">("newest");
+  const [view, setView] = useState<"cards" | "compact">("cards");
+
+  // ✅ Force Cards on mobile (Compact breaks on small screens)
+  useEffect(() => {
+    if (window.innerWidth < 640) setView("cards");
+  }, []);
 
 type Item = {
   title: string;
@@ -168,11 +177,11 @@ export default function NewsFeedClient({
               </select>
 
               <button
-                onClick={() => setView(view === "cards" ? "compact" : "cards")}
-                className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800 hover:bg-zinc-50"
-              >
-                {view === "cards" ? "Compact" : "Cards"}
-              </button>
+              onClick={() => setView(view === "cards" ? "compact" : "cards")}
+              className="hidden sm:inline-flex rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800 hover:bg-zinc-50"
+            >
+              {view === "cards" ? "Compact" : "Cards"}
+            </button>
             </div>
           </div>
 
