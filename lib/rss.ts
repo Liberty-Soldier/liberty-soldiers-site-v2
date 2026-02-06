@@ -392,6 +392,121 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
 }
 
 /* -------------------------------------------------- */
+/* caps + dedupe (safe, conservative)                  */
+/* -------------------------------------------------- */
+
+const MAX_PER_SOURCE = 4; // cap per source
+const MAX_TOTAL = 60; // cap total returned (excluding pinned)
+
+function normalizeForDedupeTitle(s: string): string {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;/g, "'")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function titleTokens(s: string): Set<string> {
+  const stop = new Set([
+    "the",
+    "a",
+    "an",
+    "and",
+    "or",
+    "to",
+    "of",
+    "in",
+    "on",
+    "for",
+    "with",
+    "as",
+    "at",
+    "by",
+    "from",
+    "after",
+    "before",
+    "over",
+    "under",
+    "into",
+    "is",
+    "are",
+    "was",
+    "were",
+    "be",
+    "been",
+    "it",
+    "this",
+    "that",
+  ]);
+
+  const cleaned = normalizeForDedupeTitle(s);
+  const toks = cleaned.split(" ").filter(Boolean).filter((t) => !stop.has(t));
+  return new Set(toks);
+}
+
+function jaccard(a: Set<string>, b: Set<string>): number {
+  if (!a.size || !b.size) return 0;
+  let inter = 0;
+  for (const x of a) if (b.has(x)) inter++;
+  const union = a.size + b.size - inter;
+  return union ? inter / union : 0;
+}
+
+/**
+ * Conservative fuzzy dedupe:
+ * - only compares against a small rolling window of recently kept items
+ * - high similarity threshold to avoid wrong merges
+ */
+function dedupeBySimilarTitle(items: Headline[]): Headline[] {
+  const FUZZY_THRESHOLD = 0.9;
+  const WINDOW = 80; // limits comparisons so performance stays safe
+
+  const kept: Headline[] = [];
+  const keptTokens: Set<string>[] = [];
+
+  for (const it of items) {
+    const ts = titleTokens(it.title);
+    let dup = false;
+
+    // compare against recent kept window only
+    const start = Math.max(0, kept.length - WINDOW);
+    for (let i = kept.length - 1; i >= start; i--) {
+      if (jaccard(ts, keptTokens[i]) >= FUZZY_THRESHOLD) {
+        dup = true;
+        break;
+      }
+    }
+
+    if (!dup) {
+      kept.push(it);
+      keptTokens.push(ts);
+    }
+  }
+
+  return kept;
+}
+
+function capBySource(items: Headline[]): Headline[] {
+  const perSource = new Map<string, number>();
+  const out: Headline[] = [];
+
+  for (const it of items) {
+    const s = (it.source || "unknown").toLowerCase().trim();
+    const c = perSource.get(s) || 0;
+    if (c >= MAX_PER_SOURCE) continue;
+
+    perSource.set(s, c + 1);
+    out.push(it);
+
+    if (out.length >= MAX_TOTAL) break;
+  }
+
+  return out;
+}
+
+/* -------------------------------------------------- */
 /* public API                                         */
 /* -------------------------------------------------- */
 
@@ -417,7 +532,13 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
   // sort newest → oldest
   unique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
 
-  return unique;
+  // ✅ conservative fuzzy title de-dupe
+  const fuzzyUnique = dedupeBySimilarTitle(unique);
+
+  // ✅ cap per source + cap total
+  const capped = capBySource(fuzzyUnique);
+
+  return capped;
 }
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
