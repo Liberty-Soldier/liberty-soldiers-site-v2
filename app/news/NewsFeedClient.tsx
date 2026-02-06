@@ -61,13 +61,20 @@ function bulletsFromSummary(summary?: string): string[] {
   }
   const chunk1 = clean.slice(0, 90).trim();
   const chunk2 = clean.slice(90, 180).trim();
-  return [chunk1, chunk2].filter(Boolean).slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
+  return [chunk1, chunk2]
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
 }
 
 function formatDate(iso: string) {
   const [y, m, d] = iso.split("-").map((v) => Number(v));
   const dt = new Date(y, (m ?? 1) - 1, d ?? 1);
-  return dt.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  return dt.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 }
 
 const DEFAULT_CATS = [
@@ -86,7 +93,9 @@ function buildCategories(items: Item[]) {
   const set = new Set<string>();
   for (const it of items) if (it.category) set.add(it.category);
   const preferred = DEFAULT_CATS.filter((c) => c === "All" || set.has(c));
-  const rest = Array.from(set).filter((c) => !preferred.includes(c) && c !== "Pinned").sort();
+  const rest = Array.from(set)
+    .filter((c) => !preferred.includes(c) && c !== "Pinned")
+    .sort();
   return [...preferred, ...rest];
 }
 
@@ -121,16 +130,16 @@ export default function NewsFeedClient({
     if (cat !== "All") out = out.filter((x) => (x.category || "General") === cat);
 
     if (sort === "newest") {
-      out = out.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
-    } else {
       out = out
         .slice()
-        .sort((a, b) => {
-          const wa = signalWeight(a.category);
-          const wb = signalWeight(b.category);
-          if (wa !== wb) return wa - wb;
-          return (b.publishedAt || 0) - (a.publishedAt || 0);
-        });
+        .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+    } else {
+      out = out.slice().sort((a, b) => {
+        const wa = signalWeight(a.category);
+        const wb = signalWeight(b.category);
+        if (wa !== wb) return wa - wb;
+        return (b.publishedAt || 0) - (a.publishedAt || 0);
+      });
     }
 
     return out;
@@ -143,7 +152,9 @@ export default function NewsFeedClient({
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <div className="text-xs text-zinc-600">
-              Showing <span className="font-semibold text-zinc-900">{list.length}</span> headlines
+              Showing{" "}
+              <span className="font-semibold text-zinc-900">{list.length}</span>{" "}
+              headlines
             </div>
 
             <div className="flex items-center gap-2">
@@ -166,8 +177,8 @@ export default function NewsFeedClient({
           </div>
 
           {/* Category chips (scrollable on mobile) */}
-          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto">
-            <div className="flex gap-2 w-max">
+          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto pb-1">
+            <div className="flex gap-2 w-max pr-4">
               {categories.map((c) => {
                 const active = c === cat;
                 return (
@@ -175,9 +186,9 @@ export default function NewsFeedClient({
                     key={c}
                     onClick={() => setCat(c)}
                     className={
-                      active
-                        ? "rounded-full border border-zinc-900 bg-zinc-900 px-3 py-1 text-xs font-semibold text-white"
-                        : "rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-800 hover:bg-zinc-50"
+                      (active
+                        ? "shrink-0 rounded-full border border-zinc-900 bg-zinc-900 px-3 py-1 text-xs font-semibold text-white"
+                        : "shrink-0 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-800 hover:bg-zinc-50")
                     }
                   >
                     {c}
@@ -276,7 +287,12 @@ export default function NewsFeedClient({
 
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition">
                     <div className="relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
-                      <img src={thumb} alt="" className="h-32 w-full object-cover" loading="lazy" />
+                      <img
+                        src={thumb}
+                        alt=""
+                        className="h-32 w-full object-cover"
+                        loading="lazy"
+                      />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                     </div>
 
@@ -297,8 +313,15 @@ export default function NewsFeedClient({
                       </div>
                     )}
 
-                    <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
-                      <h3 className="font-semibold leading-snug hover:underline">{h.title}</h3>
+                    <a
+                      href={h.url}
+                      className="block mt-1"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <h3 className="font-semibold leading-snug hover:underline">
+                        {h.title}
+                      </h3>
                     </a>
 
                     {bullets.length > 0 && (
@@ -326,9 +349,13 @@ export default function NewsFeedClient({
               const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
                 h.url
               )}`;
+
               return (
-                <div key={`${h.url}-${idx}`} className="p-4 hover:bg-zinc-50 transition">
-                  <div className="flex items-start justify-between gap-4">
+                <div
+                  key={`${h.url}-${idx}`}
+                  className="p-3 sm:p-4 hover:bg-zinc-50 transition"
+                >
+                  <div className="flex items-start justify-between gap-3 sm:gap-4">
                     <div className="min-w-0">
                       <div className="text-[11px] uppercase tracking-wide text-zinc-500">
                         {h.source}
@@ -340,13 +367,20 @@ export default function NewsFeedClient({
                         ) : null}
                       </div>
 
-                      <a href={h.url} target="_blank" rel="noreferrer" className="block mt-1">
-                        <div className="font-semibold text-zinc-900 hover:underline break-words">
+                      <a
+                        href={h.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block mt-1"
+                      >
+                        <div className="font-semibold text-zinc-900 hover:underline line-clamp-2">
                           {h.title}
                         </div>
                       </a>
 
-                      <div className="mt-1 text-xs text-zinc-500">{humanAgo(h.publishedAt)}</div>
+                      <div className="mt-1 text-[11px] text-zinc-500">
+                        {humanAgo(h.publishedAt)}
+                      </div>
                     </div>
 
                     <div className="shrink-0">
