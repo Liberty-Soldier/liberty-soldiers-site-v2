@@ -128,15 +128,21 @@ export default async function Home() {
       
           {/* Carousel */}
           <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm p-3 sm:p-4">
-            <Carousel title="">
+            {/* Mobile: carousel */}
+            <div className="sm:hidden">
+              <Carousel title="">
+                <Suspense fallback={<HeadlinesFallback />}>
+                  <HomeHeadlines variant="carousel" />
+                </Suspense>
+              </Carousel>
+            </div>
+            
+            {/* Desktop: grid */}
+            <div className="hidden sm:block">
               <Suspense fallback={<HeadlinesFallback />}>
-                <HomeHeadlines variant="carousel" />
+                <HomeHeadlines variant="grid" />
               </Suspense>
-            </Carousel>
-          </div>
-        </div>
-      </section>
-
+            </div>
 
       {/* Signal vs Noise (auto) */}
       <SignalVsNoiseAuto />
@@ -324,6 +330,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
