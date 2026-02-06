@@ -41,10 +41,19 @@ export default async function NewsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {/* Header */}
         <div className="mb-8 flex items-end justify-between gap-6">
-          <div>
+          <div className="flex items-center gap-3">
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               News Feed
             </h1>
+
+            <span className="hidden sm:inline text-zinc-400">•</span>
+
+            <div className="flex items-center gap-2">
+              <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+              <span className="text-sm sm:text-base font-semibold uppercase tracking-wide text-red-600">
+                Live Headlines
+              </span>
+            </div>
           </div>
 
           <Link
@@ -55,18 +64,8 @@ export default async function NewsPage() {
           </Link>
         </div>
 
-        {/* Live RSS headlines */}
-        <section className="border-t border-zinc-200 pt-10">
-          <div className="mb-6">
-            <h2 className="text-2xl sm:text-3xl font-bold">Latest Headlines</h2>
-            <p className="mt-1 text-zinc-600">
-              Click a headline to open the original source.
-            </p>
-            <p className="mt-1 text-xs text-zinc-500">
-              Use Share to post an X-friendly Liberty Soldiers link.
-            </p>
-          </div>
-
+        {/* Feed */}
+        <section className="border-t border-zinc-200 pt-8">
           {items.length === 0 ? (
             <div className="rounded-xl border border-zinc-200 bg-white p-6 text-zinc-700">
               No headlines yet. If this persists, check{" "}
