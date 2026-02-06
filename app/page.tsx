@@ -2,9 +2,11 @@
 import Carousel from "./components/Carousel";
 import { Suspense } from "react";
 import HomeHeadlines from "./components/Headlines";
-import XFeed from "./components/XFeed";
 import ShareButton from "./news/ShareButton";
 import { getLatestReport } from "../lib/reports";
+import LiveBriefingAuto from "./components/LiveBriefingAuto";
+import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
+
 
 export const revalidate = 600;
 
@@ -91,6 +93,9 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Live Briefing (auto from RSS) */}
+      <LiveBriefingAuto />
+
       {/* Latest Headlines (carousel) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -112,9 +117,9 @@ export default async function Home() {
           </div>
         </div>
       </section>
-      
-      {/* Live Intelligence (X Feed) */}
-      <XFeed username="LibertySoldierz" height={520} />
+
+      {/* Signal vs Noise (auto) */}
+      <SignalVsNoiseAuto />
 
       {/* Latest Report (your own content) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
@@ -299,6 +304,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
