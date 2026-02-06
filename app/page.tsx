@@ -7,7 +7,6 @@ import { getLatestReport } from "../lib/reports";
 import LiveBriefingAuto from "./components/LiveBriefingAuto";
 import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 
-
 export const revalidate = 600;
 
 export const metadata = {
@@ -48,8 +47,8 @@ export default async function Home() {
   const VIDEO_TITLE = "Latest Liberty Soldiers Video";
   const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
 
-  // Option A (recommended): use a local thumbnail you control
-  const VIDEO_THUMB = "/video.jpg"; // put file in /public/og/
+  // Put file in /public/video.jpg (or change to /og/video.jpg if stored in /public/og/)
+  const VIDEO_THUMB = "/video.jpg";
 
   // Latest report (auto)
   const latest = getLatestReport();
@@ -73,7 +72,7 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero (keep dark overlay for readability on image) */}
+      {/* Hero */}
       <section className="relative h-[25vh] sm:h-[32vh] w-full flex items-center">
         <div
           className="absolute inset-0 bg-center bg-cover"
@@ -93,10 +92,10 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Live Briefing (auto from RSS) */}
+      {/* Live Briefing */}
       <LiveBriefingAuto />
 
-     {/* Latest Headlines (carousel) */}
+      {/* Latest Headlines (mobile carousel + desktop grid) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200 bg-zinc-50/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header band */}
@@ -112,7 +111,7 @@ export default async function Home() {
                 </p>
               </div>
             </div>
-      
+
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-700">
                 Live feed
@@ -125,31 +124,40 @@ export default async function Home() {
               </a>
             </div>
           </div>
-      
-          {/* Carousel */}
-          <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm p-3 sm:p-4">
-            {/* Mobile: carousel */}
-            <div className="sm:hidden">
+
+          {/* Mobile carousel */}
+          <div className="sm:hidden">
+            <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm p-3">
               <Carousel title="">
                 <Suspense fallback={<HeadlinesFallback />}>
                   <HomeHeadlines variant="carousel" />
                 </Suspense>
               </Carousel>
             </div>
-            
-            {/* Desktop: grid */}
-            <div className="hidden sm:block">
-              <Suspense fallback={<HeadlinesFallback />}>
-                <HomeHeadlines variant="grid" />
-              </Suspense>
+          </div>
+
+          {/* Desktop grid */}
+          <div className="hidden sm:block">
+            <Suspense fallback={<HeadlinesFallback />}>
+              <HomeHeadlines variant="grid" />
+            </Suspense>
+
+            <div className="mt-6">
+              <a
+                href="/news"
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition"
+              >
+                View full News Feed <span className="text-red-600">→</span>
+              </a>
             </div>
           </div>
-        </section>
-            
-      {/* Signal vs Noise (auto) */}
+        </div>
+      </section>
+
+      {/* Signal vs Noise */}
       <SignalVsNoiseAuto />
 
-      {/* Latest Report (your own content) */}
+      {/* Latest Report */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between gap-6">
@@ -167,7 +175,6 @@ export default async function Home() {
             </a>
           </div>
 
-          {/* Latest Report card (mobile-safe) */}
           <div className="mt-6 w-full rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
             {latest ? (
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -252,7 +259,6 @@ export default async function Home() {
             </a>
           </div>
 
-          {/* Featured Video card (mobile-safe) */}
           <div className="mt-6 w-full rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
@@ -318,40 +324,14 @@ export default async function Home() {
           </h2>
 
           <p className="mt-3 text-zinc-800 leading-relaxed">
-            We analyze geopolitics, power structures, and belief systems shaping
-            modern conflict — separating narrative from reality and context from
-            propaganda.
+            We analyze geopolitics, power structures, and belief systems shaping modern conflict — separating narrative from reality and context from propaganda.
           </p>
 
           <p className="mt-3 text-zinc-700 leading-relaxed">
-            Our reports connect current events to historical patterns and
-            ideological frameworks to support situational awareness, not opinion.
+            Our reports connect current events to historical patterns and ideological frameworks to support situational awareness, not opinion.
           </p>
         </div>
       </section>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
