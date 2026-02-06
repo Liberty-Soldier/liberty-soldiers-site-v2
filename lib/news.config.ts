@@ -49,6 +49,12 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://thedefiant.io/feed/", category: "crypto" },
 ];
 
+export const NOISE_FEEDS: { url: string; category?: string }[] = [
+  { url: "https://www.tmz.com/rss.xml" },
+  { url: "https://www.eonline.com/syndication/feeds/rssfeeds/topstories.xml" },
+  { url: "https://www.hollywoodreporter.com/feed/" },
+];
+
 
 export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
   // Example:
@@ -58,6 +64,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
