@@ -4,6 +4,7 @@ import ShareButton from "./ShareButton";
 import Link from "next/link";
 import { getLatestReports } from "@/lib/reports";
 import NewsControlsClient from "./NewsControlsClient";
+import NewsFeedClient from "./NewsFeedClient";
 
 export const metadata = {
   title: "News Feed | Liberty Soldiers",
@@ -136,10 +137,9 @@ export default async function NewsPage() {
               and that deployment finished.
             </div>
           ) : (
-            <NewsControlsClient
-              items={items}
-              render={(list, view) => (
-                <>
+
+            <NewsFeedClient items={items} latestReports={latestReports} />
+
                   {view === "cards" ? (
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                       {list.map((h, idx) => {
@@ -341,3 +341,4 @@ export default async function NewsPage() {
     </main>
   );
 }
+
