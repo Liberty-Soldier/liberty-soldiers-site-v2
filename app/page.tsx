@@ -96,27 +96,47 @@ export default async function Home() {
       {/* Live Briefing (auto from RSS) */}
       <LiveBriefingAuto />
 
-      {/* Latest Headlines (carousel) */}
-      <section className="py-12 sm:py-16 border-t border-zinc-200">
+     {/* Latest Headlines (carousel) */}
+      <section className="py-12 sm:py-16 border-t border-zinc-200 bg-zinc-50/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Carousel
-            title="Latest Headlines"
-          >
-            <Suspense fallback={<HeadlinesFallback />}>
-              <HomeHeadlines variant="carousel" />
-            </Suspense>
-          </Carousel>
+          {/* Header band */}
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+            <div className="flex items-start gap-3">
+              <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+              <div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900">
+                  Latest Headlines
+                </h2>
+                <p className="mt-1 text-sm sm:text-base text-zinc-600">
+                  External signals being monitored across systems, policy, conflict, and finance.
+                </p>
+              </div>
+            </div>
       
-         <div className="mt-3 sm:mt-6">
-            <a
-              href="/news"
-              className="inline-flex items-center rounded-xl border border-zinc-200 bg-white px-5 py-3 text-sm text-zinc-800 hover:border-zinc-300 transition"
-            >
-              View the full News Feed →
-            </a>
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-700">
+                Live feed
+              </span>
+              <a
+                href="/news"
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition"
+              >
+                View full News Feed <span className="text-red-600">→</span>
+              </a>
+            </div>
+          </div>
+      
+          {/* Carousel */}
+          <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm p-3 sm:p-4">
+            <Carousel title="">
+              <Suspense fallback={<HeadlinesFallback />}>
+                <HomeHeadlines variant="carousel" />
+              </Suspense>
+            </Carousel>
           </div>
         </div>
       </section>
+
 
       {/* Signal vs Noise (auto) */}
       <SignalVsNoiseAuto />
@@ -304,6 +324,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
