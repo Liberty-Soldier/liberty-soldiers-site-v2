@@ -9,7 +9,7 @@ export default function LatestReportBand({ report }: Props) {
   if (!report) return null;
 
   return (
-    <section className="border-b border-zinc-200 bg-white">
+    <section className="bg-white">
       <div className="mx-auto max-w-6xl px-6 py-6">
         <div className="flex items-start justify-between gap-6">
           <div className="min-w-0">
@@ -18,7 +18,7 @@ export default function LatestReportBand({ report }: Props) {
             </p>
 
             <Link
-              href={`/reports/${report.slug}`}
+              <Link href={`/news/${report.slug}`} …>
               className="mt-1 block text-lg font-semibold text-zinc-900 hover:underline"
             >
               {report.title}
