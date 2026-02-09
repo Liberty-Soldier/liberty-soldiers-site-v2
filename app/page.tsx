@@ -112,11 +112,11 @@ export default async function Home() {
         </div>
       </section>
 
+        {/* Live Briefing */}
+      <LiveBriefingAuto />
+      
       {/* ✅ EMAIL SIGNUP — ABOVE LIVE FEED */}
       <EmailBand />
-
-      {/* Live Briefing */}
-      <LiveBriefingAuto />
 
       {/* ✅ LATEST LS REPORT — BELOW LIVE FEED */}
       <LatestReportBand report={latestReport} />
@@ -377,5 +377,6 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
