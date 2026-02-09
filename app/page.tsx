@@ -184,97 +184,6 @@ export default async function Home() {
       {/* Signal vs Noise */}
       <SignalVsNoiseAuto />
 
-      {/* Latest Report (full block) */}
-      <section className="py-12 sm:py-16 border-t border-zinc-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
-                Latest Report
-              </h2>
-              <p className="mt-1 text-zinc-600">
-                Original Liberty Soldiers investigative reports.
-              </p>
-            </div>
-
-            <a
-              href="/reports"
-              className="text-sm text-zinc-700 hover:text-zinc-900"
-            >
-              View all →
-            </a>
-          </div>
-
-          <div className="mt-6 w-full rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
-            {latestReport ? (
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
-                  <img
-                    src={latestThumb}
-                    alt=""
-                    className="w-full sm:w-36 h-44 sm:h-24 rounded-xl border border-zinc-200 object-cover bg-zinc-100"
-                    loading="lazy"
-                  />
-
-                  <div className="min-w-0">
-                    <a href={latestHref} className="block">
-                      <h3 className="text-lg sm:text-xl font-bold text-zinc-900 hover:underline break-words">
-                        {latestReport.title}
-                      </h3>
-                    </a>
-
-                    {/* Optional fields — only render if present on your Report type/data */}
-                    {"excerpt" in latestReport && (latestReport as any).excerpt ? (
-                      <p className="mt-2 text-sm sm:text-base text-zinc-700 break-words">
-                        {(latestReport as any).excerpt}
-                      </p>
-                    ) : null}
-
-                    {"byline" in latestReport && (latestReport as any).byline ? (
-                      <p className="mt-2 text-xs text-zinc-600">
-                        By{" "}
-                        <span className="font-medium text-zinc-800">
-                          {(latestReport as any).byline}
-                        </span>
-                      </p>
-                    ) : null}
-
-                    <div className="mt-4 flex flex-wrap items-center gap-3">
-                      <a
-                        href={latestHref}
-                        className="text-sm font-medium text-zinc-900 hover:underline"
-                      >
-                        Read →
-                      </a>
-
-                      <ShareButton
-                        wrapperUrl={`${SITE}${latestHref}`}
-                        title={latestReport.title}
-                        label="Copy link"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="hidden sm:block text-sm text-zinc-600 whitespace-nowrap">
-                  Latest →
-                </div>
-              </div>
-            ) : (
-              <div className="text-zinc-700">
-                No reports published yet.{" "}
-                <a
-                  href="/reports"
-                  className="font-medium text-zinc-900 hover:underline"
-                >
-                  View reports →
-                </a>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-
       {/* Featured Video */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -377,6 +286,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
