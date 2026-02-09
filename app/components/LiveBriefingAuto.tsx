@@ -35,11 +35,11 @@ export default async function LiveBriefingAuto() {
     .filter((h) => (MAJOR_ONLY ? isMajor(h.url, h.source) : true))
     .slice(0, 15); // newest 15
 
-  const items: LiveBriefingItem[] = signal.map((h) => ({
-    text: `${h.source}: ${h.title}`,
-    url: h.url,
-    source: h.category ? h.category : undefined,
-  }));
+ const items: LiveBriefingItem[] = signal.map((h) => ({
+  text: h.title,
+  url: h.url,
+  source: h.category ? h.category : undefined,
+}));
 
   // If MAJOR_ONLY ends up too strict (empty), fall back to normal newest 15
   if (!items.length) {
