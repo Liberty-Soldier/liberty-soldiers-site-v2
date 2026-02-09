@@ -98,7 +98,6 @@ function buildCategories(items: Item[]) {
 
 function buildCategories(items: Item[]) {
   const set = new Set<string>();
-
   for (const it of items) {
     if (it.hardCategory) set.add(it.hardCategory);
   }
@@ -113,7 +112,6 @@ function buildCategories(items: Item[]) {
   ];
 
   return ordered.filter((c) => c === "All" || set.has(c));
- }
 }
 
 export default function NewsFeedClient({
