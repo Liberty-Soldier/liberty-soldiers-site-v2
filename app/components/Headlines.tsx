@@ -11,6 +11,51 @@ type Item = {
   category?: string;
 };
 
+function pickBalanced(items: Item[], total: number) {
+  const sorted = items
+    .filter((h) => h.category !== "Pinned")
+    .slice()
+    .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+
+  // Treat these as "money-heavy"
+  const MONEY = new Set(["Finance", "Crypto"]);
+
+  const maxMoney = Math.min(3, Math.ceil(total / 3)); // e.g. 3 of 9, 7 of 20
+  const perCatMax = 2; // prevents 6+ from one category
+
+  const picked: Item[] = [];
+  const perCat = new Map<string, number>();
+  let moneyCount = 0;
+
+  for (const h of sorted) {
+    if (picked.length >= total) break;
+
+    const cat = (h.category || "General").trim();
+    const catCount = perCat.get(cat) || 0;
+
+    if (catCount >= perCatMax) continue;
+
+    const isMoney = MONEY.has(cat);
+    if (isMoney && moneyCount >= maxMoney) continue;
+
+    picked.push(h);
+    perCat.set(cat, catCount + 1);
+    if (isMoney) moneyCount += 1;
+  }
+
+  // If we were too strict, top off with newest remaining
+  if (picked.length < total) {
+    const used = new Set(picked.map((x) => x.url));
+    for (const h of sorted) {
+      if (picked.length >= total) break;
+      if (used.has(h.url)) continue;
+      picked.push(h);
+    }
+  }
+
+  return picked;
+}
+
 function humanAgo(input?: number | string | Date): string {
   if (!input) return "Just now";
   const ts = typeof input === "number" ? input : new Date(input).getTime();
@@ -60,11 +105,10 @@ export default async function HomeHeadlines({
     items = [];
   }
 
-  const top =
+ const top =
   variant === "grid"
-    ? items.slice(0, 9)
-    : items.slice(0, 20);
-
+    ? pickBalanced(items, 9)
+    : pickBalanced(items, 20);
 
   if (top.length === 0) {
     return (
