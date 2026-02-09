@@ -22,9 +22,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://rss.dw.com/rdf/rss-en-all", category: "world" },
   { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "world" },
   { url: "https://feeds.foxnews.com/foxnews/world", category: "world" },
-  { url: "https://www.infowars.com/category/politics/feed/", category: "world" },
-  { url: "https://www.infowars.com/category/world-news/feed/", category: "world" },
-
+ 
   // --- MIDDLE EAST / ISRAEL ---
   { url: "https://www.jpost.com/rss/rss.xml", category: "middle-east" },
   { url: "https://www.allisrael.com/rss", category: "middle-east" },
@@ -61,7 +59,6 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.nih.gov/news-events/news-releases/rss.xml", category: "health" },
   { url: "https://www.statnews.com/feed/", category: "health" },
   { url: "https://www.medscape.com/rss/public", category: "health" },
-  { url: "https://www.infowars.com/category/health/feed/", category: "health" },
   { url: "https://www.fiercehealthcare.com/rss/xml", category: "health" },
 
 
@@ -86,6 +83,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
