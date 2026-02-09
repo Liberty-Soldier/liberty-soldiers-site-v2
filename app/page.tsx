@@ -1,4 +1,5 @@
 // app/page.tsx
+import type { Metadata } from "next";
 import Carousel from "./components/Carousel";
 import { Suspense } from "react";
 import HomeHeadlines from "./components/Headlines";
@@ -11,17 +12,17 @@ import LatestReportBand from "./components/LatestReportBand";
 
 export const revalidate = 600;
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Liberty Soldiers | Independent analysis of power, perception, and control",
   description:
-    "Independent situational awareness and investigative analysis examining power, perception, media narratives, and emerging systems shaping the world.",
+    "Independent analysis examining power, perception, media narratives, and emerging systems shaping the world.",
   alternates: {
     canonical: "https://libertysoldiers.com/",
   },
   openGraph: {
     title: "Liberty Soldiers",
     description:
-      "Independent analysis of power, perception, and emerging systems shaping the world.",
+      "Independent analysis examining power, perception, and emerging systems shaping the world.",
     url: "https://libertysoldiers.com/",
     siteName: "Liberty Soldiers",
     type: "website",
@@ -30,7 +31,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Liberty Soldiers",
     description:
-      "Independent analysis of power, perception, and emerging systems shaping the world.",
+      "Independent analysis examining power, perception, and emerging systems shaping the world.",
   },
 };
 
@@ -48,15 +49,16 @@ export default async function Home() {
   const VIDEO_ID = "WeFeWyonzgc";
   const VIDEO_TITLE = "Latest Liberty Soldiers Video";
   const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
-  const latestReport = await getLatestReport();
 
   // Put file in /public/video.jpg (or change to /og/video.jpg if stored in /public/og/)
   const VIDEO_THUMB = "/video.jpg";
 
-  // Latest report (auto)
+  // ✅ Latest report (auto) — normalize undefined -> null
   const latestReport = (await getLatestReport()) ?? null;
-  const latestHref = latest ? `/news/${latest.slug}` : "/reports";
-  const latestThumb = latest?.coverImage ?? "/briefing-fallback.jpg";
+
+  // ✅ Use latestReport consistently (no "latest" var)
+  const latestHref = latestReport ? `/reports/${latestReport.slug}` : "/reports";
+  const latestThumb = latestReport?.coverImage ?? "/briefing-fallback.jpg";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -64,7 +66,7 @@ export default async function Home() {
     name: "Liberty Soldiers",
     url: "https://libertysoldiers.com/",
     description:
-      "Independent situational awareness and investigative analysis examining power, perception, media narratives, and emerging systems shaping the world.",
+      "Independent analysis examining power, perception, media narratives, and emerging systems shaping the world.",
     sameAs: ["https://www.youtube.com/@LibertySoldiers"],
   };
 
@@ -96,15 +98,15 @@ export default async function Home() {
         </div>
       </section>
 
-       {/* ✅ EMAIL SIGNUP — ABOVE LIVE FEED */}
+      {/* ✅ EMAIL SIGNUP — ABOVE LIVE FEED */}
       <EmailBand />
-      
+
       {/* Live Briefing */}
       <LiveBriefingAuto />
 
       {/* ✅ LATEST LS REPORT — BELOW LIVE FEED */}
       <LatestReportBand report={latestReport} />
-      
+
       {/* Latest Headlines (mobile carousel + desktop grid) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200 bg-zinc-50/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -117,7 +119,8 @@ export default async function Home() {
                   Latest Headlines
                 </h2>
                 <p className="mt-1 text-sm sm:text-base text-zinc-600">
-                  External signals being monitored across systems, policy, conflict, and finance.
+                  External signals being monitored across systems, policy,
+                  conflict, and finance.
                 </p>
               </div>
             </div>
@@ -167,7 +170,7 @@ export default async function Home() {
       {/* Signal vs Noise */}
       <SignalVsNoiseAuto />
 
-      {/* Latest Report */}
+      {/* Latest Report (full block) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between gap-6">
@@ -180,13 +183,16 @@ export default async function Home() {
               </p>
             </div>
 
-            <a href="/reports" className="text-sm text-zinc-700 hover:text-zinc-900">
+            <a
+              href="/reports"
+              className="text-sm text-zinc-700 hover:text-zinc-900"
+            >
               View all →
             </a>
           </div>
 
           <div className="mt-6 w-full rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6">
-            {latest ? (
+            {latestReport ? (
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
                   <img
@@ -199,20 +205,25 @@ export default async function Home() {
                   <div className="min-w-0">
                     <a href={latestHref} className="block">
                       <h3 className="text-lg sm:text-xl font-bold text-zinc-900 hover:underline break-words">
-                        {latest.title}
+                        {latestReport.title}
                       </h3>
                     </a>
 
-                    <p className="mt-2 text-sm sm:text-base text-zinc-700 break-words">
-                      {latest.excerpt}
-                    </p>
+                    {/* Optional fields — only render if present on your Report type/data */}
+                    {"excerpt" in latestReport && (latestReport as any).excerpt ? (
+                      <p className="mt-2 text-sm sm:text-base text-zinc-700 break-words">
+                        {(latestReport as any).excerpt}
+                      </p>
+                    ) : null}
 
-                    <p className="mt-2 text-xs text-zinc-600">
-                      By{" "}
-                      <span className="font-medium text-zinc-800">
-                        {latest.byline}
-                      </span>
-                    </p>
+                    {"byline" in latestReport && (latestReport as any).byline ? (
+                      <p className="mt-2 text-xs text-zinc-600">
+                        By{" "}
+                        <span className="font-medium text-zinc-800">
+                          {(latestReport as any).byline}
+                        </span>
+                      </p>
+                    ) : null}
 
                     <div className="mt-4 flex flex-wrap items-center gap-3">
                       <a
@@ -224,7 +235,7 @@ export default async function Home() {
 
                       <ShareButton
                         wrapperUrl={`${SITE}${latestHref}`}
-                        title={latest.title}
+                        title={latestReport.title}
                         label="Copy link"
                       />
                     </div>
@@ -238,7 +249,10 @@ export default async function Home() {
             ) : (
               <div className="text-zinc-700">
                 No reports published yet.{" "}
-                <a href="/reports" className="font-medium text-zinc-900 hover:underline">
+                <a
+                  href="/reports"
+                  className="font-medium text-zinc-900 hover:underline"
+                >
                   View reports →
                 </a>
               </div>
@@ -334,18 +348,18 @@ export default async function Home() {
           </h2>
 
           <p className="mt-3 text-zinc-800 leading-relaxed">
-            We analyze geopolitics, power structures, and belief systems shaping modern conflict — separating narrative from reality and context from propaganda.
+            We analyze geopolitics, power structures, and belief systems shaping
+            modern conflict — separating narrative from reality and context from
+            propaganda.
           </p>
 
           <p className="mt-3 text-zinc-700 leading-relaxed">
-            Our reports connect current events to historical patterns and ideological frameworks to support situational awareness, not opinion.
+            Our reports connect current events to historical patterns and
+            ideological frameworks to support situational awareness, not
+            opinion.
           </p>
         </div>
       </section>
     </div>
   );
 }
-
-
-
-
