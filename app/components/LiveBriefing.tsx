@@ -75,7 +75,7 @@ export default function LiveBriefing({
           </span>
         </div>
       </div>
-
+        }
       <style jsx global>{`
         @keyframes fadeIn {
           from {
