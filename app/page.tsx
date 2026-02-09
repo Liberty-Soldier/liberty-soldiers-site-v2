@@ -78,7 +78,7 @@ export default async function Home() {
       />
 
       {/* Hero */}
-      <section className="relative h-[25vh] sm:h-[32vh] w-full flex items-center">
+      <section className="relative min-h-[32vh] sm:h-[32vh] w-full flex items-center py-10 sm:py-0">
         <div
           className="absolute inset-0 bg-center bg-cover"
           style={{ backgroundImage: "url('/hero.jpg')" }}
@@ -286,6 +286,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
