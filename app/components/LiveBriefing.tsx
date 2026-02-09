@@ -57,7 +57,7 @@ export default function LiveBriefing({
            <a
             key={item.url}
             href={item.url}
-            className="block text-sm sm:text-base font-semibold text-red-700 hover:text-red-800 hover:underline motion-safe:animate-[fadeIn_250ms_ease-out]"
+            className="block text-base sm:text-lg lg:text-xl font-bold text-red-700 hover:text-red-800 hover:underline motion-safe:animate-[fadeIn_250ms_ease-out]"
             aria-live="polite"
             title={item.text}
             style={{
@@ -78,7 +78,7 @@ export default function LiveBriefing({
           </div>
 
           <span className="hidden sm:inline shrink-0 text-xs text-zinc-500 whitespace-nowrap">
-            Auto-updated
+            Live updates 
           </span>
         </div>
       </div>
