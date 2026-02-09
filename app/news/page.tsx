@@ -21,6 +21,7 @@ type Item = {
   image?: string;
   summary?: string;
   category?: string;
+  hardCategory?: string; 
 };
 
 export default async function NewsPage() {
@@ -70,3 +71,4 @@ export default async function NewsPage() {
     </main>
   );
 }
+
