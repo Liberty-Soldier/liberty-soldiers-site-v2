@@ -88,15 +88,6 @@ const HARD_CATS = [
 ] as const;
 
 function buildCategories(items: Item[]) {
-  // Only show hard categories that exist in current data (plus All)
-  const set = new Set<string>();
-  for (const it of items) if (it.hardCategory) set.add(it.hardCategory);
-
-  const preferred = HARD_CATS.filter((c) => c === "All" || set.has(c));
-  return preferred;
-}
-
-function buildCategories(items: Item[]) {
   const set = new Set<string>();
   for (const it of items) {
     if (it.hardCategory) set.add(it.hardCategory);
