@@ -41,14 +41,17 @@ export default function EmailSignup({
           : "rounded-xl border border-zinc-200 bg-white px-5 py-4"
       }
     >
-      {/* Copy block (tight) */}
-      <div className={isCompact ? "mb-1" : ""}>
-        <h3
-          className={
-            isCompact
-              ? "text-xs font-semibold text-zinc-900"
-              : "text-base font-semibold text-zinc-900"
-          }
+     {/* Copy block (ONLY for non-compact) */}
+      {!isCompact && (
+        <div className="mb-2">
+          <h3 className="text-base font-semibold text-zinc-900">
+            {title}
+          </h3>
+          <p className="mt-0.5 text-sm text-zinc-600">
+            {subtitle}
+          </p>
+        </div>
+      )}
         >
           {title}
         </h3>
@@ -107,25 +110,26 @@ export default function EmailSignup({
           gap: 6px !important;
         }
 
-        /* ---------- INPUT ---------- */
-        :global(.kit-scope input[type="email"]) {
-          height: 32px !important;
-          padding: 6px 8px !important;
-          font-size: 13px !important;
-          border-radius: 8px !important;
-          margin: 0 !important;
-        }
-
-        /* ---------- BUTTON ---------- */
-        :global(.kit-scope button),
-        :global(.kit-scope input[type="submit"]) {
-          height: 32px !important;
-          padding: 6px 12px !important;
-          font-size: 13px !important;
-          border-radius: 8px !important;
-          white-space: nowrap !important;
-          margin: 0 !important;
-        }
+       /* INPUT */
+      :global(.kit-scope input[type="email"]) {
+        height: 36px !important;
+        padding: 6px 10px !important;
+        font-size: 14px !important;
+        border-radius: 8px !important;
+        margin: 0 !important;
+      }
+      
+      /* BUTTON */
+      :global(.kit-scope button),
+      :global(.kit-scope input[type="submit"]) {
+        height: 36px !important;
+        padding: 6px 14px !important;
+        font-size: 14px !important;
+        line-height: 1 !important;
+        border-radius: 8px !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+      }
 
         /* ---------- MOBILE STACK ---------- */
         @media (max-width: 640px) {
