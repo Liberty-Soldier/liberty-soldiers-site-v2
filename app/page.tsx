@@ -54,7 +54,7 @@ export default async function Home() {
   const VIDEO_THUMB = "/video.jpg";
 
   // Latest report (auto)
-  const latest = getLatestReport();
+  const latestReport = (await getLatestReport()) ?? null;
   const latestHref = latest ? `/news/${latest.slug}` : "/reports";
   const latestThumb = latest?.coverImage ?? "/briefing-fallback.jpg";
 
@@ -345,6 +345,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
