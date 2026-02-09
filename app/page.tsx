@@ -48,6 +48,7 @@ export default async function Home() {
   const VIDEO_ID = "WeFeWyonzgc";
   const VIDEO_TITLE = "Latest Liberty Soldiers Video";
   const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
+  const latestReport = await getLatestReport();
 
   // Put file in /public/video.jpg (or change to /og/video.jpg if stored in /public/og/)
   const VIDEO_THUMB = "/video.jpg";
@@ -344,5 +345,6 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
