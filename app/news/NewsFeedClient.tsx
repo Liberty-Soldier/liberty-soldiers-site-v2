@@ -102,6 +102,23 @@ function buildCategories(items: Item[]) {
     "Prophecy Watch",
   ];
 
+  function signalWeightHard(c?: string) {
+  switch ((c || "").toLowerCase()) {
+    case "digital id / technocracy":
+      return 1;
+    case "war & geopolitics":
+      return 2;
+    case "power & control":
+      return 3;
+    case "religion & ideology":
+      return 4;
+    case "prophecy watch":
+      return 5;
+    default:
+      return 50;
+  }
+}
+
   return ordered.filter((c) => c === "All" || set.has(c));
 }
 
