@@ -11,8 +11,8 @@ type Item = {
   publishedAt?: number;
   image?: string;
   summary?: string;
-  category?: string;      // badge label
-  hardCategory?: string;  // ✅ NEW: hard taxonomy
+  category?: string; // badge label (Finance, Control Systems, etc.)
+  hardCategory?: string; // ✅ hard taxonomy (5 buckets)
 };
 
 type Report = {
@@ -53,15 +53,19 @@ function bulletsFromSummary(summary?: string): string[] {
   if (!summary) return [];
   const clean = summary.replace(/\s+/g, " ").trim();
   if (!clean) return [];
+
   const parts = clean
     .split(/(?:\.|\!|\?)\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
+
   if (parts.length >= 2) {
     return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
   }
+
   const chunk1 = clean.slice(0, 90).trim();
   const chunk2 = clean.slice(90, 180).trim();
+
   return [chunk1, chunk2]
     .filter(Boolean)
     .slice(0, 2)
@@ -78,7 +82,7 @@ function formatDate(iso: string) {
   });
 }
 
-const HARD_CATS = [
+const HARD_ORDER = [
   "All",
   "Power & Control",
   "Digital ID / Technocracy",
@@ -92,17 +96,11 @@ function buildCategories(items: Item[]) {
   for (const it of items) {
     if (it.hardCategory) set.add(it.hardCategory);
   }
+  // Only show categories that are present (plus All)
+  return HARD_ORDER.filter((c) => c === "All" || set.has(c));
+}
 
-  const ordered = [
-    "All",
-    "Power & Control",
-    "Digital ID / Technocracy",
-    "War & Geopolitics",
-    "Religion & Ideology",
-    "Prophecy Watch",
-  ];
-
-  function signalWeightHard(c?: string) {
+function signalWeightHard(c?: string) {
   switch ((c || "").toLowerCase()) {
     case "digital id / technocracy":
       return 1;
@@ -119,9 +117,6 @@ function buildCategories(items: Item[]) {
   }
 }
 
-  return ordered.filter((c) => c === "All" || set.has(c));
-}
-
 export default function NewsFeedClient({
   items,
   latestReports,
@@ -131,7 +126,7 @@ export default function NewsFeedClient({
 }) {
   const categories = useMemo(() => buildCategories(items), [items]);
 
-  const [cat, setCat] = useState("All");
+  const [cat, setCat] = useState<(typeof HARD_ORDER)[number]>("All");
   const [sort, setSort] = useState<"newest" | "signal">("newest");
   const [view, setView] = useState<"cards" | "compact">("cards");
 
@@ -145,31 +140,29 @@ export default function NewsFeedClient({
     return () => window.removeEventListener("resize", apply);
   }, []);
 
-const list = useMemo(() => {
-  let out = items.filter((x) => x.category !== "Pinned");
+  const list = useMemo(() => {
+    let out = items.filter((x) => x.category !== "Pinned");
 
-  // ✅ Filter by HARD category (5 buckets)
-  if (cat !== "All") {
-    out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
-  }
+    // ✅ Filter by HARD category
+    if (cat !== "All") {
+      out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
+    }
 
-  if (sort === "newest") {
-    out = out
-      .slice()
-      .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
-  } else {
-    out = out
-      .slice()
-      .sort((a, b) => {
+    if (sort === "newest") {
+      out = out
+        .slice()
+        .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+    } else {
+      out = out.slice().sort((a, b) => {
         const wa = signalWeightHard(a.hardCategory);
         const wb = signalWeightHard(b.hardCategory);
         if (wa !== wb) return wa - wb;
         return (b.publishedAt || 0) - (a.publishedAt || 0);
       });
-  }
+    }
 
-  return out;
-}, [items, cat, sort]);
+    return out;
+  }, [items, cat, sort]);
 
   return (
     <div>
@@ -271,7 +264,7 @@ const list = useMemo(() => {
                             {latestReports.slice(0, 6).map((r) => (
                               <Link
                                 key={r.slug}
-                                href={`/news/${r.slug}`}
+                                href={`/reports/${r.slug}`}  // ✅ fixed
                                 className="block rounded-xl border border-zinc-200 bg-zinc-50 p-4 transition hover:border-zinc-300"
                               >
                                 <div className="flex items-start justify-between gap-3">
@@ -338,10 +331,10 @@ const list = useMemo(() => {
                     )}
 
                     <a href={h.url} className="block mt-1">
-                    <h3 className="font-semibold leading-snug hover:underline">
-                      {h.title}
-                    </h3>
-                  </a>
+                      <h3 className="font-semibold leading-snug hover:underline">
+                        {h.title}
+                      </h3>
+                    </a>
 
                     {bullets.length > 0 && (
                       <ul className="mt-3 space-y-1 text-sm text-zinc-700">
@@ -370,7 +363,10 @@ const list = useMemo(() => {
                 h.url
               )}`;
               return (
-                <div key={`${h.url}-${idx}`} className="p-3 sm:p-4 hover:bg-zinc-50 transition">
+                <div
+                  key={`${h.url}-${idx}`}
+                  className="p-3 sm:p-4 hover:bg-zinc-50 transition"
+                >
                   <div className="flex items-start justify-between gap-3 sm:gap-4">
                     <div className="min-w-0">
                       <div className="text-[11px] uppercase tracking-wide text-zinc-500">
@@ -383,11 +379,16 @@ const list = useMemo(() => {
                         ) : null}
                       </div>
 
-                     <a href={h.url} target="_blank" rel="noreferrer" className="block mt-1">
-                      <div className="font-semibold text-zinc-900 hover:underline break-words">
-                        {h.title}
-                      </div>
-                    </a>
+                      <a
+                        href={h.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block mt-1"
+                      >
+                        <div className="font-semibold text-zinc-900 hover:underline break-words">
+                          {h.title}
+                        </div>
+                      </a>
 
                       <div className="mt-1 text-[11px] text-zinc-500">
                         {humanAgo(h.publishedAt)}
