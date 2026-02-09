@@ -70,13 +70,6 @@ export default function LiveBriefing({
             {item.text}
           </a>
 
-            {item.source ? (
-              <div className="mt-1 text-[11px] sm:text-xs text-zinc-500">
-                {item.source}
-              </div>
-            ) : null}
-          </div>
-
           <span className="hidden sm:inline shrink-0 text-xs text-zinc-500 whitespace-nowrap">
             Live updates 
           </span>
