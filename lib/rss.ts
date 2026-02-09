@@ -9,7 +9,8 @@ export type Headline = {
   publishedAt?: number;
   image?: string;
   summary?: string;
-  category?: string;
+  category?: string;      // current badge label (Finance, Biosecurity, etc.)
+  hardCategory?: string;  // new: 5-bucket taxonomy for filters
 };
 
 type FeedInput =
@@ -345,6 +346,33 @@ function extractLink(it: any): string {
 
   return "";
 }
+function toHardCategory(
+  label?: string,        // your current category label (e.g. "Control Systems")
+  feedCat?: string       // feed bucket from news.config.ts (e.g. "tech", "world")
+): string {
+  const l = (label || "").toLowerCase();
+  const f = (feedCat || "").toLowerCase();
+
+  // Strong label-based mapping (best signal)
+  if (l.includes("control") || l.includes("surveillance") || l.includes("cbdc") || l.includes("bio")) {
+    return "Digital ID / Technocracy";
+  }
+  if (l.includes("prophecy")) return "Prophecy Watch";
+  if (l.includes("relig") || l.includes("ideolog") || l.includes("church") || l.includes("doctrine") || l.includes("persecution")) {
+    return "Religion & Ideology";
+  }
+  if (l.includes("war") || l.includes("geopolit")) return "War & Geopolitics";
+
+  // Feed bucket fallback mapping
+  if (f === "tech") return "Digital ID / Technocracy";
+  if (f === "prophecy") return "Prophecy Watch";
+  if (f === "middle-east" || f === "world") return "War & Geopolitics";
+  if (f === "finance" || f === "crypto") return "Power & Control";
+  if (f === "health") return "Power & Control";
+
+  // Default
+  return "Power & Control";
+}
 
 function extractSource(feedJson: any, url: string): string {
   const title = feedJson?.rss?.channel?.title || feedJson?.feed?.title || "";
@@ -376,6 +404,7 @@ function normalizeFeed(
       const summary = extractSummary(it) || undefined;
 
       const category = categorize(title, summary, source, feedFallbackLabel);
+      const hardCategory = toHardCategory(category, feedCategory);
 
       return {
         title,
