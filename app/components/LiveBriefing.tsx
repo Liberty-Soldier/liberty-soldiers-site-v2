@@ -40,7 +40,7 @@ export default function LiveBriefing({
   const item = list[i];
 
   return (
-    <div className="w-full border-y border-zinc-200 bg-white">
+    <div className="w-full bg-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5">
         <div className="flex items-start gap-3">
           {/* Label */}
