@@ -6,6 +6,8 @@ import ShareButton from "./news/ShareButton";
 import { getLatestReport } from "../lib/reports";
 import LiveBriefingAuto from "./components/LiveBriefingAuto";
 import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
+import EmailBand from "./components/EmailBand";
+import LatestReportBand from "./components/LatestReportBand";
 
 export const revalidate = 600;
 
@@ -93,9 +95,15 @@ export default async function Home() {
         </div>
       </section>
 
+       {/* ✅ EMAIL SIGNUP — ABOVE LIVE FEED */}
+      <EmailBand />
+      
       {/* Live Briefing */}
       <LiveBriefingAuto />
 
+      {/* ✅ LATEST LS REPORT — BELOW LIVE FEED */}
+      <LatestReportBand report={latestReport} />
+      
       {/* Latest Headlines (mobile carousel + desktop grid) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200 bg-zinc-50/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -336,4 +344,5 @@ export default async function Home() {
     </div>
   );
 }
+
 
