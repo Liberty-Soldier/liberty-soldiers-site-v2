@@ -94,6 +94,21 @@ function categorize(
 ): string {
   const t = `${title} ${summary ?? ""}`.toLowerCase();
   const s = (src ?? "").toLowerCase();
+// --------------------------------------------------
+// HARD DOMAIN OVERRIDES (prevent obvious mislabels)
+// --------------------------------------------------
+if (s.includes("marketwatch")) return "Finance";
+if (s.includes("bloomberg")) return "Finance";
+if (s.includes("wsj")) return "Finance";
+if (s.includes("ft.com")) return "Finance";
+
+if (
+  s.includes("coindesk") ||
+  s.includes("cointelegraph") ||
+  s.includes("cryptopotato")
+) {
+  return "Crypto";
+}
 
   // --------------------------------------------------
   // Source-based fallback (NOT a return)
@@ -107,23 +122,34 @@ function categorize(
   // High-signal categories (ALWAYS win)
   // --------------------------------------------------
 
-  // Persecution / suppression
-  if (
-    t.includes("church") ||
-    t.includes("christian") ||
-    t.includes("jewish") ||
-    t.includes("synagogue") ||
-    t.includes("mosque") ||
-    t.includes("pastor") ||
-    t.includes("arrested") ||
-    t.includes("ban") ||
-    t.includes("banned") ||
-    t.includes("hate speech") ||
-    t.includes("blasphemy") ||
-    t.includes("persecution")
-  ) {
-    return "Persecution Watch";
-  }
+// Persecution Watch (requires coercion + religion)
+const hasReligion =
+  t.includes("church") ||
+  t.includes("christian") ||
+  t.includes("jewish") ||
+  t.includes("synagogue") ||
+  t.includes("mosque") ||
+  t.includes("pastor") ||
+  t.includes("imam");
+
+const hasPressure =
+  t.includes("persecution") ||
+  t.includes("arrest") ||
+  t.includes("arrested") ||
+  t.includes("detained") ||
+  t.includes("raid") ||
+  t.includes("ban") ||
+  t.includes("banned") ||
+  t.includes("charged") ||
+  t.includes("sentenced") ||
+  t.includes("hate speech") ||
+  t.includes("blasphemy") ||
+  t.includes("religious freedom") ||
+  t.includes("closed down");
+
+if (hasPressure && (hasReligion || t.includes("religion"))) {
+  return "Persecution Watch";
+}
 
   // Control systems / surveillance / ID / CBDC
   if (
