@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 export type LiveBriefingItem = {
   text: string;
   url: string;
-  source?: string;
+  source?: string; // kept for data, not displayed
 };
 
 type Props = {
@@ -16,13 +16,14 @@ type Props = {
 
 export default function LiveBriefing({
   items,
-  intervalMs = 8500, // slower
+  intervalMs = 8500,
   label = "LIVE FEED",
 }: Props) {
   const list = useMemo(
     () => (items || []).filter((x) => x?.text && x?.url),
     [items]
   );
+
   const [i, setI] = useState(0);
 
   useEffect(() => {
@@ -54,28 +55,29 @@ export default function LiveBriefing({
 
           {/* Text (clickable, wraps on mobile) */}
           <div className="min-w-0 flex-1">
-           <a
-            key={item.url}
-            href={item.url}
-            className="block text-base sm:text-lg lg:text-xl font-bold text-red-700 hover:text-red-800 hover:underline motion-safe:animate-[fadeIn_250ms_ease-out]"
-            aria-live="polite"
-            title={item.text}
-            style={{
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              overflow: "hidden",
-            }}
-          >
-            {item.text}
-          </a>
+            <a
+              key={item.url}
+              href={item.url}
+              className="block text-base sm:text-lg lg:text-xl font-bold text-red-700 hover:text-red-800 hover:underline motion-safe:animate-[fadeIn_250ms_ease-out]"
+              aria-live="polite"
+              title={item.text}
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+            >
+              {item.text}
+            </a>
+          </div>
 
           <span className="hidden sm:inline shrink-0 text-xs text-zinc-500 whitespace-nowrap">
-            Live updates 
+            Live updates
           </span>
         </div>
       </div>
-        }
+
       <style jsx global>{`
         @keyframes fadeIn {
           from {
