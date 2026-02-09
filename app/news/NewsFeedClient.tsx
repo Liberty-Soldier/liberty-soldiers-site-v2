@@ -82,6 +82,7 @@ const DEFAULT_CATS = [
   "Control Systems",
   "Geopolitics & War",
   "Finance",
+  "Health",
   "Biosecurity",
   "Persecution Watch",
   "Censorship & Speech",
