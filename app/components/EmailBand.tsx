@@ -1,4 +1,4 @@
-import EmailSignup from "@/components/EmailSignup";
+import EmailSignup from "./EmailSignup";
 
 export default function EmailBand() {
   return (
