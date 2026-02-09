@@ -17,7 +17,7 @@ type Props = {
 export default function LiveBriefing({
   items,
   intervalMs = 8500, // slower
-  label = "LIVE BRIEFING",
+  label = "LIVE FEED",
 }: Props) {
   const list = useMemo(
     () => (items || []).filter((x) => x?.text && x?.url),
@@ -44,7 +44,7 @@ export default function LiveBriefing({
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5">
         <div className="flex items-start gap-3">
           {/* Label */}
-          <span className="shrink-0 inline-flex items-center gap-2 text-xs sm:text-sm font-extrabold tracking-wide text-red-700">
+          <span className="shrink-0 inline-flex items-center gap-2 text-sm sm:text-base font-extrabold tracking-wider uppercase text-red-700">
             <span className="relative flex h-2.5 w-2.5">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-600/60 opacity-75" />
               <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-600" />
