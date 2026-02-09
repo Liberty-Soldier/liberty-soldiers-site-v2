@@ -91,8 +91,23 @@ export default async function Home() {
               LIBERTY SOLDIERS
             </h1>
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
-              Independent analysis of power and control as global events converge
+              Independent intelligence and situational awareness
             </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+            <a
+              href="/reports"
+              className="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-100 transition"
+            >
+              Read Reports →
+            </a>
+            <a
+              href="/news"
+              className="inline-flex items-center rounded-xl border border-white/40 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
+            >
+              Live Intelligence →
+            </a>
+          </div>
+
           </div>
         </div>
       </section>
@@ -362,4 +377,5 @@ export default async function Home() {
     </div>
   );
 }
+
 
