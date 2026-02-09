@@ -20,12 +20,6 @@ export default function LatestReportBand() {
             >
               {report.title}
             </Link>
-
-            {report.summary ? (
-              <p className="mt-1 max-w-3xl text-sm text-zinc-600">
-                {report.summary}
-              </p>
-            ) : null}
           </div>
 
           <Link
