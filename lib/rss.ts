@@ -81,6 +81,7 @@ function feedCategoryLabel(cat?: string): string | undefined {
   if (c === "world") return "World Briefing";
   if (c === "middle-east" || c === "middleeast") return "Middle East";
   if (c === "tech") return "Control Systems";
+  if (c === "health") return "Health";
   if (c === "prophecy") return "Prophecy Watch";
 
   return undefined;
