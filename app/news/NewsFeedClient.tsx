@@ -320,11 +320,11 @@ export default function NewsFeedClient({
                       </div>
                     )}
 
-                    <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
-                      <h3 className="font-semibold leading-snug hover:underline">
-                        {h.title}
-                      </h3>
-                    </a>
+                    <a href={h.url} className="block mt-1">
+                    <h3 className="font-semibold leading-snug hover:underline">
+                      {h.title}
+                    </h3>
+                  </a>
 
                     {bullets.length > 0 && (
                       <ul className="mt-3 space-y-1 text-sm text-zinc-700">
@@ -366,11 +366,11 @@ export default function NewsFeedClient({
                         ) : null}
                       </div>
 
-                      <a href={h.url} target="_blank" rel="noreferrer" className="block mt-1">
-                        <div className="font-semibold text-zinc-900 hover:underline break-words">
-                          {h.title}
-                        </div>
-                      </a>
+                     <a href={h.url} target="_blank" rel="noreferrer" className="block mt-1">
+                      <div className="font-semibold text-zinc-900 hover:underline break-words">
+                        {h.title}
+                      </div>
+                    </a>
 
                       <div className="mt-1 text-[11px] text-zinc-500">
                         {humanAgo(h.publishedAt)}
