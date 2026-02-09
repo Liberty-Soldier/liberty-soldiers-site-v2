@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { REPORTS } from "@/lib/reports";
+import { REPORTS } from "../../lib/reports";
 
 export default function LatestReportBand() {
   const report = REPORTS?.[0];
