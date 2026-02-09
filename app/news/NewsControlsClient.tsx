@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 
 type Item = {
   title: string;
@@ -10,6 +10,7 @@ type Item = {
   image?: string;
   summary?: string;
   category?: string;
+  hardCategory?: string; // ✅ NEW
 };
 
 type Props = {
@@ -17,74 +18,66 @@ type Props = {
   render: (items: Item[], view: "cards" | "compact") => React.ReactNode;
 };
 
-const DEFAULT_CATEGORIES = [
+const HARD_CATEGORIES = [
   "All",
-  "Control Systems",
-  "Geopolitics & War",
-  "Finance",
-  "Biosecurity",
-  "Persecution Watch",
-  "Censorship & Speech",
-  "Crypto",
-  "World Briefing",
-];
+  "Power & Control",
+  "Digital ID / Technocracy",
+  "War & Geopolitics",
+  "Religion & Ideology",
+  "Prophecy Watch",
+] as const;
 
-function uniqCats(items: Item[]) {
+function uniqHardCats(items: Item[]) {
   const set = new Set<string>();
   for (const it of items) {
-    if (it.category) set.add(it.category);
+    if (it.hardCategory) set.add(it.hardCategory);
   }
-  const dynamic = Array.from(set).sort((a, b) => a.localeCompare(b));
-  // Put your preferred ones first, then whatever else exists
-  const preferred = DEFAULT_CATEGORIES.filter((c) =>
-    c === "All" ? true : set.has(c)
-  );
-  const rest = dynamic.filter(
-    (c) => !preferred.includes(c) && c !== "Pinned"
-  );
-  return [...preferred, ...rest];
+  // Only show categories that exist in current data (+ All)
+  return HARD_CATEGORIES.filter((c) => c === "All" || set.has(c));
+}
+
+function weightHard(c?: string) {
+  switch ((c || "").toLowerCase()) {
+    case "digital id / technocracy":
+      return 1;
+    case "war & geopolitics":
+      return 2;
+    case "power & control":
+      return 3;
+    case "religion & ideology":
+      return 4;
+    case "prophecy watch":
+      return 5;
+    default:
+      return 50;
+  }
 }
 
 export default function NewsControlsClient({ items, render }: Props) {
-  const categories = useMemo(() => uniqCats(items), [items]);
+  const categories = useMemo(() => uniqHardCats(items), [items]);
 
-  const [cat, setCat] = useState<string>("All");
+  const [cat, setCat] = useState<(typeof HARD_CATEGORIES)[number]>("All");
   const [sort, setSort] = useState<"newest" | "signal">("newest");
   const [view, setView] = useState<"cards" | "compact">("cards");
 
   const filtered = useMemo(() => {
     let out = items.filter((x) => x.category !== "Pinned");
 
+    // ✅ Filter by HARD category
     if (cat !== "All") {
-      out = out.filter((x) => (x.category || "General") === cat);
+      out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
     }
 
     // sort
     if (sort === "newest") {
       out = out.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
     } else {
-      // "signal-first": prioritize categories you care about, then newest
-      const weight = (c?: string) => {
-        const k = (c || "").toLowerCase();
-        if (k.includes("control")) return 1;
-        if (k.includes("war") || k.includes("geopolitics")) return 2;
-        if (k.includes("finance")) return 3;
-        if (k.includes("bio")) return 4;
-        if (k.includes("persecution")) return 5;
-        if (k.includes("censor")) return 6;
-        if (k.includes("crypto")) return 7;
-        if (k.includes("world")) return 8;
-        return 50;
-      };
-
-      out = out
-        .slice()
-        .sort((a, b) => {
-          const wa = weight(a.category);
-          const wb = weight(b.category);
-          if (wa !== wb) return wa - wb;
-          return (b.publishedAt || 0) - (a.publishedAt || 0);
-        });
+      out = out.slice().sort((a, b) => {
+        const wa = weightHard(a.hardCategory);
+        const wb = weightHard(b.hardCategory);
+        if (wa !== wb) return wa - wb;
+        return (b.publishedAt || 0) - (a.publishedAt || 0);
+      });
     }
 
     return out;
@@ -92,12 +85,13 @@ export default function NewsControlsClient({ items, render }: Props) {
 
   return (
     <div>
-      {/* Sticky controls (works on mobile too) */}
+      {/* Sticky controls */}
       <div className="sticky top-0 z-20 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 bg-white/90 backdrop-blur border-b border-zinc-200">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <div className="text-xs text-zinc-600">
-              Showing <span className="font-semibold text-zinc-900">{filtered.length}</span>{" "}
+              Showing{" "}
+              <span className="font-semibold text-zinc-900">{filtered.length}</span>{" "}
               headlines
             </div>
 
@@ -120,7 +114,7 @@ export default function NewsControlsClient({ items, render }: Props) {
             </div>
           </div>
 
-          {/* Category chips: scrollable on mobile */}
+          {/* HARD category chips */}
           <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto">
             <div className="flex gap-2 w-max">
               {categories.map((c) => {
