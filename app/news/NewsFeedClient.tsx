@@ -11,7 +11,8 @@ type Item = {
   publishedAt?: number;
   image?: string;
   summary?: string;
-  category?: string;
+  category?: string;      // badge label
+  hardCategory?: string;  // ✅ NEW: hard taxonomy
 };
 
 type Report = {
@@ -77,40 +78,40 @@ function formatDate(iso: string) {
   });
 }
 
-const DEFAULT_CATS = [
+const HARD_CATS = [
   "All",
-  "Control Systems",
-  "Geopolitics & War",
-  "Finance",
-  "Health",
-  "Biosecurity",
-  "Persecution Watch",
-  "Censorship & Speech",
-  "Crypto",
-  "World Briefing",
-];
+  "Power & Control",
+  "Digital ID / Technocracy",
+  "War & Geopolitics",
+  "Religion & Ideology",
+  "Prophecy Watch",
+] as const;
 
 function buildCategories(items: Item[]) {
+  // Only show hard categories that exist in current data (plus All)
   const set = new Set<string>();
-  for (const it of items) if (it.category) set.add(it.category);
-  const preferred = DEFAULT_CATS.filter((c) => c === "All" || set.has(c));
-  const rest = Array.from(set)
-    .filter((c) => !preferred.includes(c) && c !== "Pinned")
-    .sort();
-  return [...preferred, ...rest];
+  for (const it of items) if (it.hardCategory) set.add(it.hardCategory);
+
+  const preferred = HARD_CATS.filter((c) => c === "All" || set.has(c));
+  return preferred;
 }
 
-function signalWeight(c?: string) {
-  const k = (c || "").toLowerCase();
-  if (k.includes("control")) return 1;
-  if (k.includes("war") || k.includes("geopolitics")) return 2;
-  if (k.includes("finance")) return 3;
-  if (k.includes("bio")) return 4;
-  if (k.includes("persecution")) return 5;
-  if (k.includes("censor")) return 6;
-  if (k.includes("crypto")) return 7;
-  if (k.includes("world")) return 8;
-  return 50;
+function signalWeightHard(c?: string) {
+  // lower = higher priority in "Signal-first"
+  switch ((c || "").toLowerCase()) {
+    case "digital id / technocracy":
+      return 1;
+    case "war & geopolitics":
+      return 2;
+    case "power & control":
+      return 3;
+    case "religion & ideology":
+      return 4;
+    case "prophecy watch":
+      return 5;
+    default:
+      return 50;
+  }
 }
 
 export default function NewsFeedClient({
@@ -137,17 +138,24 @@ export default function NewsFeedClient({
   }, []);
 
   const list = useMemo(() => {
-    let out = items.filter((x) => x.category !== "Pinned");
-    if (cat !== "All") out = out.filter((x) => (x.category || "General") === cat);
+   let out = items.filter((x) => x.category !== "Pinned");
 
-    if (sort === "newest") {
-      out = out.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
-    } else {
-      out = out
-        .slice()
-        .sort((a, b) => {
-          const wa = signalWeight(a.category);
-          const wb = signalWeight(b.category);
+// ✅ Filter by HARD category (5 buckets)
+if (cat !== "All") out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
+
+if (sort === "newest") {
+  out = out.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+} else {
+  out = out
+    .slice()
+    .sort((a, b) => {
+      const wa = signalWeightHard(a.hardCategory);
+      const wb = signalWeightHard(b.hardCategory);
+      if (wa !== wb) return wa - wb;
+      return (b.publishedAt || 0) - (a.publishedAt || 0);
+    });
+}
+
           if (wa !== wb) return wa - wb;
           return (b.publishedAt || 0) - (a.publishedAt || 0);
         });
