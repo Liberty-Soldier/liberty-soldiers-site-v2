@@ -96,22 +96,23 @@ function buildCategories(items: Item[]) {
   return preferred;
 }
 
-function signalWeightHard(c?: string) {
-  // lower = higher priority in "Signal-first"
-  switch ((c || "").toLowerCase()) {
-    case "digital id / technocracy":
-      return 1;
-    case "war & geopolitics":
-      return 2;
-    case "power & control":
-      return 3;
-    case "religion & ideology":
-      return 4;
-    case "prophecy watch":
-      return 5;
-    default:
-      return 50;
+function buildCategories(items: Item[]) {
+  const set = new Set<string>();
+
+  for (const it of items) {
+    if (it.hardCategory) set.add(it.hardCategory);
   }
+
+  const ordered = [
+    "All",
+    "Power & Control",
+    "Digital ID / Technocracy",
+    "War & Geopolitics",
+    "Religion & Ideology",
+    "Prophecy Watch",
+  ];
+
+  return ordered.filter((c) => c === "All" || set.has(c));
 }
 
 export default function NewsFeedClient({
