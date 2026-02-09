@@ -103,7 +103,7 @@ export default async function HomeHeadlines({
                 {h.source}
               </span>
 
-              <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
+              <a href={h.url} className="block mt-1">  
                 <h3 className="font-semibold leading-snug text-zinc-900 hover:underline">
                   {h.title}
                 </h3>
@@ -168,7 +168,7 @@ export default async function HomeHeadlines({
                 {h.source}
               </span>
 
-              <a href={h.url} className="block mt-1" target="_blank" rel="noreferrer">
+                <a href={h.url} className="block mt-1">  
                 <h3 className="text-zinc-900 font-semibold leading-snug hover:underline line-clamp-2">
                 {h.title}
               </h3>
