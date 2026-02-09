@@ -1,8 +1,11 @@
 import Link from "next/link";
-import { REPORTS } from "../../lib/reports";
+import type { Report } from "../../lib/reports";
 
-export default function LatestReportBand() {
-  const report = REPORTS?.[0];
+type Props = {
+  report: Report | null;
+};
+
+export default function LatestReportBand({ report }: Props) {
   if (!report) return null;
 
   return (
