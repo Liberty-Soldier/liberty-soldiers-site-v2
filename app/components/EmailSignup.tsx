@@ -17,6 +17,7 @@ export default function EmailSignup({
   variant = "card",
 }: Props) {
   const mountRef = useRef<HTMLDivElement | null>(null);
+  const isCompact = variant === "compact";
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -32,8 +33,6 @@ export default function EmailSignup({
     mountRef.current.appendChild(s);
   }, []);
 
-  const isCompact = variant === "compact";
-
   return (
     <section
       className={
@@ -42,7 +41,7 @@ export default function EmailSignup({
           : "rounded-xl border border-zinc-200 bg-white px-5 py-4"
       }
     >
-      {/* Copy block */}
+      {/* Copy block (tight) */}
       <div className={isCompact ? "mb-1" : ""}>
         <h3
           className={
@@ -62,27 +61,23 @@ export default function EmailSignup({
         </p>
       </div>
 
-      {/* Kit embed mount */}
-      <div ref={mountRef} />
+      {/* ✅ Scope wrapper: everything Kit injects will be inside this */}
+      <div className="kit-scope">
+        <div ref={mountRef} />
+      </div>
 
-      {/* Scoped Kit cleanup + compact styling */}
       <style jsx>{`
-        /* Remove extra wrapper spacing */
-        :global(.ck-form),
-        :global(.ck-form > div),
-        :global(.ck-form form) {
-          margin: 0 !important;
-          padding: 0 !important;
-        }
-
-        /* HARD REMOVE KIT BRANDING (scoped) */
-        :global(.ck-form .ck-powered-by),
-        :global(.ck-form .formkit-powered-by),
-        :global(.ck-form .formkit-powered-by-container),
-        :global(.ck-form a[href*="kit.com"]),
-        :global(.ck-form a[href*="convertkit"]),
-        :global(.ck-form a[href*="ck.page"]),
-        :global(.ck-form a[href*="formkit"]) {
+        /* ---------- REMOVE "BUILT WITH KIT" / POWERED BY (scoped) ---------- */
+        :global(.kit-scope .ck-powered-by),
+        :global(.kit-scope .ck-form__powered-by),
+        :global(.kit-scope .ck-form__powered-by-container),
+        :global(.kit-scope .formkit-powered-by),
+        :global(.kit-scope .formkit-powered-by-container),
+        :global(.kit-scope [class*="powered-by"]),
+        :global(.kit-scope a[href*="kit.com"]),
+        :global(.kit-scope a[href*="convertkit"]),
+        :global(.kit-scope a[href*="ck.page"]),
+        :global(.kit-scope a[href*="formkit"]) {
           display: none !important;
           visibility: hidden !important;
           height: 0 !important;
@@ -90,26 +85,41 @@ export default function EmailSignup({
           padding: 0 !important;
         }
 
-        /* Row layout */
-        :global(.ck-form form) {
+        /* In case Kit renders "Built with Kit" as plain text in a footer-like div */
+        :global(.kit-scope footer),
+        :global(.kit-scope .ck-footer),
+        :global(.kit-scope .formkit-footer) {
+          display: none !important;
+        }
+
+        /* ---------- TIGHTEN ALL DEFAULT SPACING (scoped) ---------- */
+        :global(.kit-scope .ck-form),
+        :global(.kit-scope .ck-form > div),
+        :global(.kit-scope form) {
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+
+        /* ---------- INLINE ROW (DESKTOP) ---------- */
+        :global(.kit-scope form) {
           display: flex !important;
           align-items: center !important;
           gap: 6px !important;
         }
 
-        /* Email input */
-        :global(.ck-form input[type="email"]) {
-          height: 34px !important;
+        /* ---------- INPUT ---------- */
+        :global(.kit-scope input[type="email"]) {
+          height: 32px !important;
           padding: 6px 8px !important;
           font-size: 13px !important;
           border-radius: 8px !important;
           margin: 0 !important;
         }
 
-        /* Button */
-        :global(.ck-form button),
-        :global(.ck-form input[type="submit"]) {
-          height: 34px !important;
+        /* ---------- BUTTON ---------- */
+        :global(.kit-scope button),
+        :global(.kit-scope input[type="submit"]) {
+          height: 32px !important;
           padding: 6px 12px !important;
           font-size: 13px !important;
           border-radius: 8px !important;
@@ -117,9 +127,9 @@ export default function EmailSignup({
           margin: 0 !important;
         }
 
-        /* Mobile stack */
+        /* ---------- MOBILE STACK ---------- */
         @media (max-width: 640px) {
-          :global(.ck-form form) {
+          :global(.kit-scope form) {
             flex-direction: column !important;
             align-items: stretch !important;
           }
