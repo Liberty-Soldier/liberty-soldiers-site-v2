@@ -18,7 +18,7 @@ export default function LatestReportBand({ report }: Props) {
             </p>
 
             <Link
-              <Link href={`/news/${report.slug}`} …>
+              href={`/news/${report.slug}`}
               className="mt-1 block text-lg font-semibold text-zinc-900 hover:underline"
             >
               {report.title}
