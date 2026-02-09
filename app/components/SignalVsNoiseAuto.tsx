@@ -68,11 +68,11 @@ function Panel({
             return (
               <li key={h.url} className="group">
                 <Link
-                  href={h.url}
-                  target="_blank"
-                  className="block rounded-xl border border-zinc-100 bg-white px-3 py-3 hover:border-zinc-200 hover:bg-zinc-50 transition"
-                  title={cleanTitle}
-                >
+                    href={h.url}
+                    className="block rounded-xl border border-zinc-100 bg-white px-3 py-3 hover:border-zinc-200 hover:bg-zinc-50 transition"
+                    title={cleanTitle}
+                  >
+
                   <div className="text-sm sm:text-[15px] font-semibold text-zinc-900 leading-snug">
                     {cleanTitle}
                   </div>
