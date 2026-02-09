@@ -15,11 +15,7 @@ export default function EmailBand() {
           </div>
 
           <div className="w-full sm:max-w-md">
-            <EmailSignup
-              variant="compact"
-              title="Subscribe"
-              subtitle="Stay ahead of the convergence."
-            />
+          <EmailSignup variant="compact" />
           </div>
         </div>
       </div>
