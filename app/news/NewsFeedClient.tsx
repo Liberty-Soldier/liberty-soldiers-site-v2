@@ -137,31 +137,31 @@ export default function NewsFeedClient({
     return () => window.removeEventListener("resize", apply);
   }, []);
 
-  const list = useMemo(() => {
-   let out = items.filter((x) => x.category !== "Pinned");
+const list = useMemo(() => {
+  let out = items.filter((x) => x.category !== "Pinned");
 
-// ✅ Filter by HARD category (5 buckets)
-if (cat !== "All") out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
+  // ✅ Filter by HARD category (5 buckets)
+  if (cat !== "All") {
+    out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
+  }
 
-if (sort === "newest") {
-  out = out.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
-} else {
-  out = out
-    .slice()
-    .sort((a, b) => {
-      const wa = signalWeightHard(a.hardCategory);
-      const wb = signalWeightHard(b.hardCategory);
-      if (wa !== wb) return wa - wb;
-      return (b.publishedAt || 0) - (a.publishedAt || 0);
-    });
-}
+  if (sort === "newest") {
+    out = out
+      .slice()
+      .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+  } else {
+    out = out
+      .slice()
+      .sort((a, b) => {
+        const wa = signalWeightHard(a.hardCategory);
+        const wb = signalWeightHard(b.hardCategory);
+        if (wa !== wb) return wa - wb;
+        return (b.publishedAt || 0) - (a.publishedAt || 0);
+      });
+  }
 
-          if (wa !== wb) return wa - wb;
-          return (b.publishedAt || 0) - (a.publishedAt || 0);
-        });
-    }
-    return out;
-  }, [items, cat, sort]);
+  return out;
+}, [items, cat, sort]);
 
   return (
     <div>
