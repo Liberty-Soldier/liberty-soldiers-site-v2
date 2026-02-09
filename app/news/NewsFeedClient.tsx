@@ -113,6 +113,7 @@ function buildCategories(items: Item[]) {
   ];
 
   return ordered.filter((c) => c === "All" || set.has(c));
+ }
 }
 
 export default function NewsFeedClient({
