@@ -92,7 +92,6 @@ export default async function Home() {
             </h1>
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
               Independent analysis of power and control as global events converge
-              on the prophetic timeline
             </p>
           </div>
         </div>
@@ -363,3 +362,4 @@ export default async function Home() {
     </div>
   );
 }
+
