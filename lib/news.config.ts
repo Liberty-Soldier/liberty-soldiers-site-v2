@@ -61,7 +61,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.nih.gov/news-events/news-releases/rss.xml", category: "health" },
   { url: "https://www.statnews.com/feed/", category: "health" },
   { url: "https://www.medscape.com/rss/public", category: "health" },
-  { url: "https://www.infowars.com/category/health/feed/" },
+  { url: "https://www.infowars.com/category/health/feed/", category: "health" },
   { url: "https://www.fiercehealthcare.com/rss/xml", category: "health" },
 
 
@@ -86,6 +86,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
