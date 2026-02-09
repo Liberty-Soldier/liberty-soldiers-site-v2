@@ -54,23 +54,21 @@ export default function LiveBriefing({
 
           {/* Text (clickable, wraps on mobile) */}
           <div className="min-w-0 flex-1">
-            <a
-              key={item.url}
-              href={item.url}
-              target="_blank"
-              rel="noreferrer"
-              className="block text-sm sm:text-base font-semibold text-red-700 hover:text-red-800 hover:underline motion-safe:animate-[fadeIn_250ms_ease-out]"
-              aria-live="polite"
-              title={item.text}
-              style={{
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-              }}
-            >
-              {item.text}
-            </a>
+           <a
+            key={item.url}
+            href={item.url}
+            className="block text-sm sm:text-base font-semibold text-red-700 hover:text-red-800 hover:underline motion-safe:animate-[fadeIn_250ms_ease-out]"
+            aria-live="polite"
+            title={item.text}
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {item.text}
+          </a>
 
             {item.source ? (
               <div className="mt-1 text-[11px] sm:text-xs text-zinc-500">
