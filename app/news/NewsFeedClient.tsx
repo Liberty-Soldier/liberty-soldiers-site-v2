@@ -183,8 +183,14 @@ export default function NewsFeedClient({
                 className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800"
               >
                 <option value="newest">Newest</option>
-                <option value="signal">Signal-first</option>
+                <option value="signal">Signal (priority)</option>
               </select>
+
+              {sort === "signal" && (
+              <span className="ml-2 inline-flex items-center rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700">
+                Signal mode
+              </span>
+            )}
 
               {/* Desktop-only toggle (mobile forced to cards) */}
               <button
