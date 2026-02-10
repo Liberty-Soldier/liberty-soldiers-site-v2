@@ -92,10 +92,7 @@ const HARD_ORDER = [
 ] as const;
 
 function buildCategories(_: Item[]) {
-  return HARD_ORDER; // always show every chip
-}
-
-  return HARD_ORDER.filter((c) => c === "All" || set.has(c));
+  return HARD_ORDER; // always show all chips
 }
 
 function signalWeightHard(c?: string) {
