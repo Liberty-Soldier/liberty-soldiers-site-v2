@@ -37,8 +37,6 @@ export default function ShareButton({
     if (typeof navigator !== "undefined" && "share" in navigator) {
       try {
         await navigator.share({
-          title: headline,
-          text: headline,
           url: shareUrl,
         });
         return;
