@@ -10,7 +10,7 @@ import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
 import LatestReportBand from "./components/LatestReportBand";
 
-export const revalidate = 0; // TEMP while testing (you can put back to 600 later)
+export const revalidate = 600; // TEMP while testing (you can put back to 600 later)
 
 const OG_IMAGE = "/og-default.jpg"; // must exist in /public
 
@@ -319,6 +319,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
