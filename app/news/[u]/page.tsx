@@ -2,6 +2,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const SITE = "https://libertysoldiers.com";
+const OG_IMAGE = `${SITE}/og-default.jpg`; // ✅ absolute URL for Android reliability
+const WRAP_HERO = "/og-default.jpg"; // ✅ wrapper page hero image (from /public)
+
 function safeDecode(input: string) {
   try {
     return decodeURIComponent(input);
@@ -47,7 +51,6 @@ function bulletsFromSummary(summary?: string): string[] {
   const clean = cleanSummary(summary);
   if (!clean) return [];
 
-  // Try bullet-ish separators first
   const preBullets = clean
     .split(/(?:•|·|\u2022|\s-\s|\s—\s)/)
     .map((s) => s.trim())
@@ -59,7 +62,6 @@ function bulletsFromSummary(summary?: string): string[] {
       .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
   }
 
-  // Otherwise take first 2 sentences
   const parts = clean
     .split(/(?<=[.!?])\s+/)
     .map((s) => s.trim())
@@ -67,7 +69,6 @@ function bulletsFromSummary(summary?: string): string[] {
 
   if (parts.length >= 2) return parts.slice(0, 2);
 
-  // Fallback chunking
   const chunk1 = clean.slice(0, 110).trim();
   const chunk2 = clean.slice(110, 220).trim();
 
@@ -102,18 +103,16 @@ export async function generateMetadata({
     bullets[0] ||
     "External reporting shared via Liberty Soldiers for situational awareness.";
 
-  // ✅ This is what Android Messages will show as the card title
-  // Keep it headline-first, with source as context.
   const ogTitle = titleFromQuery
     ? `${titleFromQuery}${source ? ` • ${source}` : ""}`
     : source
     ? `Liberty Soldiers • ${source}`
-    : "Liberty Soldiers";
+    : "Liberty Soldiers Intelligence Brief";
 
   return {
     title: ogTitle,
     description: ogDesc,
-    metadataBase: new URL("https://libertysoldiers.com"),
+    metadataBase: new URL(SITE),
     openGraph: {
       title: ogTitle,
       description: ogDesc,
@@ -122,9 +121,10 @@ export async function generateMetadata({
       url: `/news/${params.u}`,
       images: [
         {
-          url: "/og-default.jpg",
+          url: OG_IMAGE, // ✅ absolute
           width: 1200,
           height: 630,
+          alt: "Liberty Soldiers",
         },
       ],
     },
@@ -132,7 +132,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: ogTitle,
       description: ogDesc,
-      images: ["/og-default.jpg"],
+      images: [OG_IMAGE], // ✅ absolute
     },
   };
 }
@@ -161,7 +161,8 @@ export default function NewsWrappedLinkPage({
 
   const bullets = bulletsFromSummary(summary);
 
-  const thumb = ok ? faviconFromUrl(decodedUrl) : "/briefing-fallback.jpg";
+  // ✅ Wrapper page hero image ALWAYS your default OG
+  const hero = WRAP_HERO;
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -178,8 +179,8 @@ export default function NewsWrappedLinkPage({
         <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-6">
           <div className="mb-4 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
             <img
-              src={thumb}
-              alt=""
+              src={hero}
+              alt="Liberty Soldiers"
               className="h-44 w-full object-cover"
               loading="lazy"
             />
@@ -190,14 +191,23 @@ export default function NewsWrappedLinkPage({
           </p>
 
           {source ? (
-            <div className="mt-3 text-xs text-zinc-600">
+            <div className="mt-3 flex items-center gap-2 text-xs text-zinc-600">
+              {/* ✅ small favicon only (not ugly hero) */}
+              {ok ? (
+                <img
+                  src={faviconFromUrl(decodedUrl)}
+                  alt=""
+                  className="h-4 w-4 rounded"
+                  loading="lazy"
+                />
+              ) : null}
+
               <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5">
                 Source: {source}
               </span>
             </div>
           ) : null}
 
-          {/* ✅ Headline shown on the wrapper page */}
           <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold leading-tight">
             {headline}
           </h1>
@@ -207,7 +217,6 @@ export default function NewsWrappedLinkPage({
             and analysis separately.
           </p>
 
-          {/* ✅ “Quick brief” summary BEFORE opening original */}
           {bullets.length > 0 && (
             <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
               <div className="text-xs font-semibold uppercase tracking-wide text-zinc-700">
