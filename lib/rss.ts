@@ -404,7 +404,7 @@ function normalizeFeed(
       const summary = extractSummary(it) || undefined;
 
       const category = categorize(title, summary, source, feedFallbackLabel);
-      const hardCategory = toHardCategory(category, feedCategory);
+      const hardCategory = toHardCategory(category);
 
       return {
         title,
@@ -414,6 +414,7 @@ function normalizeFeed(
         image,
         summary,
         category,
+        hardCategory,
       };
     })
     .filter(
