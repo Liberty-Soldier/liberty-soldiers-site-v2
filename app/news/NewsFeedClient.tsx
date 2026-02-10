@@ -91,11 +91,10 @@ const HARD_ORDER = [
   "Prophecy Watch",
 ] as const;
 
-function buildCategories(items: Item[]) {
-  const set = new Set<string>();
-  for (const it of items) {
-    if (it.hardCategory) set.add(it.hardCategory);
-  }
+function buildCategories(_: Item[]) {
+  return HARD_ORDER; // always show every chip
+}
+
   return HARD_ORDER.filter((c) => c === "All" || set.has(c));
 }
 
