@@ -10,7 +10,9 @@ import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
 import LatestReportBand from "./components/LatestReportBand";
 
-export const revalidate = 600;
+export const revalidate = 0; // TEMP while testing (you can put back to 600 later)
+
+const OG_IMAGE = "/og-default.jpg"; // must exist in /public
 
 export const metadata: Metadata = {
   title: "Liberty Soldiers | Independent analysis of power, perception, and control",
@@ -22,18 +24,28 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Liberty Soldiers",
     description:
-      "Independent analysis examining power, perception, and emerging systems shaping the world.",
+      "Independent analysis examining power, perception, media narratives, and emerging systems shaping the world.",
     url: "https://libertysoldiers.com/",
     siteName: "Liberty Soldiers",
     type: "website",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Liberty Soldiers",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Liberty Soldiers",
     description:
-      "Independent analysis examining power, perception, and emerging systems shaping the world.",
+      "Independent analysis examining power, perception, media narratives, and emerging systems shaping the world.",
+    images: [OG_IMAGE],
   },
 };
+
 
 const SITE = "https://libertysoldiers.com";
 
@@ -307,6 +319,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
