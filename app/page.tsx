@@ -112,13 +112,15 @@ export default async function Home() {
         </div>
       </section>
 
-        {/* Live Briefing */}
+       {/* Live Briefing */}
       <LiveBriefingAuto />
       
-      {/* ✅ EMAIL SIGNUP — ABOVE LIVE FEED */}
-      <EmailBand />
-
-      {/* ✅ LATEST LS REPORT — BELOW LIVE FEED */}
+      {/* Email signup — desktop only (avoid mobile duplication) */}
+      <div className="hidden sm:block">
+        <EmailBand />
+      </div>
+      
+      {/* Latest Liberty Soldiers Report */}
       <LatestReportBand report={latestReport} />
 
       {/* Latest Headlines (mobile carousel + desktop grid) */}
@@ -263,35 +265,53 @@ export default async function Home() {
         </div>
       </section>
 
- {/* Bottom context */}
-    <section className="py-12 sm:py-16 border-t border-zinc-200">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
-          Liberty Soldiers is an independent investigative media platform for geopolitical analysis.
-        </h2>
-    
-        <p className="mt-3 text-zinc-800 leading-relaxed">
-          We publish investigative reporting and analytical research on global geopolitics, modern conflict,
-          information warfare, psychological operations, and the power structures and belief systems that
-          shape public perception and policy.
-        </p>
-    
-        <p className="mt-3 text-zinc-700 leading-relaxed">
-          Our reports connect breaking news and world events to historical patterns, strategic doctrine,
-          and long-term ideological frameworks—separating signal from noise, fact from propaganda, and
-          context from narrative—so readers gain situational awareness and clarity, not partisan opinion.
-        </p>
-    
-        {/* Optional micro-SEO line (small + subtle) */}
-        <p className="mt-2 text-sm text-zinc-500">
-          Topics include geopolitics, global conflict, media manipulation, surveillance systems, digital identity,
-          financial power, and narrative control.
-        </p>
-      </div>
-    </section>
+{/* Bottom context */}
+<section className="py-12 sm:py-16 border-t border-zinc-200">
+  <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+    {/* Desktop: full copy */}
+    <div className="hidden sm:block">
+      <h2 className="text-2xl sm:text-3xl font-bold text-zinc-900">
+        Liberty Soldiers is an independent investigative media platform for geopolitical analysis.
+      </h2>
+
+      <p className="mt-3 text-zinc-800 leading-relaxed">
+        We publish investigative reporting and analytical research on global geopolitics, modern conflict,
+        information warfare, psychological operations, and the power structures and belief systems that
+        shape public perception and policy.
+      </p>
+
+      <p className="mt-3 text-zinc-700 leading-relaxed">
+        Our reports connect breaking news and world events to historical patterns, strategic doctrine,
+        and long-term ideological frameworks—separating signal from noise, fact from propaganda, and
+        context from narrative—so readers gain situational awareness and clarity, not partisan opinion.
+      </p>
+
+      <p className="mt-2 text-sm text-zinc-500">
+        Topics include geopolitics, global conflict, media manipulation, surveillance systems, digital identity,
+        financial power, and narrative control.
+      </p>
     </div>
-  );
-}
+
+    {/* Mobile: compressed */}
+    <div className="sm:hidden">
+      <h2 className="text-xl font-extrabold text-zinc-900">
+        Independent analysis of power, perception, and control.
+      </h2>
+      <p className="mt-2 text-sm text-zinc-700 leading-relaxed">
+        Reports connect headlines to historical patterns—separating signal from noise.
+      </p>
+      <div className="mt-3">
+        <a
+          href="/about"
+          className="inline-flex items-center text-sm font-semibold text-zinc-900 hover:underline"
+        >
+          Read the mission → 
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 
 
