@@ -84,12 +84,14 @@ function formatDate(iso: string) {
 
 const HARD_ORDER = [
   "All",
+  "Markets & Finance",
   "Power & Control",
   "Digital ID / Technocracy",
   "War & Geopolitics",
   "Religion & Ideology",
   "Prophecy Watch",
 ] as const;
+
 
 function buildCategories(_: Item[]) {
   return HARD_ORDER; // always show all chips
