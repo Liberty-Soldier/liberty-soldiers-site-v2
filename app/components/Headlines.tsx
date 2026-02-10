@@ -123,7 +123,7 @@ export default async function HomeHeadlines({
     return (
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {top.map((h, idx) => {
-          const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
+          const shareHrefAbs = `https://libertysoldiers.com/news/${encodeURIComponent(h.url)}`;
             h.url
           )}`;
           const thumb = h.image || faviconFromUrl(h.url);
@@ -174,7 +174,7 @@ export default async function HomeHeadlines({
 
               <div className="mt-3 flex items-center justify-between gap-3">
                 <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
-                <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
+                <ShareButton shareUrl={shareHrefAbs} title={h.title} />
               </div>
             </div>
           );
