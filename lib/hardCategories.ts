@@ -1,11 +1,12 @@
 // lib/hardCategories.ts
 
 export const HARD_CATEGORIES = [
+  "Markets & Finance",
   "Power & Control",
-  "Prophecy Watch",
-  "Religion & Ideology",
-  "War & Geopolitics",
   "Digital ID / Technocracy",
+  "War & Geopolitics",
+  "Religion & Ideology",
+  "Prophecy Watch",
 ] as const;
 
 export type HardCategory = (typeof HARD_CATEGORIES)[number];
@@ -25,6 +26,8 @@ export function toHardCategory(feedCategory?: string): HardCategory {
 
     case "finance":
     case "crypto":
+      return "Markets & Finance";
+
     case "health":
       return "Power & Control";
 
