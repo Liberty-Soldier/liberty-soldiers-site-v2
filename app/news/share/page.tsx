@@ -53,11 +53,15 @@ export async function generateMetadata({ searchParams }: SP): Promise<Metadata> 
       : "https://libertysoldiers.com/news";
 
   // Use article image if provided; otherwise fallback to your default OG image
-  const ogImage = img && /^https?:\/\//i.test(img)
-    ? img
-    : "https://libertysoldiers.com/og.jpg";
+ 
+  const OG_FALLBACK = "https://libertysoldiers.com/og-default.jpg?v=2";
+
+    const ogImage =
+    img && /^https?:\/\//i.test(img) ? img : OG_FALLBACK;
 
   return {
+    metadataBase: new URL("https://libertysoldiers.com"),
+    
     title: pageTitle,
     description: desc,
     alternates: { canonical },
