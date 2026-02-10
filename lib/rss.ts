@@ -427,8 +427,8 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
 /* caps + dedupe (safe, conservative)                  */
 /* -------------------------------------------------- */
 
-const MAX_PER_SOURCE = 5; // cap per source
-const MAX_TOTAL = 150; // cap total returned (excluding pinned)
+const MAX_PER_SOURCE = 10; // cap per source
+const MAX_TOTAL = 220; // cap total returned (excluding pinned)
 
 function normalizeForDedupeTitle(s: string): string {
   return String(s || "")
@@ -538,18 +538,17 @@ function capBySource(items: Headline[]): Headline[] {
   return out;
 }
 
-const MIN_PER_CATEGORY = 6; // ✅ your request
+const MIN_PER_CATEGORY = 9; // ✅ your request
 
 function selectWithCategoryMins(items: Headline[]): Headline[] {
   const perSource = new Map<string, number>();
   const perCat = new Map<string, number>();
   const selected: Headline[] = [];
 
-  const catOf = (h: Headline) =>
-  (h.hardCategory || "Power & Control").trim();
+  const catOf = (h: Headline) => (h.hardCategory || "Power & Control").trim();
 
   // Categories we do NOT force-minimum for
-  const EXCLUDE = new Set(["Pinned", "General"]);
+  const EXCLUDE = new Set(["Pinned"]);
 
   // Determine which categories are eligible (present + not excluded)
   const eligibleCats = Array.from(
