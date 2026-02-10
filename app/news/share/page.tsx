@@ -2,7 +2,8 @@
 import type { Metadata } from "next";
 import ShareClient from "./ShareClient";
 
-export const revalidate = 600;
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 function safeDecode(input: string) {
   try {
