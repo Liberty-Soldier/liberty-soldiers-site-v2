@@ -1,6 +1,8 @@
 // lib/rss.ts
 import { XMLParser } from "fast-xml-parser";
 import { NEWS_FEEDS, NOISE_FEEDS, PINNED_LINKS, BLACKLIST } from "./news.config";
+import { toHardCategory } from "./hardCategories";
+
 
 export type Headline = {
   title: string;
