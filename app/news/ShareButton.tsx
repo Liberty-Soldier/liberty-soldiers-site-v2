@@ -4,13 +4,13 @@ import { useState } from "react";
 import { copyText } from "@/lib/copy";
 
 export default function ShareButton({
-  wrapperUrl,
+  shareUrl,      // ✅ clean URL to share (ex: /news/[slug] or /reports/[slug])
   title,
   label, // legacy support
   copyLabel,
   shareLabel = "Share",
 }: {
-  wrapperUrl: string;
+  shareUrl: string;
   title?: string;
   label?: string; // legacy
   copyLabel?: string; // preferred
@@ -19,18 +19,16 @@ export default function ShareButton({
   const [copied, setCopied] = useState(false);
 
   const finalCopyLabel = copyLabel ?? label ?? "Copy link";
-
-  // ✅ X text = headline only (no URL in the tweet text)
-  const headline = (title && title.trim()) ? title.trim() : "Shared via Liberty Soldiers";
+  const headline = title?.trim() ? title.trim() : "Shared via Liberty Soldiers";
 
   // ---------- COPY ----------
   const doCopy = async () => {
-    const ok = await copyText(wrapperUrl);
+    const ok = await copyText(shareUrl);
     if (ok) {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1200);
     } else {
-      window.prompt("Copy this link:", wrapperUrl);
+      window.prompt("Copy this link:", shareUrl);
     }
   };
 
@@ -41,7 +39,7 @@ export default function ShareButton({
         await navigator.share({
           title: headline,
           text: headline,
-          url: wrapperUrl,
+          url: shareUrl,
         });
         return;
       } catch {
@@ -52,10 +50,9 @@ export default function ShareButton({
   };
 
   // ---------- X (mobile-safe intent) ----------
-  // Put ONLY headline in text; X preview will come from the URL param
   const xIntent =
-    `https://twitter.com/intent/tweet?text=${encodeURIComponent(headline)}` +
-    `&url=${encodeURIComponent(wrapperUrl)}`;
+    `https://x.com/intent/post?text=${encodeURIComponent(headline)}` +
+    `&url=${encodeURIComponent(shareUrl)}`;
 
   const postToX = () => {
     const w = window.open(xIntent, "_blank", "noopener,noreferrer");
