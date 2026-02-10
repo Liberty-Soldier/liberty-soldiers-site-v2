@@ -108,7 +108,6 @@ export default async function Home() {
 
    {/* Live Briefing */}
     <LiveBriefingAuto />
-    </div>
 
       {/* Email signup — desktop only (avoid mobile duplication) */}
       <div className="hidden sm:block">
@@ -306,6 +305,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
