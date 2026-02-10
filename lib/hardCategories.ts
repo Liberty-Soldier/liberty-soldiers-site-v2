@@ -24,6 +24,9 @@ export function toHardCategory(feedCategory?: string): HardCategory {
     case "world":
       return "War & Geopolitics";
 
+    case "religion":
+    return "Religion & Ideology";
+
     case "finance":
     case "crypto":
       return "Markets & Finance";
