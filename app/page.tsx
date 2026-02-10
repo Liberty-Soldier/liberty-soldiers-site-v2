@@ -49,16 +49,9 @@ export default async function Home() {
   const VIDEO_ID = "WeFeWyonzgc";
   const VIDEO_TITLE = "Latest Liberty Soldiers Video";
   const VIDEO_URL = `https://www.youtube.com/watch?v=${VIDEO_ID}`;
-
-  // Put file in /public/video.jpg (or change to /og/video.jpg if stored in /public/og/)
   const VIDEO_THUMB = "/video.jpg";
 
-  // ✅ Latest report (auto) — normalize undefined -> null
   const latestReport = (await getLatestReport()) ?? null;
-
-  // ✅ Use latestReport consistently (no "latest" var)
-  const latestHref = latestReport ? `/reports/${latestReport.slug}` : "/reports";
-  const latestThumb = latestReport?.coverImage ?? "/briefing-fallback.jpg";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -93,40 +86,39 @@ export default async function Home() {
             <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
               Independent intelligence and situational awareness
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-            <a
-              href="/reports"
-              className="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-100 transition"
-            >
-              Read Reports →
-            </a>
-            <a
-              href="/news"
-              className="inline-flex items-center rounded-xl border border-white/40 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
-            >
-              Live Intelligence →
-            </a>
-          </div>
 
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href="/reports"
+                className="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-100 transition"
+              >
+                Read Reports →
+              </a>
+              <a
+                href="/news"
+                className="inline-flex items-center rounded-xl border border-white/40 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
+              >
+                Live Intelligence →
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
-       {/* Live Briefing */}
+      {/* Live Briefing */}
       <LiveBriefingAuto />
-      
+
       {/* Email signup — desktop only (avoid mobile duplication) */}
       <div className="hidden sm:block">
         <EmailBand />
       </div>
-      
-      {/* Latest Liberty Soldiers Report */}
+
+      {/* Latest LS Report */}
       <LatestReportBand report={latestReport} />
 
       {/* Latest Headlines (mobile carousel + desktop grid) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200 bg-zinc-50/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header band */}
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
             <div className="flex items-start gap-3">
               <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
@@ -142,14 +134,11 @@ export default async function Home() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-700">
-                Live feed
-              </span>
               <a
                 href="/news"
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition"
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition"
               >
-                View full News Feed <span className="text-red-600">→</span>
+                Full feed <span className="text-red-600">→</span>
               </a>
             </div>
           </div>
@@ -265,7 +254,7 @@ export default async function Home() {
         </div>
       </section>
 
-{/* Bottom context */}
+     {/* Bottom context */}
 <section className="py-12 sm:py-16 border-t border-zinc-200">
   <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
     {/* Desktop: full copy */}
@@ -311,10 +300,3 @@ export default async function Home() {
     </div>
   </div>
 </section>
-
-
-
-
-
-
-
