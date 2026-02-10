@@ -545,7 +545,8 @@ function selectWithCategoryMins(items: Headline[]): Headline[] {
   const perCat = new Map<string, number>();
   const selected: Headline[] = [];
 
-  const catOf = (h: Headline) => (h.category || "General").trim();
+  const catOf = (h: Headline) =>
+  (h.hardCategory || "Power & Control").trim();
 
   // Categories we do NOT force-minimum for
   const EXCLUDE = new Set(["Pinned", "General"]);
