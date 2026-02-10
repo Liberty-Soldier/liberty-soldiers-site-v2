@@ -91,8 +91,11 @@ function bulletsFromSummary(summary?: string): string[] {
 }
 
 // ✅ Clean share URL builder (NO query strings; fixes Android SMS ugly text)
-function buildNewsShareAbs(externalUrl: string) {
-  return `https://libertysoldiers.com/news/${encodeURIComponent(externalUrl)}`;
+function buildNewsShareAbs(externalUrl: string, title?: string) {
+  const base = `https://libertysoldiers.com/news/${encodeURIComponent(externalUrl)}`;
+  if (!title || !title.trim()) return base;
+  // ✅ Only title — keeps things short, no long ugly message text
+  return `${base}?t=${encodeURIComponent(title.trim())}`;
 }
 
 export default async function HomeHeadlines({
@@ -122,7 +125,7 @@ export default async function HomeHeadlines({
     return (
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {top.map((h, idx) => {
-          const shareHrefAbs = buildNewsShareAbs(h.url);
+          const shareHrefAbs = buildNewsShareAbs(h.url, h.title);
           const thumb = h.image || faviconFromUrl(h.url);
           const bullets = bulletsFromSummary(h.summary);
 
@@ -186,7 +189,7 @@ export default async function HomeHeadlines({
   return (
     <>
       {top.map((h, idx) => {
-        const shareHrefAbs = buildNewsShareAbs(h.url);
+       const shareHrefAbs = buildNewsShareAbs(h.url, h.title);
         const thumb = h.image || faviconFromUrl(h.url);
         const bullets = bulletsFromSummary(h.summary);
 
