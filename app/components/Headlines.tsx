@@ -17,11 +17,9 @@ function pickBalanced(items: Item[], total: number) {
     .slice()
     .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
 
-  // Treat these as "money-heavy"
   const MONEY = new Set(["Finance", "Crypto"]);
-
-  const maxMoney = Math.min(3, Math.ceil(total / 3)); // e.g. 3 of 9, 7 of 20
-  const perCatMax = 2; // prevents 6+ from one category
+  const maxMoney = Math.min(3, Math.ceil(total / 3));
+  const perCatMax = 2;
 
   const picked: Item[] = [];
   const perCat = new Map<string, number>();
@@ -32,7 +30,6 @@ function pickBalanced(items: Item[], total: number) {
 
     const cat = (h.category || "General").trim();
     const catCount = perCat.get(cat) || 0;
-
     if (catCount >= perCatMax) continue;
 
     const isMoney = MONEY.has(cat);
@@ -43,7 +40,6 @@ function pickBalanced(items: Item[], total: number) {
     if (isMoney) moneyCount += 1;
   }
 
-  // If we were too strict, top off with newest remaining
   if (picked.length < total) {
     const used = new Set(picked.map((x) => x.url));
     for (const h of sorted) {
@@ -90,7 +86,13 @@ function bulletsFromSummary(summary?: string): string[] {
     .split(/(?:\.|\!|\?)\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
+
   return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
+}
+
+// ✅ Clean share URL builder (NO query strings; fixes Android SMS ugly text)
+function buildNewsShareAbs(externalUrl: string) {
+  return `https://libertysoldiers.com/news/${encodeURIComponent(externalUrl)}`;
 }
 
 export default async function HomeHeadlines({
@@ -105,10 +107,7 @@ export default async function HomeHeadlines({
     items = [];
   }
 
- const top =
-  variant === "grid"
-    ? pickBalanced(items, 9)
-    : pickBalanced(items, 20);
+  const top = variant === "grid" ? pickBalanced(items, 9) : pickBalanced(items, 20);
 
   if (top.length === 0) {
     return (
@@ -118,13 +117,12 @@ export default async function HomeHeadlines({
     );
   }
 
-  // GRID (unchanged)
+  // GRID
   if (variant === "grid") {
     return (
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {top.map((h, idx) => {
-          const shareHrefAbs = `https://libertysoldiers.com/news/${encodeURIComponent(h.url)}`;
-          )}`;
+          const shareHrefAbs = buildNewsShareAbs(h.url);
           const thumb = h.image || faviconFromUrl(h.url);
           const bullets = bulletsFromSummary(h.summary);
 
@@ -146,7 +144,7 @@ export default async function HomeHeadlines({
                 {h.source}
               </span>
 
-              <a href={h.url} className="block mt-1">  
+              <a href={h.url} className="block mt-1">
                 <h3 className="font-semibold leading-snug text-zinc-900 hover:underline">
                   {h.title}
                 </h3>
@@ -172,7 +170,9 @@ export default async function HomeHeadlines({
               )}
 
               <div className="mt-3 flex items-center justify-between gap-3">
-                <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
+                <span className="text-xs text-zinc-500">
+                  {humanAgo(h.publishedAt)}
+                </span>
                 <ShareButton shareUrl={shareHrefAbs} title={h.title} />
               </div>
             </div>
@@ -182,13 +182,11 @@ export default async function HomeHeadlines({
     );
   }
 
-  // CAROUSEL (slides only, no wrapper div)
+  // CAROUSEL (slides only)
   return (
     <>
       {top.map((h, idx) => {
-        const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
-          h.url
-        )}`;
+        const shareHrefAbs = buildNewsShareAbs(h.url);
         const thumb = h.image || faviconFromUrl(h.url);
         const bullets = bulletsFromSummary(h.summary);
 
@@ -197,7 +195,7 @@ export default async function HomeHeadlines({
             key={`${h.url}-${idx}`}
             className="shrink-0 w-[88%] sm:w-[520px] lg:w-[640px]"
           >
-              <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
+            <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
               <div className="mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
                 <img
                   src={thumb}
@@ -211,10 +209,10 @@ export default async function HomeHeadlines({
                 {h.source}
               </span>
 
-                <a href={h.url} className="block mt-1">  
+              <a href={h.url} className="block mt-1">
                 <h3 className="text-zinc-900 font-semibold leading-snug hover:underline line-clamp-2">
-                {h.title}
-              </h3>
+                  {h.title}
+                </h3>
               </a>
 
               {bullets.length > 0 && (
@@ -237,8 +235,10 @@ export default async function HomeHeadlines({
               )}
 
               <div className="mt-auto pt-4 flex items-center justify-between gap-3">
-                <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
-                <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
+                <span className="text-xs text-zinc-500">
+                  {humanAgo(h.publishedAt)}
+                </span>
+                <ShareButton shareUrl={shareHrefAbs} title={h.title} />
               </div>
             </div>
           </div>
