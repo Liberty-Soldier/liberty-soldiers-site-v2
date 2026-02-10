@@ -4,6 +4,7 @@ export type FeedCategory =
   | "world"
   | "middle-east"
   | "tech"
+  | "religion"
   | "prophecy"
   | "finance"
   | "crypto"
@@ -61,6 +62,10 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.medscape.com/rss/public", category: "health" },
   { url: "https://www.fiercehealthcare.com/rss/xml", category: "health" },
 
+    // --- RELIGION / IDEOLOGY ---
+  { url: "https://religionnews.com/feed/", category: "religion" },
+  { url: "https://www.christianpost.com/rss", category: "religion" },
+  { url: "https://www.firstthings.com/rss/web-exclusives", category: "religion" },
 
   // --- CRYPTO ---
   { url: "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml", category: "crypto" },
@@ -83,6 +88,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
