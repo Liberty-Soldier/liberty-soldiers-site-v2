@@ -106,8 +106,10 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Live Briefing */}
+     {/* Live Briefing — desktop only */}
+    <div className="hidden sm:block">
       <LiveBriefingAuto />
+    </div>
 
       {/* Email signup — desktop only (avoid mobile duplication) */}
       <div className="hidden sm:block">
@@ -120,6 +122,10 @@ export default async function Home() {
       {/* Latest Headlines (mobile carousel + desktop grid) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200 bg-zinc-50/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Mobile: Live briefing inline */}
+          <div className="sm:hidden mb-4">
+            <LiveBriefingAuto />
+          </div>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
             <div className="flex items-start gap-3">
               <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
@@ -305,6 +311,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
