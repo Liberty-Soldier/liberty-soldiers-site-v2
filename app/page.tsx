@@ -53,7 +53,7 @@ export default async function Home() {
 
   const latestReport = (await getLatestReport()) ?? null;
 
-  const jsonLd = {
+   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Liberty Soldiers",
@@ -65,6 +65,7 @@ export default async function Home() {
 
   return (
     <div>
+
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -300,3 +301,4 @@ export default async function Home() {
     </div>
   </div>
 </section>
+
