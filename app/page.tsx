@@ -253,7 +253,7 @@ export default async function Home() {
                     </a>
 
                     <ShareButton
-                      wrapperUrl={`${SITE}/videos`}
+                      shareUrl={`${SITE}/videos`}
                       title={VIDEO_TITLE}
                       label="Copy link"
                     />
@@ -319,6 +319,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
