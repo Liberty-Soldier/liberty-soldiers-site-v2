@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og.jpg",
+        url: "/og-default.jpg",
         width: 1200,
         height: 630,
         alt: "Liberty Soldiers",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: "Liberty Soldiers",
     description:
       "Independent situational awareness and investigative analysis of power, perception, and emerging systems shaping the world.",
-    images: ["/og.jpg"],
+    images: ["/og-default.jpg"],
   },
 
   icons: {
@@ -102,3 +102,4 @@ export default function RootLayout({
     </html>
   );
 }
+
