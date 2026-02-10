@@ -114,8 +114,10 @@ export default async function Home() {
         <EmailBand />
       </div>
 
-      {/* Latest LS Report */}
-      <LatestReportBand report={latestReport} />
+         {/* Latest LS Report — desktop only */}
+      <div className="hidden sm:block">
+        <LatestReportBand report={latestReport} />
+      </div>
 
       {/* Latest Headlines (mobile carousel + desktop grid) */}
       <section className="py-12 sm:py-16 border-t border-zinc-200 bg-zinc-50/50">
@@ -305,6 +307,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
