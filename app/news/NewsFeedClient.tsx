@@ -11,8 +11,8 @@ type Item = {
   publishedAt?: number;
   image?: string;
   summary?: string;
-  category?: string; // badge label (Finance, Control Systems, etc.)
-  hardCategory?: string; // ✅ hard taxonomy (5 buckets)
+  category?: string;
+  hardCategory?: string;
 };
 
 type Report = {
@@ -96,7 +96,6 @@ function buildCategories(items: Item[]) {
   for (const it of items) {
     if (it.hardCategory) set.add(it.hardCategory);
   }
-  // Only show categories that are present (plus All)
   return HARD_ORDER.filter((c) => c === "All" || set.has(c));
 }
 
@@ -117,6 +116,13 @@ function signalWeightHard(c?: string) {
   }
 }
 
+// ✅ Clean share URL builder (NO query strings; fixes Android SMS ugly text)
+// Uses your existing /news/[...]/ page (encoded external URL as path segment).
+function buildNewsShareAbs(externalUrl: string) {
+  const encoded = encodeURIComponent(externalUrl);
+  return `https://libertysoldiers.com/news/${encoded}`;
+}
+
 export default function NewsFeedClient({
   items,
   latestReports,
@@ -130,7 +136,6 @@ export default function NewsFeedClient({
   const [sort, setSort] = useState<"newest" | "signal">("newest");
   const [view, setView] = useState<"cards" | "compact">("cards");
 
-  // Force "Cards" on mobile always (compact looked broken on mobile)
   useEffect(() => {
     const apply = () => {
       if (window.innerWidth < 640) setView("cards");
@@ -143,7 +148,6 @@ export default function NewsFeedClient({
   const list = useMemo(() => {
     let out = items.filter((x) => x.category !== "Pinned");
 
-    // ✅ Filter by HARD category
     if (cat !== "All") {
       out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
     }
@@ -187,12 +191,11 @@ export default function NewsFeedClient({
               </select>
 
               {sort === "signal" && (
-              <span className="ml-2 inline-flex items-center rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700">
-                Signal mode
-              </span>
-            )}
+                <span className="ml-2 inline-flex items-center rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700">
+                  Signal mode
+                </span>
+              )}
 
-              {/* Desktop-only toggle (mobile forced to cards) */}
               <button
                 onClick={() => setView(view === "cards" ? "compact" : "cards")}
                 className="hidden sm:inline-flex rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800 hover:bg-zinc-50"
@@ -202,7 +205,7 @@ export default function NewsFeedClient({
             </div>
           </div>
 
-          {/* Category chips (scrollable on mobile) */}
+          {/* Category chips */}
           <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto pb-2">
             <div className="flex gap-2 w-max pr-4">
               {categories.map((c) => {
@@ -231,9 +234,8 @@ export default function NewsFeedClient({
         {view === "cards" ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {list.map((h, idx) => {
-              const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
-                h.url
-              )}`;
+              // ✅ FIX: share a clean Liberty Soldiers URL (no /news/share?u=...)
+              const shareHrefAbs = buildNewsShareAbs(h.url);
 
               const thumb = h.image || faviconFromUrl(h.url);
               const bullets = bulletsFromSummary(h.summary);
@@ -270,7 +272,7 @@ export default function NewsFeedClient({
                             {latestReports.slice(0, 6).map((r) => (
                               <Link
                                 key={r.slug}
-                                href={`/reports/${r.slug}`}  // ✅ fixed
+                                href={`/reports/${r.slug}`}
                                 className="block rounded-xl border border-zinc-200 bg-zinc-50 p-4 transition hover:border-zinc-300"
                               >
                                 <div className="flex items-start justify-between gap-3">
@@ -353,9 +355,9 @@ export default function NewsFeedClient({
                       </ul>
                     )}
 
-                    {/* Extra bottom padding so buttons never clip */}
                     <div className="mt-4 pb-1 flex items-center justify-end">
-                      <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
+                      {/* ✅ ShareButton now shares clean /news/<encodedExternalUrl> */}
+                      <ShareButton shareUrl={shareHrefAbs} title={h.title} />
                     </div>
                   </div>
                 </div>
@@ -365,9 +367,9 @@ export default function NewsFeedClient({
         ) : (
           <div className="rounded-2xl border border-zinc-200 bg-white divide-y divide-zinc-100">
             {list.map((h, idx) => {
-              const shareHrefAbs = `https://libertysoldiers.com/news/share?u=${encodeURIComponent(
-                h.url
-              )}`;
+              // ✅ FIX: share a clean Liberty Soldiers URL (no /news/share?u=...)
+              const shareHrefAbs = buildNewsShareAbs(h.url);
+
               return (
                 <div
                   key={`${h.url}-${idx}`}
@@ -402,7 +404,8 @@ export default function NewsFeedClient({
                     </div>
 
                     <div className="shrink-0">
-                      <ShareButton wrapperUrl={shareHrefAbs} title={h.title} />
+                      {/* ✅ ShareButton now shares clean /news/<encodedExternalUrl> */}
+                      <ShareButton shareUrl={shareHrefAbs} title={h.title} />
                     </div>
                   </div>
                 </div>
