@@ -347,27 +347,52 @@ function extractLink(it: any): string {
   return "";
 }
 function toHardCategory(
-  label?: string,        // your current category label (e.g. "Control Systems")
-  feedCat?: string       // feed bucket from news.config.ts (e.g. "tech", "world")
+  label?: string,        // e.g. "Control Systems", "Finance", "Biosecurity"
+  feedCat?: string       // e.g. "tech", "finance", "world"
 ): string {
   const l = (label || "").toLowerCase();
   const f = (feedCat || "").toLowerCase();
 
-  // Strong label-based mapping (best signal)
-  if (l.includes("control") || l.includes("surveillance") || l.includes("cbdc") || l.includes("bio")) {
+  // ----- label-driven (best signal) -----
+  if (
+    l.includes("control") ||
+    l.includes("surveillance") ||
+    l.includes("censorship") ||
+    l.includes("speech") ||
+    l.includes("technocrat") ||
+    l.includes("digital id") ||
+    l.includes("cbdc")
+  ) {
     return "Digital ID / Technocracy";
   }
+
+  if (l.includes("biosecurity") || l.includes("health")) {
+    return "Power & Control"; // keep health/bio as governance/control lens
+  }
+
+  if (l.includes("finance") || l.includes("crypto")) {
+    return "Markets & Finance";
+  }
+
   if (l.includes("prophecy")) return "Prophecy Watch";
-  if (l.includes("relig") || l.includes("ideolog") || l.includes("church") || l.includes("doctrine") || l.includes("persecution")) {
+
+  if (
+    l.includes("relig") ||
+    l.includes("ideolog") ||
+    l.includes("church") ||
+    l.includes("doctrine") ||
+    l.includes("persecution")
+  ) {
     return "Religion & Ideology";
   }
+
   if (l.includes("war") || l.includes("geopolit")) return "War & Geopolitics";
 
-  // Feed bucket fallback mapping
+  // ----- feed-bucket fallback -----
   if (f === "tech") return "Digital ID / Technocracy";
+  if (f === "finance" || f === "crypto") return "Markets & Finance";
   if (f === "prophecy") return "Prophecy Watch";
   if (f === "middle-east" || f === "world") return "War & Geopolitics";
-  if (f === "finance" || f === "crypto") return "Power & Control";
   if (f === "health") return "Power & Control";
 
   // Default
