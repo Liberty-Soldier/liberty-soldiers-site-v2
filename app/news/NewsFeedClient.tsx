@@ -288,7 +288,19 @@ export default function NewsFeedClient({
               const shareHrefAbs = buildNewsShareAbs(h.url);
 
               const fallback = fallbackForCategory(h.hardCategory || h.category);
-              const thumb = (h.image && h.image.trim()) ? h.image : fallback;
+
+              const raw = (h.image || "").trim();
+              
+              // Treat your generic default as "no image" so category cards can show
+              const isGenericDefault =
+                raw === "/og-default.jpg" ||
+                raw === "/og-default.jpeg" ||
+                raw === "/default-og.jpg" ||
+                raw === "/default-og.jpeg" ||
+                raw.includes("og-default") ||
+                raw.includes("default-og");
+              
+              const thumb = raw && !isGenericDefault ? raw : fallback;
               const bullets = bulletsFromSummary(h.summary);
     
 
