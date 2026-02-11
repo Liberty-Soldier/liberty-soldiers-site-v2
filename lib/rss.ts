@@ -252,6 +252,53 @@ function stripHtml(s: any): string {
     .trim();
 }
 
+const DEFAULT_OG = "/og-default.jpg";
+
+// Tune these over time
+const BAD_IMAGE_HINTS = [
+  "spacer",
+  "pixel",
+  "blank",
+  "default",
+  "placeholder",
+  "transparent",
+  "1x1",
+  "tracking",
+  "tracker",
+  "ads",
+  "doubleclick",
+];
+
+const BAD_IMAGE_EXTS = [".svg", ".gif"]; // gifs are often tiny/animated junk in feeds
+
+function isGoodImage(url?: string): boolean {
+  if (!url) return false;
+
+  const u = url.trim();
+  if (!u) return false;
+
+  const lower = u.toLowerCase();
+
+  // data URIs are usually junk for our use
+  if (lower.startsWith("data:")) return false;
+
+  // block obvious bad extensions
+  if (BAD_IMAGE_EXTS.some((ext) => lower.endsWith(ext))) return false;
+
+  // block obvious “junk” substrings
+  if (BAD_IMAGE_HINTS.some((hint) => lower.includes(hint))) return false;
+
+  // require http(s)
+  if (!/^https?:\/\//i.test(u)) return false;
+
+  return true;
+}
+
+function pickImageOrDefault(extracted?: string): string {
+  return isGoodImage(extracted) ? extracted! : DEFAULT_OG;
+}
+
+
 function extractSummary(it: any): string {
   // Prefer short description/summary first
   const cand =
@@ -375,7 +422,8 @@ function normalizeFeed(
       const url = normalizeUrl(rawLink);
       const source = host(url) || sourceFallback;
 
-      const image = extractImage(it) || undefined;
+      const extractedImage = extractImage(it) || undefined;
+      const image = pickImageOrDefault(extractedImage);
       const summary = extractSummary(it) || undefined;
 
       const category = categorize(title, summary, source, feedFallbackLabel);
@@ -664,7 +712,7 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
     url: p.url,
     source: p.source ? String(p.source) : host(p.url),
     publishedAt: undefined,
-    image: undefined,
+    image: DEFAULT_OG,
     summary: undefined,
     category: "Pinned",
   }));
