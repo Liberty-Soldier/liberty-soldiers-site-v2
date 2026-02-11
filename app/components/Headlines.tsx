@@ -270,17 +270,20 @@ export default async function HomeHeadlines({
             key={`${h.url}-${idx}`}
             className="shrink-0 w-[88%] sm:w-[520px] lg:w-[640px]"
           >
-            <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
-              <div className="mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
-                <div className="relative w-full pt-[56.25%]"> {/* 16:9 always */}
-                  <FallbackImg
-                    src={thumb}
-                    alt=""
-                    className="absolute inset-0 block w-full h-full object-cover"
-                    loading="lazy"
-                    fallback={fallback}
-                  />
+           <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
+                <div className="mb-3 flex-shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
+                  <div className="relative w-full pt-[56.25%]">
+                    <FallbackImg
+                      src={thumb}
+                      alt=""
+                      className="absolute inset-0 block w-full h-full object-cover"
+                      loading="lazy"
+                      fallback={fallback}
+                    />
+                  </div>
                 </div>
+                {/* rest of card */}
+              </div>
               </div>
 
               <span className="text-[11px] uppercase tracking-wide text-zinc-500">
