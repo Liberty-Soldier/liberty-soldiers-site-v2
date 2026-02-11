@@ -197,7 +197,7 @@ export default async function HomeHeadlines({
                   src={thumb}
                   alt=""
                   className="absolute inset-0 w-full h-full object-cover"
-                  style={{ objectPosition: "50% 23%" }}
+                  style={{ objectPosition: "50% 10%" }}
                   loading="lazy"
                   fallback={fallback}
                 />
