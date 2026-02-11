@@ -21,6 +21,7 @@ type Props = {
 const HARD_CATEGORIES = [
   "All",
   "Power & Control",
+  "Markets & Finance",
   "Digital ID / Technocracy",
   "War & Geopolitics",
   "Religion & Ideology",
@@ -38,6 +39,8 @@ function uniqHardCats(items: Item[]) {
 
 function weightHard(c?: string) {
   switch ((c || "").toLowerCase()) {
+    case "markets & finance":
+      return 0;
     case "digital id / technocracy":
       return 1;
     case "war & geopolitics":
