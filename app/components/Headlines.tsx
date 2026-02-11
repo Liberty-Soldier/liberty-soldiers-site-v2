@@ -209,9 +209,10 @@ export default async function HomeHeadlines({
     <>
       {top.map((h, idx) => {
        const shareHrefAbs = buildNewsShareAbs(h.url, h.title);
-        const thumb = h.image || faviconFromUrl(h.url);
+        const thumb = (h.image && h.image.trim()) ? h.image : faviconFromUrl(h.url);
+        const fallback = fallbackForCategory(h.category);
         const bullets = bulletsFromSummary(h.summary);
-
+      
         return (
           <div
             key={`${h.url}-${idx}`}
