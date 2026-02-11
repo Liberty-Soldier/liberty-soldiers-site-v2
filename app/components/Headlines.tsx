@@ -10,6 +10,7 @@ type Item = {
   image?: string;
   summary?: string;
   category?: string;
+  hardCategory?: string; 
 };
 
 function pickBalanced(items: Item[], total: number) {
