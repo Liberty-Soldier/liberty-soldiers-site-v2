@@ -72,6 +72,7 @@ function humanAgo(input?: number | string | Date): string {
 function fallbackForCategory(cat?: string) {
   const c = (cat || "").toLowerCase().trim();
 
+  // --- Exact hardCategory bucket matches ---
   if (c === "power & control") return "/og-power-control.jpg";
   if (c === "markets & finance") return "/og-markets-finance.jpg";
   if (c === "digital id / technocracy") return "/og-digital-id.jpg";
@@ -79,7 +80,36 @@ function fallbackForCategory(cat?: string) {
   if (c === "religion & ideology") return "/og-religion-ideology.jpg";
   if (c === "prophecy watch") return "/og-prophecy-watch.jpg";
 
-  return "/og-default.jpg";
+  // --- Map your badge categories / keywords into those buckets ---
+  // Markets
+  if (c.includes("finance") || c.includes("crypto") || c.includes("markets"))
+    return "/og-markets-finance.jpg";
+
+  // Digital / technocracy
+  if (
+    c.includes("digital id") ||
+    c.includes("technocracy") ||
+    c.includes("surveillance") ||
+    c.includes("control systems") ||
+    c.includes("censorship") ||
+    c.includes("speech")
+  ) {
+    return "/og-digital-id.jpg";
+  }
+
+  // War
+  if (c.includes("war") || c.includes("geopolitics") || c.includes("middle east"))
+    return "/og-war-geopolitics.jpg";
+
+  // Religion
+  if (c.includes("religion") || c.includes("ideology") || c.includes("persecution"))
+    return "/og-religion-ideology.jpg";
+
+  // Prophecy
+  if (c.includes("prophecy")) return "/og-prophecy-watch.jpg";
+
+  // Default bucket (better than og-default for your brand)
+  return "/og-power-control.jpg";
 }
 
 function faviconFromUrl(articleUrl: string): string {
