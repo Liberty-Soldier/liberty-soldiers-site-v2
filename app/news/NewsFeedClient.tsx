@@ -41,6 +41,7 @@ function humanAgo(input?: number | string | Date): string {
 function fallbackForCategory(cat?: string) {
   const c = (cat || "").toLowerCase().trim();
 
+  // 1) Exact hardCategory matches (best case)
   if (c === "power & control") return "/og-power-control.jpg";
   if (c === "markets & finance") return "/og-markets-finance.jpg";
   if (c === "digital id / technocracy") return "/og-digital-id.jpg";
@@ -48,18 +49,54 @@ function fallbackForCategory(cat?: string) {
   if (c === "religion & ideology") return "/og-religion-ideology.jpg";
   if (c === "prophecy watch") return "/og-prophecy-watch.jpg";
 
-  return "/og-default.jpg";
-}
+  // 2) Keyword mapping for badge categories / non-exact labels
+  // Markets
+  if (c.includes("finance") || c.includes("crypto") || c.includes("markets"))
+    return "/og-markets-finance.jpg";
 
-function faviconFromUrl(articleUrl: string): string {
-  try {
-    const u = new URL(articleUrl);
-    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(
-      u.hostname
-    )}&sz=128`;
-  } catch {
-    return "/briefing-fallback.jpg";
-  }
+  // Digital / technocracy / control systems
+  if (
+    c.includes("digital") ||
+    c.includes("technocracy") ||
+    c.includes("control systems") ||
+    c.includes("surveillance") ||
+    c.includes("censorship") ||
+    c.includes("speech") ||
+    c.includes("ai") ||
+    c.includes("tech")
+  )
+    return "/og-digital-id.jpg";
+
+  // War / geopolitics / world
+  if (
+    c.includes("war") ||
+    c.includes("geopolitics") ||
+    c.includes("world") ||
+    c.includes("middle east") ||
+    c.includes("israel") ||
+    c.includes("iran") ||
+    c.includes("ukraine") ||
+    c.includes("russia") ||
+    c.includes("china")
+  )
+    return "/og-war-geopolitics.jpg";
+
+  // Religion / persecution
+  if (
+    c.includes("religion") ||
+    c.includes("ideology") ||
+    c.includes("persecution") ||
+    c.includes("church") ||
+    c.includes("christian")
+  )
+    return "/og-religion-ideology.jpg";
+
+  // Prophecy
+  if (c.includes("prophecy") || c.includes("end time") || c.includes("endtime"))
+    return "/og-prophecy-watch.jpg";
+
+  // 3) Default: choose one of your 6 (NOT og-default)
+  return "/og-power-control.jpg";
 }
 
 function bulletsFromSummary(summary?: string): string[] {
