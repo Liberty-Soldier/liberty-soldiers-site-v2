@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 type Props = {
-  src: string;
+  src?: string;
   alt?: string;
   className?: string;
   loading?: "lazy" | "eager";
@@ -15,16 +17,24 @@ export default function FallbackImg({
   loading = "lazy",
   fallback = "/og-default.jpg",
 }: Props) {
+  const clean = (src || "").trim();
+  const [currentSrc, setCurrentSrc] = useState<string>(clean || fallback);
+
+  // If src changes (new headline), update.
+  useEffect(() => {
+    const next = (src || "").trim();
+    setCurrentSrc(next || fallback);
+  }, [src, fallback]);
+
   return (
     <img
-      src={src}
+      src={currentSrc}
       alt={alt}
       className={className}
       loading={loading}
       referrerPolicy="no-referrer"
-      onError={(e) => {
-        const img = e.currentTarget;
-        if (!img.src.includes(fallback)) img.src = fallback;
+      onError={() => {
+        if (currentSrc !== fallback) setCurrentSrc(fallback);
       }}
     />
   );
