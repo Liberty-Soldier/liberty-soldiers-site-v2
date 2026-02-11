@@ -1,5 +1,6 @@
 import { fetchAllHeadlines } from "@/lib/rss";
 import ShareButton from "@/app/news/ShareButton";
+import FallbackImg from "@/app/components/FallbackImg";
 
 type Item = {
   title: string;
@@ -135,19 +136,12 @@ export default async function HomeHeadlines({
               className="rounded-xl border border-zinc-200 bg-white p-4"
             >
               <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
-                <img
-                  src={thumb}
-                  alt=""
-                  className="h-32 w-full object-cover"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                  onError={(e) => {
-                    const img = e.currentTarget;
-                    const fallback = "/og-default.jpg";
-                    // prevent infinite loops
-                    if (!img.src.includes(fallback)) img.src = fallback;
-                  }}
-                />
+             <FallbackImg
+                src={thumb}
+                alt=""
+                className="h-32 w-full object-cover"
+                loading="lazy"
+              />
               </div>
 
               <span className="text-[11px] uppercase tracking-wide text-zinc-500">
@@ -207,17 +201,11 @@ export default async function HomeHeadlines({
           >
             <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
               <div className="mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
-               <img
+              <FallbackImg
                 src={thumb}
                 alt=""
                 className="h-40 sm:h-44 w-full object-cover"
                 loading="lazy"
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  const img = e.currentTarget;
-                  const fallback = "/og-default.jpg";
-                  if (!img.src.includes(fallback)) img.src = fallback;
-                }}
               />
               </div>
 
