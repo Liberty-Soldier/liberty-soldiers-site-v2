@@ -271,15 +271,14 @@ export default async function HomeHeadlines({
             className="shrink-0 w-[88%] sm:w-[520px] lg:w-[640px]"
           >
             <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
-              <div className="mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 aspect-[16/9]">
-              <FallbackImg
-                src={thumb}
-                alt=""
-                className="h-full w-full object-cover"
-                loading="lazy"
-                fallback={fallback}
-              />
-
+              <div className="mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 relative h-40 sm:h-44">
+                <FallbackImg
+                  src={thumb}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover"
+                  loading="lazy"
+                  fallback={fallback}
+                />
               </div>
 
               <span className="text-[11px] uppercase tracking-wide text-zinc-500">
