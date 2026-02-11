@@ -251,8 +251,8 @@ export default function NewsFeedClient({
               // ✅ FIX: share a clean Liberty Soldiers URL (no /news/share?u=...)
               const shareHrefAbs = buildNewsShareAbs(h.url);
 
-              const thumb = (h.image && h.image.trim()) ? h.image : faviconFromUrl(h.url);
               const fallback = fallbackForCategory(h.hardCategory || h.category);
+              const thumb = (h.image && h.image.trim()) ? h.image : fallback;
               const bullets = bulletsFromSummary(h.summary);
     
 
