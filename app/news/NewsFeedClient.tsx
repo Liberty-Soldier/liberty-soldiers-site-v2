@@ -375,11 +375,11 @@ export default function NewsFeedClient({
                   )}
 
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition">
-                    <div className="relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+                    <div className="relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 aspect-[16/9]">
                       <FallbackImg
                         src={thumb}
                         alt=""
-                        className="h-32 w-full object-cover"
+                        className="h-full w-full object-cover"
                         loading="lazy"
                         fallback={fallback}
                       />
