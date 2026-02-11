@@ -286,8 +286,8 @@ function isGoodImage(url?: string): boolean {
   return true;
 }
 
-function pickImageOrDefault(extracted?: string): string {
-  return isGoodImage(extracted) ? extracted! : DEFAULT_OG;
+function pickImage(extracted?: string): string | undefined {
+  return isGoodImage(extracted) ? extracted!.trim() : undefined;
 }
 
 
@@ -414,8 +414,8 @@ function normalizeFeed(
       const url = normalizeUrl(rawLink);
       const source = host(url) || sourceFallback;
 
-      const extractedImage = extractImage(it) || undefined;
-      const image = pickImageOrDefault(extractedImage);
+     const extractedImage = extractImage(it) || undefined;
+      const image = pickImage(extractedImage);
       const summary = extractSummary(it) || undefined;
 
       const category = categorize(title, summary, source, feedFallbackLabel);
