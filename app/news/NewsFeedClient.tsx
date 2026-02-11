@@ -41,15 +41,12 @@ function humanAgo(input?: number | string | Date): string {
 function fallbackForCategory(cat?: string) {
   const c = (cat || "").toLowerCase().trim();
 
-  if (c.includes("power")) return "/og-power-control.jpg";
-  if (c.includes("markets") || c.includes("finance") || c.includes("crypto"))
-    return "/og-markets-finance.jpg";
-  if (c.includes("digital")) return "/og-digital-id.jpg";
-  if (c.includes("war") || c.includes("geopolitics"))
-    return "/og-war-geopolitics.jpg";
-  if (c.includes("religion") || c.includes("ideology"))
-    return "/og-religion-ideology.jpg";
-  if (c.includes("prophecy")) return "/og-prophecy-watch.jpg";
+  if (c === "power & control") return "/og-power-control.jpg";
+  if (c === "markets & finance") return "/og-markets-finance.jpg";
+  if (c === "digital id / technocracy") return "/og-digital-id.jpg";
+  if (c === "war & geopolitics") return "/og-war-geopolitics.jpg";
+  if (c === "religion & ideology") return "/og-religion-ideology.jpg";
+  if (c === "prophecy watch") return "/og-prophecy-watch.jpg";
 
   return "/og-default.jpg";
 }
@@ -115,6 +112,8 @@ function buildCategories(_: Item[]) {
 
 function signalWeightHard(c?: string) {
   switch ((c || "").toLowerCase()) {
+    case "markets & finance":
+      return 0;
     case "digital id / technocracy":
       return 1;
     case "war & geopolitics":
