@@ -196,7 +196,7 @@ export default async function HomeHeadlines({
               <FallbackImg
                 src={thumb}
                 alt=""
-                className="absolute inset-0 w-full h-full object-cover object-[50%_20%]"
+                className="absolute inset-0 w-full h-full object-contain bg-zinc-100"
                 loading="lazy"
                 fallback={fallback}
               />
@@ -275,7 +275,7 @@ export default async function HomeHeadlines({
               <FallbackImg
                 src={thumb}
                 alt=""
-                className="absolute inset-0 w-full h-full object-cover object-[50%_20%]"
+                className="absolute inset-0 w-full h-full object-contain bg-zinc-100"
                 loading="lazy"
                 fallback={fallback}
               />
