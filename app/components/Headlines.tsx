@@ -193,13 +193,15 @@ export default async function HomeHeadlines({
               className="rounded-xl border border-zinc-200 bg-white p-4"
             >
             <div className="mb-3 relative w-full h-[160px] sm:h-[176px] overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
-              <FallbackImg
-                src={thumb}
-                alt=""
-                className="absolute inset-0 w-full h-full object-cover object-[50%_15%]"
-                loading="lazy"
-                fallback={fallback}
-              />
+             <FallbackImg
+              src={thumb}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ objectPosition: "50% 15%" }}   // ✅ guaranteed
+              loading="lazy"
+              fallback={fallback}
+            />
+
             </div>
 
               <span className="text-[11px] uppercase tracking-wide text-zinc-500">
@@ -274,7 +276,8 @@ export default async function HomeHeadlines({
                   <FallbackImg
                     src={thumb}
                     alt=""
-                    className="absolute inset-0 block w-full h-full object-cover object-[50%_15%]"
+                    className="absolute inset-0 block w-full h-full object-cover"
+                    style={{ objectPosition: "50% 15%" }}   // ✅ guaranteed
                     loading="lazy"
                     fallback={fallback}
                   />
