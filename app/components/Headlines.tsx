@@ -140,6 +140,13 @@ export default async function HomeHeadlines({
                   alt=""
                   className="h-32 w-full object-cover"
                   loading="lazy"
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const img = e.currentTarget;
+                    const fallback = "/og-default.jpg";
+                    // prevent infinite loops
+                    if (!img.src.includes(fallback)) img.src = fallback;
+                  }}
                 />
               </div>
 
@@ -200,12 +207,18 @@ export default async function HomeHeadlines({
           >
             <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
               <div className="mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
-                <img
-                  src={thumb}
-                  alt=""
-                  className="h-40 sm:h-44 w-full object-cover"
-                  loading="lazy"
-                />
+               <img
+                src={thumb}
+                alt=""
+                className="h-40 sm:h-44 w-full object-cover"
+                loading="lazy"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const img = e.currentTarget;
+                  const fallback = "/og-default.jpg";
+                  if (!img.src.includes(fallback)) img.src = fallback;
+                }}
+              />
               </div>
 
               <span className="text-[11px] uppercase tracking-wide text-zinc-500">
