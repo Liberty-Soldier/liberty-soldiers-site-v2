@@ -3,6 +3,7 @@
 import Link from "next/link";
 import ShareButton from "./ShareButton";
 import { useEffect, useMemo, useState } from "react";
+import FallbackImg from "@/app/components/FallbackImg";
 
 type Item = {
   title: string;
@@ -36,6 +37,21 @@ function humanAgo(input?: number | string | Date): string {
   if (hr < 24) return `${hr}h ago`;
   const d = Math.floor(hr / 24);
   return `${d}d ago`;
+}
+function fallbackForCategory(cat?: string) {
+  const c = (cat || "").toLowerCase().trim();
+
+  if (c.includes("power")) return "/og-power-control.jpg";
+  if (c.includes("markets") || c.includes("finance") || c.includes("crypto"))
+    return "/og-markets-finance.jpg";
+  if (c.includes("digital")) return "/og-digital-id.jpg";
+  if (c.includes("war") || c.includes("geopolitics"))
+    return "/og-war-geopolitics.jpg";
+  if (c.includes("religion") || c.includes("ideology"))
+    return "/og-religion-ideology.jpg";
+  if (c.includes("prophecy")) return "/og-prophecy-watch.jpg";
+
+  return "/og-default.jpg";
 }
 
 function faviconFromUrl(articleUrl: string): string {
@@ -235,8 +251,10 @@ export default function NewsFeedClient({
               // ✅ FIX: share a clean Liberty Soldiers URL (no /news/share?u=...)
               const shareHrefAbs = buildNewsShareAbs(h.url);
 
-              const thumb = h.image || faviconFromUrl(h.url);
+              const thumb = (h.image && h.image.trim()) ? h.image : faviconFromUrl(h.url);
+              const fallback = fallbackForCategory(h.hardCategory || h.category);
               const bullets = bulletsFromSummary(h.summary);
+    
 
               const INSERT_AFTER = 30;
               const shouldInsertReports = idx === INSERT_AFTER;
@@ -310,12 +328,14 @@ export default function NewsFeedClient({
 
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition">
                     <div className="relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
-                      <img
+                      <FallbackImg
                         src={thumb}
                         alt=""
                         className="h-32 w-full object-cover"
                         loading="lazy"
+                        fallback={fallback}
                       />
+
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                     </div>
 
