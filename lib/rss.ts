@@ -704,7 +704,7 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
     url: p.url,
     source: p.source ? String(p.source) : host(p.url),
     publishedAt: undefined,
-    image: undifined,
+    image: undefined,
     summary: undefined,
     category: "Pinned",
   }));
