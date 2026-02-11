@@ -256,20 +256,15 @@ const DEFAULT_OG = "/og-default.jpg";
 
 // Tune these over time
 const BAD_IMAGE_HINTS = [
-  "spacer",
-  "pixel",
-  "blank",
-  "default",
-  "placeholder",
-  "transparent",
   "1x1",
+  "pixel",
+  "spacer",
+  "blank",
   "tracking",
   "tracker",
-  "ads",
-  "doubleclick",
 ];
 
-const BAD_IMAGE_EXTS = [".svg", ".gif"]; // gifs are often tiny/animated junk in feeds
+const BAD_IMAGE_EXTS: string[] = []; // don't block svg/gif here (too aggressive)
 
 function isGoodImage(url?: string): boolean {
   if (!url) return false;
@@ -282,14 +277,11 @@ function isGoodImage(url?: string): boolean {
   // data URIs are usually junk for our use
   if (lower.startsWith("data:")) return false;
 
-  // block obvious bad extensions
-  if (BAD_IMAGE_EXTS.some((ext) => lower.endsWith(ext))) return false;
-
-  // block obvious “junk” substrings
-  if (BAD_IMAGE_HINTS.some((hint) => lower.includes(hint))) return false;
-
-  // require http(s)
+  // must be http(s)
   if (!/^https?:\/\//i.test(u)) return false;
+
+  // only block obvious tracker-ish hints
+  if (BAD_IMAGE_HINTS.some((hint) => lower.includes(hint))) return false;
 
   return true;
 }
@@ -712,7 +704,7 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
     url: p.url,
     source: p.source ? String(p.source) : host(p.url),
     publishedAt: undefined,
-    image: DEFAULT_OG,
+    image: undifined,
     summary: undefined,
     category: "Pinned",
   }));
