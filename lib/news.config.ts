@@ -43,6 +43,11 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://endtimeheadlines.org/feed/", category: "prophecy" },
   { url: "https://www.prophecynewswatch.com/rss.xml", category: "prophecy" },
   { url: "https://www.nowtheendbegins.com/feed/", category: "prophecy" },
+  { url: "https://www.raptureready.com/feed", category: "prophecy" },
+  { url: "https://www.worthynews.com/feed", category: "prophecy" },
+  { url: "https://www1.cbn.com/rss-cbn-news-insideisrael.xml", category: "prophecy" },
+  { url: "https://www1.cbn.com/rss-cbn-news-jerusalemdateline.xml", category: "prophecy" },
+  { url: "https://www1.cbn.com/rss-cbn-news-christianworldnews.xml", category: "prophecy" },
 
   // --- FINANCE ---
   { url: "https://www.reuters.com/business/rss", category: "finance" },
@@ -66,6 +71,11 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://religionnews.com/feed/", category: "religion" },
   { url: "https://www.christianpost.com/rss", category: "religion" },
   { url: "https://www.firstthings.com/rss/web-exclusives", category: "religion" },
+  { url: "https://www.realclearreligion.org/index.xml", category: "religion" },
+  { url: "https://www.realclearreligion.org/articles/index.xml", category: "religion" },
+  { url: "https://www.mnnonline.org/rss/pubNewsTease.rdf", category: "religion" },
+  { url: "https://feeds.christianitytoday.com/christianitytoday/ctmag", category: "religion" },
+  { url: "https://www.christiancentury.org/taxonomy/term/44163/feed", category: "religion" },
 
   // --- CRYPTO ---
   { url: "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml", category: "crypto" },
@@ -88,6 +98,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
