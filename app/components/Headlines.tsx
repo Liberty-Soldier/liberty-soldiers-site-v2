@@ -245,86 +245,80 @@ export default async function HomeHeadlines({
   }
 
   // CAROUSEL (slides only)
-  return (
-    <>
-      {top.map((h, idx) => {
-       const shareHrefAbs = buildNewsShareAbs(h.url, h.title);
-        const fallback = fallbackForCategory(h.hardCategory || h.category);
+return (
+  <>
+    {top.map((h, idx) => {
+      const shareHrefAbs = buildNewsShareAbs(h.url, h.title);
+      const fallback = fallbackForCategory(h.hardCategory || h.category);
 
-        const raw = (h.image || "").trim();
-        
-        // Treat your generic default as "no image" so category cards can show
-        const isGenericDefault =
-          raw === "/og-default.jpg" ||
-          raw === "/og-default.jpeg" ||
-          raw === "/default-og.jpg" ||
-          raw === "/default-og.jpeg" ||
-          raw.includes("og-default") ||
-          raw.includes("default-og");
-        
-        const thumb = raw && !isGenericDefault ? raw : fallback;
-        const bullets = bulletsFromSummary(h.summary);
-      
-        return (
-          <div
-            key={`${h.url}-${idx}`}
-            className="shrink-0 w-[88%] sm:w-[520px] lg:w-[640px]"
-          >
-           <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
-                <div className="mb-3 flex-shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
-                  <div className="relative w-full pt-[56.25%]">
-                    <FallbackImg
-                      src={thumb}
-                      alt=""
-                      className="absolute inset-0 block w-full h-full object-cover"
-                      loading="lazy"
-                      fallback={fallback}
-                    />
-                  </div>
-                </div>
-                {/* rest of card */}
-              </div>
-              </div>
+      const raw = (h.image || "").trim();
+      const isGenericDefault =
+        raw === "/og-default.jpg" ||
+        raw === "/og-default.jpeg" ||
+        raw === "/default-og.jpg" ||
+        raw === "/default-og.jpeg" ||
+        raw.includes("og-default") ||
+        raw.includes("default-og");
 
-              <span className="text-[11px] uppercase tracking-wide text-zinc-500">
-                {h.source}
-              </span>
+      const thumb = raw && !isGenericDefault ? raw : fallback;
+      const bullets = bulletsFromSummary(h.summary);
 
-              <a href={h.url} className="block mt-1">
-                <h3 className="text-zinc-900 font-semibold leading-snug hover:underline line-clamp-2">
-                  {h.title}
-                </h3>
-              </a>
-
-              {bullets.length > 0 && (
-                <ul className="mt-3 space-y-1 text-sm text-zinc-600 line-clamp-3">
-                  {bullets.map((b, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="text-zinc-400">•</span>
-                      <span className="leading-snug">{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              {h.category && (
-                <div className="mt-2">
-                  <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-700">
-                    {h.category}
-                  </span>
-                </div>
-              )}
-
-              <div className="mt-auto pt-4 flex items-center justify-between gap-3">
-                <span className="text-xs text-zinc-500">
-                  {humanAgo(h.publishedAt)}
-                </span>
-                <ShareButton shareUrl={shareHrefAbs} title={h.title} />
+      return (
+        <div
+          key={`${h.url}-${idx}`}
+          className="shrink-0 w-[88%] sm:w-[520px] lg:w-[640px]"
+        >
+          <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
+            <div className="mb-3 flex-shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
+              <div className="relative w-full pt-[56.25%]">
+                <FallbackImg
+                  src={thumb}
+                  alt=""
+                  className="absolute inset-0 block w-full h-full object-cover"
+                  loading="lazy"
+                  fallback={fallback}
+                />
               </div>
             </div>
+
+            <span className="text-[11px] uppercase tracking-wide text-zinc-500">
+              {h.source}
+            </span>
+
+            <a href={h.url} className="block mt-1">
+              <h3 className="text-zinc-900 font-semibold leading-snug hover:underline line-clamp-2">
+                {h.title}
+              </h3>
+            </a>
+
+            {bullets.length > 0 && (
+              <ul className="mt-3 space-y-1 text-sm text-zinc-600 line-clamp-3">
+                {bullets.map((b, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="text-zinc-400">•</span>
+                    <span className="leading-snug">{b}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {h.category && (
+              <div className="mt-2">
+                <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-700">
+                  {h.category}
+                </span>
+              </div>
+            )}
+
+            <div className="mt-auto pt-4 flex items-center justify-between gap-3">
+              <span className="text-xs text-zinc-500">
+                {humanAgo(h.publishedAt)}
+              </span>
+              <ShareButton shareUrl={shareHrefAbs} title={h.title} />
+            </div>
           </div>
-        );
-      })}
-    </>
-  );
-}
+        </div>
+      );
+    })}
+  </>
+);
