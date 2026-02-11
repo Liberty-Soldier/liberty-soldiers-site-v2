@@ -7,7 +7,7 @@ type Props = {
   alt?: string;
   className?: string;
   loading?: "lazy" | "eager";
-  fallback?: string;
+  fallback: string; // ✅ REQUIRED
 };
 
 export default function FallbackImg({
@@ -15,12 +15,11 @@ export default function FallbackImg({
   alt = "",
   className,
   loading = "lazy",
-  fallback = "/og-default.jpg",
+  fallback,
 }: Props) {
   const clean = (src || "").trim();
   const [currentSrc, setCurrentSrc] = useState<string>(clean || fallback);
 
-  // If src changes (new headline), update.
   useEffect(() => {
     const next = (src || "").trim();
     setCurrentSrc(next || fallback);
@@ -34,7 +33,7 @@ export default function FallbackImg({
       loading={loading}
       referrerPolicy="no-referrer"
       onError={() => {
-        if (currentSrc !== fallback) setCurrentSrc(fallback);
+        setCurrentSrc((cur) => (cur === fallback ? cur : fallback));
       }}
     />
   );
