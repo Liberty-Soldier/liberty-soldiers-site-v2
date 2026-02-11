@@ -192,15 +192,15 @@ export default async function HomeHeadlines({
               key={`${h.url}-${idx}`}
               className="rounded-xl border border-zinc-200 bg-white p-4"
             >
-              <div className="mb-3 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
-             <FallbackImg
+            <div className="mb-3 relative w-full h-[160px] sm:h-[176px] overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
+              <FallbackImg
                 src={thumb}
                 alt=""
-                className="h-40 sm:h-44 w-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover object-[50%_20%]"
                 loading="lazy"
                 fallback={fallback}
               />
-              </div>
+            </div>
 
               <span className="text-[11px] uppercase tracking-wide text-zinc-500">
                 {h.source}
