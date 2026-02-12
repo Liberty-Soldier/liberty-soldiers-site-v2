@@ -154,6 +154,29 @@ const hasPressure =
 if (hasPressure && (hasReligion || t.includes("religion"))) {
   return "Persecution Watch";
 }
+    // --------------------------------------------------
+  // Prophecy (HIGH-signal)
+  // --------------------------------------------------
+  const isProphecy =
+    t.includes("prophecy") ||
+    t.includes("end time") ||
+    t.includes("end-time") ||
+    t.includes("endtime") ||
+    t.includes("rapture") ||
+    t.includes("tribulation") ||
+    t.includes("antichrist") ||
+    t.includes("mark of the beast") ||
+    t.includes("revelation") ||
+    t.includes("daniel") ||
+    t.includes("eschatology");
+
+  // Source/domain assist (OliveTreeReviews)
+  const isProphecySource =
+    s.includes("olivetreeviews") || s.includes("olivetreeviews.org");
+
+  if (isProphecy || isProphecySource) {
+    return "Prophecy Watch";
+  }
 
   // Control systems / surveillance / ID / CBDC
   if (
@@ -419,7 +442,7 @@ function normalizeFeed(
       const summary = extractSummary(it) || undefined;
 
       const category = categorize(title, summary, source, feedFallbackLabel);
-      const hardCategory = toHardCategory(feedCategory);
+      const hardCategory = toHardCategory(category);
 
       return {
         title,
