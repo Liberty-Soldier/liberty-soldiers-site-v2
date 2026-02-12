@@ -302,13 +302,7 @@ export default function NewsFeedClient({
               
               const thumb = raw && !isGenericDefault ? raw : fallback;
               const bullets = bulletsFromSummary(h.summary);
-              const isLocalOG =
-                thumb.startsWith("/og-") ||
-                thumb === "/og-default.jpg" ||
-                thumb === "/default-og.jpg";
-
-    
-
+          
               const INSERT_AFTER = 30;
               const shouldInsertReports = idx === INSERT_AFTER;
 
@@ -386,17 +380,14 @@ export default function NewsFeedClient({
                       thumb === "/default-og.jpg";
                     
                    <div className="relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 aspect-[16/9]">
-                    <FallbackImg
-                      src={thumb}
-                      alt=""
-                      loading="lazy"
-                      fallback={fallback}
-                      className={
-                        isLocalOG
-                          ? "absolute inset-3 w-[calc(100%-24px)] h-[calc(100%-24px)] object-contain"
-                          : "absolute inset-0 w-full h-full object-cover"
-                      }
-                    />
+                      <FallbackImg
+                        src={thumb}
+                        alt=""
+                        loading="lazy"
+                        fallback={fallback}
+                        className="absolute inset-0 w-full h-full object-cover object-[50%_12%]"
+                      />
+
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                   </div>
 
