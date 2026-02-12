@@ -442,7 +442,7 @@ function normalizeFeed(
       const summary = extractSummary(it) || undefined;
 
       const category = categorize(title, summary, source, feedFallbackLabel);
-      const hardCategory = toHardCategory(category);
+      const hardCategory = toHardCategory(feedCategory);
 
       return {
         title,
