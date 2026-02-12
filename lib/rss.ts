@@ -442,7 +442,44 @@ function normalizeFeed(
       const summary = extractSummary(it) || undefined;
 
       const category = categorize(title, summary, source, feedFallbackLabel);
-      const hardCategory = toHardCategory(feedCategory);
+      const category = categorize(title, summary, source, feedFallbackLabel);
+
+let hardCategory = toHardCategory(feedCategory);
+
+// ✅ OliveTreeReviews: only move to Prophecy Watch when prophecy-like
+const domain = host(url).toLowerCase();
+const src = (source || "").toLowerCase();
+const text = `${title} ${summary ?? ""}`.toLowerCase();
+
+const isOliveTree =
+  domain.includes("olivetreeviews") || src.includes("olivetreeviews");
+
+const looksProphetic =
+  text.includes("prophecy") ||
+  text.includes("end time") ||
+  text.includes("end-time") ||
+  text.includes("endtime") ||
+  text.includes("rapture") ||
+  text.includes("tribulation") ||
+  text.includes("antichrist") ||
+  text.includes("mark of the beast") ||
+  text.includes("revelation") ||
+  text.includes("daniel");
+
+if (isOliveTree && looksProphetic) {
+  hardCategory = "Prophecy Watch";
+}
+
+return {
+  title,
+  url,
+  source,
+  publishedAt: pickDate(it),
+  image,
+  summary,
+  category,
+  hardCategory,
+};
 
       return {
         title,
