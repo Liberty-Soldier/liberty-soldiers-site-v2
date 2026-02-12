@@ -375,15 +375,24 @@ export default function NewsFeedClient({
                   )}
 
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition">
+                    const isLocalOG =
+                      thumb.startsWith("/og-") ||
+                      thumb === "/og-default.jpg" ||
+                      thumb === "/default-og.jpg";
+                    
                     <div className="relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 aspect-[16/9]">
                       <FallbackImg
                         src={thumb}
                         alt=""
-                        className="h-full w-full object-cover"
                         loading="lazy"
                         fallback={fallback}
+                        className={
+                          isLocalOG
+                            ? "absolute inset-3 w-[calc(100%-24px)] h-[calc(100%-24px)] object-contain"
+                            : "absolute inset-0 w-full h-full object-cover"
+                        }
                       />
-
+                    
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                     </div>
 
