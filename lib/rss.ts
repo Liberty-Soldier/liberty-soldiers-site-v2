@@ -438,11 +438,10 @@ function normalizeFeed(
       const source = host(url) || sourceFallback;
 
      const extractedImage = extractImage(it) || undefined;
-      const image = pickImage(extractedImage);
-      const summary = extractSummary(it) || undefined;
+const image = pickImage(extractedImage);
+const summary = extractSummary(it) || undefined;
 
-      const category = categorize(title, summary, source, feedFallbackLabel);
-      const category = categorize(title, summary, source, feedFallbackLabel);
+const category = categorize(title, summary, source, feedFallbackLabel);
 
 let hardCategory = toHardCategory(feedCategory);
 
