@@ -46,6 +46,23 @@ function host(u: string): string {
 }
 
 function normalizeUrl(raw: any): string {
+  function resolveUrl(raw: any, base?: string): string {
+  const s = String(raw ?? "").trim();
+  if (!s) return "";
+
+  if (s.startsWith("//")) return "https:" + s;
+  if (/^https?:\/\//i.test(s)) return s;
+
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s)) return "https://" + s;
+
+  if (base) {
+    try {
+      return new URL(s, base).toString();
+    } catch {}
+  }
+
+  return "";
+}
   const s0 = String(raw ?? "").trim();
   if (!s0) return "";
   if (s0.startsWith("//")) return "https:" + s0; // protocol-relative → https
@@ -309,10 +326,10 @@ function isGoodImage(url?: string): boolean {
   return true;
 }
 
-function pickImage(extracted?: string): string | undefined {
-  return isGoodImage(extracted) ? extracted!.trim() : undefined;
+function pickImage(extracted?: string, base?: string): string | undefined {
+  const u = resolveUrl(extracted, base);
+  return isGoodImage(u) ? u.trim() : undefined;
 }
-
 
 function extractSummary(it: any): string {
   // Prefer short description/summary first
@@ -437,8 +454,8 @@ function normalizeFeed(
       const url = normalizeUrl(rawLink);
       const source = host(url) || sourceFallback;
 
-     const extractedImage = extractImage(it) || undefined;
-const image = pickImage(extractedImage);
+   const extractedImage = extractImage(it) || undefined;
+const image = pickImage(extractedImage, url || feedUrl);
 const summary = extractSummary(it) || undefined;
 
 const category = categorize(title, summary, source, feedFallbackLabel);
