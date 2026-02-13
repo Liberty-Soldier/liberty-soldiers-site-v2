@@ -295,10 +295,8 @@ export default function NewsFeedClient({
                 <div key={`${h.url}-${idx}`} className="contents">
 
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition">
-                  
-                    <div
-                    className={`relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 ${
-                      isFallbackThumb ? "h-24" : "aspect-[16/9]"
+         
+                   <div className="relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 aspect-[16/9]">
                     }`}
                   >
                     <FallbackImg
