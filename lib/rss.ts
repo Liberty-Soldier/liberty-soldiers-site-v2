@@ -469,17 +469,6 @@ if (isOliveTree && looksProphetic) {
   hardCategory = "Prophecy Watch";
 }
 
-return {
-  title,
-  url,
-  source,
-  publishedAt: pickDate(it),
-  image,
-  summary,
-  category,
-  hardCategory,
-};
-
       return {
         title,
         url,
