@@ -60,7 +60,7 @@ export default function SignalVsNoiseReportPage() {
           </p>
         <div className="my-10">
           <img
-            src="/signal-vs-noise-01.jpg"
+            src="/signal-vs-noise.jpg"
             alt="Signal vs Noise information flow visual"
             className="w-full rounded-2xl border border-zinc-200 bg-white shadow-sm"
             loading="lazy"
