@@ -1,7 +1,6 @@
 // app/news/page.tsx
 import { fetchAllHeadlines } from "@/lib/rss";
 import Link from "next/link";
-import { getLatestReports } from "@/lib/reports";
 import NewsFeedClient from "./NewsFeedClient";
 
 export const metadata = {
@@ -31,8 +30,6 @@ export default async function NewsPage() {
   } catch {
     items = [];
   }
-
-  const latestReports = getLatestReports(10);
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -71,4 +68,5 @@ export default async function NewsPage() {
     </main>
   );
 }
+
 
