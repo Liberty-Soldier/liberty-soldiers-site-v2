@@ -46,7 +46,16 @@ function host(u: string): string {
 }
 
 function normalizeUrl(raw: any): string {
-  function resolveUrl(raw: any, base?: string): string {
+  const s0 = String(raw ?? "").trim();
+  if (!s0) return "";
+  if (s0.startsWith("//")) return "https:" + s0; // protocol-relative → https
+  if (/^https?:\/\//i.test(s0)) return s0; // already http/https
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s0)) return "https://" + s0;
+  return "";
+}
+
+// ✅ TOP-LEVEL (global) helper
+function resolveUrl(raw: any, base?: string): string {
   const s = String(raw ?? "").trim();
   if (!s) return "";
 
@@ -63,12 +72,9 @@ function normalizeUrl(raw: any): string {
 
   return "";
 }
-  const s0 = String(raw ?? "").trim();
-  if (!s0) return "";
-  if (s0.startsWith("//")) return "https:" + s0; // protocol-relative → https
-  if (/^https?:\/\//i.test(s0)) return s0; // already http/https
-  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s0)) return "https://" + s0;
-  return "";
+
+function pickDate(it: any): number | undefined {
+  ...
 }
 
 function pickDate(it: any): number | undefined {
