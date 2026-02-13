@@ -61,12 +61,13 @@ export default async function NewsPage() {
               <code className="text-zinc-900">lib/news.config.ts</code>.
             </div>
           ) : (
-            <NewsFeedClient items={items} latestReports={latestReports} />
+            <NewsFeedClient items={items} />
           )}
         </section>
       </div>
     </main>
   );
 }
+
 
 
