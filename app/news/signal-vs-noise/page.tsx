@@ -1,7 +1,8 @@
 // app/news/signal-vs-noise/page.tsx
 
 export const metadata = {
-  title: "Signal vs Noise: How Modern Narratives Shape Public Perception | Liberty Soldiers",
+  title:
+    "Signal vs Noise: How Modern Narratives Shape Public Perception | Liberty Soldiers",
   description:
     "An investigative briefing on narrative cycles, information overload, and the why: desensitization, compliance, and easier mass control through perception management.",
   openGraph: {
@@ -22,26 +23,26 @@ export const metadata = {
 
 export default function SignalVsNoiseReportPage() {
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-white text-zinc-900">
       <article className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <a href="/news" className="text-sm text-white/70 hover:text-white">
+        <a href="/news" className="text-sm text-zinc-600 hover:text-zinc-900">
           ← Back to News
         </a>
 
         <header className="mt-6">
-          <div className="text-[11px] uppercase tracking-widest text-white/50">
+          <div className="text-[11px] uppercase tracking-widest text-zinc-500">
             Report
           </div>
 
-          <h1 className="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight">
+          <h1 className="mt-3 text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
             Signal vs Noise: How Modern Narratives Shape Public Perception
           </h1>
 
-          <p className="mt-4 text-white/70 italic">
+          <p className="mt-4 text-zinc-600 italic">
             Information overload isn’t accidental — it reshapes behavior.
           </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-white/50">
+          <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-zinc-500">
             <span>Liberty Soldiers</span>
             <span>•</span>
             <span>Field Report</span>
@@ -50,13 +51,21 @@ export default function SignalVsNoiseReportPage() {
           </div>
         </header>
 
-        <hr className="my-10 border-white/10" />
+        <hr className="my-10 border-zinc-200" />
 
-        <div className="space-y-6 text-white/85 leading-relaxed">
+        <div className="space-y-6 text-zinc-800 leading-relaxed">
           {/* COLD OPEN */}
-          <p className="text-white/90">
+          <p className="text-zinc-900">
             The loudest moment is rarely the most important one.
           </p>
+        <div className="my-10">
+          <img
+            src="/signal-vs-noise-01.jpg"
+            alt="Signal vs Noise information flow visual"
+            className="w-full rounded-2xl border border-zinc-200 bg-white shadow-sm"
+            loading="lazy"
+          />
+        </div>
 
           <p>
             Every day, headlines compete for attention — crisis language, urgent
@@ -74,12 +83,12 @@ export default function SignalVsNoiseReportPage() {
             ultimately respond to change.
           </p>
 
-          {/* Optional hero image inside article (add file to /public/reports if you want) */}
+          {/* Optional hero image inside article (file lives directly under /public) */}
           {/* <div className="my-10">
             <img
-              src="/reports/signal-vs-noise-01.jpg"
+              src="/signal-vs-noise.jpg"
               alt="Information overload and narrative churn"
-              className="w-full rounded-2xl border border-white/10 bg-white/5 shadow-sm"
+              className="w-full rounded-2xl border border-zinc-200 bg-white shadow-sm"
               loading="lazy"
             />
           </div> */}
@@ -108,10 +117,18 @@ export default function SignalVsNoiseReportPage() {
             signal from overwhelming noise.
           </p>
 
-          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-white">
+          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-zinc-900">
             The pattern behind the noise
           </h2>
-
+          <div className="my-10">
+            <img
+              src="/signal-vs-noise-02.jpg"
+              alt="Narrative cycle visualization"
+              className="w-full rounded-2xl border border-zinc-200 bg-white shadow-sm"
+              loading="lazy"
+            />
+          </div>
+          
           <p>
             When viewed over time, many news cycles follow a familiar rhythm.
             A major event breaks. Coverage intensifies within minutes.
@@ -120,11 +137,9 @@ export default function SignalVsNoiseReportPage() {
             sometimes after public opinion has already hardened.
           </p>
 
-          <p>
-            The specifics change, but the structure often remains the same:
-          </p>
+          <p>The specifics change, but the structure often remains the same:</p>
 
-          <ul className="list-disc pl-6 space-y-2 text-white/85">
+          <ul className="list-disc pl-6 space-y-2 text-zinc-800">
             <li>Sudden escalation</li>
             <li>Rapid consensus framing</li>
             <li>Emotional amplification</li>
@@ -139,7 +154,7 @@ export default function SignalVsNoiseReportPage() {
             reaction.
           </p>
 
-          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-white">
+          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-zinc-900">
             Why narrative cycles work
           </h2>
 
@@ -152,16 +167,24 @@ export default function SignalVsNoiseReportPage() {
             even when underlying facts are still unstable.
           </p>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p className="text-sm text-white/80">
+          <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+            <p className="text-sm text-zinc-700">
               <strong>Key mechanism:</strong> speed + repetition + emotion can
               shape belief before context arrives.
             </p>
           </div>
 
-          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-white">
+          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-zinc-900">
             A pattern with deep roots
           </h2>
+          <div className="my-10">
+            <img
+              src="/signal-vs-noise-03.jpg"
+              alt="Historical media framing visual"
+              className="w-full rounded-2xl border border-zinc-200 bg-white shadow-sm"
+              loading="lazy"
+            />
+          </div>
 
           <p>
             Narrative framing is not new. Throughout history, institutions have
@@ -176,7 +199,7 @@ export default function SignalVsNoiseReportPage() {
             with less time to process it.
           </p>
 
-          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-white">
+          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-zinc-900">
             Why this matters: desensitization and control
           </h2>
 
@@ -210,15 +233,15 @@ export default function SignalVsNoiseReportPage() {
             the framing, and the “approved” conclusions.
           </p>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p className="text-sm text-white/80">
+          <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+            <p className="text-sm text-zinc-700">
               <strong>The why:</strong> A desensitized public is easier to steer.
               When attention is overwhelmed, resistance weakens and control
               becomes less visible.
             </p>
           </div>
 
-          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-white">
+          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-zinc-900">
             The role of awareness
           </h2>
 
@@ -235,7 +258,7 @@ export default function SignalVsNoiseReportPage() {
             sustain.
           </p>
 
-          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-white">
+          <h2 className="pt-4 text-xl sm:text-2xl font-bold text-zinc-900">
             Closing
           </h2>
 
@@ -257,9 +280,9 @@ export default function SignalVsNoiseReportPage() {
             slower lens to find it.
           </p>
 
-          <hr className="my-10 border-white/10" />
+          <hr className="my-10 border-zinc-200" />
 
-          <p className="text-white/70 text-sm">
+          <p className="text-zinc-600 text-sm">
             <strong>Liberty Soldiers signature:</strong> In an age of constant
             urgency, clarity becomes an act of discipline. Liberty Soldiers
             examines the structures shaping perception — separating signal from
@@ -267,18 +290,18 @@ export default function SignalVsNoiseReportPage() {
           </p>
         </div>
 
-        <footer className="mt-12 border-t border-white/10 pt-8">
+        <footer className="mt-12 border-t border-zinc-200 pt-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <a href="/news" className="text-sm text-white/70 hover:text-white">
+            <a href="/news" className="text-sm text-zinc-600 hover:text-zinc-900">
               ← Back to News Feed
             </a>
 
-            <a href="/" className="text-sm text-white/70 hover:text-white">
+            <a href="/" className="text-sm text-zinc-600 hover:text-zinc-900">
               Home
             </a>
           </div>
 
-          <p className="mt-6 text-xs text-white/40">
+          <p className="mt-6 text-xs text-zinc-500">
             External headlines referenced on the News page are for situational
             awareness and are not endorsements.
           </p>
