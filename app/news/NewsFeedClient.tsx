@@ -175,11 +175,10 @@ function buildNewsShareAbs(externalUrl: string) {
 
 export default function NewsFeedClient({
   items,
-  latestReports,
 }: {
   items: Item[];
-  latestReports: Report[];
 }) {
+
   const categories = useMemo(() => buildCategories(items), [items]);
 
   const [cat, setCat] = useState<(typeof HARD_ORDER)[number]>("All");
