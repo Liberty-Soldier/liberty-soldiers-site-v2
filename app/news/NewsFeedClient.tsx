@@ -282,24 +282,43 @@ export default function NewsFeedClient({
                 raw.includes("default-og");
               
               const thumb = raw && !isGenericDefault ? raw : fallback;
-              const bullets = bulletsFromSummary(h.summary);
+
+                const isFallbackThumb =
+                  thumb.startsWith("/og-") ||
+                  thumb === "/og-default.jpg" ||
+                  thumb === "/default-og.jpg";
+                
+                const bullets = bulletsFromSummary(h.summary);
+
           
               return (
                 <div key={`${h.url}-${idx}`} className="contents">
 
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition">
                   
-                   <div className="relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 aspect-[16/9]">
-                      <FallbackImg
-                        src={thumb}
-                        alt=""
-                        loading="lazy"
-                        fallback={fallback}
-                        className="absolute inset-0 w-full h-full object-cover object-[50%_12%]"
-                      />
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                  </div>
+                    <div
+                    className={`relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 ${
+                      isFallbackThumb ? "h-24" : "aspect-[16/9]"
+                    }`}
+                  >
+                    <FallbackImg
+                      src={thumb}
+                      alt=""
+                      loading="lazy"
+                      fallback={fallback}
+                      className={`absolute inset-0 w-full h-full object-cover object-[50%_12%] ${
+                        isFallbackThumb ? "opacity-45 saturate-50 contrast-90" : ""
+                      }`}
+                    />
+                  
+                    {/* soften fallback images so repeated art doesn't dominate */}
+                    {isFallbackThumb && <div className="absolute inset-0 bg-white/25" />}
+                  
+                    {/* keep the gradient only for real thumbnails */}
+                    {!isFallbackThumb && (
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                    )}
+                  </div>                  
 
                     <div className="flex items-start justify-between gap-3">
                       <span className="text-[11px] uppercase tracking-wide text-zinc-500">
