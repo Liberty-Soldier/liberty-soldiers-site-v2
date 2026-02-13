@@ -10,6 +10,16 @@ export type Report = {
 };
 
 export const REPORTS: Report[] = [
+  {
+  slug: "signal-vs-noise",
+  title: "Signal vs Noise: How Modern Narratives Shape Public Perception",
+  excerpt:
+    "Narrative cycles, desensitization, and the hidden why behind modern information overload.",
+  dateISO: "2026-02-13",
+  byline: "Black Signal",
+  coverImage: "/signal-vs-noise.jpg",
+},
+
 {
   slug: "doomsday-clock",
   title: "The Doomsday Clock Isn’t a Prediction — It’s a Psychological Instrument",
