@@ -48,13 +48,12 @@ function host(u: string): string {
 function normalizeUrl(raw: any): string {
   const s0 = String(raw ?? "").trim();
   if (!s0) return "";
-  if (s0.startsWith("//")) return "https:" + s0; // protocol-relative → https
-  if (/^https?:\/\//i.test(s0)) return s0; // already http/https
+  if (s0.startsWith("//")) return "https:" + s0;
+  if (/^https?:\/\//i.test(s0)) return s0;
   if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s0)) return "https://" + s0;
   return "";
 }
 
-// ✅ TOP-LEVEL (global) helper
 function resolveUrl(raw: any, base?: string): string {
   const s = String(raw ?? "").trim();
   if (!s) return "";
@@ -74,10 +73,6 @@ function resolveUrl(raw: any, base?: string): string {
 }
 
 function pickDate(it: any): number | undefined {
-  ...
-}
-
-function pickDate(it: any): number | undefined {
   const d =
     it?.pubDate ||
     it?.published ||
@@ -91,6 +86,7 @@ function pickDate(it: any): number | undefined {
   const ms = Date.parse(String(t));
   return Number.isFinite(ms) ? ms : undefined;
 }
+
 
 function toFeedInput(x: FeedInput): { url: string; category?: string } {
   if (typeof x === "string") return { url: x };
