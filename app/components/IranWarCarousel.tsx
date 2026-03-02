@@ -5,9 +5,8 @@ type Item = {
   title: string;
   url: string;
   source?: string;
-  published?: string; // ISO string if you have it
-  ogImage?: string | null; // resolved OG if you already compute it
-  category?: string;
+  publishedAt?: number;
+  image?: string;
 };
 
 function hostFromUrl(u: string) {
@@ -68,9 +67,11 @@ export default function IranWarCarousel({
       <div className="py-3 overflow-hidden">
         <div className="flex w-max gap-3 px-3 animate-marquee hover:[animation-play-state:paused]">  
             {loop.map((it, idx) => {
-              const og = it.ogImage || fallbackOg;
+              const og = it.image || fallbackOg;
               const src = it.source || hostFromUrl(it.url);
-              const time = displayTime(it.published);
+              const time = it.publishedAt
+              ? displayTime(new Date(it.publishedAt).toISOString())
+              : "";
 
               return (
                 <a
@@ -81,13 +82,12 @@ export default function IranWarCarousel({
                   className="group flex w-[340px] shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm hover:shadow-md transition"
                 >
                   <div className="relative h-[90px] w-[140px] shrink-0 bg-neutral-100">
-                    <Image
+                    <img
                       src={og}
                       alt=""
-                      fill
-                      className="object-cover"
-                      sizes="140px"
-                      priority={idx < 4}
+                      className="h-full w-full object-cover"
+                      loading={idx < 4 ? "eager" : "lazy"}
+                      referrerPolicy="no-referrer"
                     />
                   </div>
 
