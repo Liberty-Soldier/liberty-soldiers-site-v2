@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 type Item = {
   title: string;
   url: string;
@@ -56,8 +58,28 @@ export default function IranWarCarousel({
   const loop = [...items, ...items];
 
   return (
-    <section className="w-full">
-      <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+  <section className="w-full">
+
+    {/* Header */}
+    <div className="mb-3 flex items-center justify-between">
+      <div>
+        <div className="text-xs uppercase tracking-wider text-neutral-500">
+          Live Conflict Feed
+        </div>
+        <h2 className="text-lg font-semibold text-neutral-900">
+          War & Escalation Radar
+        </h2>
+      </div>
+
+      <Link
+        href="/war-escalation"
+        className="text-sm font-medium text-neutral-700 hover:text-neutral-900 underline underline-offset-4"
+      >
+        View all →
+      </Link>
+    </div>
+
+    <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white">
         {/* edge fades */}
         <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent z-10" />
