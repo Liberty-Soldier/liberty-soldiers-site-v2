@@ -58,22 +58,6 @@ export default function IranWarCarousel({
   const loop = [...items, ...items];
 
   return (
-    <section className="w-full">
-      <div className="mb-2 flex items-end justify-between">
-        <div>
-          <div className="text-xs uppercase tracking-wider text-neutral-500">
-            Live Conflict Feed
-          </div>
-          <h2 className="text-lg font-semibold text-neutral-900">Iran War Updates</h2>
-        </div>
-
-        <Link
-          href="/iran-war"
-          className="text-sm text-neutral-700 hover:text-neutral-900 underline underline-offset-4"
-        >
-          View all
-        </Link>
-      </div>
 
       <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white">
         {/* edge fades */}
