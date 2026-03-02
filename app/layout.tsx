@@ -8,6 +8,10 @@ import ClearSW from "../components/ClearSW";
 import "../styles/globals.css";
 
 const GA_MEASUREMENT_ID = "G-6HE5GBG1H2";
+const SITE_URL = "https://libertysoldiers.com";
+const SITE_NAME = "Liberty Soldiers";
+const X_URL = "https://x.com/LibertySoldierz";
+const YT_URL = "https://www.youtube.com/@LibertySoldiers";
 
 export const metadata: Metadata = {
   title: "Liberty Soldiers",
@@ -74,6 +78,86 @@ export default function RootLayout({
         `}
       </Script>
 
+      // ...your imports stay the same
+
+const SITE_URL = "https://libertysoldiers.com";
+const SITE_NAME = "Liberty Soldiers";
+const X_URL = "https://x.com/LibertySoldierz"; // change if different
+const YT_URL = "https://www.youtube.com/@LibertySoldiers"; // change if different
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className="bg-zinc-50 text-zinc-900">
+      <body className="min-h-screen bg-zinc-50 text-zinc-900">
+        {/* GA4: load gtag.js */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        {/* GA4: init */}
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GA_MEASUREMENT_ID}', {
+              anonymize_ip: true,
+              send_page_view: true
+            });
+          `}
+        </Script>
+
+        {/* ✅ JSON-LD: Organization */}
+        <Script
+          id="jsonld-organization"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: SITE_NAME,
+              url: SITE_URL,
+              // Add a logo if you have it:
+              // logo: `${SITE_URL}/icon.png`,
+              sameAs: [X_URL, YT_URL],
+            }),
+          }}
+        />
+
+        {/* ✅ JSON-LD: WebSite */}
+        <Script
+          id="jsonld-website"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: SITE_NAME,
+              url: SITE_URL,
+              // Only include this if /search is a real working page:
+              // potentialAction: {
+              //   "@type": "SearchAction",
+              //   target: `${SITE_URL}/search?q={search_term_string}`,
+              //   "query-input": "required name=search_term_string",
+              // },
+            }),
+          }}
+        />
+
+        <ClearSW />
+        <Header />
+
+        <main>{children}</main>
+
+        {/* footer unchanged... */}
+      </body>
+    </html>
+  );
+}
+      
+
       <ClearSW />
       <Header />
 
@@ -99,5 +183,6 @@ export default function RootLayout({
   </html>
 );
 }
+
 
 
