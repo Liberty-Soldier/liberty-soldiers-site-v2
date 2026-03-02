@@ -53,10 +53,10 @@ function displayTime(ms?: number) {
 
 const SOURCE_OG_MAP: Record<string, string> = {
   "aljazeera.com": "/og-aljazeera.jpg",
-  "worthynews.com": "/og-worthynews.jpg",
-  "realclearreligion.org": "/og-realclearreligion.jpg",
+  "worthynews.com": "/og-worthy news.jpg",
+  "realclearreligion.org": "/og-real clear religion.jpg",
   "cbn.com": "/og-cbn.jpg",
-  "olivetreeviews.org": "/og-olivetree.jpg",
+  "olivetreeviews.org": "/og-olive tree.jpg",
   "zerohedge.com": "/og-zerohedge.jpg",
   "endtimeheadlines.org": "/og-endtimesheadlines.jpg",
 };
