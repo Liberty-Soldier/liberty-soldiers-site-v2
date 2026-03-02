@@ -9,7 +9,7 @@ import LiveBriefingAuto from "./components/LiveBriefingAuto";
 import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
 import LatestReportBand from "./components/LatestReportBand";
-import IranWarCarousel from "./components/IranWarCarousel";
+import WarCarousel from "./components/WarCarousel";
 import { fetchAllHeadlines } from "../lib/rss";
 
 export const revalidate = 600; // TEMP while testing (you can put back to 600 later)
@@ -70,11 +70,11 @@ export default async function Home() {
   const all = await fetchAllHeadlines();
 
 // TEMP filter (works right now even before you add feedCategory support)
-const iranItems = all
+const Items = all
   .filter((h) => {
     const t = `${h.title} ${h.summary ?? ""}`.toLowerCase();
     return (
-      t.includes("iran") ||
+      t.includes("") ||
       t.includes("tehran") ||
       t.includes("israel") ||
       t.includes("hezbollah") ||
@@ -146,14 +146,14 @@ const iranItems = all
   <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div className="mb-2">
       <h2 className="text-lg font-semibold text-neutral-900">
-        Middle East Conflict Updates
+        War & Escalation Radar
       </h2>
       <p className="text-sm text-neutral-500">
-        Real-time headlines referencing Iran, regional escalation, and related conflict signals.
+        Real-time headlines referencing , regional escalation, and related conflict signals.
       </p>
     </div>
 
-    <IranWarCarousel items={iranItems} />
+    <WarCarousel items={Items} />
   </div>
 </section>
 
@@ -358,6 +358,7 @@ const iranItems = all
     </div>
   );
 }
+
 
 
 
