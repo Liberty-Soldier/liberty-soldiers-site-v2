@@ -22,6 +22,7 @@ export function toHardCategory(feedCategory?: string): HardCategory {
 
     case "middle-east":
     case "world":
+    case "iran-war":
       return "War & Geopolitics";
 
     case "religion":
