@@ -9,7 +9,7 @@ import LiveBriefingAuto from "./components/LiveBriefingAuto";
 import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
 import LatestReportBand from "./components/LatestReportBand";
-import WarCarousel from "./components/WarCarousel";
+import IranWarCarousel from "./components/IranWarCarousel";
 import { fetchAllHeadlines } from "../lib/rss";
 
 export const revalidate = 600; // TEMP while testing (you can put back to 600 later)
@@ -70,11 +70,11 @@ export default async function Home() {
   const all = await fetchAllHeadlines();
 
 // TEMP filter (works right now even before you add feedCategory support)
-const Items = all
+const iranItems = all
   .filter((h) => {
     const t = `${h.title} ${h.summary ?? ""}`.toLowerCase();
     return (
-      t.includes("") ||
+      t.includes("iran") ||
       t.includes("tehran") ||
       t.includes("israel") ||
       t.includes("hezbollah") ||
@@ -149,11 +149,11 @@ const Items = all
         War & Escalation Radar
       </h2>
       <p className="text-sm text-neutral-500">
-        Real-time headlines referencing , regional escalation, and related conflict signals.
+        Real-time headlines referencing Iran, regional escalation, and related conflict signals.
       </p>
     </div>
 
-    <WarCarousel items={Items} />
+    <IranWarCarousel items={iranItems} />
   </div>
 </section>
 
@@ -358,8 +358,6 @@ const Items = all
     </div>
   );
 }
-
-
 
 
 
