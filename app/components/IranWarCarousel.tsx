@@ -62,15 +62,7 @@ export default function IranWarCarousel({
 
     {/* Header */}
     <div className="mb-3 flex items-center justify-between">
-      <div>
-        <div className="text-xs uppercase tracking-wider text-neutral-500">
-          Live Conflict Feed
-        </div>
-        <h2 className="text-lg font-semibold text-neutral-900">
-          War & Escalation Radar
-        </h2>
-      </div>
-
+    
       <Link
         href="/war-escalation"
         className="text-sm font-medium text-neutral-700 hover:text-neutral-900 underline underline-offset-4"
