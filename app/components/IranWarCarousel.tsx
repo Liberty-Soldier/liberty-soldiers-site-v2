@@ -65,8 +65,8 @@ export default function IranWarCarousel({
         <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent z-10" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent z-10" />
 
-        <div className="marquee py-3">
-          <div className="marquee__track gap-3 px-3">
+      <div className="py-3 overflow-hidden">
+        <div className="flex w-max gap-3 px-3 animate-marquee hover:[animation-play-state:paused]">  
             {loop.map((it, idx) => {
               const og = it.ogImage || fallbackOg;
               const src = it.source || hostFromUrl(it.url);
@@ -109,27 +109,6 @@ export default function IranWarCarousel({
         </div>
       </div>
 
-      <style jsx>{`
-        .marquee {
-          position: relative;
-        }
-        .marquee__track {
-          display: flex;
-          width: max-content;
-          animation: scroll 55s linear infinite;
-        }
-        .marquee:hover .marquee__track {
-          animation-play-state: paused;
-        }
-        @keyframes scroll {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
-        }
-      `}</style>
     </section>
   );
 }
