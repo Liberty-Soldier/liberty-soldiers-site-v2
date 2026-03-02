@@ -9,6 +9,7 @@ import LiveBriefingAuto from "./components/LiveBriefingAuto";
 import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
 import LatestReportBand from "./components/LatestReportBand";
+import IranWarCarousel from "./components/IranWarCarousel";
 
 export const revalidate = 600; // TEMP while testing (you can put back to 600 later)
 
@@ -117,6 +118,16 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+{/* Iran War Updates — top band */}
+<section className="border-b border-zinc-200 bg-white">
+  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <IranWarCarousel />
+  </div>
+</section>
+
+{/* Live Briefing */}
+<LiveBriefingAuto />
 
    {/* Live Briefing */}
     <LiveBriefingAuto />
@@ -319,6 +330,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
