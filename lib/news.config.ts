@@ -46,13 +46,14 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.jpost.com/Rss/RssFeedsHeadlines.aspx", category: "iran-war" },
   { url: "https://www.timesofisrael.com/feed/", category: "iran-war" },
   { url: "https://thehill.com/rss/syndicator/19110", category: "iran-war" },
-  { url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/air/ ", category: "iran-war" },
-  { url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/global/ ", category: "iran-war" },
+  { url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/air/?outputType=xml", category: "iran-war" },
+  { url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/global/?outputType=xml", category: "iran-war" },
   { url: "https://foreignpolicy.com/feed/", category: "iran-war" },
-  { url: "https://www.cfr.org/rss", category: "iran-war" },
   { url: "https://warontherocks.com/feed/", category: "iran-war" },
   { url: "http://rss.cnn.com/rss/edition_world.rss", category: "iran-war" },
   { url: "https://rss.dw.com/rdf/rss-en-world", category: "iran-war" },
+  { url: "https://feeds.skynews.com/feeds/rss/world.xml", category: "world" }, // Sky has an official RSS index page
+  { url: "https://www.france24.com/en/middle-east/rss", category: "middle-east" },
    
   // --- TECH / CONTROL SYSTEMS ---
   { url: "https://reclaimthenet.org/feed/", category: "tech" },
@@ -118,6 +119,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
