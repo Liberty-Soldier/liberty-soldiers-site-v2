@@ -17,25 +17,16 @@ export const revalidate = 600; // TEMP while testing (you can put back to 600 la
 const OG_IMAGE = "/og-default.jpg"; // must exist in /public
 
 export const metadata: Metadata = {
-  title:
-    "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
+  title: "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
   description:
     "Independent investigative analysis of geopolitics, global power structures, media narratives, digital control systems, and emerging technologies shaping world events.",
-  keywords: [
-    "geopolitical analysis",
-    "independent investigative news",
-    "global power structures",
-    "media narratives",
-    "digital ID systems",
-    "technocracy",
-    "world events analysis",
-  ],
+
   alternates: {
     canonical: "https://libertysoldiers.com/",
   },
+
   openGraph: {
-    title:
-      "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
+    title: "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
     description:
       "Independent investigative analysis of geopolitics, global power structures, media narratives, digital control systems, and emerging technologies shaping world events.",
     url: "https://libertysoldiers.com/",
@@ -50,16 +41,15 @@ export const metadata: Metadata = {
       },
     ],
   },
-};
+
   twitter: {
     card: "summary_large_image",
-    title: "Liberty Soldiers",
+    title: "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
     description:
-      "Independent analysis examining power, perception, media narratives, and emerging systems shaping the world.",
+      "Independent investigative analysis of geopolitics, global power structures, media narratives, digital control systems, and emerging technologies shaping world events.",
     images: [OG_IMAGE],
   },
 };
-
 
 const SITE = "https://libertysoldiers.com";
 
@@ -370,6 +360,7 @@ const iranItems = all
     </div>
   );
 }
+
 
 
 
