@@ -117,6 +117,15 @@ export default function Header() {
           </Link>
 
           <Link
+            href="/war-escalation"
+            className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3 hover:bg-zinc-100"
+            onClick={close}
+          >
+            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+            <span>War & Escalation</span>
+          </Link>
+
+          <Link
             href="/reports"
             className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3 hover:bg-zinc-100"
             onClick={close}
