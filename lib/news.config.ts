@@ -3,6 +3,7 @@
 export type FeedCategory =
   | "world"
   | "middle-east"
+  | "iran-war"
   | "tech"
   | "religion"
   | "prophecy"
@@ -30,8 +31,13 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.israeltoday.co.il/feed/", category: "middle-east" },
   { url: "https://www.israel365news.com/feed/", category: "middle-east" },
   { url: "https://olivetreeviews.org/feed/", category: "middle-east" },
- 
-
+  
+    // --- IRAN WAR (FOCUSED) ---
+  { url: "https://feeds.reuters.com/reuters/worldNews", category: "iran-war" }, // placeholder if you don't have a better Reuters-Iran RSS
+  { url: "https://feeds.apnews.com/apf/world-news", category: "iran-war" },
+  { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "iran-war" },
+  { url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml", category: "iran-war" },
+   
   // --- TECH / CONTROL SYSTEMS ---
   { url: "https://reclaimthenet.org/feed/", category: "tech" },
   { url: "https://www.biometricupdate.com/feed/", category: "tech" },
@@ -96,6 +102,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
