@@ -100,11 +100,10 @@ export default function IranWarCarousel({
                 : "";
 
               return (
-                <a
-                  key={`${it.url}-${idx}`}
-                  href={it.url}
-                  target="_blank"
-                  rel="noreferrer"
+               <a
+              key={`${it.url}-${idx}`}
+              href={it.url}
+                 
                   className="group flex w-[340px] shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm hover:shadow-md transition"
                 >
                   <div className="relative h-[90px] w-[140px] shrink-0 bg-neutral-100">
