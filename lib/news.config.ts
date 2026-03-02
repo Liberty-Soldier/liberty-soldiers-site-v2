@@ -36,7 +36,23 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://feeds.reuters.com/reuters/worldNews", category: "iran-war" }, // placeholder if you don't have a better Reuters-Iran RSS
   { url: "https://feeds.apnews.com/apf/world-news", category: "iran-war" },
   { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "iran-war" },
-  { url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml", category: "iran-war" },
+  { url: "https://abcnews.go.com/abcnews/internationalheadlines", category: "iran-war" },
+  { url: "https://abcnews.go.com/abcnews/topstories", category: "iran-war" },
+  { url: "https://moxie.foxnews.com/google-publisher/world.xml", category: "iran-war" },
+  { url: "https://moxie.foxnews.com/google-publisher/politics.xml", category: "iran-war" },
+  { url: "https://www.cbsnews.com/latest/rss/world", category: "iran-war" },
+  { url: "https://feeds.nbcnews.com/nbcnews/public/world", category: "iran-war" },
+  { url: "https://www.theguardian.com/world/rss", category: "iran-war" },
+  { url: "https://www.jpost.com/Rss/RssFeedsHeadlines.aspx", category: "iran-war" },
+  { url: "https://www.timesofisrael.com/feed/", category: "iran-war" },
+  { url: "https://thehill.com/rss/syndicator/19110", category: "iran-war" },
+  { url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/air/ ", category: "iran-war" },
+  { url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/global/ ", category: "iran-war" },
+  { url: "https://foreignpolicy.com/feed/", category: "iran-war" },
+  { url: "https://www.cfr.org/rss", category: "iran-war" },
+  { url: "https://warontherocks.com/feed/", category: "iran-war" },
+  { url: "http://rss.cnn.com/rss/edition_world.rss", category: "iran-war" },
+  { url: "https://rss.dw.com/rdf/rss-en-world", category: "iran-war" },
    
   // --- TECH / CONTROL SYSTEMS ---
   { url: "https://reclaimthenet.org/feed/", category: "tech" },
@@ -102,6 +118,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
