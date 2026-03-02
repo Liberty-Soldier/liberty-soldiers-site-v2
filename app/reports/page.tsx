@@ -5,7 +5,7 @@ import { getAllReports } from "@/lib/reports";
 export const metadata = {
   title: "Reports | Liberty Soldiers",
   description: "Original Liberty Soldiers investigative reports and analysis.",
-  alternates: { canonical: "https://libertysoldiers.com/reports" },
+  alternates: { canonical: "https://libertysoldiers.com/reports/" },
 };
 
 function formatDate(iso: string) {
