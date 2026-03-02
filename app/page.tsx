@@ -17,16 +17,27 @@ export const revalidate = 600; // TEMP while testing (you can put back to 600 la
 const OG_IMAGE = "/og-default.jpg"; // must exist in /public
 
 export const metadata: Metadata = {
-  title: "Liberty Soldiers | Independent analysis of power, perception, and control",
+  title:
+    "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
   description:
-    "Independent analysis examining power, perception, media narratives, and emerging systems shaping the world.",
+    "Independent investigative analysis of geopolitics, global power structures, media narratives, digital control systems, and emerging technologies shaping world events.",
+  keywords: [
+    "geopolitical analysis",
+    "independent investigative news",
+    "global power structures",
+    "media narratives",
+    "digital ID systems",
+    "technocracy",
+    "world events analysis",
+  ],
   alternates: {
     canonical: "https://libertysoldiers.com/",
   },
   openGraph: {
-    title: "Liberty Soldiers",
+    title:
+      "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
     description:
-      "Independent analysis examining power, perception, media narratives, and emerging systems shaping the world.",
+      "Independent investigative analysis of geopolitics, global power structures, media narratives, digital control systems, and emerging technologies shaping world events.",
     url: "https://libertysoldiers.com/",
     siteName: "Liberty Soldiers",
     type: "website",
@@ -35,10 +46,11 @@ export const metadata: Metadata = {
         url: OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: "Liberty Soldiers",
+        alt: "Liberty Soldiers - Independent Geopolitical Analysis",
       },
     ],
   },
+};
   twitter: {
     card: "summary_large_image",
     title: "Liberty Soldiers",
@@ -358,6 +370,7 @@ const iranItems = all
     </div>
   );
 }
+
 
 
 
