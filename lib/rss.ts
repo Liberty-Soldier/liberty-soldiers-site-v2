@@ -105,6 +105,7 @@ function feedCategoryLabel(cat?: string): string | undefined {
   if (c === "tech") return "Control Systems";
   if (c === "health") return "Health";
   if (c === "prophecy") return "Prophecy Watch";
+  if (c === "iran-war") return "Iran War";
 
   return undefined;
 }
