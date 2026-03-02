@@ -270,8 +270,6 @@ export default async function WarEscalationPage() {
                   <a
                     key={it.url}
                     href={it.url}
-                    target="_blank"
-                    rel="noreferrer"
                     className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-md transition"
                   >
                     <div className="relative">
