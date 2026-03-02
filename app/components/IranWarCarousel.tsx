@@ -97,12 +97,22 @@ export default function IranWarCarousel({
                   className="group flex w-[340px] shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm hover:shadow-md transition"
                 >
                   <div className="relative h-[90px] w-[140px] shrink-0 bg-neutral-100">
-                    <img
+                      <img
                       src={og}
                       alt=""
                       className="h-full w-full object-cover"
                       loading={idx < 4 ? "eager" : "lazy"}
                       referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        const img = e.currentTarget;
+                    
+                        // prevent infinite loop
+                        if (img.dataset.fallbackApplied === "1") return;
+                        img.dataset.fallbackApplied = "1";
+                    
+                        // try source-specific fallback first, then global fallback
+                        img.src = sourceFallbackOg(it.url) || fallbackOg;
+                      }}
                     />
                   </div>
 
