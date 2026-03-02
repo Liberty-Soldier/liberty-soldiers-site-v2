@@ -87,6 +87,51 @@ function pickDate(it: any): number | undefined {
   return Number.isFinite(ms) ? ms : undefined;
 }
 
+function isIranRelated(title: string, summary?: string): boolean {
+  const t = `${title} ${summary ?? ""}`.toLowerCase();
+
+  // strict-ish Iran / escalation terms
+  const iranTerms = [
+    "iran",
+    "tehran",
+    "islamic republic",
+    "irgc",
+    "revolutionary guard",
+    "quds force",
+    "ayatollah",
+    "khamenei",
+    "raisi",
+    "natanz",
+    "isfahan",
+    "fordow",
+    "arak",
+    "bushehr",
+    "hormuz",
+    "strait of hormuz",
+    "persian gulf",
+    "iranian drone",
+    "shahed",
+  ];
+
+  // include “proxy war” terms only if Iran is also mentioned
+  const proxyTerms = [
+    "hezbollah",
+    "houthi",
+    "hamas",
+    "axis of resistance",
+  ];
+
+  const hasIranCore = iranTerms.some((k) => t.includes(k));
+  if (hasIranCore) return true;
+
+  const hasProxy = proxyTerms.some((k) => t.includes(k));
+  if (hasProxy && (t.includes("iran") || t.includes("tehran") || t.includes("irgc"))) {
+    return true;
+  }
+
+  return false;
+}
+
 
 function toFeedInput(x: FeedInput): { url: string; category?: string } {
   if (typeof x === "string") return { url: x };
