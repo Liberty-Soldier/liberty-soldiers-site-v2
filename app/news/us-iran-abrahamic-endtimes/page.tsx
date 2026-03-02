@@ -44,8 +44,42 @@ const AUTHOR_NAME = "Dead Reckoning";
 
 export default function ReportPage() {
   return (
-    <main className="min-h-screen bg-white text-zinc-900">
-      <article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
+   <main className="min-h-screen bg-white text-zinc-900">
+
+  <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{
+      __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "NewsArticle",
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": CANONICAL,
+        },
+        headline: TITLE,
+        description: DESCRIPTION,
+        datePublished: `${DATE_PUBLISHED}T00:00:00-05:00`,
+        dateModified: `${DATE_PUBLISHED}T00:00:00-05:00`,
+        image: [OG_IMAGE],
+        author: {
+          "@type": "Person",
+          name: AUTHOR_NAME,
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Liberty Soldiers",
+          url: SITE_URL,
+          logo: {
+            "@type": "ImageObject",
+            url: `${SITE_URL}/icon.png`,
+          },
+        },
+      }),
+    }}
+  />
+
+  <article className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12">
+    
         <header className="mb-8">
           <p className="text-[11px] uppercase tracking-wide text-zinc-500">
             Report
