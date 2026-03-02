@@ -84,11 +84,9 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* ✅ JSON-LD: Organization */}
-        <Script
-          id="jsonld-organization"
+               {/* ✅ JSON-LD: Organization */}
+        <script
           type="application/ld+json"
-          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -102,10 +100,8 @@ export default function RootLayout({
         />
 
         {/* ✅ JSON-LD: WebSite */}
-        <Script
-          id="jsonld-website"
+        <script
           type="application/ld+json"
-          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -142,3 +138,4 @@ export default function RootLayout({
     </html>
   );
 }
+
