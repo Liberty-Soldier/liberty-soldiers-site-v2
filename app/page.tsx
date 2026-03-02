@@ -141,18 +141,6 @@ const iranItems = all
         </div>
       </section>
 
-{/* War & Escalation Radar — top band */}
-<section className="border-b border-zinc-200 bg-white">
-  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <div className="mb-2">
-      <h2 className="text-lg font-semibold text-neutral-900">
-        War & Escalation Radar
-      </h2>
-      <p className="text-sm text-neutral-500">
-        Real-time headlines referencing Iran, regional escalation, and related conflict signals.
-      </p>
-    </div>
-
     <IranWarCarousel items={iranItems} />
   </div>
 </section>
@@ -358,6 +346,7 @@ const iranItems = all
     </div>
   );
 }
+
 
 
 
