@@ -14,5 +14,6 @@ html, body { background: #000; color: #fff; }
 }
 
 .animate-marquee {
-  animation: marquee 55s linear infinite;
+  animation: marquee 137s linear infinite;
 }
+
