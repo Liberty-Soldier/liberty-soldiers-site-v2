@@ -67,6 +67,27 @@ export default async function Home() {
 
   const latestReport = (await getLatestReport()) ?? null;
 
+  const all = await fetchAllHeadlines();
+
+// TEMP filter (works right now even before you add feedCategory support)
+const iranItems = all
+  .filter((h) => {
+    const t = `${h.title} ${h.summary ?? ""}`.toLowerCase();
+    return (
+      t.includes("iran") ||
+      t.includes("tehran") ||
+      t.includes("israel") ||
+      t.includes("hezbollah") ||
+      t.includes("houthi") ||
+      t.includes("strait of hormuz") ||
+      t.includes("missile") ||
+      t.includes("airstrike") ||
+      t.includes("strike") ||
+      t.includes("retaliat")
+    );
+  })
+  .slice(0, 24);
+
    const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -123,15 +144,12 @@ export default async function Home() {
 {/* Iran War Updates — top band */}
 <section className="border-b border-zinc-200 bg-white">
   <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-    <IranWarCarousel />
+    <IranWarCarousel items={iranItems} />
   </div>
 </section>
 
 {/* Live Briefing */}
 <LiveBriefingAuto />
-
-   {/* Live Briefing */}
-    <LiveBriefingAuto />
 
       {/* Email signup — desktop only (avoid mobile duplication) */}
       <div className="hidden sm:block">
@@ -331,6 +349,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
