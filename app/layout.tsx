@@ -8,6 +8,7 @@ import ClearSW from "../components/ClearSW";
 import "../styles/globals.css";
 
 const GA_MEASUREMENT_ID = "G-6HE5GBG1H2";
+
 const SITE_URL = "https://libertysoldiers.com";
 const SITE_NAME = "Liberty Soldiers";
 const X_URL = "https://x.com/LibertySoldierz";
@@ -17,14 +18,18 @@ export const metadata: Metadata = {
   title: "Liberty Soldiers",
   description:
     "Independent situational awareness and investigative analysis of power, perception, and emerging systems shaping the world.",
-  metadataBase: new URL("https://libertysoldiers.com"),
+  metadataBase: new URL(SITE_URL),
+
+  alternates: {
+    canonical: `${SITE_URL}/`,
+  },
 
   openGraph: {
     title: "Liberty Soldiers",
     description:
       "Independent situational awareness and investigative analysis of power, perception, and emerging systems shaping the world.",
-    url: "https://libertysoldiers.com",
-    siteName: "Liberty Soldiers",
+    url: SITE_URL,
+    siteName: SITE_NAME,
     type: "website",
     images: [
       {
@@ -57,35 +62,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
- return (
-  <html lang="en" className="bg-zinc-50 text-zinc-900">
-    <body className="min-h-screen bg-zinc-50 text-zinc-900">
-      {/* GA4: load gtag.js */}
-      <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-        strategy="afterInteractive"
-      />
-      {/* GA4: init */}
-      <Script id="ga4-init" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', '${GA_MEASUREMENT_ID}', {
-            anonymize_ip: true,
-            send_page_view: true
-          });
-        `}
-      </Script>
-
-      // ...your imports stay the same
-
-const SITE_URL = "https://libertysoldiers.com";
-const SITE_NAME = "Liberty Soldiers";
-const X_URL = "https://x.com/LibertySoldierz"; // change if different
-const YT_URL = "https://www.youtube.com/@LibertySoldiers"; // change if different
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="bg-zinc-50 text-zinc-900">
       <body className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -94,6 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
         />
+
         {/* GA4: init */}
         <Script id="ga4-init" strategy="afterInteractive">
           {`
@@ -118,8 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "@type": "Organization",
               name: SITE_NAME,
               url: SITE_URL,
-              // Add a logo if you have it:
-              // logo: `${SITE_URL}/icon.png`,
+              logo: `${SITE_URL}/icon.png`,
               sameAs: [X_URL, YT_URL],
             }),
           }}
@@ -136,12 +112,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "@type": "WebSite",
               name: SITE_NAME,
               url: SITE_URL,
-              // Only include this if /search is a real working page:
-              // potentialAction: {
-              //   "@type": "SearchAction",
-              //   target: `${SITE_URL}/search?q={search_term_string}`,
-              //   "query-input": "required name=search_term_string",
-              // },
             }),
           }}
         />
@@ -151,38 +121,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <main>{children}</main>
 
-        {/* footer unchanged... */}
+        <footer className="border-t border-zinc-200 py-8 mt-12">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-6">
+              <EmailSignup
+                title="Get Liberty Soldiers briefings"
+                subtitle="Email only when new reports publish. No spam."
+              />
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+              <p className="text-sm text-zinc-600">
+                © {new Date().getFullYear()} Liberty Soldiers. All rights
+                reserved.
+              </p>
+            </div>
+          </div>
+        </footer>
       </body>
     </html>
   );
 }
-      
-
-      <ClearSW />
-      <Header />
-
-      <main>{children}</main>
-
-      <footer className="border-t border-zinc-200 py-8 mt-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-6">
-            <EmailSignup
-              title="Get Liberty Soldiers briefings"
-              subtitle="Email only when new reports publish. No spam."
-            />
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-sm text-zinc-600">
-              © {new Date().getFullYear()} Liberty Soldiers. All rights reserved.
-            </p>
-          </div>
-        </div>
-      </footer>
-    </body>
-  </html>
-);
-}
-
-
-
