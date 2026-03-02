@@ -32,6 +32,16 @@ export const metadata = {
   },
 };
 
+const SITE_URL = "https://libertysoldiers.com";
+const CANONICAL = "https://libertysoldiers.com/news/us-iran-abrahamic-endtimes";
+const OG_IMAGE = "https://libertysoldiers.com/IRAN.jpg";
+
+const TITLE = "U.S.–Iran Escalation and the Abrahamic End-Time Lens";
+const DESCRIPTION =
+  "After prior U.S. strikes and amid renewed escalation signals, competing end-time frameworks across Judaism, Christianity, and Islam shape public perception.";
+const DATE_PUBLISHED = "2026-01-29";
+const AUTHOR_NAME = "Dead Reckoning";
+
 export default function ReportPage() {
   return (
     <main className="min-h-screen bg-white text-zinc-900">
