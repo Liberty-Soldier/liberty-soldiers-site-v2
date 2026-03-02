@@ -29,6 +29,21 @@ function displayTime(iso?: string) {
   });
 }
 
+const SOURCE_OG_MAP: Record<string, string> = {
+  "aljazeera.com": "/og-aljazeera.jpg",
+  "worthynews.com": "/og-worthy news.jpg",
+  "realclearreligion.org": "/og-real clear religion.jpg",
+  "cbn.com": "/og-cbn.jpg",
+  "olivetreeviews.org": "/og-olive tree ministries.jpg",
+};
+
+// matches subdomains too (e.g. www., feeds., etc.)
+function sourceFallbackOg(url: string): string | undefined {
+  const h = hostFromUrl(url).toLowerCase();
+  const key = Object.keys(SOURCE_OG_MAP).find((k) => h.includes(k));
+  return key ? SOURCE_OG_MAP[key] : undefined;
+}
+
 export default function IranWarCarousel({
   items,
   fallbackOg = "/og-iran-war.jpg",
@@ -67,7 +82,7 @@ export default function IranWarCarousel({
       <div className="py-3 overflow-hidden">
         <div className="flex w-max gap-3 px-3 animate-marquee hover:[animation-play-state:paused]">  
             {loop.map((it, idx) => {
-              const og = it.image || fallbackOg;
+              const og = it.image || sourceFallbackOg(it.url) || fallbackOg;
               const src = it.source || hostFromUrl(it.url);
               const time = it.publishedAt
               ? displayTime(new Date(it.publishedAt).toISOString())
