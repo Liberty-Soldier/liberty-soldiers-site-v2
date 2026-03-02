@@ -157,6 +157,75 @@ export default async function WarEscalationPage() {
                 Curated from global sources for situational awareness — not narrative.
               </p>
 
+              <section className="border-b border-zinc-200 bg-white">
+  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div className="max-w-3xl">
+      <div className="text-xs uppercase tracking-wider text-zinc-500">
+        Live Monitor
+      </div>
+
+      <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
+        War & Escalation Radar
+      </h1>
+
+      <p className="mt-3 text-base sm:text-lg text-zinc-700 leading-relaxed">
+        Real-time monitoring of Iran-related escalation signals across the Middle East — including
+        regional conflict, proxy activity, maritime risk, and strategic messaging that can shift the
+        trajectory of war. This page aggregates breaking headlines and provides a single place to
+        track escalation momentum as it develops.
+      </p>
+
+      <div className="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+        <h2 className="text-lg font-bold text-zinc-900">
+          What this radar tracks
+        </h2>
+        <ul className="mt-3 space-y-2 text-sm text-zinc-700">
+          <li>
+            <span className="font-semibold text-zinc-900">Iran & Tehran:</span>{" "}
+            leadership statements, military posture, retaliation cycles, and strategic doctrine.
+          </li>
+          <li>
+            <span className="font-semibold text-zinc-900">Proxy networks:</span>{" "}
+            Hezbollah, Houthis, militias, and cross-border escalation indicators.
+          </li>
+          <li>
+            <span className="font-semibold text-zinc-900">Maritime chokepoints:</span>{" "}
+            Strait of Hormuz risk, shipping disruptions, drones, and missile threats.
+          </li>
+          <li>
+            <span className="font-semibold text-zinc-900">Regional spillover:</span>{" "}
+            Israel, Lebanon, Syria, Iraq, Yemen and wider Middle East conflict dynamics.
+          </li>
+          <li>
+            <span className="font-semibold text-zinc-900">Markets & policy:</span>{" "}
+            energy impacts, sanctions, diplomatic moves, and US/UK/EU positioning.
+          </li>
+        </ul>
+      </div>
+
+      <div className="mt-6 flex flex-wrap gap-3">
+        <a
+          href="/news"
+          className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition"
+        >
+          Full news feed →
+        </a>
+        <a
+          href="/reports"
+          className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-black transition"
+        >
+          Read reports →
+        </a>
+      </div>
+
+      <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
+        Note: Links below point to external sources. Liberty Soldiers monitors narrative shifts and
+        escalation patterns for situational awareness — not financial advice or operational guidance.
+      </p>
+    </div>
+  </div>
+</section>
+
               <div className="mt-5 flex flex-wrap gap-3">
                 <a
                   href="/"
