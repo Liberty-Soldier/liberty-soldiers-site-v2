@@ -33,22 +33,27 @@ export default function Header() {
         {/* Desktop nav + socials */}
         <div className="hidden md:flex items-center gap-8">
           {/* Nav links */}
-          <nav className="flex items-center gap-6 text-sm text-zinc-800">
-            <Link href="/news" className="hover:text-zinc-600">
-              News
-            </Link>
-            <Link href="/reports" className="hover:text-zinc-600">
-              Reports
-            </Link>
-            {/* Only keep this if /videos exists (recommended). Otherwise link to YouTube videos page. */}
-            <Link href="/videos" className="hover:text-zinc-600">
-              Videos
-            </Link>
-            <Link href="/store" className="hover:text-zinc-600">
-              Store
-            </Link>
-          </nav>
-
+         <nav className="flex items-center gap-6 text-sm text-zinc-800">
+          <Link href="/news" className="hover:text-zinc-600">
+            News
+          </Link>
+        
+          <Link href="/war-escalation" className="hover:text-zinc-600">
+            War Radar
+          </Link>
+        
+          <Link href="/reports" className="hover:text-zinc-600">
+            Reports
+          </Link>
+        
+          <Link href="/videos" className="hover:text-zinc-600">
+            Videos
+          </Link>
+        
+          <Link href="/store" className="hover:text-zinc-600">
+            Store
+          </Link>
+        </nav>
           {/* Social icons */}
           <div className="flex items-center gap-4">
             <a
