@@ -57,68 +57,62 @@ export default function IranWarCarousel({
   // Duplicate items to create an “infinite” marquee feel
   const loop = [...items, ...items];
 
-  return (
-
-      <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white">
-        {/* edge fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent z-10" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent z-10" />
+ return (
+  <section className="w-full">
+    <div className="relative overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+      {/* edge fades */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent z-10" />
 
       <div className="py-3 overflow-hidden">
-        <div className="flex w-max gap-3 px-3 animate-marquee hover:[animation-play-state:paused]">  
-            {loop.map((it, idx) => {
-              const og = it.image || sourceFallbackOg(it.url) || fallbackOg;
-              const src = it.source || hostFromUrl(it.url);
-              const time = it.publishedAt
+        <div className="flex w-max gap-3 px-3 animate-marquee hover:[animation-play-state:paused]">
+          {loop.map((it, idx) => {
+            const og = it.image || sourceFallbackOg(it.url) || fallbackOg;
+            const src = it.source || hostFromUrl(it.url);
+            const time = it.publishedAt
               ? displayTime(new Date(it.publishedAt).toISOString())
               : "";
 
-              return (
-                <a
-                  key={`${it.url}-${idx}`}
-                  href={it.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex w-[340px] shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm hover:shadow-md transition"
-                >
-                  <div className="relative h-[90px] w-[140px] shrink-0 bg-neutral-100">
-                      <img
-                      src={og}
-                      alt=""
-                      className="h-full w-full object-cover"
-                      loading={idx < 4 ? "eager" : "lazy"}
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        const img = e.currentTarget;
-                    
-                        // prevent infinite loop
-                        if (img.dataset.fallbackApplied === "1") return;
-                        img.dataset.fallbackApplied = "1";
-                    
-                        // try source-specific fallback first, then global fallback
-                        img.src = sourceFallbackOg(it.url) || fallbackOg;
-                      }}
-                    />
+            return (
+              <a
+                key={`${it.url}-${idx}`}
+                href={it.url}
+                target="_blank"
+                rel="noreferrer"
+                className="group flex w-[340px] shrink-0 overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm hover:shadow-md transition"
+              >
+                <div className="relative h-[90px] w-[140px] shrink-0 bg-neutral-100">
+                  <img
+                    src={og}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    loading={idx < 4 ? "eager" : "lazy"}
+                    referrerPolicy="no-referrer"
+                    onError={(e) => {
+                      const img = e.currentTarget;
+                      if (img.dataset.fallbackApplied === "1") return;
+                      img.dataset.fallbackApplied = "1";
+                      img.src = sourceFallbackOg(it.url) || fallbackOg;
+                    }}
+                  />
+                </div>
+
+                <div className="flex min-w-0 flex-1 flex-col p-3">
+                  <div className="flex items-center gap-2 text-[11px] text-neutral-500">
+                    <span className="truncate">{src}</span>
+                    {time ? <span className="text-neutral-300">•</span> : null}
+                    {time ? <span className="truncate">{time}</span> : null}
                   </div>
 
-                  <div className="flex min-w-0 flex-1 flex-col p-3">
-                    <div className="flex items-center gap-2 text-[11px] text-neutral-500">
-                      <span className="truncate">{src}</span>
-                      {time ? <span className="text-neutral-300">•</span> : null}
-                      {time ? <span className="truncate">{time}</span> : null}
-                    </div>
-
-                    <div className="mt-1 line-clamp-3 text-sm font-medium text-neutral-900 group-hover:underline underline-offset-4">
-                      {it.title}
-                    </div>
+                  <div className="mt-1 line-clamp-3 text-sm font-medium text-neutral-900 group-hover:underline underline-offset-4">
+                    {it.title}
                   </div>
-                </a>
-              );
-            })}
-          </div>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
-
-    </section>
-  );
-}
+    </div>
+  </section>
+);
