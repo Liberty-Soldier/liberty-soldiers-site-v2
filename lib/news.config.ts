@@ -30,7 +30,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.israeltoday.co.il/feed/", category: "middle-east" },
   { url: "https://www.israel365news.com/feed/", category: "middle-east" },
   { url: "https://olivetreeviews.org/feed/", category: "middle-east" },
-  { url: "http://feeds.bbci.co.uk/news/world/middle_east/rss.xml", category: "middle-east" },
+ 
 
   // --- TECH / CONTROL SYSTEMS ---
   { url: "https://reclaimthenet.org/feed/", category: "tech" },
@@ -51,9 +51,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
 
   // --- FINANCE ---
   { url: "https://www.reuters.com/business/rss", category: "finance" },
-  { url: "https://feeds.apnews.com/apf/business", category: "finance" },
   { url: "https://www.marketwatch.com/rss/topstories", category: "finance" },
-  { url: "https://www.investing.com/rss/news_25.rss", category: "finance" },
   { url: "https://www.bis.org/rss/all.xml", category: "finance" },
   { url: "https://www.imf.org/external/rss/feeds.aspx?feed=imf_blog", category: "finance" },
   { url: "https://feeds.feedburner.com/zerohedge/feed", category: "finance" },
@@ -98,6 +96,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
