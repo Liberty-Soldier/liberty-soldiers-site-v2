@@ -56,7 +56,7 @@ const SOURCE_OG_MAP: Record<string, string> = {
   "worthynews.com": "/og-worthy news.jpg",
   "realclearreligion.org": "/og-real clear religion.jpg",
   "cbn.com": "/og-cbn.jpg",
-  "olivetreeviews.org": "/og-olive tree.jpg",
+  "olivetreeviews.org": "/og-olive tree ministries.jpg",
   "zerohedge.com": "/og-zerohedge.jpg",
   "endtimeheadlines.org": "/og-endtimesheadlines.jpg",
 };
