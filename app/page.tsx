@@ -10,6 +10,7 @@ import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
 import LatestReportBand from "./components/LatestReportBand";
 import IranWarCarousel from "./components/IranWarCarousel";
+import { fetchAllHeadlines } from "../lib/rss";
 
 export const revalidate = 600; // TEMP while testing (you can put back to 600 later)
 
@@ -330,6 +331,7 @@ export default async function Home() {
     </div>
   );
 }
+
 
 
 
