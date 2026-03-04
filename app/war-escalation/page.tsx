@@ -9,9 +9,9 @@ const CANONICAL = `${SITE}/war-escalation`;
 const OG_IMAGE = "/og-iran-war.jpg";
 
 export const metadata: Metadata = {
-  title: "War & Escalation Radar | Liberty Soldiers",
+  title: "Iran War & Escalation Radar | Liberty Soldiers",
   description:
-    "Real-time monitoring of Iran-related escalation signals, regional conflict, proxy activity, maritime risk, and strategic messaging across key geopolitical flashpoints.",
+  "Live Iran war escalation tracker covering strikes, proxy activity, Hormuz risk, diplomacy, and strategic signals across the Middle East.",
   alternates: { canonical: CANONICAL },
   openGraph: {
     title: "War & Escalation Radar | Liberty Soldiers",
@@ -128,9 +128,15 @@ export default async function WarEscalationPage() {
     .filter((h) => looksRelevant(`${h.title} ${h.summary ?? ""}`))
     .slice(0, 120);
 
-  const pageJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
+  const latest = items.find((x) => typeof x.publishedAt === "number")?.publishedAt;
+const latestIso = latest
+  ? new Date(latest).toISOString()
+  : new Date().toISOString();
+
+     const pageJsonLd = {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      dateModified: latestIso,
     name: "War & Escalation Radar",
     description:
       "Real-time monitoring of Iran-related escalation signals, regional conflict, proxy activity, maritime risk, and strategic messaging across key geopolitical flashpoints.",
@@ -261,7 +267,7 @@ export default async function WarEscalationPage() {
               </p>
 
               <div className="mt-3 text-xs text-zinc-500">
-                Updated frequently. Items link to original sources.
+                Updated: {latest ? displayTime(latest) : "—"} • Items link to original sources.
               </div>
             </div>
 
