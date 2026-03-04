@@ -24,6 +24,19 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://rss.dw.com/rdf/rss-en-all", category: "world" },
   { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "world" },
   { url: "https://feeds.foxnews.com/foxnews/world", category: "world" },
+
+    // --- IRAN / REGIONAL / ANTI-WAR BALANCERS (ADD THESE) ---
+  // Foreign policy restraint / anti-intervention analysis
+  { url: "https://responsiblestatecraft.org/feeds/analysis.rss", category: "iran-war" }, // Quincy/RS analysis feed :contentReference[oaicite:0]{index=0}
+  { url: "http://original.antiwar.com/feed/", category: "iran-war" }, // Antiwar original content feed :contentReference[oaicite:1]{index=1}
+
+  // Iranian / region-adjacent English outlets (shows “their side” narrative)
+  { url: "https://en.mehrnews.com/rss", category: "iran-war" }, // Mehr News English RSS :contentReference[oaicite:2]{index=2}
+  { url: "https://www.tehrantimes.com/rss", category: "iran-war" }, // Tehran Times RSS :contentReference[oaicite:3]{index=3}
+  { url: "https://www.presstv.ir/rss.xml", category: "iran-war" }, // PressTV RSS xml :contentReference[oaicite:4]{index=4}
+
+  // Deeper Middle East context (less “war drum” tone)
+  { url: "https://www.merip.org/feed", category: "middle-east" }, // MERIP (analysis) :contentReference[oaicite:5]{index=5}
  
   // --- MIDDLE EAST / ISRAEL ---
   { url: "https://www.jpost.com/rss/rss.xml", category: "middle-east" },
@@ -119,6 +132,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
