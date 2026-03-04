@@ -138,12 +138,11 @@ const iranItems = all
                 className="inline-flex items-center rounded-xl border border-white/40 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10 transition"
               >
                 Live Intelligence →
-                <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
+              </a>
+              <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
              Tracking global conflict, financial systems,
               technological control, and narrative power.
             </p>
-    
-              </a>
             </div>
           </div>
         </div>
@@ -366,6 +365,7 @@ const iranItems = all
     </div>
   );
 }
+
 
 
 
