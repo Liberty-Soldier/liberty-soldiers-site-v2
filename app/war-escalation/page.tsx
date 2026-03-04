@@ -62,7 +62,7 @@ const SOURCE_OG_MAP: Record<string, string> = {
   "cbn.com": "/og-cbn.jpg",
   "olivetreeviews.org": "/og-olive tree ministries.jpg",
   "zerohedge.com": "/og-zerohedge.jpg",
-  "endtimeheadlines.org": "/og-endtimeheadlines.jpg",
+  "endtimeheadlines.org": "/og-endtimesheadlines.jpg",
 };
 
 function sourceFallbackOg(url: string): string | undefined {
