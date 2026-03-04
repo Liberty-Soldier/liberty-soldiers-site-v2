@@ -316,7 +316,7 @@ const latestIso = latest
                         <div className="h-40 w-full bg-zinc-100">
                           <img
                             src={og}
-                            alt={it.title}
+                            alt={`${it.title} – War & Escalation Radar | Liberty Soldiers`}
                             className="h-full w-full object-cover"
                             loading="lazy"
                             referrerPolicy="no-referrer"
