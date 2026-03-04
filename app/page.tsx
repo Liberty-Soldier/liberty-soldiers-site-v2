@@ -140,8 +140,7 @@ const iranItems = all
                 Live Intelligence →
               </a>
               <p className="mt-4 text-base sm:text-lg text-white/90 max-w-2xl">
-             Tracking global conflict, financial systems,
-              technological control, and narrative power.
+             Tracking power, conflict, and the narratives shaping the world.
             </p>
             </div>
           </div>
@@ -365,6 +364,7 @@ const iranItems = all
     </div>
   );
 }
+
 
 
 
