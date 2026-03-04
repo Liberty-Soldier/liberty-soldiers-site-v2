@@ -303,7 +303,7 @@ export default async function WarEscalationPage() {
                     className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-md transition"
                   >
                     {/* Main clickable area to source */}
-                    <a href={it.url} target="_blank" rel="noopener noreferrer" className="block">
+                    <a href={it.url} className="block">
                       <div className="relative">
                         <div className="h-40 w-full bg-zinc-100">
                           <img
@@ -340,8 +340,6 @@ export default async function WarEscalationPage() {
                     <div className="px-4 pb-4 pt-0 flex items-center justify-between">
                       <a
                         href={it.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         className="text-sm font-medium text-zinc-900 hover:underline"
                       >
                         Open source →
