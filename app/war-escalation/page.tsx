@@ -1,7 +1,6 @@
 // app/war-escalation/page.tsx
 import type { Metadata } from "next";
 import { fetchAllHeadlines } from "../../lib/rss";
-import ShareClient from "../share/ShareClient";
 
 export const revalidate = 300; // refresh often (good for "live" pages)
 
@@ -92,6 +91,35 @@ function looksRelevant(text: string) {
   );
 }
 
+// Build a link to your existing /share wrapper page that accepts searchParams:
+// u, t, s, p, i, x
+function shareWrapperHref(args: {
+  url: string;
+  title: string;
+  source?: string;
+  publishedAt?: number;
+  image?: string;
+  summary?: string;
+}) {
+  const sp = new URLSearchParams();
+
+  // ShareClient expects encoded values; it also tries to decode safely.
+  sp.set("u", encodeURIComponent(args.url));
+  sp.set("t", encodeURIComponent(args.title));
+
+  const src = args.source || hostFromUrl(args.url);
+  if (src) sp.set("s", encodeURIComponent(src));
+
+  if (typeof args.publishedAt === "number" && Number.isFinite(args.publishedAt)) {
+    sp.set("p", encodeURIComponent(String(args.publishedAt)));
+  }
+
+  if (args.image) sp.set("i", encodeURIComponent(args.image));
+  if (args.summary) sp.set("x", encodeURIComponent(args.summary));
+
+  return `/share?${sp.toString()}`;
+}
+
 export default async function WarEscalationPage() {
   const all = await fetchAllHeadlines();
 
@@ -131,6 +159,16 @@ export default async function WarEscalationPage() {
       },
     })),
   };
+
+  // Optional: share link for the page itself (uses your wrapper too)
+  const shareThisPage = shareWrapperHref({
+    url: CANONICAL,
+    title: "War & Escalation Radar | Liberty Soldiers",
+    source: "Liberty Soldiers",
+    image: `${SITE}${OG_IMAGE}`,
+    summary:
+      "Live monitoring of Iran-related escalation signals, proxy activity, maritime risk, and regional flashpoints.",
+  });
 
   return (
     <main className="min-h-screen bg-white">
@@ -207,11 +245,13 @@ export default async function WarEscalationPage() {
                   ← Home
                 </a>
 
-                {/* Share this PAGE (not source) using your existing ShareClient */}
-                <ShareClient
-                  title="War & Escalation Radar | Liberty Soldiers"
-                  url={CANONICAL}
-                />
+                {/* Share the War Escalation page via your wrapper */}
+                <a
+                  href={shareThisPage}
+                  className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition"
+                >
+                  Share this page →
+                </a>
               </div>
 
               <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
@@ -245,9 +285,16 @@ export default async function WarEscalationPage() {
                 const src = it.source || hostFromUrl(it.url);
                 const time = displayTime(it.publishedAt);
 
-                // Share the SOURCE url (absolute). If you prefer sharing YOUR page instead,
-                // swap this to: `${CANONICAL}?u=${encodeURIComponent(it.url)}`
-                const shareUrl = it.url?.startsWith("http") ? it.url : `${SITE}${it.url}`;
+                // Build share wrapper link for THIS item
+                const shareHref = shareWrapperHref({
+                  url: it.url,
+                  title: it.title,
+                  source: src,
+                  publishedAt: it.publishedAt,
+                  // share wrapper can show thumb; if og is relative, make it absolute
+                  image: og.startsWith("http") ? og : `${SITE}${og}`,
+                  summary: it.summary ?? "",
+                });
 
                 return (
                   <div
@@ -297,8 +344,13 @@ export default async function WarEscalationPage() {
                         Open source →
                       </a>
 
-                      {/* Native share sheet via your existing ShareClient */}
-                      <ShareClient title={it.title} url={shareUrl} />
+                      {/* Share via your existing /share wrapper */}
+                      <a
+                        href={shareHref}
+                        className="text-sm font-semibold text-zinc-900 hover:underline"
+                      >
+                        Share →
+                      </a>
                     </div>
                   </div>
                 );
