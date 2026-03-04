@@ -43,12 +43,14 @@ function displayTime(ms?: number) {
   if (!ms) return "";
   const d = new Date(ms);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleString(undefined, {
+
+  return d.toLocaleString("en-US", {
+    timeZone: "UTC",
     month: "short",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-  });
+  }) + " UTC";
 }
 
 /**
@@ -266,9 +268,9 @@ const latestIso = latest
                 escalation patterns for situational awareness — not financial advice or operational guidance.
               </p>
 
-              <div className="mt-3 text-xs text-zinc-500">
-                Updated: {latest ? displayTime(latest) : "—"} • Items link to original sources.
-              </div>
+             <div className="mt-3 text-xs text-zinc-500">
+              Updated: {latest ? displayTime(latest) : "—"} • Times shown in UTC.
+            </div>
             </div>
 
             <div className="hidden sm:block text-right text-xs text-zinc-500 whitespace-nowrap">
