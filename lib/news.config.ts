@@ -31,7 +31,6 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "http://original.antiwar.com/feed/", category: "iran-war" }, // Antiwar original content feed :contentReference[oaicite:1]{index=1}
 
   // Iranian / region-adjacent English outlets (shows “their side” narrative)
-  { url: "https://en.mehrnews.com/rss", category: "iran-war" }, // Mehr News English RSS :contentReference[oaicite:2]{index=2}
   { url: "https://www.tehrantimes.com/rss", category: "iran-war" }, // Tehran Times RSS :contentReference[oaicite:3]{index=3}
   { url: "https://www.presstv.ir/rss.xml", category: "iran-war" }, // PressTV RSS xml :contentReference[oaicite:4]{index=4}
 
@@ -132,6 +131,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
