@@ -11,12 +11,12 @@ const OG_IMAGE = "/og-iran-war.jpg";
 export const metadata: Metadata = {
   title: "War & Escalation Radar | Liberty Soldiers",
   description:
-    "Live conflict intelligence updates referencing Iran, regional escalation, and geopolitical flashpoints. Curated signals from global sources for situational awareness.",
+    "Real-time monitoring of Iran-related escalation signals, regional conflict, proxy activity, maritime risk, and strategic messaging across key geopolitical flashpoints.",
   alternates: { canonical: CANONICAL },
   openGraph: {
     title: "War & Escalation Radar | Liberty Soldiers",
     description:
-      "Live conflict intelligence updates referencing Iran, regional escalation, and geopolitical flashpoints.",
+      "Live conflict intelligence signals across Iran-related escalation, proxy activity, maritime risk, and regional flashpoints.",
     url: CANONICAL,
     siteName: "Liberty Soldiers",
     type: "website",
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "War & Escalation Radar | Liberty Soldiers",
     description:
-      "Live conflict intelligence updates referencing Iran, regional escalation, and geopolitical flashpoints.",
+      "Live conflict intelligence signals across Iran-related escalation, proxy activity, maritime risk, and regional flashpoints.",
     images: [OG_IMAGE],
   },
 };
@@ -51,14 +51,18 @@ function displayTime(ms?: number) {
   });
 }
 
+/**
+ * IMPORTANT: avoid spaces in public asset filenames. Use hyphens.
+ * Make sure these files exist under /public.
+ */
 const SOURCE_OG_MAP: Record<string, string> = {
   "aljazeera.com": "/og-aljazeera.jpg",
-  "worthynews.com": "/og-worthy news.jpg",
-  "realclearreligion.org": "/og-real clear religion.jpg",
+  "worthynews.com": "/og-worthy-news.jpg",
+  "realclearreligion.org": "/og-real-clear-religion.jpg",
   "cbn.com": "/og-cbn.jpg",
-  "olivetreeviews.org": "/og-olive tree ministries.jpg",
+  "olivetreeviews.org": "/og-olive-tree-ministries.jpg",
   "zerohedge.com": "/og-zerohedge.jpg",
-  "endtimeheadlines.org": "/og-endtimesheadlines.jpg",
+  "endtimeheadlines.org": "/og-endtimeheadlines.jpg",
 };
 
 function sourceFallbackOg(url: string): string | undefined {
@@ -69,8 +73,6 @@ function sourceFallbackOg(url: string): string | undefined {
 
 function looksRelevant(text: string) {
   const t = text.toLowerCase();
-
-  // Keep your current "war radar" logic (broad but intentional)
   return (
     t.includes("iran") ||
     t.includes("tehran") ||
@@ -89,6 +91,19 @@ function looksRelevant(text: string) {
   );
 }
 
+function xShareUrl(title: string, url: string) {
+  // Shares the SOURCE link (not your page). If you want it to share your page instead,
+  // change `url` to CANONICAL.
+  const text = `${title}`;
+  const via = "LibertySoldierz"; // optional; change or remove if you want
+  const qs = new URLSearchParams({
+    text,
+    url,
+    via,
+  });
+  return `https://twitter.com/intent/tweet?${qs.toString()}`;
+}
+
 export default async function WarEscalationPage() {
   const all = await fetchAllHeadlines();
 
@@ -101,7 +116,7 @@ export default async function WarEscalationPage() {
     "@type": "CollectionPage",
     name: "War & Escalation Radar",
     description:
-      "Live conflict intelligence updates referencing Iran, regional escalation, and geopolitical flashpoints. Curated signals from global sources for situational awareness.",
+      "Real-time monitoring of Iran-related escalation signals, regional conflict, proxy activity, maritime risk, and strategic messaging across key geopolitical flashpoints.",
     url: CANONICAL,
     isPartOf: {
       "@type": "WebSite",
@@ -140,106 +155,75 @@ export default async function WarEscalationPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(feedJsonLd) }}
       />
 
+      {/* Header / intro */}
       <section className="border-b border-zinc-200 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-3xl">
-              <div className="text-xs uppercase tracking-wider text-zinc-500">
-                Live Intelligence
-              </div>
+              <div className="text-xs uppercase tracking-wider text-zinc-500">Live Monitor</div>
 
               <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
-                War & Escalation Radar
+                War &amp; Escalation Radar
               </h1>
 
-              <p className="mt-3 text-base sm:text-lg text-zinc-700">
-                Live conflict signals referencing Iran, regional escalation, and geopolitical flashpoints.
-                Curated from global sources for situational awareness — not narrative.
+              <p className="mt-3 text-base sm:text-lg text-zinc-700 leading-relaxed">
+                Real-time monitoring of Iran-related escalation signals across the Middle East —
+                including regional conflict, proxy activity, maritime risk, and strategic messaging that
+                can shift the trajectory of war. This page aggregates breaking headlines and provides a
+                single place to track escalation momentum as it develops.
               </p>
 
-              <section className="border-b border-zinc-200 bg-white">
-  <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <div className="max-w-3xl">
-      <div className="text-xs uppercase tracking-wider text-zinc-500">
-        Live Monitor
-      </div>
+              <div className="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+                <h2 className="text-lg font-bold text-zinc-900">What this radar tracks</h2>
+                <ul className="mt-3 space-y-2 text-sm text-zinc-700">
+                  <li>
+                    <span className="font-semibold text-zinc-900">Iran &amp; Tehran:</span>{" "}
+                    leadership statements, military posture, retaliation cycles, and doctrine.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-zinc-900">Proxy networks:</span>{" "}
+                    Hezbollah, Houthis, militias, and cross-border escalation indicators.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-zinc-900">Maritime chokepoints:</span>{" "}
+                    Strait of Hormuz risk, shipping disruptions, drones, and missile threats.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-zinc-900">Regional spillover:</span>{" "}
+                    Israel, Lebanon, Syria, Iraq, Yemen and wider Middle East dynamics.
+                  </li>
+                  <li>
+                    <span className="font-semibold text-zinc-900">Markets &amp; policy:</span>{" "}
+                    energy impacts, sanctions, diplomatic moves, and US/UK/EU positioning.
+                  </li>
+                </ul>
+              </div>
 
-      <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
-        War & Escalation Radar
-      </h1>
-
-      <p className="mt-3 text-base sm:text-lg text-zinc-700 leading-relaxed">
-        Real-time monitoring of Iran-related escalation signals across the Middle East — including
-        regional conflict, proxy activity, maritime risk, and strategic messaging that can shift the
-        trajectory of war. This page aggregates breaking headlines and provides a single place to
-        track escalation momentum as it develops.
-      </p>
-
-      <div className="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
-        <h2 className="text-lg font-bold text-zinc-900">
-          What this radar tracks
-        </h2>
-        <ul className="mt-3 space-y-2 text-sm text-zinc-700">
-          <li>
-            <span className="font-semibold text-zinc-900">Iran & Tehran:</span>{" "}
-            leadership statements, military posture, retaliation cycles, and strategic doctrine.
-          </li>
-          <li>
-            <span className="font-semibold text-zinc-900">Proxy networks:</span>{" "}
-            Hezbollah, Houthis, militias, and cross-border escalation indicators.
-          </li>
-          <li>
-            <span className="font-semibold text-zinc-900">Maritime chokepoints:</span>{" "}
-            Strait of Hormuz risk, shipping disruptions, drones, and missile threats.
-          </li>
-          <li>
-            <span className="font-semibold text-zinc-900">Regional spillover:</span>{" "}
-            Israel, Lebanon, Syria, Iraq, Yemen and wider Middle East conflict dynamics.
-          </li>
-          <li>
-            <span className="font-semibold text-zinc-900">Markets & policy:</span>{" "}
-            energy impacts, sanctions, diplomatic moves, and US/UK/EU positioning.
-          </li>
-        </ul>
-      </div>
-
-      <div className="mt-6 flex flex-wrap gap-3">
-        <a
-          href="/news"
-          className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition"
-        >
-          Full news feed →
-        </a>
-        <a
-          href="/reports"
-          className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-black transition"
-        >
-          Read reports →
-        </a>
-      </div>
-
-      <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
-        Note: Links below point to external sources. Liberty Soldiers monitors narrative shifts and
-        escalation patterns for situational awareness — not financial advice or operational guidance.
-      </p>
-    </div>
-  </div>
-</section>
-
-              <div className="mt-5 flex flex-wrap gap-3">
+              <div className="mt-6 flex flex-wrap gap-3">
+                <a
+                  href="/news"
+                  className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition"
+                >
+                  Full news feed →
+                </a>
+                <a
+                  href="/reports"
+                  className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-black transition"
+                >
+                  Read reports →
+                </a>
                 <a
                   href="/"
                   className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition"
                 >
                   ← Home
                 </a>
-                <a
-                  href="/news"
-                  className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 transition"
-                >
-                  Full News Feed →
-                </a>
               </div>
+
+              <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
+                Note: Links below point to external sources. Liberty Soldiers monitors narrative shifts and
+                escalation patterns for situational awareness — not financial advice or operational guidance.
+              </p>
 
               <div className="mt-3 text-xs text-zinc-500">
                 Updated frequently. Items link to original sources.
@@ -253,6 +237,7 @@ export default async function WarEscalationPage() {
         </div>
       </section>
 
+      {/* Feed */}
       <section className="bg-zinc-50/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
           {items.length === 0 ? (
@@ -265,48 +250,67 @@ export default async function WarEscalationPage() {
                 const og = it.image || sourceFallbackOg(it.url) || OG_IMAGE;
                 const src = it.source || hostFromUrl(it.url);
                 const time = displayTime(it.publishedAt);
+                const share = xShareUrl(it.title, it.url);
 
                 return (
-                  <a
+                  <div
                     key={it.url}
-                    href={it.url}
                     className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-md transition"
                   >
-                    <div className="relative">
-                      <div className="h-40 w-full bg-zinc-100">
-                        <img
-                          src={og}
-                          alt=""
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          referrerPolicy="no-referrer"
-                        />
-                      </div>
-                      <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/30 via-black/0 to-black/0" />
-                    </div>
-
-                    <div className="p-4">
-                      <div className="flex items-center gap-2 text-[11px] text-zinc-500">
-                        <span className="truncate">{src}</span>
-                        {time ? <span className="text-zinc-300">•</span> : null}
-                        {time ? <span className="truncate">{time}</span> : null}
-                      </div>
-
-                      <div className="mt-2 text-sm font-semibold text-zinc-900 group-hover:underline underline-offset-4 line-clamp-3">
-                        {it.title}
-                      </div>
-
-                      {it.summary ? (
-                        <div className="mt-2 text-sm text-zinc-600 line-clamp-3">
-                          {it.summary}
+                    {/* Main clickable area to source */}
+                    <a href={it.url} target="_blank" rel="noopener noreferrer" className="block">
+                      <div className="relative">
+                        <div className="h-40 w-full bg-zinc-100">
+                          <img
+                            src={og}
+                            alt={it.title}
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                          />
                         </div>
-                      ) : null}
-
-                      <div className="mt-3 text-sm font-medium text-zinc-900">
-                        Open source →
+                        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/30 via-black/0 to-black/0" />
                       </div>
+
+                      <div className="p-4">
+                        <div className="flex items-center gap-2 text-[11px] text-zinc-500">
+                          <span className="truncate">{src}</span>
+                          {time ? <span className="text-zinc-300">•</span> : null}
+                          {time ? <span className="truncate">{time}</span> : null}
+                        </div>
+
+                        <div className="mt-2 text-sm font-semibold text-zinc-900 group-hover:underline underline-offset-4 line-clamp-3">
+                          {it.title}
+                        </div>
+
+                        {it.summary ? (
+                          <div className="mt-2 text-sm text-zinc-600 line-clamp-3">{it.summary}</div>
+                        ) : null}
+                      </div>
+                    </a>
+
+                    {/* Footer actions */}
+                    <div className="px-4 pb-4 pt-0 flex items-center justify-between">
+                      <a
+                        href={it.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium text-zinc-900 hover:underline"
+                      >
+                        Open source →
+                      </a>
+
+                      <a
+                        href={share}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-semibold text-zinc-900 hover:underline"
+                        aria-label="Share on X"
+                      >
+                        Share →
+                      </a>
                     </div>
-                  </a>
+                  </div>
                 );
               })}
             </div>
