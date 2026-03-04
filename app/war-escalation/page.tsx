@@ -12,7 +12,12 @@ export const metadata: Metadata = {
   title: "Iran War & Escalation Radar | Liberty Soldiers",
   description:
   "Live Iran war escalation tracker covering strikes, proxy activity, Hormuz risk, diplomacy, and strategic signals across the Middle East.",
-  alternates: { canonical: CANONICAL },
+ alternates: {
+  canonical: CANONICAL,
+  types: {
+    "application/rss+xml": `${SITE}/war-escalation/rss`,
+  },
+},
   openGraph: {
     title: "Iran War & Escalation Radar | Liberty Soldiers",
     description:
@@ -241,28 +246,35 @@ const latestIso = latest
                 >
                   Full news feed →
                 </a>
+              
                 <a
                   href="/reports"
                   className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-black transition"
                 >
                   Read reports →
                 </a>
+              
                 <a
                   href="/"
                   className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition"
                 >
                   ← Home
                 </a>
-
-                {/* Share the War Escalation page via your wrapper */}
+              
                 <a
                   href={shareThisPage}
                   className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition"
                 >
                   Share this page →
                 </a>
+              
+                <a
+                  href="/war-escalation/rss"
+                  className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition"
+                >
+                  RSS →
+                </a>
               </div>
-
               <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
                 Note: Links below point to external sources. Liberty Soldiers monitors narrative shifts and
                 escalation patterns for situational awareness — not financial advice or operational guidance.
