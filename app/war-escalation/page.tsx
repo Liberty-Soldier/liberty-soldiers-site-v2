@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   "Live Iran war escalation tracker covering strikes, proxy activity, Hormuz risk, diplomacy, and strategic signals across the Middle East.",
   alternates: { canonical: CANONICAL },
   openGraph: {
-    title: "War & Escalation Radar | Liberty Soldiers",
+    title: "Iran War & Escalation Radar | Liberty Soldiers",
     description:
       "Live conflict intelligence signals across Iran-related escalation, proxy activity, maritime risk, and regional flashpoints.",
     url: CANONICAL,
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "War & Escalation Radar | Liberty Soldiers",
+    title: "Iran War & Escalation Radar | Liberty Soldiers",
     description:
       "Live conflict intelligence signals across Iran-related escalation, proxy activity, maritime risk, and regional flashpoints.",
     images: [OG_IMAGE],
