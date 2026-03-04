@@ -132,7 +132,130 @@ function isIranRelated(title: string, summary?: string): boolean {
   return false;
 }
 
+// --------------------------------------------------
+// IRAN PAGE BALANCING (post-filter)
+// --------------------------------------------------
 
+type SourceGroup =
+  | "antiwar"
+  | "regional"
+  | "iran"
+  | "western"
+  | "thinktank"
+  | "israel"
+  | "other";
+
+// Map domains → perspective group
+const SOURCE_GROUP_BY_DOMAIN: Record<string, SourceGroup> = {
+  // Anti-war / restraint
+  "antiwar.com": "antiwar",
+  "responsiblestatecraft.org": "antiwar",
+
+  // Regional
+  "aljazeera.com": "regional",
+  "middleeasteye.net": "regional",
+  "trtworld.com": "regional",
+  "france24.com": "regional",
+
+  // Iranian narrative / Iran-based outlets (if you add them later)
+  "presstv.ir": "iran",
+  "tehrantimes.com": "iran",
+  "en.mehrnews.com": "iran",
+  "en.irna.ir": "iran",
+  "tasnimnews.com": "iran",
+
+  // Western / wire / mainstream
+  "reuters.com": "western",
+  "apnews.com": "western",
+  "bbc.co.uk": "western",
+  "theguardian.com": "western",
+  "cnn.com": "western",
+  "nbcnews.com": "western",
+  "cbsnews.com": "western",
+  "abcnews.go.com": "western",
+  "dw.com": "western",
+  "sky.com": "western",
+  "foxnews.com": "western",
+
+  // Think tank / analysis
+  "warontherocks.com": "thinktank",
+  "foreignpolicy.com": "thinktank",
+  "crisisgroup.org": "thinktank",
+
+  // Israel-focused
+  "jpost.com": "israel",
+  "timesofisrael.com": "israel",
+  "allisrael.com": "israel",
+  "israel365news.com": "israel",
+  "israeltoday.co.il": "israel",
+  "olivetreeviews.org": "israel",
+};
+
+function groupOfHeadline(h: Headline): SourceGroup {
+  const d = host(h.url);
+  return SOURCE_GROUP_BY_DOMAIN[d] ?? "other";
+}
+
+// Hard cap repeats from any one domain on the Iran page
+function limitByDomain(items: Headline[], maxPerDomain = 2): Headline[] {
+  const counts = new Map<string, number>();
+  const out: Headline[] = [];
+
+  for (const it of items) {
+    const d = host(it.url);
+    const n = counts.get(d) ?? 0;
+    if (n >= maxPerDomain) continue;
+    counts.set(d, n + 1);
+    out.push(it);
+  }
+  return out;
+}
+
+// Round-robin the first screen so you don’t get 12 “airstrike” headlines in a row
+function roundRobinByGroup(items: Headline[], take = 40): Headline[] {
+  const buckets = new Map<SourceGroup, Headline[]>();
+  for (const it of items) {
+    const g = groupOfHeadline(it);
+    if (!buckets.has(g)) buckets.set(g, []);
+    buckets.get(g)!.push(it);
+  }
+
+  const order: SourceGroup[] = [
+    "antiwar",
+    "regional",
+    "iran",
+    "western",
+    "thinktank",
+    "israel",
+    "other",
+  ];
+
+  const out: Headline[] = [];
+  while (out.length < take) {
+    let progressed = false;
+
+    for (const g of order) {
+      const b = buckets.get(g);
+      if (b && b.length) {
+        out.push(b.shift()!);
+        progressed = true;
+        if (out.length >= take) break;
+      }
+    }
+
+    if (!progressed) break;
+  }
+
+  return out;
+}
+
+// Public helper you can import and use on the Iran page
+export function balanceIranHeadlines(items: Headline[], take = 30): Headline[] {
+  // items should already be newest-first
+  let out = roundRobinByGroup(items, Math.max(take, 40));
+  out = limitByDomain(out, 2);
+  return out.slice(0, take);
+}
 function toFeedInput(x: FeedInput): { url: string; category?: string } {
   if (typeof x === "string") return { url: x };
   return { url: x.url, category: x.category };
