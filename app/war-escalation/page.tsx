@@ -91,7 +91,7 @@ function looksRelevant(text: string) {
   );
 }
 
-// Build a link to your existing /share wrapper page that accepts searchParams:
+// Build a link to your existing /news/share wrapper page that accepts searchParams:
 // u, t, s, p, i, x
 function shareWrapperHref(args: {
   url: string;
@@ -103,21 +103,22 @@ function shareWrapperHref(args: {
 }) {
   const sp = new URLSearchParams();
 
-  // ShareClient expects encoded values; it also tries to decode safely.
-  sp.set("u", encodeURIComponent(args.url));
-  sp.set("t", encodeURIComponent(args.title));
+  // ✅ DO NOT pre-encode; URLSearchParams will handle encoding.
+  sp.set("u", args.url);
+  sp.set("t", args.title);
 
   const src = args.source || hostFromUrl(args.url);
-  if (src) sp.set("s", encodeURIComponent(src));
+  if (src) sp.set("s", src);
 
   if (typeof args.publishedAt === "number" && Number.isFinite(args.publishedAt)) {
-    sp.set("p", encodeURIComponent(String(args.publishedAt)));
+    sp.set("p", String(args.publishedAt));
   }
 
-  if (args.image) sp.set("i", encodeURIComponent(args.image));
-  if (args.summary) sp.set("x", encodeURIComponent(args.summary));
+  if (args.image) sp.set("i", args.image);
+  if (args.summary) sp.set("x", args.summary);
 
-  return `/share?${sp.toString()}`;
+  // ✅ IMPORTANT: your share page route is /news/share (NOT /share)
+  return `/news/share?${sp.toString()}`;
 }
 
 export default async function WarEscalationPage() {
@@ -328,7 +329,9 @@ export default async function WarEscalationPage() {
                         </div>
 
                         {it.summary ? (
-                          <div className="mt-2 text-sm text-zinc-600 line-clamp-3">{it.summary}</div>
+                          <div className="mt-2 text-sm text-zinc-600 line-clamp-3">
+                            {it.summary}
+                          </div>
                         ) : null}
                       </div>
                     </a>
@@ -344,7 +347,7 @@ export default async function WarEscalationPage() {
                         Open source →
                       </a>
 
-                      {/* Share via your existing /share wrapper */}
+                      {/* Share via your existing /news/share wrapper */}
                       <a
                         href={shareHref}
                         className="text-sm font-semibold text-zinc-900 hover:underline"
