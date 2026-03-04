@@ -1,6 +1,7 @@
 // app/war-escalation/page.tsx
 import type { Metadata } from "next";
 import { fetchAllHeadlines } from "../../lib/rss";
+import ShareClient from "../share/ShareClient";
 
 export const revalidate = 300; // refresh often (good for "live" pages)
 
@@ -89,19 +90,6 @@ function looksRelevant(text: string) {
     t.includes("proxy") ||
     t.includes("escalat")
   );
-}
-
-function xShareUrl(title: string, url: string) {
-  // Shares the SOURCE link (not your page). If you want it to share your page instead,
-  // change `url` to CANONICAL.
-  const text = `${title}`;
-  const via = "LibertySoldierz"; // optional; change or remove if you want
-  const qs = new URLSearchParams({
-    text,
-    url,
-    via,
-  });
-  return `https://twitter.com/intent/tweet?${qs.toString()}`;
 }
 
 export default async function WarEscalationPage() {
@@ -218,6 +206,12 @@ export default async function WarEscalationPage() {
                 >
                   ← Home
                 </a>
+
+                {/* Share this PAGE (not source) using your existing ShareClient */}
+                <ShareClient
+                  title="War & Escalation Radar | Liberty Soldiers"
+                  url={CANONICAL}
+                />
               </div>
 
               <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
@@ -250,7 +244,10 @@ export default async function WarEscalationPage() {
                 const og = it.image || sourceFallbackOg(it.url) || OG_IMAGE;
                 const src = it.source || hostFromUrl(it.url);
                 const time = displayTime(it.publishedAt);
-                const share = xShareUrl(it.title, it.url);
+
+                // Share the SOURCE url (absolute). If you prefer sharing YOUR page instead,
+                // swap this to: `${CANONICAL}?u=${encodeURIComponent(it.url)}`
+                const shareUrl = it.url?.startsWith("http") ? it.url : `${SITE}${it.url}`;
 
                 return (
                   <div
@@ -300,15 +297,8 @@ export default async function WarEscalationPage() {
                         Open source →
                       </a>
 
-                      <a
-                        href={share}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-semibold text-zinc-900 hover:underline"
-                        aria-label="Share on X"
-                      >
-                        Share →
-                      </a>
+                      {/* Native share sheet via your existing ShareClient */}
+                      <ShareClient title={it.title} url={shareUrl} />
                     </div>
                   </div>
                 );
