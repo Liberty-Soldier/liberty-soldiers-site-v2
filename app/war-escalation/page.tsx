@@ -281,8 +281,14 @@ const latestIso = latest
               </p>
 
              <div className="mt-3 text-xs text-zinc-500">
-              Updated: {latest ? displayTime(latest) : "—"} • Times shown in UTC.
-            </div>
+                Updated:{" "}
+                {latest ? (
+                  <time dateTime={latestIso}>{displayTime(latest)}</time>
+                ) : (
+                  "—"
+                )}{" "}
+                • Times shown in UTC.
+              </div>
             </div>
 
             <div className="hidden sm:block text-right text-xs text-zinc-500 whitespace-nowrap">
