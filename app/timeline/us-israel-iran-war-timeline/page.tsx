@@ -71,57 +71,80 @@ export default async function TimelinePage() {
   const data = await res.json();
   const events: TimelineEvent[] = data?.events ?? [];
 
-// ✅ Key Events: manual-only, newest → oldest
-const manual = events
-  .filter((e) => e.kind === "manual")
-  .sort((a, b) => b.ts - a.ts);
+  // ✅ Key Events: manual-only, newest → oldest
+  const manual = events
+    .filter((e) => e.kind === "manual")
+    .sort((a, b) => b.ts - a.ts);
 
-// ✅ Live Timeline: auto-only, newest → oldest
-const auto = events
-  .filter((e) => e.kind === "auto")
-  .sort((a, b) => b.ts - a.ts);
+  // ✅ Live Timeline: auto-only, newest → oldest
+  const auto = events
+    .filter((e) => e.kind === "auto")
+    .sort((a, b) => b.ts - a.ts);
 
   return (
-    <main className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
-      <header className="mb-8">
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
-          US–Israel–Iran War Timeline
-        </h1>
-        <p className="mt-2 text-zinc-600">
-          Key escalation events in sequence — updated frequently to separate
-          signal from noise.
-        </p>
-        <p className="mt-1 text-sm text-zinc-500">
-          Updated: {fmt(data?.updatedAt ?? Date.now())} • Items: {events.length}
-        </p>
-      </header>
+    <main className="relative">
+      {/* subtle background (optional, safe for readability) */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white via-white to-zinc-50" />
 
-      {manual.length > 0 && (
-        <section className="mb-10">
-          <h2 className="text-lg font-bold text-zinc-900 mb-3">Key Events</h2>
-          <div className="space-y-3">
-            {manual.map((e) => (
-              <EventCard key={e.id} e={e} />
+      <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+        <header className="mb-8">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
+            US–Israel–Iran War Timeline
+          </h1>
+          <p className="mt-2 text-zinc-600">
+            Key escalation events in sequence — updated frequently to separate
+            signal from noise.
+          </p>
+          <p className="mt-1 text-sm text-zinc-500">
+            Updated: {fmt(data?.updatedAt ?? Date.now())} • Items: {events.length}
+          </p>
+        </header>
+
+        {manual.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-lg font-bold text-zinc-900 mb-3">Key Events</h2>
+
+            {/* ✅ vertical timeline line */}
+            <div className="relative border-l border-zinc-200 pl-6 space-y-6">
+              {manual.map((e) => (
+                <EventCard key={e.id} e={e} dot="zinc" />
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section>
+          <h2 className="text-lg font-bold text-zinc-900 mb-3">Live Timeline</h2>
+
+          {/* ✅ vertical timeline line */}
+          <div className="relative border-l border-zinc-200 pl-6 space-y-6">
+            {auto.map((e) => (
+              <EventCard key={e.id} e={e} dot="red" />
             ))}
           </div>
         </section>
-      )}
-
-      <section>
-        <h2 className="text-lg font-bold text-zinc-900 mb-3">Live Timeline</h2>
-        <div className="space-y-3">
-          {auto.map((e) => (
-            <EventCard key={e.id} e={e} />
-          ))}
-        </div>
-      </section>
+      </div>
     </main>
   );
 }
 
-function EventCard({ e }: { e: TimelineEvent }) {
+function EventCard({
+  e,
+  dot = "zinc",
+}: {
+  e: TimelineEvent;
+  dot?: "zinc" | "red";
+}) {
+  const dotClass =
+    dot === "red" ? "bg-red-600" : "bg-zinc-900";
+
   return (
-    <article className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+    <article className="relative rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+      {/* timeline dot */}
+      <span
+        className={`absolute -left-[11px] top-6 h-4 w-4 rounded-full ${dotClass} border-4 border-white`}
+      />
+
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="text-xs text-zinc-500">{fmt(e.ts)}</div>
