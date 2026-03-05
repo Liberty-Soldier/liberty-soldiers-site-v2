@@ -71,8 +71,15 @@ export default async function TimelinePage() {
   const data = await res.json();
   const events: TimelineEvent[] = data?.events ?? [];
 
-  const manual = events.filter((e) => e.kind === "manual");
-  const auto = events.filter((e) => e.kind !== "manual");
+// ✅ Key Events: manual-only, newest → oldest
+const manual = events
+  .filter((e) => e.kind === "manual")
+  .sort((a, b) => b.ts - a.ts);
+
+// ✅ Live Timeline: auto-only, newest → oldest
+const auto = events
+  .filter((e) => e.kind === "auto")
+  .sort((a, b) => b.ts - a.ts);
 
   return (
     <main className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
