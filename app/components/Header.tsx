@@ -118,7 +118,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop nav (one line, smaller) */}
-          <div className="hidden md:flex items-center gap-3 min-w-0 flex-1 justify-end">
+          <div className="hidden md:flex items-center gap-3 min-w-0 flex-1">
            <div className="min-w-0 flex items-center gap-2">
               <nav className="flex items-center gap-2 whitespace-nowrap">
                 {NAV_LEFT.map((item) => {
