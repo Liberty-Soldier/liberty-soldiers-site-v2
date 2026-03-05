@@ -42,7 +42,7 @@ export default function Header() {
             War Radar
           </Link>
 
-           <Link href="/us-israel-iran-war-timeline" className="hover:text-zinc-600">
+           <Link href="/timeline/us-israel-iran-war-timeline" className="hover:text-zinc-600">
             Timeline
           </Link>
                   
@@ -134,7 +134,7 @@ export default function Header() {
           </Link>
 
           <Link
-            href="/us-israel-iran-war-timeline"
+            href="/timeline/us-israel-iran-war-timeline"
             className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3 hover:bg-zinc-100"
             onClick={close}
           >
