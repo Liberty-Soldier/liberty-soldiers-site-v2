@@ -3,27 +3,28 @@ import { IRAN_MANUAL_TIMELINE } from "@/lib/timeline.manual.iran";
 import { fetchIranTimelineAuto } from "@/lib/timeline.fetch";
 import type { TimelineEvent } from "@/lib/timeline.types";
 
-export const revalidate = 120; // refresh often
+export const revalidate = 120;
 
 export async function GET() {
-  const auto = await fetchIranTimelineAuto();
+  // Key events (manual) — long history
+  const manual = [...IRAN_MANUAL_TIMELINE].sort((a, b) => b.ts - a.ts);
 
-  // Put manual events at top (but still sort everything by time)
-  const merged: TimelineEvent[] = [...IRAN_MANUAL_TIMELINE, ...auto];
+  // Live updates (auto) — recent window + cap
+  const autoAll = await fetchIranTimelineAuto();
 
-  // dedupe by url/title (manual should win if duplicates exist)
-  const seen = new Set<string>();
-  const out: TimelineEvent[] = [];
-  for (const e of merged.sort((a, b) => b.ts - a.ts)) {
-    const key = (e.url || e.title).toLowerCase().trim();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(e);
-  }
+  const days = 7; // ✅ change to 3, 7, 14 if you want
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+
+  const auto = autoAll
+    .filter((e) => e.ts >= cutoff)
+    .slice(0, 40); // ✅ cap the noise
+
+  // merge for backwards compatibility with your page
+  const events: TimelineEvent[] = [...manual, ...auto].sort((a, b) => b.ts - a.ts);
 
   return NextResponse.json({
     updatedAt: Date.now(),
-    count: out.length,
-    events: out,
+    count: events.length,
+    events,
   });
 }
