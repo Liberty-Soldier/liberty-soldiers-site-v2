@@ -42,10 +42,10 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/85 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur">
       {/* TOP STRIP */}
       <div className="border-b border-zinc-200 bg-gradient-to-r from-zinc-950 to-zinc-900 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-9 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between">
           <div className="flex items-center gap-3 text-xs font-semibold tracking-wide">
             <span className="inline-flex items-center gap-2">
               <span className="inline-flex h-2 w-2 rounded-full bg-red-500 motion-safe:animate-pulse" />
@@ -55,11 +55,11 @@ export default function Header() {
             <span className="hidden sm:inline text-white/80">{nowLabel}</span>
           </div>
 
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-2 text-xs">
             <Link
               href="/war-escalation"
               onClick={close}
-              className="hidden sm:inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 hover:bg-white/15"
+              className="hidden sm:inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 hover:bg-white/15"
             >
               <FaSatelliteDish className="h-3.5 w-3.5" />
               War Radar
@@ -67,7 +67,7 @@ export default function Header() {
             <Link
               href="/timeline/us-israel-iran-war-timeline"
               onClick={close}
-              className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 hover:bg-white/15"
+              className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 hover:bg-white/15"
             >
               <FaTimeline className="h-3.5 w-3.5" />
               Timeline
@@ -77,106 +77,111 @@ export default function Header() {
       </div>
 
       {/* MAIN BAR */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand */}
-        <Link href="/" className="flex items-center gap-3 group" onClick={close}>
-          <div className="relative">
-            <Image
-              src="/liberty-logo.png"
-              alt="Liberty Soldiers Logo"
-              width={42}
-              height={42}
-              className="rounded-full ring-2 ring-zinc-900/10 group-hover:ring-zinc-900/25 transition"
-              priority
-            />
-            <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-red-500 ring-2 ring-white" />
-          </div>
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
+        <div className="flex items-center justify-between gap-4">
+          {/* Brand */}
+          <Link href="/" className="flex items-center gap-3 group shrink-0" onClick={close}>
+            <div className="relative">
+              <Image
+                src="/liberty-logo.png"
+                alt="Liberty Soldiers Logo"
+                width={44}
+                height={44}
+                className="rounded-full ring-2 ring-zinc-900/10 group-hover:ring-zinc-900/25 transition"
+                priority
+              />
+              <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-red-500 ring-2 ring-white" />
+            </div>
 
-          <div className="leading-tight">
-            <div className="font-extrabold tracking-widest text-base sm:text-lg text-zinc-900">
+           <div className="leading-tight min-w-0">
+            <div className="font-extrabold tracking-widest text-base sm:text-lg text-zinc-900 whitespace-nowrap">
               LIBERTY SOLDIERS
             </div>
-            <div className="hidden sm:block text-[11px] text-zinc-600">
+          
+            {/* keep it one line, truncate if needed */}
+            <div className="hidden sm:block text-[11px] text-zinc-600 whitespace-nowrap overflow-hidden text-ellipsis">
               Signal over noise • Real-time monitoring
             </div>
           </div>
-        </Link>
-
-        {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-6">
-          <nav className="flex items-center gap-2 text-sm">
-            {NAV.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={close}
-                  className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-2 text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
-                >
-                  <Icon className="h-4 w-4 text-zinc-700" />
-                  <span className="font-semibold">{item.label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Primary CTA */}
-          <Link
-            href="/news"
-            onClick={close}
-            className="hidden lg:inline-flex items-center gap-2 rounded-full bg-zinc-900 px-4 py-2 text-sm font-extrabold text-white shadow-sm hover:bg-zinc-800 transition"
-            aria-label="Go to latest briefings"
-          >
-            <FaBolt className="h-4 w-4" />
-            Latest Briefings
           </Link>
 
-          {/* Socials */}
-          <div className="flex items-center gap-3 pl-2 border-l border-zinc-200">
-            <a
-              href="https://x.com/LibertySoldierz"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Liberty Soldiers on X"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-            >
-              <FaXTwitter className="h-4 w-4" />
-            </a>
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-4 min-w-0">
+            {/* square-ish buttons + wrap if needed */}
+            <nav className="flex flex-wrap items-center gap-2 min-w-0">
+              {NAV.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={close}
+                    className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+                  >
+                    <Icon className="h-4 w-4 text-zinc-700" />
+                    <span>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
 
-            <a
-              href="https://www.youtube.com/@LibertySoldiers"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Liberty Soldiers on YouTube"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+            {/* Primary CTA */}
+            <Link
+              href="/news"
+              onClick={close}
+              className="hidden lg:inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm hover:bg-zinc-800 transition shrink-0"
+              aria-label="Go to latest briefings"
             >
-              <FaYoutube className="h-4 w-4" />
-            </a>
+              <FaBolt className="h-4 w-4" />
+              Latest Briefings
+            </Link>
 
-            <a
-              href="https://rumble.com/c/LibertySoldiers"
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Liberty Soldiers on Rumble"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-            >
-              <FaPlay className="h-4 w-4" />
-            </a>
+            {/* Socials */}
+            <div className="flex items-center gap-2 pl-2 border-l border-zinc-200 shrink-0">
+              <a
+                href="https://x.com/LibertySoldierz"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Liberty Soldiers on X"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+              >
+                <FaXTwitter className="h-4 w-4" />
+              </a>
+
+              <a
+                href="https://www.youtube.com/@LibertySoldiers"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Liberty Soldiers on YouTube"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+              >
+                <FaYoutube className="h-4 w-4" />
+              </a>
+
+              <a
+                href="https://rumble.com/c/LibertySoldiers"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Liberty Soldiers on Rumble"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+              >
+                <FaPlay className="h-4 w-4" />
+              </a>
+            </div>
           </div>
-        </div>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="md:hidden inline-flex items-center gap-2 px-3 py-2 border border-zinc-300 rounded-xl text-sm font-semibold text-zinc-900 bg-white shadow-sm"
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          aria-label="Toggle menu"
-        >
-          <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-500 motion-safe:animate-pulse" />
-          Menu
-        </button>
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="md:hidden inline-flex items-center gap-2 px-4 py-2.5 border border-zinc-300 rounded-xl text-sm font-semibold text-zinc-900 bg-white shadow-sm shrink-0"
+            aria-expanded={open}
+            aria-controls="mobile-nav"
+            aria-label="Toggle menu"
+          >
+            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-500 motion-safe:animate-pulse" />
+            Menu
+          </button>
+        </div>
       </div>
 
       {/* Mobile dropdown */}
@@ -185,7 +190,6 @@ export default function Header() {
           id="mobile-nav"
           className="md:hidden bg-white border-t border-zinc-200 px-4 py-4 flex flex-col gap-3 text-base text-zinc-900"
         >
-          {/* quick CTA */}
           <Link
             href="/war-escalation"
             className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-950 text-white px-4 py-3 shadow-sm"
@@ -198,7 +202,6 @@ export default function Header() {
             <span className="text-xs text-white/80">LIVE</span>
           </Link>
 
-          {/* nav items */}
           <div className="grid grid-cols-2 gap-3">
             {NAV.map((item) => {
               const Icon = item.icon;
@@ -216,13 +219,12 @@ export default function Header() {
             })}
           </div>
 
-          {/* Socials (mobile) */}
           <div className="mt-2 flex items-center gap-3">
             <a
               href="https://x.com/LibertySoldierz"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
               aria-label="X"
               onClick={close}
             >
@@ -232,7 +234,7 @@ export default function Header() {
               href="https://www.youtube.com/@LibertySoldiers"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
               aria-label="YouTube"
               onClick={close}
             >
@@ -242,7 +244,7 @@ export default function Header() {
               href="https://rumble.com/c/LibertySoldiers"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-700"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
               aria-label="Rumble"
               onClick={close}
             >
