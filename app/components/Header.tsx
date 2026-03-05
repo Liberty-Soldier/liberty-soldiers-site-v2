@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -45,6 +45,14 @@ export default function Header() {
       return "";
     }
   }, []);
+
+  // prevent scroll behind mobile menu
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur">
@@ -109,9 +117,8 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop nav (ONE LINE, NO WRAP) */}
+          {/* Desktop nav (one line, smaller) */}
           <div className="hidden md:flex items-center gap-3 min-w-0 flex-1 justify-end">
-            {/* Nav cluster */}
             <div className="min-w-0 flex items-center gap-2 overflow-hidden">
               <nav className="flex items-center gap-2 whitespace-nowrap">
                 {NAV_LEFT.map((item) => {
@@ -148,7 +155,6 @@ export default function Header() {
               </nav>
             </div>
 
-            {/* CTA (xl+) */}
             <Link
               href="/news"
               onClick={close}
@@ -158,7 +164,6 @@ export default function Header() {
               Latest Briefings
             </Link>
 
-            {/* Socials */}
             <div className="flex items-center gap-2 pl-2 border-l border-zinc-200 shrink-0">
               <a
                 href="https://x.com/LibertySoldierz"
@@ -169,7 +174,6 @@ export default function Header() {
               >
                 <FaXTwitter className="h-4 w-4" />
               </a>
-
               <a
                 href="https://www.youtube.com/@LibertySoldiers"
                 target="_blank"
@@ -179,7 +183,6 @@ export default function Header() {
               >
                 <FaYoutube className="h-4 w-4" />
               </a>
-
               <a
                 href="https://rumble.com/c/LibertySoldiers"
                 target="_blank"
@@ -206,81 +209,81 @@ export default function Header() {
         </div>
       </div>
 
-     {/* Mobile dropdown */}
-{open && (
-  <>
-    <button
-      aria-label="Close menu backdrop"
-      onClick={close}
-      className="fixed inset-0 top-[104px] z-40 bg-black/10"
-    />
-
-    <nav
-      id="mobile-nav"
-      className="md:hidden fixed left-0 right-0 top-[104px] z-50 bg-white border-t border-zinc-200 px-4 py-4 flex flex-col gap-3 text-base text-zinc-900 shadow-lg"
-    >
-          <Link
-            href="/war-escalation"
-            className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-950 text-white px-4 py-3 shadow-sm"
+      {/* Mobile dropdown + backdrop */}
+      {open && (
+        <>
+          <button
+            aria-label="Close menu backdrop"
             onClick={close}
+            className="md:hidden fixed inset-0 top-[104px] z-40 bg-black/10"
+          />
+          <nav
+            id="mobile-nav"
+            className="md:hidden fixed left-0 right-0 top-[104px] z-50 bg-white border-t border-zinc-200 px-4 py-4 flex flex-col gap-3 text-base text-zinc-900 shadow-lg max-h-[calc(100vh-104px)] overflow-y-auto"
           >
-            <span className="flex items-center gap-3 font-extrabold">
-              <FaSatelliteDish className="h-5 w-5" />
-              War Radar
-            </span>
-            <span className="text-xs text-white/80">LIVE</span>
-          </Link>
+            <Link
+              href="/war-escalation"
+              className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-950 text-white px-4 py-3 shadow-sm"
+              onClick={close}
+            >
+              <span className="flex items-center gap-3 font-extrabold">
+                <FaSatelliteDish className="h-5 w-5" />
+                War Radar
+              </span>
+              <span className="text-xs text-white/80">LIVE</span>
+            </Link>
 
-          <div className="grid grid-cols-2 gap-3">
-            {NAV_ALL.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex items-center gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-3 py-3 hover:bg-zinc-100"
-                  onClick={close}
-                >
-                  <Icon className="h-4 w-4 text-zinc-700" />
-                  <span className="font-semibold">{item.label}</span>
-                </Link>
-              );
-            })}
-          </div>
+            <div className="grid grid-cols-2 gap-3">
+              {NAV_ALL.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex items-center gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 px-3 py-3 hover:bg-zinc-100"
+                    onClick={close}
+                  >
+                    <Icon className="h-4 w-4 text-zinc-700" />
+                    <span className="font-semibold">{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
 
-          <div className="mt-2 flex items-center gap-3">
-            <a
-              href="https://x.com/LibertySoldierz"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
-              aria-label="X"
-              onClick={close}
-            >
-              <FaXTwitter />
-            </a>
-            <a
-              href="https://www.youtube.com/@LibertySoldiers"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
-              aria-label="YouTube"
-              onClick={close}
-            >
-              <FaYoutube />
-            </a>
-            <a
-              href="https://rumble.com/c/LibertySoldiers"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
-              aria-label="Rumble"
-              onClick={close}
-            >
-              <FaPlay />
-            </a>
-          </div>
-        </nav>
+            <div className="mt-2 flex items-center gap-3">
+              <a
+                href="https://x.com/LibertySoldierz"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
+                aria-label="X"
+                onClick={close}
+              >
+                <FaXTwitter />
+              </a>
+              <a
+                href="https://www.youtube.com/@LibertySoldiers"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
+                aria-label="YouTube"
+                onClick={close}
+              >
+                <FaYoutube />
+              </a>
+              <a
+                href="https://rumble.com/c/LibertySoldiers"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
+                aria-label="Rumble"
+                onClick={close}
+              >
+                <FaPlay />
+              </a>
+            </div>
+          </nav>
+        </>
       )}
     </header>
   );
