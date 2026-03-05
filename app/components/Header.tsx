@@ -39,11 +39,11 @@ export default function Header() {
           </Link>
         
           <Link href="/war-escalation" className="hover:text-zinc-600">
-            War Radar
+            Us-Iran War Radar
           </Link>
 
            <Link href="/timeline/us-israel-iran-war-timeline" className="hover:text-zinc-600">
-            Timeline
+            Us-Iran War Timeline
           </Link>
                   
           <Link href="/reports" className="hover:text-zinc-600">
