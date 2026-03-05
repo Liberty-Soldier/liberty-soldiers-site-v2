@@ -62,7 +62,7 @@ export default function Header() {
               className="hidden sm:inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 hover:bg-white/15"
             >
               <FaSatelliteDish className="h-3.5 w-3.5" />
-              War Radar
+              US-Iran War Updates
             </Link>
             <Link
               href="/timeline/us-israel-iran-war-timeline"
@@ -70,7 +70,7 @@ export default function Header() {
               className="inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 hover:bg-white/15"
             >
               <FaTimeline className="h-3.5 w-3.5" />
-              Timeline
+              US-Iran War Timeline
             </Link>
           </div>
         </div>
