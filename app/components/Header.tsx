@@ -131,67 +131,89 @@ export default function Header() {
               </nav>
 
               {/* Right nav */}
-              <nav className="flex items-center gap-2 border-l border-zinc-200 pl-4">
-                {NAV_RIGHT.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={close}
-                      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
-                    >
-                      <Icon className="h-4 w-4 text-zinc-700" />
-                      {item.label}
-                    </Link>
-                  );
-                })}
-              </nav>
-            </div>
+              <div className="hidden md:flex items-center gap-3 min-w-0 flex-1 justify-end">
+  {/* NAV (no wrap) */}
+  <div className="min-w-0 flex items-center gap-2 overflow-hidden">
+    {/* Left nav */}
+    <nav className="flex items-center gap-2 whitespace-nowrap">
+      {NAV_LEFT.map((item) => {
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={close}
+            className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-2 text-[12px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+          >
+            <Icon className="h-3.5 w-3.5 text-zinc-700" />
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
 
-            {/* CTA */}
-            <Link
-              href="/news"
-              onClick={close}
-              className="hidden lg:inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm hover:bg-zinc-800 transition shrink-0"
-            >
-              <FaBolt className="h-4 w-4" />
-              Latest Briefings
-            </Link>
+    {/* Right nav (hide on medium widths to avoid overlap) */}
+    <nav className="hidden lg:flex items-center gap-2 border-l border-zinc-200 pl-2 whitespace-nowrap">
+      {NAV_RIGHT.map((item) => {
+        const Icon = item.icon;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={close}
+            className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-2 text-[12px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+          >
+            <Icon className="h-3.5 w-3.5 text-zinc-700" />
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  </div>
 
-            {/* Socials */}
-            <div className="flex items-center gap-2 pl-2 border-l border-zinc-200 shrink-0">
-              <a
-                href="https://x.com/LibertySoldierz"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Liberty Soldiers on X"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-              >
-                <FaXTwitter className="h-4 w-4" />
-              </a>
+  {/* CTA (only show on xl to guarantee no overlap) */}
+  <Link
+    href="/news"
+    onClick={close}
+    className="hidden xl:inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-3 py-2 text-[12px] font-extrabold text-white shadow-sm hover:bg-zinc-800 transition shrink-0"
+  >
+    <FaBolt className="h-3.5 w-3.5" />
+    Latest Briefings
+  </Link>
 
-              <a
-                href="https://www.youtube.com/@LibertySoldiers"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Liberty Soldiers on YouTube"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-              >
-                <FaYoutube className="h-4 w-4" />
-              </a>
+  {/* Socials (always visible, fixed width) */}
+  <div className="flex items-center gap-2 pl-2 border-l border-zinc-200 shrink-0">
+    <a
+      href="https://x.com/LibertySoldierz"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Liberty Soldiers on X"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+    >
+      <FaXTwitter className="h-4 w-4" />
+    </a>
 
-              <a
-                href="https://rumble.com/c/LibertySoldiers"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Liberty Soldiers on Rumble"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-              >
-                <FaPlay className="h-4 w-4" />
-              </a>
-            </div>
-          </div>
+    <a
+      href="https://www.youtube.com/@LibertySoldiers"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Liberty Soldiers on YouTube"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+    >
+      <FaYoutube className="h-4 w-4" />
+    </a>
+
+    <a
+      href="https://rumble.com/c/LibertySoldiers"
+      target="_blank"
+      rel="noreferrer"
+      aria-label="Liberty Soldiers on Rumble"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+    >
+      <FaPlay className="h-4 w-4" />
+    </a>
+  </div>
+</div>
 
           {/* Mobile menu button */}
           <button
