@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 
 export const revalidate = 120;
 
@@ -39,9 +40,18 @@ function fmt(ts: number) {
   }
 }
 
+// ✅ Build an absolute URL for server-side fetch (fixes Vercel ERR_INVALID_URL)
+function absoluteUrl(path: string) {
+  const h = headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  const proto = h.get("x-forwarded-proto") ?? "https";
+  return `${proto}://${host}${path}`;
+}
+
 export default async function TimelinePage() {
-  // ✅ relative fetch (works everywhere)
-  const res = await fetch("/api/timeline/iran", {
+  const url = absoluteUrl("/api/timeline/iran");
+
+  const res = await fetch(url, {
     next: { revalidate: 120 },
   });
 
@@ -71,7 +81,8 @@ export default async function TimelinePage() {
           US–Israel–Iran War Timeline
         </h1>
         <p className="mt-2 text-zinc-600">
-          Key escalation events in sequence — updated frequently to separate signal from noise.
+          Key escalation events in sequence — updated frequently to separate
+          signal from noise.
         </p>
         <p className="mt-1 text-sm text-zinc-500">
           Updated: {fmt(data?.updatedAt ?? Date.now())} • Items: {events.length}
@@ -109,7 +120,9 @@ function EventCard({ e }: { e: TimelineEvent }) {
           <div className="text-xs text-zinc-500">{fmt(e.ts)}</div>
           <h3 className="mt-1 font-semibold text-zinc-900">{e.title}</h3>
 
-          {e.summary && <p className="mt-1 text-sm text-zinc-700">{e.summary}</p>}
+          {e.summary && (
+            <p className="mt-1 text-sm text-zinc-700">{e.summary}</p>
+          )}
 
           <div className="mt-2 flex flex-wrap items-center gap-2">
             {e.kind === "manual" && (
