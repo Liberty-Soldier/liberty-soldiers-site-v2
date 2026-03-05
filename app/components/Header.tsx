@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaXTwitter, FaYoutube, FaPlay, FaNewspaper, FaFileLines, FaVideo } from "react-icons/fa6";
+import { FaXTwitter, FaYoutube, FaPlay, FaNewspaper, FaFileLines, FaVideo, FaMagnifyingGlass } from "react-icons/fa6";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -44,6 +44,10 @@ export default function Header() {
         
           <Link href="/reports" className="hover:text-zinc-600">
             Reports
+          </Link>
+
+           <Link href="/search" className="hover:text-zinc-600">
+            Search
           </Link>
         
           <Link href="/videos" className="hover:text-zinc-600">
@@ -144,6 +148,15 @@ export default function Header() {
             <span>Videos</span>
           </Link>
 
+          <Link
+            href="/search"
+            className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3 hover:bg-zinc-100"
+            onClick={close}
+          >
+            <FaMagnifyingGlass className="h-4 w-4 text-zinc-600" />
+            <span>Search</span>
+          </Link>
+          
           <Link
             href="/store"
             className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3 hover:bg-zinc-100"
