@@ -90,7 +90,10 @@ const iranItems = all
   })
   .slice(0, 24);
 
-   const jsonLd = {
+  const nowIso = new Date().toISOString();
+
+const jsonLd = [
+  {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "Liberty Soldiers",
@@ -98,7 +101,32 @@ const iranItems = all
     description:
       "Independent analysis examining power, perception, media narratives, and emerging systems shaping the world.",
     sameAs: ["https://www.youtube.com/@LibertySoldiers"],
-  };
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Liberty Soldiers",
+    url: "https://libertysoldiers.com/",
+    dateModified: nowIso,
+    publisher: {
+      "@type": "Organization",
+      name: "Liberty Soldiers",
+      url: "https://libertysoldiers.com/",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
+    url: "https://libertysoldiers.com/",
+    dateModified: nowIso,
+    isPartOf: {
+      "@type": "WebSite",
+      name: "Liberty Soldiers",
+      url: "https://libertysoldiers.com/",
+    },
+  },
+];
 
   return (
     <div>
@@ -364,6 +392,7 @@ const iranItems = all
     </div>
   );
 }
+
 
 
 
