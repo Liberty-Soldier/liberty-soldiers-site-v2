@@ -16,12 +16,15 @@ import {
   FaBolt,
 } from "react-icons/fa6";
 
-const NAV = [
+const NAV_LEFT = [
   { href: "/news", label: "News", icon: FaNewspaper },
   { href: "/war-escalation", label: "War Radar", icon: FaSatelliteDish },
   { href: "/timeline/us-israel-iran-war-timeline", label: "Timeline", icon: FaTimeline },
   { href: "/reports", label: "Reports", icon: FaFileLines },
   { href: "/search", label: "Search", icon: FaMagnifyingGlass },
+];
+
+const NAV_RIGHT = [
   { href: "/videos", label: "Videos", icon: FaVideo },
   { href: "/store", label: "Store", icon: FaBolt },
 ];
@@ -108,8 +111,45 @@ export default function Header() {
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-4 min-w-0">
             {/* square-ish buttons + wrap if needed */}
-            <nav className="flex flex-wrap items-center gap-2 min-w-0">
-              {NAV.map((item) => {
+           <div className="flex items-center gap-6">
+
+  {/* Left nav */}
+  <nav className="flex items-center gap-2">
+    {NAV_LEFT.map((item) => {
+      const Icon = item.icon;
+      return (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={close}
+          className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+        >
+          <Icon className="h-4 w-4 text-zinc-700" />
+          {item.label}
+        </Link>
+      );
+    })}
+  </nav>
+
+  {/* Right nav */}
+  <nav className="flex items-center gap-2 border-l border-zinc-200 pl-4">
+    {NAV_RIGHT.map((item) => {
+      const Icon = item.icon;
+      return (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={close}
+          className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+        >
+          <Icon className="h-4 w-4 text-zinc-700" />
+          {item.label}
+        </Link>
+      );
+    })}
+  </nav>
+
+</div>
                 const Icon = item.icon;
                 return (
                   <Link
