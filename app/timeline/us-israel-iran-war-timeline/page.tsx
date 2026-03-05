@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 export const revalidate = 120;
 
 const SITE = "https://libertysoldiers.com";
-const CANONICAL = `${SITE}/us-israel-iran-war-timeline`;
+const CANONICAL = `${SITE}/timeline/us-israel-iran-war-timeline`;
 
 export const metadata: Metadata = {
   title: "US–Israel–Iran War Timeline | Liberty Soldiers",
