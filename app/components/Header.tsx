@@ -92,9 +92,9 @@ export default function Header() {
 
       {/* MAIN BAR */}
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center justify-between gap-3">
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-3 group min-w-0" onClick={close}>
+          <Link href="/" className="flex items-center gap-3 group min-w-0 flex-1" onClick={close}>
             <div className="relative shrink-0">
               <Image
                 src="/liberty-logo.png"
@@ -108,7 +108,7 @@ export default function Header() {
             </div>
 
             <div className="leading-tight min-w-0">
-              <div className="font-extrabold tracking-widest text-base sm:text-lg text-zinc-900 whitespace-nowrap">
+             <div className="font-extrabold tracking-widest text-base sm:text-lg text-zinc-900 whitespace-nowrap overflow-hidden text-ellipsis max-w-[52vw]">
                 LIBERTY SOLDIERS
               </div>
               <div className="hidden sm:block text-[11px] text-zinc-600 whitespace-nowrap overflow-hidden text-ellipsis">
