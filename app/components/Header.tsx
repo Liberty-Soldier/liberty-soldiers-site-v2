@@ -109,11 +109,11 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-4 min-w-0">
-            <div className="flex items-center gap-6 min-w-0">
-              {/* Left nav */}
-              <nav className="flex items-center gap-2 min-w-0">
+          {/* Desktop nav (ONE LINE, NO WRAP) */}
+          <div className="hidden md:flex items-center gap-3 min-w-0 flex-1 justify-end">
+            {/* Nav cluster */}
+            <div className="min-w-0 flex items-center gap-2 overflow-hidden">
+              <nav className="flex items-center gap-2 whitespace-nowrap">
                 {NAV_LEFT.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -121,99 +121,76 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={close}
-                      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+                      className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-2 text-[12px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
                     >
-                      <Icon className="h-4 w-4 text-zinc-700" />
+                      <Icon className="h-3.5 w-3.5 text-zinc-700" />
                       {item.label}
                     </Link>
                   );
                 })}
               </nav>
 
-              {/* Right nav */}
-              <div className="hidden md:flex items-center gap-3 min-w-0 flex-1 justify-end">
-  {/* NAV (no wrap) */}
-  <div className="min-w-0 flex items-center gap-2 overflow-hidden">
-    {/* Left nav */}
-    <nav className="flex items-center gap-2 whitespace-nowrap">
-      {NAV_LEFT.map((item) => {
-        const Icon = item.icon;
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={close}
-            className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-2 text-[12px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
-          >
-            <Icon className="h-3.5 w-3.5 text-zinc-700" />
-            {item.label}
-          </Link>
-        );
-      })}
-    </nav>
+              <nav className="hidden lg:flex items-center gap-2 border-l border-zinc-200 pl-2 whitespace-nowrap">
+                {NAV_RIGHT.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={close}
+                      className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-2 text-[12px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+                    >
+                      <Icon className="h-3.5 w-3.5 text-zinc-700" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
 
-    {/* Right nav (hide on medium widths to avoid overlap) */}
-    <nav className="hidden lg:flex items-center gap-2 border-l border-zinc-200 pl-2 whitespace-nowrap">
-      {NAV_RIGHT.map((item) => {
-        const Icon = item.icon;
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={close}
-            className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-2 text-[12px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
-          >
-            <Icon className="h-3.5 w-3.5 text-zinc-700" />
-            {item.label}
-          </Link>
-        );
-      })}
-    </nav>
-  </div>
+            {/* CTA (xl+) */}
+            <Link
+              href="/news"
+              onClick={close}
+              className="hidden xl:inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-3 py-2 text-[12px] font-extrabold text-white shadow-sm hover:bg-zinc-800 transition shrink-0"
+            >
+              <FaBolt className="h-3.5 w-3.5" />
+              Latest Briefings
+            </Link>
 
-  {/* CTA (only show on xl to guarantee no overlap) */}
-  <Link
-    href="/news"
-    onClick={close}
-    className="hidden xl:inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-3 py-2 text-[12px] font-extrabold text-white shadow-sm hover:bg-zinc-800 transition shrink-0"
-  >
-    <FaBolt className="h-3.5 w-3.5" />
-    Latest Briefings
-  </Link>
+            {/* Socials */}
+            <div className="flex items-center gap-2 pl-2 border-l border-zinc-200 shrink-0">
+              <a
+                href="https://x.com/LibertySoldierz"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Liberty Soldiers on X"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+              >
+                <FaXTwitter className="h-4 w-4" />
+              </a>
 
-  {/* Socials (always visible, fixed width) */}
-  <div className="flex items-center gap-2 pl-2 border-l border-zinc-200 shrink-0">
-    <a
-      href="https://x.com/LibertySoldierz"
-      target="_blank"
-      rel="noreferrer"
-      aria-label="Liberty Soldiers on X"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-    >
-      <FaXTwitter className="h-4 w-4" />
-    </a>
+              <a
+                href="https://www.youtube.com/@LibertySoldiers"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Liberty Soldiers on YouTube"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+              >
+                <FaYoutube className="h-4 w-4" />
+              </a>
 
-    <a
-      href="https://www.youtube.com/@LibertySoldiers"
-      target="_blank"
-      rel="noreferrer"
-      aria-label="Liberty Soldiers on YouTube"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-    >
-      <FaYoutube className="h-4 w-4" />
-    </a>
-
-    <a
-      href="https://rumble.com/c/LibertySoldiers"
-      target="_blank"
-      rel="noreferrer"
-      aria-label="Liberty Soldiers on Rumble"
-      className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-    >
-      <FaPlay className="h-4 w-4" />
-    </a>
-  </div>
-</div>
+              <a
+                href="https://rumble.com/c/LibertySoldiers"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Liberty Soldiers on Rumble"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+              >
+                <FaPlay className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
 
           {/* Mobile menu button */}
           <button
@@ -229,12 +206,19 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile dropdown */}
-      {open && (
-        <nav
-          id="mobile-nav"
-          className="md:hidden bg-white border-t border-zinc-200 px-4 py-4 flex flex-col gap-3 text-base text-zinc-900"
-        >
+     {/* Mobile dropdown */}
+{open && (
+  <>
+    <button
+      aria-label="Close menu backdrop"
+      onClick={close}
+      className="fixed inset-0 top-[104px] z-40 bg-black/10"
+    />
+
+    <nav
+      id="mobile-nav"
+      className="md:hidden fixed left-0 right-0 top-[104px] z-50 bg-white border-t border-zinc-200 px-4 py-4 flex flex-col gap-3 text-base text-zinc-900 shadow-lg"
+    >
           <Link
             href="/war-escalation"
             className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-950 text-white px-4 py-3 shadow-sm"
