@@ -119,7 +119,7 @@ export default function Header() {
 
           {/* Desktop nav (one line, smaller) */}
           <div className="hidden md:flex items-center gap-3 min-w-0 flex-1 justify-end">
-            <div className="min-w-0 flex items-center gap-2 overflow-hidden">
+           <div className="min-w-0 flex items-center gap-2 overflow-x-auto overflow-y-hidden no-scrollbar">
               <nav className="flex items-center gap-2 whitespace-nowrap">
                 {NAV_LEFT.map((item) => {
                   const Icon = item.icon;
@@ -128,7 +128,7 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={close}
-                      className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2.5 py-2 text-[12px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+                      className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-[11px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
                     >
                       <Icon className="h-3.5 w-3.5 text-zinc-700" />
                       {item.label}
