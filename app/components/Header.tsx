@@ -29,6 +29,8 @@ const NAV_RIGHT = [
   { href: "/store", label: "Store", icon: FaBolt },
 ];
 
+const NAV_ALL = [...NAV_LEFT, ...NAV_RIGHT];
+
 export default function Header() {
   const [open, setOpen] = useState(false);
 
@@ -67,6 +69,7 @@ export default function Header() {
               <FaSatelliteDish className="h-3.5 w-3.5" />
               US-Iran War Updates
             </Link>
+
             <Link
               href="/timeline/us-israel-iran-war-timeline"
               onClick={close}
@@ -83,8 +86,8 @@ export default function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-4">
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-3 group shrink-0" onClick={close}>
-            <div className="relative">
+          <Link href="/" className="flex items-center gap-3 group min-w-0" onClick={close}>
+            <div className="relative shrink-0">
               <Image
                 src="/liberty-logo.png"
                 alt="Liberty Soldiers Logo"
@@ -96,81 +99,61 @@ export default function Header() {
               <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-red-500 ring-2 ring-white" />
             </div>
 
-           <div className="leading-tight min-w-0">
-            <div className="font-extrabold tracking-widest text-base sm:text-lg text-zinc-900 whitespace-nowrap">
-              LIBERTY SOLDIERS
+            <div className="leading-tight min-w-0">
+              <div className="font-extrabold tracking-widest text-base sm:text-lg text-zinc-900 whitespace-nowrap">
+                LIBERTY SOLDIERS
+              </div>
+              <div className="hidden sm:block text-[11px] text-zinc-600 whitespace-nowrap overflow-hidden text-ellipsis">
+                Signal over noise • Real-time monitoring
+              </div>
             </div>
-          
-            {/* keep it one line, truncate if needed */}
-            <div className="hidden sm:block text-[11px] text-zinc-600 whitespace-nowrap overflow-hidden text-ellipsis">
-              Signal over noise • Real-time monitoring
-            </div>
-          </div>
           </Link>
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-4 min-w-0">
-            {/* square-ish buttons + wrap if needed */}
-           <div className="flex items-center gap-6">
+            <div className="flex items-center gap-6 min-w-0">
+              {/* Left nav */}
+              <nav className="flex items-center gap-2 min-w-0">
+                {NAV_LEFT.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={close}
+                      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+                    >
+                      <Icon className="h-4 w-4 text-zinc-700" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
 
-  {/* Left nav */}
-  <nav className="flex items-center gap-2">
-    {NAV_LEFT.map((item) => {
-      const Icon = item.icon;
-      return (
-        <Link
-          key={item.href}
-          href={item.href}
-          onClick={close}
-          className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
-        >
-          <Icon className="h-4 w-4 text-zinc-700" />
-          {item.label}
-        </Link>
-      );
-    })}
-  </nav>
+              {/* Right nav */}
+              <nav className="flex items-center gap-2 border-l border-zinc-200 pl-4">
+                {NAV_RIGHT.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={close}
+                      className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+                    >
+                      <Icon className="h-4 w-4 text-zinc-700" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
 
-  {/* Right nav */}
-  <nav className="flex items-center gap-2 border-l border-zinc-200 pl-4">
-    {NAV_RIGHT.map((item) => {
-      const Icon = item.icon;
-      return (
-        <Link
-          key={item.href}
-          href={item.href}
-          onClick={close}
-          className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
-        >
-          <Icon className="h-4 w-4 text-zinc-700" />
-          {item.label}
-        </Link>
-      );
-    })}
-  </nav>
-
-</div>
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={close}
-                    className="inline-flex items-center gap-2 rounded-xl border border-zinc-200 bg-white px-3 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
-                  >
-                    <Icon className="h-4 w-4 text-zinc-700" />
-                    <span>{item.label}</span>
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Primary CTA */}
+            {/* CTA */}
             <Link
               href="/news"
               onClick={close}
               className="hidden lg:inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-extrabold text-white shadow-sm hover:bg-zinc-800 transition shrink-0"
-              aria-label="Go to latest briefings"
             >
               <FaBolt className="h-4 w-4" />
               Latest Briefings
@@ -243,7 +226,7 @@ export default function Header() {
           </Link>
 
           <div className="grid grid-cols-2 gap-3">
-            {NAV.map((item) => {
+            {NAV_ALL.map((item) => {
               const Icon = item.icon;
               return (
                 <Link
