@@ -156,8 +156,6 @@ function EventCard({ e }: { e: TimelineEvent }) {
         {e.url && (
           <a
             href={e.url}
-            target="_blank"
-            rel="noreferrer"
             className="shrink-0 text-sm font-semibold text-zinc-900 underline decoration-zinc-300 hover:decoration-zinc-900"
           >
             Source
