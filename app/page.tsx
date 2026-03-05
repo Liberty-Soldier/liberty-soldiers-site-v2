@@ -103,21 +103,41 @@ const jsonLd = [
     sameAs: ["https://www.youtube.com/@LibertySoldiers"],
   },
   {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "Liberty Soldiers",
-    url: "https://libertysoldiers.com/",
-    dateModified: nowIso,
-    publisher: {
-      "@type": "Organization",
-      name: "Liberty Soldiers",
-      url: "https://libertysoldiers.com/",
-    },
+  "@context": "https://schema.org",
+  "@type": "NewsMediaOrganization",
+  name: "Liberty Soldiers",
+  url: "https://libertysoldiers.com/",
+  logo: {
+    "@type": "ImageObject",
+    url: "https://libertysoldiers.com/logo.png"
   },
+  sameAs: [
+    "https://www.youtube.com/@LibertySoldiers",
+    "https://x.com/LibertySoldierz"
+  ],
+  publishingPrinciples: "https://libertysoldiers.com/about"
+},
+ {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Liberty Soldiers",
+  url: "https://libertysoldiers.com/",
+  dateModified: nowIso,
+  publisher: {
+    "@type": "Organization",
+    name: "Liberty Soldiers",
+    url: "https://libertysoldiers.com/"
+  },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: "https://libertysoldiers.com/search?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+},
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
+    name: "Liberty Soldiers | Geopolitics, Global Conflict & Power Analysis",
     url: "https://libertysoldiers.com/",
     dateModified: nowIso,
     isPartOf: {
@@ -392,6 +412,7 @@ const jsonLd = [
     </div>
   );
 }
+
 
 
 
