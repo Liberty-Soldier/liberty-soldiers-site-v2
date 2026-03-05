@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaXTwitter, FaYoutube, FaPlay, FaNewspaper, FaFileLines, FaVideo, FaMagnifyingGlass } from "react-icons/fa6";
+import { FaXTwitter, FaYoutube, FaPlay, FaNewspaper, FaFileLines, FaVideo, FaMagnifyingGlass, FaTimeline } from "react-icons/fa6";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -41,7 +41,11 @@ export default function Header() {
           <Link href="/war-escalation" className="hover:text-zinc-600">
             War Radar
           </Link>
-        
+
+           <Link href="/us-israel-iran-war-timeline" className="hover:text-zinc-600">
+            Timeline
+          </Link>
+                  
           <Link href="/reports" className="hover:text-zinc-600">
             Reports
           </Link>
@@ -127,6 +131,15 @@ export default function Header() {
           >
             <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
             <span>War & Escalation</span>
+          </Link>
+
+          <Link
+            href="/us-israel-iran-war-timeline"
+            className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-3 hover:bg-zinc-100"
+            onClick={close}
+          >
+            <FaTimeline className="h-4 w-4 text-zinc-600" />
+            <span>Timeline</span>
           </Link>
 
           <Link
