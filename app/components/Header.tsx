@@ -94,7 +94,7 @@ export default function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between gap-3">
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-3 group min-w-0 flex-1" onClick={close}>
+          <Link href="/" className="flex items-center gap-3 group min-w-0 shrink-0" onClick={close}>
             <div className="relative shrink-0">
               <Image
                 src="/liberty-logo.png"
@@ -118,9 +118,9 @@ export default function Header() {
           </Link>
 
           {/* Desktop nav (one line, smaller) */}
-          <div className="hidden md:flex items-center gap-3 min-w-0 flex-1">
+          <div className="hidden md:flex items-center gap-3 min-w-0 flex-1 justify-start ml-6">
            <div className="min-w-0 flex items-center gap-2">
-              <nav className="flex items-center gap-2 whitespace-nowrap">
+              <nav className="flex flex-wrap items-center gap-2">
                 {NAV_LEFT.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -137,7 +137,7 @@ export default function Header() {
                 })}
               </nav>
 
-              <nav className="hidden lg:flex items-center gap-2 border-l border-zinc-200 pl-2 whitespace-nowrap">
+              <nav className="hidden lg:flex flex-wrap items-center gap-2 border-l border-zinc-200 pl-2">
                 {NAV_RIGHT.map((item) => {
                   const Icon = item.icon;
                   return (
