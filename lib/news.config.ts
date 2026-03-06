@@ -55,7 +55,8 @@ export const NEWS_FEEDS: NewsFeed[] = [
   // “Their side” / regional narratives (English)
   { url: "https://www.tehrantimes.com/rss", category: "iran-war" }, // Tehran Times :contentReference[oaicite:5]{index=5}
   { url: "https://www.presstv.ir/rss.xml", category: "iran-war" }, // PressTV (common public endpoint) :contentReference[oaicite:6]{index=6}
-
+  { url: "https://english.alarabiya.net/tools/mrss", category: "world"},
+  
   // Russia state-wire perspective (useful for “what Russia says”)
   { url: "https://tass.com/rss/v2.xml", category: "iran-war" }, // TASS :contentReference[oaicite:7]{index=7}
 
@@ -149,6 +150,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
