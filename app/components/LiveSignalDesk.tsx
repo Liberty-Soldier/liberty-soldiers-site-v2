@@ -8,7 +8,7 @@ const PRIMARY_FEED = {
   description:
     "Sky News live coverage of global politics, conflict, and major international developments.",
   embedUrl:
-    "https://www.youtube.com/embed/YDvsBbKfLPA?autoplay=1&mute=1&playsinline=1&cc_load_policy=1",
+    "https://www.youtube.com/embed/YDvsBbKfLPA?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
   href: "https://www.youtube.com/watch?v=YDvsBbKfLPA",
 }
 
@@ -21,7 +21,7 @@ const SECONDARY_FEEDS = [
   description:
     "Bloomberg Television live coverage of global markets, geopolitics, and economic developments.",
   embedUrl:
-    "https://www.youtube.com/embed/iEpJwprxDdk?autoplay=1&mute=1&playsinline=1&cc_load_policy=1",
+    "https://www.youtube.com/embed/iEpJwprxDdk?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
   href: "https://www.youtube.com/watch?v=iEpJwprxDdk",
 },
   {
@@ -32,7 +32,7 @@ const SECONDARY_FEEDS = [
   description:
     "DW News live coverage from Europe with global reporting on geopolitics, economics, and international developments.",
   embedUrl:
-    "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1&cc_load_policy=1",
+    "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
   href: "https://www.youtube.com/watch?v=LuKwFajn37U",
 }
 ];
