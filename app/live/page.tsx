@@ -42,7 +42,7 @@ const FEEDS = [
     description:
       "Bloomberg Television live coverage of global markets, geopolitics, and economic developments.",
     embedUrl:
-      "https://www.youtube.com/embed/iEpJwprxDdk?autoplay=1&mute=1&playsinline=1&cc_load_policy=1",
+      "https://www.youtube.com/embed/iEpJwprxDdk?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
     href: "https://www.youtube.com/watch?v=iEpJwprxDdk",
     featured: true,
   },
@@ -54,7 +54,7 @@ const FEEDS = [
     description:
       "Broad live coverage across conflict zones, regional power shifts, and diplomatic escalation.",
     embedUrl:
-      "https://www.youtube.com/embed/bNyUyrR0PHo?autoplay=1&mute=1&playsinline=1&cc_load_policy=1",
+      "https://www.youtube.com/embed/bNyUyrR0PHo?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
     href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
   },
   {
@@ -65,7 +65,7 @@ const FEEDS = [
     description:
       "International live desk covering geopolitical shifts, world events, and policy developments.",
     embedUrl:
-      "https://www.youtube.com/embed/l8PMl7tUDIE?autoplay=1&mute=1&playsinline=1&cc_load_policy=1",
+      "https://www.youtube.com/embed/l8PMl7tUDIE?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
     href: "https://www.youtube.com/watch?v=l8PMl7tUDIE",
   },
   {
@@ -76,7 +76,7 @@ const FEEDS = [
     description:
       "DW News live coverage from Europe with global reporting on geopolitics, economics, and international developments.",
     embedUrl:
-      "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1&cc_load_policy=1",
+      "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
     href: "https://www.youtube.com/watch?v=LuKwFajn37U",
   },
   {
@@ -87,7 +87,7 @@ const FEEDS = [
     description:
       "Sky News live coverage of global politics, conflict, and major international developments.",
     embedUrl:
-      "https://www.youtube.com/embed/YDvsBbKfLPA?autoplay=1&mute=1&playsinline=1&cc_load_policy=1",
+      "https://www.youtube.com/embed/YDvsBbKfLPA?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
     href: "https://www.youtube.com/watch?v=YDvsBbKfLPA",
   },
   {
@@ -98,7 +98,7 @@ const FEEDS = [
     description:
       "CBS News live coverage of breaking global events and major geopolitical developments.",
     embedUrl:
-      "https://www.youtube.com/embed/E0XsFF5ySr0?autoplay=1&mute=1&playsinline=1&cc_load_policy=1",
+      "https://www.youtube.com/embed/E0XsFF5ySr0?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
     href: "https://www.youtube.com/watch?v=E0XsFF5ySr0",
   },
 ];
