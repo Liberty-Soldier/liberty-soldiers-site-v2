@@ -1,35 +1,39 @@
 import LiveFeedPanel from "./LiveFeedPanel";
 
 const PRIMARY_FEED = {
-  title: "Al Jazeera English Live",
-  source: "Al Jazeera English",
-  region: "Middle East / Global",
+  title: "Reuters Live",
+  source: "Reuters",
+  region: "Global",
   status: "LIVE",
   description:
-    "Broad live coverage across the Middle East, diplomacy, conflict zones, and international breaking news.",
-  embedUrl: "https://www.youtube.com/embed/bNyUyrR0PHo",
-  href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
+    "Global live coverage from Reuters focusing on major geopolitical and economic developments.",
+  embedUrl:
+    "https://www.youtube.com/embed/NMre6IAAAiU?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=NMre6IAAAiU",
 };
 
 const SECONDARY_FEEDS = [
   {
-    title: "France 24 English Live",
-    source: "France 24",
-    region: "Europe / Global",
+    title: "Sky News Live",
+    source: "Sky News",
+    region: "UK / Global",
     status: "LIVE",
     description:
-      "International live desk coverage tracking geopolitical developments, conflict, and global policy shifts.",
-    embedUrl: "https://www.youtube.com/embed/l8PMl7tUDIE",
-    href: "https://www.youtube.com/watch?v=l8PMl7tUDIE",
+      "24-hour English language rolling news coverage of global events.",
+    embedUrl:
+      "https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&playsinline=1",
+    href: "https://www.youtube.com/watch?v=9Auq9mYxFEE",
   },
   {
-    title: "Iran Monitoring Feed",
-    source: "Iran International",
-    region: "Iran / West Asia",
-    status: "MONITORING",
+    title: "NBC News Now",
+    source: "NBC News",
+    region: "US / Global",
+    status: "LIVE",
     description:
-      "Iran-focused live source slot. Opens externally while embeddable Iran feeds are being verified.",
-    href: "https://www.iranintl.com/live",
+      "US-based live coverage and global breaking news monitoring.",
+    embedUrl:
+      "https://www.youtube.com/embed/UeP-u7C2UlM?autoplay=1&mute=1&playsinline=1",
+    href: "https://www.youtube.com/watch?v=UeP-u7C2UlM",
   },
 ];
 
