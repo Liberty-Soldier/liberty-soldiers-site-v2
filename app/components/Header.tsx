@@ -14,12 +14,11 @@ import {
   FaTimeline,
   FaSatelliteDish,
   FaBolt,
-  FaBroadcastTower,
 } from "react-icons/fa6";
 
 const NAV_LEFT = [
   { href: "/news", label: "News", icon: FaNewspaper },
-  { href: "/live", label: "Live Desk", icon: FaBroadcastTower },
+  { href: "/live", label: "Live Desk", icon: FaVideo },
   { href: "/war-escalation", label: "War Radar", icon: FaSatelliteDish },
   { href: "/timeline/us-israel-iran-war-timeline", label: "Timeline", icon: FaTimeline },
   { href: "/reports", label: "Reports", icon: FaFileLines },
