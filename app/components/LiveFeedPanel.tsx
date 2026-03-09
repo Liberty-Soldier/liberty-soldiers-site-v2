@@ -57,15 +57,14 @@ export default function LiveFeedPanel({
           ].join(" ")}
         >
           {embedUrl ? (
-            <iframe
-              className="h-full w-full"
-              src={embedUrl}
-              title={title}
-              loading="lazy"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            />
+           <iframe
+            className="h-full w-full"
+            src={embedUrl}
+            title={title}
+            loading="lazy"
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
           ) : (
             <div className="flex h-full items-center justify-center px-6 text-center text-sm text-zinc-600">
               Live playback is not embedded for this source. Open the feed below.
