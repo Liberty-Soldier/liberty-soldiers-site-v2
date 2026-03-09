@@ -16,8 +16,10 @@ const SECONDARY_FEEDS = [
   {
     title: "France 24 English",
     source: "France 24",
-    region: "Europe",
+    region: "Europe / Global",
     status: "LIVE",
+    description:
+      "France 24 English live coverage tracking geopolitics, conflict, and international developments.",
     embedUrl:
       "https://www.youtube.com/embed/l8PMl7tUDIE?autoplay=1&mute=1&playsinline=1",
     href: "https://www.youtube.com/watch?v=l8PMl7tUDIE",
@@ -27,12 +29,13 @@ const SECONDARY_FEEDS = [
     source: "Al Jazeera",
     region: "Middle East / Global",
     status: "LIVE",
+    description:
+      "Al Jazeera English live coverage of global politics, diplomacy, and conflict zones.",
     embedUrl:
       "https://www.youtube.com/embed/bNyUyrR0PHo?autoplay=1&mute=1&playsinline=1",
     href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
   },
 ];
-
 export default function LiveSignalDesk() {
   return (
     <section className="border-t border-zinc-200 bg-white py-12 sm:py-16">
