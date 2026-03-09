@@ -1,39 +1,35 @@
 import LiveFeedPanel from "./LiveFeedPanel";
 
 const PRIMARY_FEED = {
-  title: "France 24 English Live",
-  source: "France 24",
-  region: "Europe / Global",
+  title: "Sky News Live",
+  source: "Sky News",
+  region: "UK / Global",
   status: "LIVE",
   description:
-    "France 24 English live coverage tracking global politics, geopolitics, and international developments.",
+    "Sky News live coverage of global politics, war developments, and major international events.",
   embedUrl:
-    "https://www.youtube.com/embed/l8PMl7tUDIE?autoplay=1&mute=1&playsinline=1",
-  href: "https://www.youtube.com/watch?v=l8PMl7tUDIE",
+    "https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=9Auq9mYxFEE",
 };
 
 const SECONDARY_FEEDS = [
   {
-    title: "Al Jazeera English Live",
-    source: "Al Jazeera English",
+    title: "France 24 English",
+    source: "France 24",
+    region: "Europe",
+    status: "LIVE",
+    embedUrl:
+      "https://www.youtube.com/embed/l8PMl7tUDIE?autoplay=1&mute=1&playsinline=1",
+    href: "https://www.youtube.com/watch?v=l8PMl7tUDIE",
+  },
+  {
+    title: "Al Jazeera English",
+    source: "Al Jazeera",
     region: "Middle East / Global",
     status: "LIVE",
-    description:
-      "Al Jazeera English live coverage of global politics, diplomacy, and conflict zones.",
     embedUrl:
       "https://www.youtube.com/embed/bNyUyrR0PHo?autoplay=1&mute=1&playsinline=1",
     href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
-  },
-  {
-    title: "NDTV 24x7 Live",
-    source: "NDTV",
-    region: "India / Global",
-    status: "LIVE",
-    description:
-      "NDTV 24x7 English news coverage across Asia and global political developments.",
-    embedUrl:
-      "https://www.youtube.com/embed/WB-y7_ymPJ4?autoplay=1&mute=1&playsinline=1",
-    href: "https://www.youtube.com/watch?v=WB-y7_ymPJ4",
   },
 ];
 
