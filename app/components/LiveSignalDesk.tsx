@@ -1,39 +1,39 @@
 import LiveFeedPanel from "./LiveFeedPanel";
 
 const PRIMARY_FEED = {
-  title: "CBS News 24/7",
-  source: "CBS News",
-  region: "US / Global",
+  title: "Al Jazeera English Live",
+  source: "Al Jazeera English",
+  region: "Middle East / Global",
   status: "LIVE",
   description:
-    "CBS News 24/7 live stream covering breaking news, geopolitics, and global developments.",
+    "Al Jazeera English live coverage of global politics, conflict zones, and major world developments.",
   embedUrl:
-    "https://www.cbsnews.com/live/",
-  href: "https://www.cbsnews.com/live/",
+    "https://www.youtube.com/embed/bNyUyrR0PHo?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
 };
 
 const SECONDARY_FEEDS = [
+  {
+    title: "Al Jazeera English Live",
+  source: "Al Jazeera English",
+  region: "Middle East / Global",
+  status: "LIVE",
+  description:
+    "Al Jazeera English live coverage of global politics, conflict zones, and major world developments.",
+  embedUrl:
+    "https://www.youtube.com/embed/bNyUyrR0PHo?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
+};
   {
     title: "NDTV 24x7 Live",
     source: "NDTV",
     region: "India / Global",
     status: "LIVE",
     description:
-      "NDTV 24x7 English news covering global politics, Asia, and international developments.",
+      "NDTV 24x7 English news covering international developments across Asia and global politics.",
     embedUrl:
-      "https://www.ndtv.com/livetv-ndtv24x7",
-    href: "https://www.ndtv.com/livetv-ndtv24x7",
-  },
-  {
-    title: "LiveNOW from FOX",
-    source: "FOX",
-    region: "US / Global",
-    status: "LIVE",
-    description:
-      "LiveNOW from FOX delivers real-time coverage of breaking events, press conferences, and global news.",
-    embedUrl:
-      "https://www.livenowfox.com/",
-    href: "https://www.livenowfox.com/",
+      "https://www.youtube.com/embed/WB-y7_ymPJ4?autoplay=1&mute=1&playsinline=1",
+    href: "https://www.youtube.com/watch?v=WB-y7_ymPJ4",
   },
 ];
 
