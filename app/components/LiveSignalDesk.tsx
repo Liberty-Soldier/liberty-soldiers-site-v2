@@ -1,39 +1,39 @@
 import LiveFeedPanel from "./LiveFeedPanel";
 
 const PRIMARY_FEED = {
-  title: "Sky News Live",
-  source: "Sky News",
-  region: "UK / Global",
+  title: "CBS News 24/7",
+  source: "CBS News",
+  region: "United States / Global",
   status: "LIVE",
   description:
-    "Sky News live coverage of global politics, war developments, and major international events.",
+    "CBS News 24/7 live coverage of breaking global events and major developments.",
   embedUrl:
-    "https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&playsinline=1",
-  href: "https://www.youtube.com/watch?v=9Auq9mYxFEE",
+    "https://www.youtube.com/embed/21X5lGlDOfg?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=21X5lGlDOfg",
 };
 
 const SECONDARY_FEEDS = [
   {
-    title: "France 24 English",
-    source: "France 24",
+    title: "Bloomberg Live",
+    source: "Bloomberg",
+    region: "Global Finance",
+    status: "LIVE",
+    description:
+      "Bloomberg live coverage of global markets, finance, and economic developments.",
+    embedUrl:
+      "https://www.youtube.com/embed/dp8PhLsUcFE?autoplay=1&mute=1&playsinline=1",
+    href: "https://www.youtube.com/watch?v=dp8PhLsUcFE",
+  },
+  {
+    title: "DW News",
+    source: "Deutsche Welle",
     region: "Europe / Global",
     status: "LIVE",
     description:
-      "France 24 English live coverage tracking geopolitics, conflict, and international developments.",
+      "DW News live coverage of global politics and geopolitical developments.",
     embedUrl:
-      "https://www.youtube.com/embed/l8PMl7tUDIE?autoplay=1&mute=1&playsinline=1",
-    href: "https://www.youtube.com/watch?v=l8PMl7tUDIE",
-  },
-  {
-    title: "Al Jazeera English",
-    source: "Al Jazeera",
-    region: "Middle East / Global",
-    status: "LIVE",
-    description:
-      "Al Jazeera English live coverage of global politics, diplomacy, and conflict zones.",
-    embedUrl:
-      "https://www.youtube.com/embed/bNyUyrR0PHo?autoplay=1&mute=1&playsinline=1",
-    href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
+      "https://www.youtube.com/embed/GE_SfNVNyqk?autoplay=1&mute=1&playsinline=1",
+    href: "https://www.youtube.com/watch?v=GE_SfNVNyqk",
   },
 ];
 export default function LiveSignalDesk() {
