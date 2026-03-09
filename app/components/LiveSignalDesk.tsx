@@ -1,40 +1,40 @@
 import LiveFeedPanel from "./LiveFeedPanel";
 
 const PRIMARY_FEED = {
-  title: "CBS News 24/7",
+  title: "CBS News Live",
   source: "CBS News",
   region: "United States / Global",
   status: "LIVE",
   description:
-    "CBS News 24/7 live coverage of breaking global events and major developments.",
+    "CBS News live coverage of breaking global events and major geopolitical developments.",
   embedUrl:
-    "https://www.youtube.com/embed/21X5lGlDOfg?autoplay=1&mute=1&playsinline=1",
-  href: "https://www.youtube.com/watch?v=21X5lGlDOfg",
-};
+    "https://www.youtube.com/embed/E0XsFF5ySr0?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=E0XsFF5ySr0",
+}
 
 const SECONDARY_FEEDS = [
   {
     title: "Bloomberg Live",
-    source: "Bloomberg",
-    region: "Global Finance",
-    status: "LIVE",
-    description:
-      "Bloomberg live coverage of global markets, finance, and economic developments.",
-    embedUrl:
-      "https://www.youtube.com/embed/dp8PhLsUcFE?autoplay=1&mute=1&playsinline=1",
-    href: "https://www.youtube.com/watch?v=dp8PhLsUcFE",
-  },
+  source: "Bloomberg",
+  region: "Global Markets",
+  status: "LIVE",
+  description:
+    "Bloomberg Television live coverage of global markets, geopolitics, and economic developments.",
+  embedUrl:
+    "https://www.youtube.com/embed/iEpJwprxDdk?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=iEpJwprxDdk",
+},
   {
-    title: "DW News",
-    source: "Deutsche Welle",
-    region: "Europe / Global",
-    status: "LIVE",
-    description:
-      "DW News live coverage of global politics and geopolitical developments.",
-    embedUrl:
-      "https://www.youtube.com/embed/GE_SfNVNyqk?autoplay=1&mute=1&playsinline=1",
-    href: "https://www.youtube.com/watch?v=GE_SfNVNyqk",
-  },
+  title: "DW News Live",
+  source: "Deutsche Welle",
+  region: "Europe / Global",
+  status: "LIVE",
+  description:
+    "DW News live coverage from Europe with global reporting on geopolitics, economics, and international developments.",
+  embedUrl:
+    "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=LuKwFajn37U",
+}
 ];
 export default function LiveSignalDesk() {
   return (
