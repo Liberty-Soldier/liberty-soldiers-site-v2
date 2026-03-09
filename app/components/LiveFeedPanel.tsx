@@ -20,13 +20,7 @@ export default function LiveFeedPanel({
   featured = false,
 }: LiveFeedPanelProps) {
   return (
-    <article
-      className={[
-        "group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm",
-        featured ? "lg:col-span-2" : "",
-      ].join(" ")}
-    >
-      {/* top signal bar */}
+    <article className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
       <div className="flex items-center justify-between gap-3 border-b border-zinc-200 bg-zinc-950 px-4 py-3 text-white">
         <div className="min-w-0">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-white/75">
@@ -43,22 +37,25 @@ export default function LiveFeedPanel({
         </span>
       </div>
 
-      {/* meta row */}
       <div className="flex flex-wrap items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-zinc-600">
-        <span className="rounded-full bg-white px-2.5 py-1 border border-zinc-200">
+        <span className="rounded-full border border-zinc-200 bg-white px-2.5 py-1">
           Source: {source}
         </span>
-        <span className="rounded-full bg-white px-2.5 py-1 border border-zinc-200">
+        <span className="rounded-full border border-zinc-200 bg-white px-2.5 py-1">
           Region: {region}
         </span>
-        <span className="rounded-full bg-white px-2.5 py-1 border border-zinc-200">
+        <span className="rounded-full border border-zinc-200 bg-white px-2.5 py-1">
           Open-source feed
         </span>
       </div>
 
-      {/* player */}
       <div className="px-4 pt-4">
-        <div className="overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 aspect-video">
+        <div
+          className={[
+            "overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100",
+            featured ? "aspect-video" : "aspect-video",
+          ].join(" ")}
+        >
           {embedUrl ? (
             <iframe
               className="h-full w-full"
@@ -71,13 +68,12 @@ export default function LiveFeedPanel({
             />
           ) : (
             <div className="flex h-full items-center justify-center px-6 text-center text-sm text-zinc-600">
-              Live playback unavailable for this source. Open the external feed below.
+              Live playback is not embedded for this source. Open the feed below.
             </div>
           )}
         </div>
       </div>
 
-      {/* footer */}
       <div className="px-4 pb-4 pt-4">
         <p className="text-sm leading-relaxed text-zinc-700">{description}</p>
 
