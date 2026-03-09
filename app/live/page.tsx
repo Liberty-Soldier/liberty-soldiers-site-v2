@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import LiveFeedPanel from "../components/LiveFeedPanel";
 
 export const metadata: Metadata = {
-  title: "Live Desk | Liberty Soldiers",
+  title: "Live Global News Monitoring | Liberty Soldiers",
   description:
-    "Live Signal Desk for continuous open-source monitoring of global broadcasts, geopolitics, and breaking developments.",
+    "Live global news monitoring and continuous open-source broadcast coverage of geopolitics, conflict, markets, and breaking international developments.",
   alternates: {
     canonical: "https://libertysoldiers.com/live",
   },
   openGraph: {
-    title: "Live Desk | Liberty Soldiers",
+    title: "Live Global News Monitoring | Liberty Soldiers",
     description:
-      "Continuous live monitoring of world broadcasts, conflict signals, and breaking geopolitical developments.",
+      "Continuous live monitoring of world broadcasts, conflict signals, markets, and breaking geopolitical developments.",
     url: "https://libertysoldiers.com/live",
     siteName: "Liberty Soldiers",
     type: "website",
@@ -26,9 +26,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Live Desk | Liberty Soldiers",
+    title: "Live Global News Monitoring | Liberty Soldiers",
     description:
-      "Continuous live monitoring of world broadcasts, conflict signals, and breaking geopolitical developments.",
+      "Continuous live monitoring of world broadcasts, conflict signals, markets, and breaking geopolitical developments.",
     images: ["/og-default.jpg"],
   },
 };
@@ -103,12 +103,47 @@ const FEEDS = [
   },
 ];
 
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Live Global News Monitoring | Liberty Soldiers",
+    url: "https://libertysoldiers.com/live",
+    description:
+      "Live global news monitoring and continuous open-source broadcast coverage of geopolitics, conflict, markets, and breaking international developments.",
+    isPartOf: {
+      "@type": "WebSite",
+      name: "Liberty Soldiers",
+      url: "https://libertysoldiers.com",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BroadcastEvent",
+    name: "Liberty Soldiers Live Signal Desk",
+    description:
+      "Continuous monitoring of global live broadcasts covering geopolitics, conflict escalation, markets, and breaking world events.",
+    isLiveBroadcast: true,
+    startDate: "2024-01-01T00:00:00Z",
+    broadcaster: {
+      "@type": "Organization",
+      name: "Liberty Soldiers",
+      url: "https://libertysoldiers.com",
+    },
+  },
+];
+
 export default function LivePage() {
   return (
     <div className="bg-zinc-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       <section className="border-b border-zinc-200 bg-white">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-[11px] font-extrabold uppercase tracking-[0.16em] text-red-700">
               <span className="inline-flex h-2 w-2 rounded-full bg-red-600 motion-safe:animate-pulse" />
               Liberty Soldiers Live
@@ -119,8 +154,14 @@ export default function LivePage() {
             </h1>
 
             <p className="mt-4 text-base sm:text-lg text-zinc-700">
-              Continuous monitoring of major open-source live broadcasts for
-              geopolitics, conflict escalation, and breaking international developments.
+              The Liberty Soldiers Live Signal Desk aggregates major international
+              live news broadcasts for real-time monitoring of geopolitics,
+              global conflict, financial markets, and breaking world events.
+            </p>
+
+            <p className="mt-3 text-sm sm:text-base text-zinc-600">
+              Sources currently include Bloomberg, Al Jazeera English, France 24,
+              Deutsche Welle, Sky News, and CBS.
             </p>
           </div>
         </div>
