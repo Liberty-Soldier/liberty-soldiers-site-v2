@@ -1,39 +1,39 @@
 import LiveFeedPanel from "./LiveFeedPanel";
 
 const PRIMARY_FEED = {
-  title: "Reuters Live",
-  source: "Reuters",
-  region: "Global",
+  title: "CBS News 24/7",
+  source: "CBS News",
+  region: "US / Global",
   status: "LIVE",
   description:
-    "Global live coverage from Reuters focusing on major geopolitical and economic developments.",
+    "CBS News 24/7 live stream covering breaking news, geopolitics, and global developments.",
   embedUrl:
-    "https://www.youtube.com/embed/NMre6IAAAiU?autoplay=1&mute=1&playsinline=1",
-  href: "https://www.youtube.com/watch?v=NMre6IAAAiU",
+    "https://www.cbsnews.com/live/",
+  href: "https://www.cbsnews.com/live/",
 };
 
 const SECONDARY_FEEDS = [
   {
-    title: "Sky News Live",
-    source: "Sky News",
-    region: "UK / Global",
+    title: "NDTV 24x7 Live",
+    source: "NDTV",
+    region: "India / Global",
     status: "LIVE",
     description:
-      "24-hour English language rolling news coverage of global events.",
+      "NDTV 24x7 English news covering global politics, Asia, and international developments.",
     embedUrl:
-      "https://www.youtube.com/embed/9Auq9mYxFEE?autoplay=1&mute=1&playsinline=1",
-    href: "https://www.youtube.com/watch?v=9Auq9mYxFEE",
+      "https://www.ndtv.com/livetv-ndtv24x7",
+    href: "https://www.ndtv.com/livetv-ndtv24x7",
   },
   {
-    title: "NBC News Now",
-    source: "NBC News",
+    title: "LiveNOW from FOX",
+    source: "FOX",
     region: "US / Global",
     status: "LIVE",
     description:
-      "US-based live coverage and global breaking news monitoring.",
+      "LiveNOW from FOX delivers real-time coverage of breaking events, press conferences, and global news.",
     embedUrl:
-      "https://www.youtube.com/embed/UeP-u7C2UlM?autoplay=1&mute=1&playsinline=1",
-    href: "https://www.youtube.com/watch?v=UeP-u7C2UlM",
+      "https://www.livenowfox.com/",
+    href: "https://www.livenowfox.com/",
   },
 ];
 
