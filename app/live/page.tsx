@@ -34,17 +34,17 @@ export const metadata: Metadata = {
 };
 
 const FEEDS = [
-  {
-    title: "Reuters World Live",
-    source: "Reuters",
-    region: "Global",
-    status: "LIVE",
-    description:
-      "Continuous world coverage focused on breaking developments, state announcements, and global flashpoints.",
-    embedUrl: "https://www.youtube.com/embed/gM8dUPHv2HY",
-    href: "https://www.youtube.com/watch?v=gM8dUPHv2HY",
-    featured: true,
-  },
+  const PRIMARY_FEED = {
+  title: "Bloomberg Live",
+  source: "Bloomberg",
+  region: "Global Markets",
+  status: "LIVE",
+  description:
+    "Bloomberg Television live coverage of global markets, geopolitics, and economic developments.",
+  embedUrl:
+    "https://www.youtube.com/embed/iEpJwprxDdk?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=iEpJwprxDdk",
+};,
   {
     title: "Al Jazeera English Live",
     source: "Al Jazeera English",
@@ -67,35 +67,38 @@ const FEEDS = [
     href: "https://www.youtube.com/watch?v=l8PMl7tUDIE",
   },
   {
-    title: "DW News Live",
-    source: "DW",
-    region: "Europe / Global",
-    status: "LIVE",
-    description:
-      "International live monitoring with strong Europe-facing coverage and global breaking developments.",
-    embedUrl: "https://www.youtube.com/embed/NvqKZHpKs-g",
-    href: "https://www.youtube.com/watch?v=NvqKZHpKs-g",
-  },
+  title: "DW News Live",
+  source: "Deutsche Welle",
+  region: "Europe / Global",
+  status: "LIVE",
+  description:
+    "DW News live coverage from Europe with global reporting on geopolitics, economics, and international developments.",
+  embedUrl:
+    "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=LuKwFajn37U",
+},
   {
-    title: "Sky News Live",
-    source: "Sky News",
-    region: "UK / Global",
-    status: "LIVE",
-    description:
-      "Rolling world coverage with emphasis on crisis response, political developments, and war-related updates.",
-    embedUrl: "https://www.youtube.com/embed/9Auq9mYxFEE",
-    href: "https://www.youtube.com/watch?v=9Auq9mYxFEE",
-  },
+  title: "Sky News Live",
+  source: "Sky News",
+  region: "UK / Global",
+  status: "LIVE",
+  description:
+    "Sky News live coverage of global politics, conflict, and major international developments.",
+  embedUrl:
+    "https://www.youtube.com/embed/YDvsBbKfLPA?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=YDvsBbKfLPA",
+}
   {
-    title: "NBC News Live",
-    source: "NBC News",
-    region: "US / Global",
-    status: "LIVE",
-    description:
-      "US-facing live desk for major breaking developments and international spillover coverage.",
-    embedUrl: "https://www.youtube.com/embed/UeP-u7C2UlM",
-    href: "https://www.youtube.com/watch?v=UeP-u7C2UlM",
-  },
+  title: "CBS News Live",
+  source: "CBS News",
+  region: "United States / Global",
+  status: "LIVE",
+  description:
+    "CBS News live coverage of breaking global events and major geopolitical developments.",
+  embedUrl:
+    "https://www.youtube.com/embed/E0XsFF5ySr0?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=E0XsFF5ySr0",
+},
 ];
 
 export default function LivePage() {
