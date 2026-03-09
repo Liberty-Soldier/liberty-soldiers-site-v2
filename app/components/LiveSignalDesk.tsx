@@ -1,15 +1,15 @@
 import LiveFeedPanel from "./LiveFeedPanel";
 
 const PRIMARY_FEED = {
-  title: "CBS News Live",
-  source: "CBS News",
-  region: "United States / Global",
+  title: "Sky News Live",
+  source: "Sky News",
+  region: "UK / Global",
   status: "LIVE",
   description:
-    "CBS News live coverage of breaking global events and major geopolitical developments.",
+    "Sky News live coverage of global politics, conflict, and major international developments.",
   embedUrl:
-    "https://www.youtube.com/embed/E0XsFF5ySr0?autoplay=1&mute=1&playsinline=1",
-  href: "https://www.youtube.com/watch?v=E0XsFF5ySr0",
+    "https://www.youtube.com/embed/YDvsBbKfLPA?autoplay=1&mute=1&playsinline=1",
+  href: "https://www.youtube.com/watch?v=YDvsBbKfLPA",
 }
 
 const SECONDARY_FEEDS = [
