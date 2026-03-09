@@ -1,27 +1,17 @@
 import LiveFeedPanel from "./LiveFeedPanel";
 
-const FEEDS = [
-  {
-    title: "Reuters World Live",
-    source: "Reuters",
-    region: "Global",
-    status: "LIVE",
-    description:
-      "Continuous world coverage focused on breaking developments, government statements, and major international events.",
-    embedUrl: "https://www.youtube.com/embed/gM8dUPHv2HY",
-    href: "https://www.youtube.com/watch?v=gM8dUPHv2HY",
-    featured: true,
-  },
-  {
-    title: "Al Jazeera English Live",
-    source: "Al Jazeera English",
-    region: "Middle East / Global",
-    status: "LIVE",
-    description:
-      "Broad live coverage across the Middle East, diplomacy, conflict zones, and international breaking news.",
-    embedUrl: "https://www.youtube.com/embed/bNyUyrR0PHo",
-    href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
-  },
+const PRIMARY_FEED = {
+  title: "Al Jazeera English Live",
+  source: "Al Jazeera English",
+  region: "Middle East / Global",
+  status: "LIVE",
+  description:
+    "Broad live coverage across the Middle East, diplomacy, conflict zones, and international breaking news.",
+  embedUrl: "https://www.youtube.com/embed/bNyUyrR0PHo",
+  href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
+};
+
+const SECONDARY_FEEDS = [
   {
     title: "France 24 English Live",
     source: "France 24",
@@ -31,6 +21,15 @@ const FEEDS = [
       "International live desk coverage tracking geopolitical developments, conflict, and global policy shifts.",
     embedUrl: "https://www.youtube.com/embed/l8PMl7tUDIE",
     href: "https://www.youtube.com/watch?v=l8PMl7tUDIE",
+  },
+  {
+    title: "Iran Monitoring Feed",
+    source: "Iran International",
+    region: "Iran / West Asia",
+    status: "MONITORING",
+    description:
+      "Iran-focused live source slot. Opens externally while embeddable Iran feeds are being verified.",
+    href: "https://www.iranintl.com/live",
   },
 ];
 
@@ -55,18 +54,31 @@ export default function LiveSignalDesk() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <a
-              href="/live"
-              className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-800"
-            >
-              Open full live desk →
-            </a>
-          </div>
+          <a
+            href="/live"
+            className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-800"
+          >
+            Open full live desk →
+          </a>
         </div>
 
-        <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {FEEDS.map((feed) => (
+        {/* Large primary feed */}
+        <div className="mt-8">
+          <LiveFeedPanel
+            title={PRIMARY_FEED.title}
+            source={PRIMARY_FEED.source}
+            region={PRIMARY_FEED.region}
+            status={PRIMARY_FEED.status}
+            description={PRIMARY_FEED.description}
+            embedUrl={PRIMARY_FEED.embedUrl}
+            href={PRIMARY_FEED.href}
+            featured
+          />
+        </div>
+
+        {/* Two smaller feeds below */}
+        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+          {SECONDARY_FEEDS.map((feed) => (
             <LiveFeedPanel
               key={feed.title}
               title={feed.title}
@@ -76,7 +88,6 @@ export default function LiveSignalDesk() {
               description={feed.description}
               embedUrl={feed.embedUrl}
               href={feed.href}
-              featured={feed.featured}
             />
           ))}
         </div>
