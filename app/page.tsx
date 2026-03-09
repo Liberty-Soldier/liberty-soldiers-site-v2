@@ -215,10 +215,13 @@ const jsonLd = [
 {/* Live Briefing */}
 <LiveBriefingAuto />
 
-      {/* Email signup — desktop only (avoid mobile duplication) */}
-      <div className="hidden sm:block">
-        <EmailBand />
-      </div>
+{/* Live Signal Desk */}
+<LiveSignalDesk />
+
+{/* Email signup — desktop only (avoid mobile duplication) */}
+<div className="hidden sm:block">
+  <EmailBand />
+</div>
 
          {/* Latest LS Report — desktop only */}
       <div className="hidden sm:block">
@@ -413,6 +416,7 @@ const jsonLd = [
     </div>
   );
 }
+
 
 
 
