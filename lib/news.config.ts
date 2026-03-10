@@ -92,8 +92,6 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://endtimeheadlines.org/feed/", category: "prophecy" },
   { url: "https://www.prophecynewswatch.com/rss.xml", category: "prophecy" },
   { url: "https://www.nowtheendbegins.com/feed/", category: "prophecy" },
-  { url: "https://www.raptureready.com/feed", category: "prophecy" },
-  { url: "https://www.worthynews.com/feed", category: "prophecy" },
   { url: "https://www1.cbn.com/rss-cbn-news-insideisrael.xml", category: "prophecy" },
   { url: "https://www1.cbn.com/rss-cbn-news-jerusalemdateline.xml", category: "prophecy" },
   { url: "https://www1.cbn.com/rss-cbn-news-christianworldnews.xml", category: "prophecy" },
@@ -150,6 +148,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // Add blocked domains like "example.com"
 ];
+
 
 
 
