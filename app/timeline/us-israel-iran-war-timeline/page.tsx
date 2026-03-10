@@ -40,7 +40,6 @@ function fmt(ts: number) {
   }
 }
 
-// ✅ Build an absolute URL for server-side fetch (fixes Vercel ERR_INVALID_URL)
 function absoluteUrl(path: string) {
   const h = headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");
@@ -48,7 +47,9 @@ function absoluteUrl(path: string) {
   return `${proto}://${host}${path}`;
 }
 
-function classify(e: TimelineEvent): "strike" | "diplomacy" | "economy" | "humanitarian" | "other" {
+function classify(
+  e: TimelineEvent
+): "strike" | "diplomacy" | "economy" | "humanitarian" | "other" {
   const t = `${e.title ?? ""} ${e.summary ?? ""} ${(e.tags ?? []).join(" ")}`.toLowerCase();
 
   if (
@@ -99,7 +100,8 @@ function classify(e: TimelineEvent): "strike" | "diplomacy" | "economy" | "human
 }
 
 function Dot({ kind }: { kind: ReturnType<typeof classify> }) {
-  const base = "absolute -left-[15px] top-5 h-5 w-5 rounded-full border-[4px] border-white shadow-sm";
+  const base =
+    "absolute -left-[15px] top-5 h-5 w-5 rounded-full border-[4px] border-white shadow-sm";
   const color =
     kind === "strike"
       ? "bg-red-600"
@@ -145,23 +147,19 @@ export default async function TimelinePage() {
   const data = await res.json();
   const events: TimelineEvent[] = data?.events ?? [];
 
-  // ✅ Key Events: manual-only, newest → oldest
   const manual = events
     .filter((e) => e.kind === "manual")
     .sort((a, b) => b.ts - a.ts);
 
-  // ✅ Live Timeline: auto-only, newest → oldest
   const auto = events
     .filter((e) => e.kind === "auto")
     .sort((a, b) => b.ts - a.ts);
 
-  // quick stats (for the header pills)
   const totalKey = manual.length;
   const totalLive = auto.length;
 
   return (
     <main className="relative">
-      {/* punchier background */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white via-white to-zinc-50" />
       <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(circle_at_20%_10%,rgba(0,0,0,0.06),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(220,38,38,0.08),transparent_40%)]" />
 
@@ -172,21 +170,21 @@ export default async function TimelinePage() {
               <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-900">
                 US–Israel–Iran War Timeline
               </h1>
-              <p className="mt-2 text-zinc-700 max-w-2xl">
+              <p className="mt-2 max-w-2xl text-zinc-700">
                 Major escalation events + live conflict signals — updated frequently to separate
                 signal from noise.
               </p>
 
               <div className="mt-4 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full bg-zinc-900 text-white px-3 py-1 text-xs font-semibold">
+                <span className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-1 text-xs font-semibold text-white">
                   <span className="h-2 w-2 rounded-full bg-red-500" />
                   Live
                 </span>
                 <span className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-900">
-                  Key Events: {totalKey}
+                  Live Items: {totalLive}
                 </span>
                 <span className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-900">
-                  Live Items: {totalLive}
+                  Key Events: {totalKey}
                 </span>
               </div>
 
@@ -195,9 +193,8 @@ export default async function TimelinePage() {
               </p>
             </div>
 
-            {/* legend */}
-            <div className="rounded-2xl border border-zinc-200 bg-white/90 backdrop-blur px-4 py-3 shadow-sm">
-              <div className="text-xs font-semibold text-zinc-900 mb-2">Legend</div>
+            <div className="rounded-2xl border border-zinc-200 bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
+              <div className="mb-2 text-xs font-semibold text-zinc-900">Legend</div>
               <div className="flex flex-wrap gap-2 text-xs">
                 <span className="inline-flex items-center gap-2">
                   <span className="h-2.5 w-2.5 rounded-full bg-red-600" /> Strikes
@@ -216,18 +213,31 @@ export default async function TimelinePage() {
           </div>
         </header>
 
-        {/* KEY EVENTS */}
+        {/* LIVE TIMELINE FIRST */}
+        <section className="mb-12">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-extrabold text-zinc-900">Live Timeline</h2>
+            <span className="text-xs text-zinc-500">Recent signals (auto feed)</span>
+          </div>
+
+          <div className="relative space-y-6 pl-8">
+            <div className="absolute left-[10px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-zinc-200 via-zinc-200 to-transparent" />
+
+            {auto.map((e) => (
+              <EventCard key={e.id} e={e} variant="live" />
+            ))}
+          </div>
+        </section>
+
+        {/* KEY EVENTS SECOND */}
         {manual.length > 0 && (
-          <section className="mb-12">
-            <div className="flex items-center justify-between mb-3">
+          <section>
+            <div className="mb-3 flex items-center justify-between">
               <h2 className="text-lg font-extrabold text-zinc-900">Key Events</h2>
-              <span className="text-xs text-zinc-500">
-                Curated milestones (manual)
-              </span>
+              <span className="text-xs text-zinc-500">Curated milestones (manual)</span>
             </div>
 
-            {/* stronger spine */}
-            <div className="relative pl-8 space-y-6">
+            <div className="relative space-y-6 pl-8">
               <div className="absolute left-[10px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-zinc-200 via-zinc-200 to-transparent" />
 
               {manual.map((e) => (
@@ -236,24 +246,6 @@ export default async function TimelinePage() {
             </div>
           </section>
         )}
-
-        {/* LIVE TIMELINE */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-extrabold text-zinc-900">Live Timeline</h2>
-            <span className="text-xs text-zinc-500">
-              Recent signals (auto feed)
-            </span>
-          </div>
-
-          <div className="relative pl-8 space-y-6">
-            <div className="absolute left-[10px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-zinc-200 via-zinc-200 to-transparent" />
-
-            {auto.map((e) => (
-              <EventCard key={e.id} e={e} variant="live" />
-            ))}
-          </div>
-        </section>
       </div>
     </main>
   );
@@ -269,21 +261,20 @@ function EventCard({
   const k = classify(e);
 
   const tone =
-    variant === "key"
-      ? "ring-1 ring-zinc-900/10"
-      : "ring-1 ring-red-600/10";
+    variant === "key" ? "ring-1 ring-zinc-900/10" : "ring-1 ring-red-600/10";
 
   const headerAccent =
-    variant === "key"
-      ? "from-zinc-900/10"
-      : "from-red-600/10";
+    variant === "key" ? "from-zinc-900/10" : "from-red-600/10";
 
   return (
-    <article className={`relative rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm ${tone}`}>
+    <article
+      className={`relative rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm ${tone}`}
+    >
       <Dot kind={k} />
 
-      {/* subtle top accent */}
-      <div className={`pointer-events-none absolute inset-x-0 top-0 h-10 rounded-t-2xl bg-gradient-to-b ${headerAccent} to-transparent`} />
+      <div
+        className={`pointer-events-none absolute inset-x-0 top-0 h-10 rounded-t-2xl bg-gradient-to-b ${headerAccent} to-transparent`}
+      />
 
       <div className="relative flex items-start justify-between gap-4">
         <div className="min-w-0">
@@ -291,13 +282,13 @@ function EventCard({
             <span className="text-xs text-zinc-500">{fmt(e.ts)}</span>
 
             {variant === "key" && (
-              <span className="text-[11px] rounded-full bg-zinc-900 text-white px-2 py-0.5 font-semibold">
+              <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[11px] font-semibold text-white">
                 KEY
               </span>
             )}
 
             {k !== "other" && (
-              <span className="text-[11px] rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-zinc-800 font-semibold">
+              <span className="rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-zinc-800">
                 {k === "strike"
                   ? "Strike / Kinetic"
                   : k === "diplomacy"
@@ -309,12 +300,12 @@ function EventCard({
             )}
           </div>
 
-          <h3 className="mt-2 text-base sm:text-lg font-extrabold text-zinc-900 leading-snug">
+          <h3 className="mt-2 text-base font-extrabold leading-snug text-zinc-900 sm:text-lg">
             {e.title}
           </h3>
 
           {e.summary && (
-            <p className="mt-2 text-sm text-zinc-700 leading-relaxed">
+            <p className="mt-2 text-sm leading-relaxed text-zinc-700">
               {e.summary}
             </p>
           )}
