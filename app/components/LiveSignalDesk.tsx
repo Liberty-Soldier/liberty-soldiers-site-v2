@@ -52,8 +52,8 @@ export default function LiveSignalDesk() {
             </h2>
 
             <p className="mt-2 max-w-3xl text-sm sm:text-base text-zinc-600">
-             Live global broadcast monitoring for geopolitics, conflict signals, 
-             and breaking international developments.
+             Real-time monitoring of major global broadcasts tracking geopolitics, 
+             conflict escalation, markets, and emerging world events.
             </p>
           </div>
 
