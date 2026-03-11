@@ -43,6 +43,15 @@ function hostFromUrl(u: string) {
     return "";
   }
 }
+function cleanSummary(summary?: string): string {
+  if (!summary) return "";
+  return summary
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\u00A0/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
 
 function displayTime(ms?: number) {
   if (!ms) return "";
@@ -320,7 +329,7 @@ const latestIso = latest
                   publishedAt: it.publishedAt,
                   // share wrapper can show thumb; if og is relative, make it absolute
                   image: og.startsWith("http") ? og : `${SITE}${og}`,
-                  summary: it.summary ?? "",
+                  summary: cleanSummary(it.summary),
                 });
 
                 return (
