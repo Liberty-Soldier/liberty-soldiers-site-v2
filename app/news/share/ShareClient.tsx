@@ -49,7 +49,7 @@ function cleanSummary(summary?: string): string {
     .trim();
 }
 
-function truncate(text: string, max = 220) {
+function truncate(text: string, max = 280) {
   if (!text) return "";
   if (text.length <= max) return text;
   return text.slice(0, max).replace(/\s+\S*$/, "").trim() + "…";
@@ -58,39 +58,7 @@ function truncate(text: string, max = 220) {
 function buildBriefingLead(summary?: string): string {
   const clean = cleanSummary(summary);
   if (!clean) return "";
-  return truncate(clean, 220);
-}
-
-function takeawaysFromSummary(summary?: string): string[] {
-  const clean = cleanSummary(summary);
-  if (!clean) return [];
-
-  const sentences = clean
-    .split(/(?<=[.!?])\s+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  const normalized = sentences.map((s) =>
-    /[.!?]$/.test(s) ? s : s + "."
-  );
-
-  if (normalized.length >= 3) {
-    return normalized
-      .filter((s) => s.length > 35)
-      .slice(0, 3);
-  }
-
-  if (normalized.length === 2) {
-    return normalized;
-  }
-
-  const chunk1 = clean.slice(0, 160).trim();
-  const chunk2 = clean.slice(160, 320).trim();
-
-  return [chunk1, chunk2]
-    .filter(Boolean)
-    .map((s) => (/[.!?]$/.test(s) ? s : s + "."))
-    .filter((s) => s.length > 30);
+  return truncate(clean, 280);
 }
 
 type SP = { searchParams: Record<string, string | string[] | undefined> };
@@ -119,9 +87,7 @@ export default function ShareClient({ searchParams }: SP) {
   const rawSummary = typeof xRaw === "string" ? safeDecode(xRaw) : "";
 
   const when = humanWhen(publishedAt);
-  const summary = cleanSummary(rawSummary);
-  const briefingLead = buildBriefingLead(summary);
-  const takeaways = takeawaysFromSummary(summary);
+  const briefingLead = buildBriefingLead(rawSummary);
 
   const thumb = image || (url ? faviconFromUrl(url) : "/briefing-fallback.jpg");
 
@@ -201,23 +167,6 @@ export default function ShareClient({ searchParams }: SP) {
               </p>
             </div>
           ) : null}
-
-          {takeaways.length > 0 && (
-            <div className="mt-5">
-              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-900">
-                Quick Takeaways
-              </h2>
-
-              <ul className="mt-3 space-y-3 text-sm text-zinc-700">
-                {takeaways.map((item, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="mt-[3px] text-zinc-400">•</span>
-                    <span className="leading-relaxed">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
 
           <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-900">
