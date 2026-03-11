@@ -5,7 +5,6 @@ export const metadata = {
     "The Crisis Window: How Fear Accelerates Change and Expands Public Consent | Liberty Soldiers",
   description:
     "An investigative briefing on how periods of crisis and instability can accelerate systemic change, reduce resistance, and create openings for policies and technologies that might otherwise face opposition.",
-  
   openGraph: {
   title: "The Crisis Window: How Fear Accelerates Change and Expands Public Consent",
   description:
@@ -20,7 +19,6 @@ export const metadata = {
     },
   ],
 },
-  
   twitter: {
     card: "summary_large_image",
     title:
@@ -30,7 +28,6 @@ export const metadata = {
     images: ["https://libertysoldiers.com/crisis-window.jpg"],
   },
 };
-
 export default function CrisisWindowReportPage() {
   return (
     <main className="min-h-screen bg-white text-zinc-900">
