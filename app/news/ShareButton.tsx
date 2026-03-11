@@ -4,14 +4,16 @@ import { useState } from "react";
 import { copyText } from "@/lib/copy";
 
 export default function ShareButton({
-  shareUrl, // clean wrapper URL (ex: /news/[encoded])
+  shareUrl,
   title,
-  label, // legacy support
+  summary,
+  label,
   copyLabel,
   shareLabel = "Share",
 }: {
   shareUrl: string;
   title?: string;
+  summary?: string;
   label?: string;
   copyLabel?: string;
   shareLabel?: string;
@@ -21,7 +23,12 @@ export default function ShareButton({
   const finalCopyLabel = copyLabel ?? label ?? "Copy link";
   const headline = title?.trim() || "Shared via Liberty Soldiers";
 
-  // ---------- COPY ----------
+  const trimmedSummary = summary?.trim() || "";
+  const shortSummary =
+    trimmedSummary.length > 180
+      ? trimmedSummary.slice(0, 177).replace(/\s+\S*$/, "").trim() + "..."
+      : trimmedSummary;
+
   const doCopy = async () => {
     const ok = await copyText(shareUrl);
     if (ok) {
@@ -32,26 +39,29 @@ export default function ShareButton({
     }
   };
 
-  // ---------- NATIVE SHARE (mobile share sheet) ----------
   const doNativeShare = async () => {
     if (typeof navigator !== "undefined" && "share" in navigator) {
       try {
-        await navigator.share({ url: shareUrl });
+        await navigator.share({
+          title: headline,
+          text: shortSummary || headline,
+          url: shareUrl,
+        });
         return;
       } catch {
-        // user canceled → fall back
+        // user canceled or share failed
       }
     }
     await doCopy();
   };
 
-  // ---------- X (cache-busted preview ONLY for X) ----------
-  const xShareUrl =
-    shareUrl + (shareUrl.includes("?") ? "&" : "?") + `v=${Date.now()}`;
+  const xText = shortSummary
+    ? `${headline}\n\n${shortSummary}`
+    : headline;
 
   const xIntent =
-    `https://x.com/intent/post?text=${encodeURIComponent(headline)}` +
-    `&url=${encodeURIComponent(xShareUrl)}`;
+    `https://x.com/intent/post?text=${encodeURIComponent(xText)}` +
+    `&url=${encodeURIComponent(shareUrl)}`;
 
   const postToX = () => {
     const w = window.open(xIntent, "_blank", "noopener,noreferrer");
