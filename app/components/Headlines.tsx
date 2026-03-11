@@ -136,11 +136,53 @@ function bulletsFromSummary(summary?: string): string[] {
 }
 
 // ✅ Clean share URL builder (NO query strings; fixes Android SMS ugly text)
-function buildNewsShareAbs(externalUrl: string, title?: string) {
-  const base = `https://libertysoldiers.com/news/${encodeURIComponent(externalUrl)}`;
-  if (!title || !title.trim()) return base;
-  // ✅ Only title — keeps things short, no long ugly message text
-  return `${base}?t=${encodeURIComponent(title.trim())}`;
+function hostFromUrl(u: string) {
+  try {
+    return new URL(u).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+function cleanSummary(summary?: string): string {
+  if (!summary) return "";
+  return summary
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\u00A0/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function buildNewsShareAbs(args: {
+  url: string;
+  title: string;
+  source?: string;
+  publishedAt?: number;
+  image?: string;
+  summary?: string;
+}) {
+  const sp = new URLSearchParams();
+
+  sp.set("u", args.url);
+  sp.set("t", args.title);
+
+  const src = args.source || hostFromUrl(args.url);
+  if (src) sp.set("s", src);
+
+  if (
+    typeof args.publishedAt === "number" &&
+    Number.isFinite(args.publishedAt)
+  ) {
+    sp.set("p", String(args.publishedAt));
+  }
+
+  if (args.image) sp.set("i", args.image);
+
+  const cleaned = cleanSummary(args.summary);
+  if (cleaned) sp.set("x", cleaned);
+
+  return `https://libertysoldiers.com/news/share?${sp.toString()}`;
 }
 
 export default async function HomeHeadlines({
@@ -170,7 +212,16 @@ export default async function HomeHeadlines({
     return (
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {top.map((h, idx) => {
-          const shareHrefAbs = buildNewsShareAbs(h.url, h.title);
+          const shareHrefAbs = buildNewsShareAbs({
+  url: h.url,
+  title: h.title,
+  source: h.source,
+  publishedAt: h.publishedAt,
+  image: thumb.startsWith("http")
+    ? thumb
+    : `https://libertysoldiers.com${thumb}`,
+  summary: h.summary,
+});
            const fallback = fallbackForCategory(h.hardCategory || h.category);
           
           const raw = (h.image || "").trim();
@@ -236,7 +287,11 @@ export default async function HomeHeadlines({
                 <span className="text-xs text-zinc-500">
                   {humanAgo(h.publishedAt)}
                 </span>
-                <ShareButton shareUrl={shareHrefAbs} title={h.title} />
+                <ShareButton
+  shareUrl={shareHrefAbs}
+  title={h.title}
+  summary={h.summary}
+/>
               </div>
             </div>
           );
@@ -249,7 +304,16 @@ export default async function HomeHeadlines({
   return (
     <>
       {top.map((h, idx) => {
-        const shareHrefAbs = buildNewsShareAbs(h.url, h.title);
+        const shareHrefAbs = buildNewsShareAbs({
+  url: h.url,
+  title: h.title,
+  source: h.source,
+  publishedAt: h.publishedAt,
+  image: thumb.startsWith("http")
+    ? thumb
+    : `https://libertysoldiers.com${thumb}`,
+  summary: h.summary,
+});
         const fallback = fallbackForCategory(h.hardCategory || h.category);
 
         const raw = (h.image || "").trim();
@@ -316,7 +380,11 @@ export default async function HomeHeadlines({
                 <span className="text-xs text-zinc-500">
                   {humanAgo(h.publishedAt)}
                 </span>
-                <ShareButton shareUrl={shareHrefAbs} title={h.title} />
+               <ShareButton
+  shareUrl={shareHrefAbs}
+  title={h.title}
+  summary={h.summary}
+/>
               </div>
             </div>
           </div>
