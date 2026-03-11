@@ -150,11 +150,53 @@ function signalWeightHard(c?: string) {
 
 // ✅ Clean share URL builder (NO query strings; fixes Android SMS ugly text)
 // Uses your existing /news/[...]/ page (encoded external URL as path segment).
-function buildNewsShareAbs(externalUrl: string) {
-  const encoded = encodeURIComponent(externalUrl);
-  return `https://libertysoldiers.com/news/${encoded}`;
+function hostFromUrl(u: string) {
+  try {
+    return new URL(u).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
 }
 
+function cleanSummary(summary?: string): string {
+  if (!summary) return "";
+  return summary
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\u00A0/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+function buildNewsShareAbs(args: {
+  url: string;
+  title: string;
+  source?: string;
+  publishedAt?: number;
+  image?: string;
+  summary?: string;
+}) {
+  const sp = new URLSearchParams();
+
+  sp.set("u", args.url);
+  sp.set("t", args.title);
+
+  const src = args.source || hostFromUrl(args.url);
+  if (src) sp.set("s", src);
+
+  if (
+    typeof args.publishedAt === "number" &&
+    Number.isFinite(args.publishedAt)
+  ) {
+    sp.set("p", String(args.publishedAt));
+  }
+
+  if (args.image) sp.set("i", args.image);
+
+  const cleaned = cleanSummary(args.summary);
+  if (cleaned) sp.set("x", cleaned);
+
+  return `https://libertysoldiers.com/news/share?${sp.toString()}`;
+}
 export default function NewsFeedClient({
   items,
 }: {
@@ -266,7 +308,16 @@ export default function NewsFeedClient({
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {list.map((h, idx) => {
               // ✅ FIX: share a clean Liberty Soldiers URL (no /news/share?u=...)
-              const shareHrefAbs = buildNewsShareAbs(h.url);
+              const shareHrefAbs = buildNewsShareAbs({
+  url: h.url,
+  title: h.title,
+  source: h.source,
+  publishedAt: h.publishedAt,
+  image: thumb.startsWith("http")
+    ? thumb
+    : `https://libertysoldiers.com${thumb}`,
+  summary: h.summary,
+});
 
               const fallback = fallbackForCategory(h.hardCategory || h.category);
 
@@ -352,7 +403,11 @@ export default function NewsFeedClient({
 
                     <div className="mt-4 pb-1 flex items-center justify-end">
                       {/* ✅ ShareButton now shares clean /news/<encodedExternalUrl> */}
-                      <ShareButton shareUrl={shareHrefAbs} title={h.title} />
+                      <ShareButton
+  shareUrl={shareHrefAbs}
+  title={h.title}
+  summary={h.summary}
+/>
                     </div>
                   </div>
                 </div>
@@ -363,7 +418,29 @@ export default function NewsFeedClient({
           <div className="rounded-2xl border border-zinc-200 bg-white divide-y divide-zinc-100">
             {list.map((h, idx) => {
               // ✅ FIX: share a clean Liberty Soldiers URL (no /news/share?u=...)
-              const shareHrefAbs = buildNewsShareAbs(h.url);
+              const fallback = fallbackForCategory(h.hardCategory || h.category);
+const raw = (h.image || "").trim();
+
+const isGenericDefault =
+  raw === "/og-default.jpg" ||
+  raw === "/og-default.jpeg" ||
+  raw === "/default-og.jpg" ||
+  raw === "/default-og.jpeg" ||
+  raw.includes("og-default") ||
+  raw.includes("default-og");
+
+const thumb = raw && !isGenericDefault ? raw : fallback;
+
+const shareHrefAbs = buildNewsShareAbs({
+  url: h.url,
+  title: h.title,
+  source: h.source,
+  publishedAt: h.publishedAt,
+  image: thumb.startsWith("http")
+    ? thumb
+    : `https://libertysoldiers.com${thumb}`,
+  summary: h.summary,
+});
 
               return (
                 <div
@@ -400,7 +477,11 @@ export default function NewsFeedClient({
 
                     <div className="shrink-0">
                       {/* ✅ ShareButton now shares clean /news/<encodedExternalUrl> */}
-                      <ShareButton shareUrl={shareHrefAbs} title={h.title} />
+                     <ShareButton
+  shareUrl={shareHrefAbs}
+  title={h.title}
+  summary={h.summary}
+/>
                     </div>
                   </div>
                 </div>
