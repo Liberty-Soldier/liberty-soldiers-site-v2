@@ -29,6 +29,22 @@ function humanAgo(input?: number | string | Date): string {
   const d = Math.floor(hr / 24);
   return `${d}d ago`;
 }
+function previewFromSummary(summary?: string): string {
+  if (!summary) return "";
+
+  const clean = summary
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\u00A0/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  if (!clean) return "";
+
+  return clean.length > 180
+    ? clean.slice(0, 177).replace(/\s+\S*$/, "").trim() + "..."
+    : clean;
+}
 
 function fallbackForCategory(cat?: string) {
   const c = (cat || "").toLowerCase().trim();
@@ -376,17 +392,11 @@ export default function NewsFeedClient({
                       </h3>
                     </a>
 
-                    {bullets.length > 0 && (
-                      <ul className="mt-3 space-y-1 text-sm text-zinc-700">
-                        {bullets.map((b, ii) => (
-                          <li key={ii} className="flex gap-2">
-                            <span className="text-zinc-400">•</span>
-                            <span className="leading-snug">{b}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
+                    {previewFromSummary(h.summary) && (
+  <p className="mt-3 text-sm text-zinc-700 leading-relaxed line-clamp-3">
+    {previewFromSummary(h.summary)}
+  </p>
+)}
                     <div className="mt-4 pb-1 flex items-center justify-end">
                       <a
                         href={shareHrefAbs}
