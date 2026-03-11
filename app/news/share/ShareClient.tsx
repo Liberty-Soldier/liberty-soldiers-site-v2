@@ -49,7 +49,7 @@ function cleanSummary(summary?: string): string {
     .trim();
 }
 
-function truncate(text: string, max = 280) {
+function truncate(text: string, max = 420) {
   if (!text) return "";
   if (text.length <= max) return text;
   return text.slice(0, max).replace(/\s+\S*$/, "").trim() + "…";
