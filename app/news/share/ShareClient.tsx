@@ -58,7 +58,10 @@ function truncate(text: string, max = 420) {
 function buildBriefingLead(summary?: string): string {
   const clean = cleanSummary(summary);
   if (!clean) return "";
-  return truncate(clean, 280);
+
+  if (clean.length <= 420) return clean;
+
+  return clean.slice(0, 420).replace(/\s+\S*$/, "").trim() + "…";
 }
 
 type SP = { searchParams: Record<string, string | string[] | undefined> };
