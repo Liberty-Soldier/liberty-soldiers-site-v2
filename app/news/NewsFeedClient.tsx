@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import ShareButton from "./ShareButton";
 import { useEffect, useMemo, useState } from "react";
 import FallbackImg from "@/app/components/FallbackImg";
 
@@ -30,10 +29,10 @@ function humanAgo(input?: number | string | Date): string {
   const d = Math.floor(hr / 24);
   return `${d}d ago`;
 }
+
 function fallbackForCategory(cat?: string) {
   const c = (cat || "").toLowerCase().trim();
 
-  // 1) Exact hardCategory matches (best case)
   if (c === "power & control") return "/og-power-control.jpg";
   if (c === "markets & finance") return "/og-markets-finance.jpg";
   if (c === "digital id / technocracy") return "/og-digital-id.jpg";
@@ -41,12 +40,10 @@ function fallbackForCategory(cat?: string) {
   if (c === "religion & ideology") return "/og-religion-ideology.jpg";
   if (c === "prophecy watch") return "/og-prophecy-watch.jpg";
 
-  // 2) Keyword mapping for badge categories / non-exact labels
-  // Markets
-  if (c.includes("finance") || c.includes("crypto") || c.includes("markets"))
+  if (c.includes("finance") || c.includes("crypto") || c.includes("markets")) {
     return "/og-markets-finance.jpg";
+  }
 
-  // Digital / technocracy / control systems
   if (
     c.includes("digital") ||
     c.includes("technocracy") ||
@@ -56,10 +53,10 @@ function fallbackForCategory(cat?: string) {
     c.includes("speech") ||
     c.includes("ai") ||
     c.includes("tech")
-  )
+  ) {
     return "/og-digital-id.jpg";
+  }
 
-  // War / geopolitics / world
   if (
     c.includes("war") ||
     c.includes("geopolitics") ||
@@ -70,24 +67,24 @@ function fallbackForCategory(cat?: string) {
     c.includes("ukraine") ||
     c.includes("russia") ||
     c.includes("china")
-  )
+  ) {
     return "/og-war-geopolitics.jpg";
+  }
 
-  // Religion / persecution
   if (
     c.includes("religion") ||
     c.includes("ideology") ||
     c.includes("persecution") ||
     c.includes("church") ||
     c.includes("christian")
-  )
+  ) {
     return "/og-religion-ideology.jpg";
+  }
 
-  // Prophecy
-  if (c.includes("prophecy") || c.includes("end time") || c.includes("endtime"))
+  if (c.includes("prophecy") || c.includes("end time") || c.includes("endtime")) {
     return "/og-prophecy-watch.jpg";
+  }
 
-  // 3) Default: choose one of your 6 (NOT og-default)
   return "/og-power-control.jpg";
 }
 
@@ -124,9 +121,8 @@ const HARD_ORDER = [
   "Prophecy Watch",
 ] as const;
 
-
 function buildCategories(_: Item[]) {
-  return HARD_ORDER; // always show all chips
+  return HARD_ORDER;
 }
 
 function signalWeightHard(c?: string) {
@@ -148,8 +144,6 @@ function signalWeightHard(c?: string) {
   }
 }
 
-// ✅ Clean share URL builder (NO query strings; fixes Android SMS ugly text)
-// Uses your existing /news/[...]/ page (encoded external URL as path segment).
 function hostFromUrl(u: string) {
   try {
     return new URL(u).hostname.replace(/^www\./, "");
@@ -167,6 +161,7 @@ function cleanSummary(summary?: string): string {
     .replace(/\s{2,}/g, " ")
     .trim();
 }
+
 function buildNewsShareAbs(args: {
   url: string;
   title: string;
@@ -197,12 +192,12 @@ function buildNewsShareAbs(args: {
 
   return `https://libertysoldiers.com/news/share?${sp.toString()}`;
 }
+
 export default function NewsFeedClient({
   items,
 }: {
   items: Item[];
 }) {
-
   const categories = useMemo(() => buildCategories(items), [items]);
 
   const [cat, setCat] = useState<(typeof HARD_ORDER)[number]>("All");
@@ -243,8 +238,7 @@ export default function NewsFeedClient({
 
   return (
     <div>
-      {/* Sticky controls */}
-      <div className="sticky top-0 z-20 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 bg-white/90 backdrop-blur border-b border-zinc-200">
+      <div className="sticky top-0 z-20 -mx-4 border-b border-zinc-200 bg-white/90 px-4 py-3 backdrop-blur sm:mx-0 sm:px-0">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <div className="text-xs text-zinc-600">
@@ -256,7 +250,7 @@ export default function NewsFeedClient({
             <div className="flex items-center gap-2">
               <select
                 value={sort}
-                onChange={(e) => setSort(e.target.value as any)}
+                onChange={(e) => setSort(e.target.value as "newest" | "signal")}
                 className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800"
               >
                 <option value="newest">Newest</option>
@@ -271,16 +265,15 @@ export default function NewsFeedClient({
 
               <button
                 onClick={() => setView(view === "cards" ? "compact" : "cards")}
-                className="hidden sm:inline-flex rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800 hover:bg-zinc-50"
+                className="hidden rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800 hover:bg-zinc-50 sm:inline-flex"
               >
                 {view === "cards" ? "Compact" : "Cards"}
               </button>
             </div>
           </div>
 
-          {/* Category chips */}
-          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto pb-2">
-            <div className="flex gap-2 w-max pr-4">
+          <div className="-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
+            <div className="flex w-max gap-2 pr-4">
               {categories.map((c) => {
                 const active = c === cat;
                 return (
@@ -302,74 +295,69 @@ export default function NewsFeedClient({
         </div>
       </div>
 
-      {/* Render */}
       <div className="mt-6 pb-6">
         {view === "cards" ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {list.map((h, idx) => {
-  const fallback = fallbackForCategory(h.hardCategory || h.category);
+              const fallback = fallbackForCategory(h.hardCategory || h.category);
+              const raw = (h.image || "").trim();
 
-  const raw = (h.image || "").trim();
+              const isGenericDefault =
+                raw === "/og-default.jpg" ||
+                raw === "/og-default.jpeg" ||
+                raw === "/default-og.jpg" ||
+                raw === "/default-og.jpeg" ||
+                raw.includes("og-default") ||
+                raw.includes("default-og");
 
-  // Treat your generic default as "no image" so category cards can show
-  const isGenericDefault =
-    raw === "/og-default.jpg" ||
-    raw === "/og-default.jpeg" ||
-    raw === "/default-og.jpg" ||
-    raw === "/default-og.jpeg" ||
-    raw.includes("og-default") ||
-    raw.includes("default-og");
+              const thumb = raw && !isGenericDefault ? raw : fallback;
 
-  const thumb = raw && !isGenericDefault ? raw : fallback;
+              const shareHrefAbs = buildNewsShareAbs({
+                url: h.url,
+                title: h.title,
+                source: h.source,
+                publishedAt: h.publishedAt,
+                image: thumb.startsWith("http")
+                  ? thumb
+                  : `https://libertysoldiers.com${thumb}`,
+                summary: h.summary,
+              });
 
-  const shareHrefAbs = buildNewsShareAbs({
-    url: h.url,
-    title: h.title,
-    source: h.source,
-    publishedAt: h.publishedAt,
-    image: thumb.startsWith("http")
-      ? thumb
-      : `https://libertysoldiers.com${thumb}`,
-    summary: h.summary,
-  });
+              const isFallbackThumb =
+                thumb.startsWith("/og-") ||
+                thumb === "/og-default.jpg" ||
+                thumb === "/default-og.jpg";
 
-  const isFallbackThumb =
-    thumb.startsWith("/og-") ||
-    thumb === "/og-default.jpg" ||
-    thumb === "/default-og.jpg";
+              const bullets = bulletsFromSummary(h.summary);
 
-  const bullets = bulletsFromSummary(h.summary);
-
-  return (
+              return (
                 <div key={`${h.url}-${idx}`} className="contents">
+                  <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:border-zinc-300 hover:shadow-md">
+                    <div className="relative mb-3 aspect-[16/9] overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
+                      <FallbackImg
+                        src={thumb}
+                        alt=""
+                        loading="lazy"
+                        fallback={fallback}
+                        className={`absolute inset-0 h-full w-full object-cover object-[50%_12%] ${
+                          isFallbackThumb ? "opacity-45 saturate-50 contrast-90" : ""
+                        }`}
+                      />
 
-                  <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition">
-         
-                   <div className="relative mb-3 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100 aspect-[16/9]">
-                    <FallbackImg
-                      src={thumb}
-                      alt=""
-                      loading="lazy"
-                      fallback={fallback}
-                      className={`absolute inset-0 w-full h-full object-cover object-[50%_12%] ${
-                        isFallbackThumb ? "opacity-45 saturate-50 contrast-90" : ""
-                      }`}
-                    />
-                  
-                    {/* soften fallback images so repeated art doesn't dominate */}
-                    {isFallbackThumb && <div className="absolute inset-0 bg-white/25" />}
-                  
-                    {/* keep the gradient only for real thumbnails */}
-                    {!isFallbackThumb && (
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                    )}
-                  </div>                  
+                      {isFallbackThumb && (
+                        <div className="absolute inset-0 bg-white/25" />
+                      )}
+
+                      {!isFallbackThumb && (
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                      )}
+                    </div>
 
                     <div className="flex items-start justify-between gap-3">
                       <span className="text-[11px] uppercase tracking-wide text-zinc-500">
                         {h.source}
                       </span>
-                      <span className="text-xs text-zinc-500 whitespace-nowrap">
+                      <span className="whitespace-nowrap text-xs text-zinc-500">
                         {humanAgo(h.publishedAt)}
                       </span>
                     </div>
@@ -382,7 +370,7 @@ export default function NewsFeedClient({
                       </div>
                     )}
 
-                    <a href={h.url} className="block mt-1">
+                    <a href={h.url} className="mt-1 block" target="_blank" rel="noreferrer">
                       <h3 className="font-semibold leading-snug hover:underline">
                         {h.title}
                       </h3>
@@ -400,12 +388,12 @@ export default function NewsFeedClient({
                     )}
 
                     <div className="mt-4 pb-1 flex items-center justify-end">
-                      {/* ✅ ShareButton now shares clean /news/<encodedExternalUrl> */}
-                      <ShareButton
-  shareUrl={shareHrefAbs}
-  title={h.title}
-  summary={h.summary}
-/>
+                      <a
+                        href={shareHrefAbs}
+                        className="text-sm font-semibold text-zinc-900 hover:underline"
+                      >
+                        Share →
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -413,37 +401,36 @@ export default function NewsFeedClient({
             })}
           </div>
         ) : (
-          <div className="rounded-2xl border border-zinc-200 bg-white divide-y divide-zinc-100">
+          <div className="divide-y divide-zinc-100 rounded-2xl border border-zinc-200 bg-white">
             {list.map((h, idx) => {
-              // ✅ FIX: share a clean Liberty Soldiers URL (no /news/share?u=...)
               const fallback = fallbackForCategory(h.hardCategory || h.category);
-const raw = (h.image || "").trim();
+              const raw = (h.image || "").trim();
 
-const isGenericDefault =
-  raw === "/og-default.jpg" ||
-  raw === "/og-default.jpeg" ||
-  raw === "/default-og.jpg" ||
-  raw === "/default-og.jpeg" ||
-  raw.includes("og-default") ||
-  raw.includes("default-og");
+              const isGenericDefault =
+                raw === "/og-default.jpg" ||
+                raw === "/og-default.jpeg" ||
+                raw === "/default-og.jpg" ||
+                raw === "/default-og.jpeg" ||
+                raw.includes("og-default") ||
+                raw.includes("default-og");
 
-const thumb = raw && !isGenericDefault ? raw : fallback;
+              const thumb = raw && !isGenericDefault ? raw : fallback;
 
-const shareHrefAbs = buildNewsShareAbs({
-  url: h.url,
-  title: h.title,
-  source: h.source,
-  publishedAt: h.publishedAt,
-  image: thumb.startsWith("http")
-    ? thumb
-    : `https://libertysoldiers.com${thumb}`,
-  summary: h.summary,
-});
+              const shareHrefAbs = buildNewsShareAbs({
+                url: h.url,
+                title: h.title,
+                source: h.source,
+                publishedAt: h.publishedAt,
+                image: thumb.startsWith("http")
+                  ? thumb
+                  : `https://libertysoldiers.com${thumb}`,
+                summary: h.summary,
+              });
 
               return (
                 <div
                   key={`${h.url}-${idx}`}
-                  className="p-3 sm:p-4 hover:bg-zinc-50 transition"
+                  className="p-3 transition hover:bg-zinc-50 sm:p-4"
                 >
                   <div className="flex items-start justify-between gap-3 sm:gap-4">
                     <div className="min-w-0">
@@ -461,9 +448,9 @@ const shareHrefAbs = buildNewsShareAbs({
                         href={h.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="block mt-1"
+                        className="mt-1 block"
                       >
-                        <div className="font-semibold text-zinc-900 hover:underline break-words">
+                        <div className="break-words font-semibold text-zinc-900 hover:underline">
                           {h.title}
                         </div>
                       </a>
@@ -474,12 +461,12 @@ const shareHrefAbs = buildNewsShareAbs({
                     </div>
 
                     <div className="shrink-0">
-                      {/* ✅ ShareButton now shares clean /news/<encodedExternalUrl> */}
-                     <ShareButton
-  shareUrl={shareHrefAbs}
-  title={h.title}
-  summary={h.summary}
-/>
+                      <a
+                        href={shareHrefAbs}
+                        className="text-sm font-semibold text-zinc-900 hover:underline"
+                      >
+                        Share →
+                      </a>
                     </div>
                   </div>
                 </div>
