@@ -211,32 +211,33 @@ export default async function HomeHeadlines({
   if (variant === "grid") {
     return (
       <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {top.map((h, idx) => {
-          const shareHrefAbs = buildNewsShareAbs({
-  url: h.url,
-  title: h.title,
-  source: h.source,
-  publishedAt: h.publishedAt,
-  image: thumb.startsWith("http")
-    ? thumb
-    : `https://libertysoldiers.com${thumb}`,
-  summary: h.summary,
-});
-           const fallback = fallbackForCategory(h.hardCategory || h.category);
-          
-          const raw = (h.image || "").trim();
-          
-          // Treat your generic default as "no image" so category cards can show
-          const isGenericDefault =
-            raw === "/og-default.jpg" ||
-            raw === "/og-default.jpeg" ||
-            raw === "/default-og.jpg" ||
-            raw === "/default-og.jpeg" ||
-            raw.includes("og-default") ||
-            raw.includes("default-og");
-          
-          const thumb = raw && !isGenericDefault ? raw : fallback;
-          const bullets = bulletsFromSummary(h.summary);
+       {top.map((h, idx) => {
+  const fallback = fallbackForCategory(h.hardCategory || h.category);
+
+  const raw = (h.image || "").trim();
+
+  const isGenericDefault =
+    raw === "/og-default.jpg" ||
+    raw === "/og-default.jpeg" ||
+    raw === "/default-og.jpg" ||
+    raw === "/default-og.jpeg" ||
+    raw.includes("og-default") ||
+    raw.includes("default-og");
+
+  const thumb = raw && !isGenericDefault ? raw : fallback;
+
+  const shareHrefAbs = buildNewsShareAbs({
+    url: h.url,
+    title: h.title,
+    source: h.source,
+    publishedAt: h.publishedAt,
+    image: thumb.startsWith("http")
+      ? thumb
+      : `https://libertysoldiers.com${thumb}`,
+    summary: h.summary,
+  });
+
+  const bullets = bulletsFromSummary(h.summary);
 
           return (
             <div
@@ -304,30 +305,31 @@ export default async function HomeHeadlines({
   return (
     <>
       {top.map((h, idx) => {
-        const shareHrefAbs = buildNewsShareAbs({
-  url: h.url,
-  title: h.title,
-  source: h.source,
-  publishedAt: h.publishedAt,
-  image: thumb.startsWith("http")
-    ? thumb
-    : `https://libertysoldiers.com${thumb}`,
-  summary: h.summary,
-});
-        const fallback = fallbackForCategory(h.hardCategory || h.category);
+  const fallback = fallbackForCategory(h.hardCategory || h.category);
 
-        const raw = (h.image || "").trim();
-        const isGenericDefault =
-          raw === "/og-default.jpg" ||
-          raw === "/og-default.jpeg" ||
-          raw === "/default-og.jpg" ||
-          raw === "/default-og.jpeg" ||
-          raw.includes("og-default") ||
-          raw.includes("default-og");
+  const raw = (h.image || "").trim();
+  const isGenericDefault =
+    raw === "/og-default.jpg" ||
+    raw === "/og-default.jpeg" ||
+    raw === "/default-og.jpg" ||
+    raw === "/default-og.jpeg" ||
+    raw.includes("og-default") ||
+    raw.includes("default-og");
 
-        const thumb = raw && !isGenericDefault ? raw : fallback;
-        const bullets = bulletsFromSummary(h.summary);
+  const thumb = raw && !isGenericDefault ? raw : fallback;
 
+  const shareHrefAbs = buildNewsShareAbs({
+    url: h.url,
+    title: h.title,
+    source: h.source,
+    publishedAt: h.publishedAt,
+    image: thumb.startsWith("http")
+      ? thumb
+      : `https://libertysoldiers.com${thumb}`,
+    summary: h.summary,
+  });
+
+  const bullets = bulletsFromSummary(h.summary);
         return (
           <div
             key={`${h.url}-${idx}`}
