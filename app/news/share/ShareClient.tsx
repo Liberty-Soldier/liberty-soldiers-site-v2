@@ -55,13 +55,19 @@ function truncate(text: string, max = 420) {
   return text.slice(0, max).replace(/\s+\S*$/, "").trim() + "…";
 }
 
-function buildBriefingLead(summary?: string): string {
-  const clean = cleanSummary(summary);
-  if (!clean) return "";
+function buildBriefingLead(title?: string, summary?: string): string {
+  const cleanTitle = (title || "").trim();
+  const cleanSummaryText = cleanSummary(summary);
 
-  if (clean.length <= 420) return clean;
+  if (!cleanTitle && !cleanSummaryText) return "";
 
-  return clean.slice(0, 420).replace(/\s+\S*$/, "").trim() + "…";
+  const combined = cleanSummaryText
+    ? `${cleanTitle ? cleanTitle + ". " : ""}${cleanSummaryText}`
+    : cleanTitle;
+
+  if (combined.length <= 420) return combined;
+
+  return combined.slice(0, 420).replace(/\s+\S*$/, "").trim() + "…";
 }
 
 type SP = { searchParams: Record<string, string | string[] | undefined> };
@@ -90,8 +96,7 @@ export default function ShareClient({ searchParams }: SP) {
   const rawSummary = typeof xRaw === "string" ? safeDecode(xRaw) : "";
 
   const when = humanWhen(publishedAt);
-  const briefingLead = buildBriefingLead(rawSummary);
-
+  const briefingLead = buildBriefingLead(title, rawSummary);
   const thumb = image || (url ? faviconFromUrl(url) : "/briefing-fallback.jpg");
 
   const doCopy = async () => {
