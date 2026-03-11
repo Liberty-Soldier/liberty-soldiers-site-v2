@@ -52,6 +52,22 @@ function pickBalanced(items: Item[], total: number) {
 
   return picked;
 }
+function previewFromSummary(summary?: string): string {
+  if (!summary) return "";
+
+  const clean = summary
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\u00A0/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  if (!clean) return "";
+
+  return clean.length > 180
+    ? clean.slice(0, 177).replace(/\s+\S*$/, "").trim() + "..."
+    : clean;
+}
 
 function humanAgo(input?: number | string | Date): string {
   if (!input) return "Just now";
@@ -246,16 +262,11 @@ export default async function HomeHeadlines({
                 </h3>
               </a>
 
-              {bullets.length > 0 && (
-                <ul className="mt-3 space-y-1 text-sm text-zinc-600">
-                  {bullets.map((b, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="text-zinc-400">•</span>
-                      <span className="leading-snug">{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              {previewFromSummary(h.summary) && (
+  <p className="mt-3 text-sm text-zinc-700 leading-relaxed line-clamp-3">
+    {previewFromSummary(h.summary)}
+  </p>
+)}
 
               {h.category && (
                 <div className="mt-2">
@@ -341,16 +352,11 @@ export default async function HomeHeadlines({
                 </h3>
               </a>
 
-              {bullets.length > 0 && (
-                <ul className="mt-3 line-clamp-3 space-y-1 text-sm text-zinc-600">
-                  {bullets.map((b, i) => (
-                    <li key={i} className="flex gap-2">
-                      <span className="text-zinc-400">•</span>
-                      <span className="leading-snug">{b}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              {previewFromSummary(h.summary) && (
+  <p className="mt-3 text-sm text-zinc-700 leading-relaxed line-clamp-3">
+    {previewFromSummary(h.summary)}
+  </p>
+)}
 
               {h.category && (
                 <div className="mt-2">
