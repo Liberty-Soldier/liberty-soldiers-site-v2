@@ -1,5 +1,4 @@
 import { fetchAllHeadlines } from "@/lib/rss";
-import ShareButton from "@/app/news/ShareButton";
 import FallbackImg from "@/app/components/FallbackImg";
 
 type Item = {
@@ -10,7 +9,7 @@ type Item = {
   image?: string;
   summary?: string;
   category?: string;
-  hardCategory?: string; 
+  hardCategory?: string;
 };
 
 function pickBalanced(items: Item[], total: number) {
@@ -72,7 +71,6 @@ function humanAgo(input?: number | string | Date): string {
 function fallbackForCategory(cat?: string) {
   const c = (cat || "").toLowerCase().trim();
 
-  // --- Exact hardCategory bucket matches ---
   if (c === "power & control") return "/og-power-control.jpg";
   if (c === "markets & finance") return "/og-markets-finance.jpg";
   if (c === "digital id / technocracy") return "/og-digital-id.jpg";
@@ -80,12 +78,10 @@ function fallbackForCategory(cat?: string) {
   if (c === "religion & ideology") return "/og-religion-ideology.jpg";
   if (c === "prophecy watch") return "/og-prophecy-watch.jpg";
 
-  // --- Map your badge categories / keywords into those buckets ---
-  // Markets
-  if (c.includes("finance") || c.includes("crypto") || c.includes("markets"))
+  if (c.includes("finance") || c.includes("crypto") || c.includes("markets")) {
     return "/og-markets-finance.jpg";
+  }
 
-  // Digital / technocracy
   if (
     c.includes("digital id") ||
     c.includes("technocracy") ||
@@ -97,36 +93,24 @@ function fallbackForCategory(cat?: string) {
     return "/og-digital-id.jpg";
   }
 
-  // War
-  if (c.includes("war") || c.includes("geopolitics") || c.includes("middle east"))
+  if (c.includes("war") || c.includes("geopolitics") || c.includes("middle east")) {
     return "/og-war-geopolitics.jpg";
+  }
 
-  // Religion
-  if (c.includes("religion") || c.includes("ideology") || c.includes("persecution"))
+  if (c.includes("religion") || c.includes("ideology") || c.includes("persecution")) {
     return "/og-religion-ideology.jpg";
+  }
 
-  // Prophecy
   if (c.includes("prophecy")) return "/og-prophecy-watch.jpg";
 
-  // Default bucket (better than og-default for your brand)
   return "/og-power-control.jpg";
-}
-
-function faviconFromUrl(articleUrl: string): string {
-  try {
-    const u = new URL(articleUrl);
-    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(
-      u.hostname
-    )}&sz=128`;
-  } catch {
-    return "/briefing-fallback.jpg";
-  }
 }
 
 function bulletsFromSummary(summary?: string): string[] {
   if (!summary) return [];
   const clean = summary.replace(/\s+/g, " ").trim();
   if (!clean) return [];
+
   const parts = clean
     .split(/(?:\.|\!|\?)\s+/)
     .map((s) => s.trim())
@@ -135,7 +119,6 @@ function bulletsFromSummary(summary?: string): string[] {
   return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
 }
 
-// ✅ Clean share URL builder (NO query strings; fixes Android SMS ugly text)
 function hostFromUrl(u: string) {
   try {
     return new URL(u).hostname.replace(/^www\./, "");
@@ -207,48 +190,46 @@ export default async function HomeHeadlines({
     );
   }
 
-  // GRID
   if (variant === "grid") {
     return (
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-       {top.map((h, idx) => {
-  const fallback = fallbackForCategory(h.hardCategory || h.category);
+      <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {top.map((h, idx) => {
+          const fallback = fallbackForCategory(h.hardCategory || h.category);
+          const raw = (h.image || "").trim();
 
-  const raw = (h.image || "").trim();
+          const isGenericDefault =
+            raw === "/og-default.jpg" ||
+            raw === "/og-default.jpeg" ||
+            raw === "/default-og.jpg" ||
+            raw === "/default-og.jpeg" ||
+            raw.includes("og-default") ||
+            raw.includes("default-og");
 
-  const isGenericDefault =
-    raw === "/og-default.jpg" ||
-    raw === "/og-default.jpeg" ||
-    raw === "/default-og.jpg" ||
-    raw === "/default-og.jpeg" ||
-    raw.includes("og-default") ||
-    raw.includes("default-og");
+          const thumb = raw && !isGenericDefault ? raw : fallback;
 
-  const thumb = raw && !isGenericDefault ? raw : fallback;
+          const shareHrefAbs = buildNewsShareAbs({
+            url: h.url,
+            title: h.title,
+            source: h.source,
+            publishedAt: h.publishedAt,
+            image: thumb.startsWith("http")
+              ? thumb
+              : `https://libertysoldiers.com${thumb}`,
+            summary: h.summary,
+          });
 
-  const shareHrefAbs = buildNewsShareAbs({
-    url: h.url,
-    title: h.title,
-    source: h.source,
-    publishedAt: h.publishedAt,
-    image: thumb.startsWith("http")
-      ? thumb
-      : `https://libertysoldiers.com${thumb}`,
-    summary: h.summary,
-  });
-
-  const bullets = bulletsFromSummary(h.summary);
+          const bullets = bulletsFromSummary(h.summary);
 
           return (
             <div
               key={`${h.url}-${idx}`}
               className="rounded-xl border border-zinc-200 bg-white p-4"
             >
-            <div className="mb-3 relative w-full h-[160px] sm:h-[176px] overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
+              <div className="relative mb-3 h-[160px] w-full overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 sm:h-[176px]">
                 <FallbackImg
                   src={thumb}
                   alt=""
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 h-full w-full object-cover"
                   style={{ objectPosition: "50% 10%" }}
                   loading="lazy"
                   fallback={fallback}
@@ -259,7 +240,7 @@ export default async function HomeHeadlines({
                 {h.source}
               </span>
 
-              <a href={h.url} className="block mt-1">
+              <a href={h.url} className="mt-1 block" target="_blank" rel="noreferrer">
                 <h3 className="font-semibold leading-snug text-zinc-900 hover:underline">
                   {h.title}
                 </h3>
@@ -288,11 +269,12 @@ export default async function HomeHeadlines({
                 <span className="text-xs text-zinc-500">
                   {humanAgo(h.publishedAt)}
                 </span>
-                <ShareButton
-  shareUrl={shareHrefAbs}
-  title={h.title}
-  summary={h.summary}
-/>
+                <a
+                  href={shareHrefAbs}
+                  className="text-sm font-semibold text-zinc-900 hover:underline"
+                >
+                  Share →
+                </a>
               </div>
             </div>
           );
@@ -301,48 +283,48 @@ export default async function HomeHeadlines({
     );
   }
 
-   // CAROUSEL (slides only)
   return (
     <>
       {top.map((h, idx) => {
-  const fallback = fallbackForCategory(h.hardCategory || h.category);
+        const fallback = fallbackForCategory(h.hardCategory || h.category);
 
-  const raw = (h.image || "").trim();
-  const isGenericDefault =
-    raw === "/og-default.jpg" ||
-    raw === "/og-default.jpeg" ||
-    raw === "/default-og.jpg" ||
-    raw === "/default-og.jpeg" ||
-    raw.includes("og-default") ||
-    raw.includes("default-og");
+        const raw = (h.image || "").trim();
+        const isGenericDefault =
+          raw === "/og-default.jpg" ||
+          raw === "/og-default.jpeg" ||
+          raw === "/default-og.jpg" ||
+          raw === "/default-og.jpeg" ||
+          raw.includes("og-default") ||
+          raw.includes("default-og");
 
-  const thumb = raw && !isGenericDefault ? raw : fallback;
+        const thumb = raw && !isGenericDefault ? raw : fallback;
 
-  const shareHrefAbs = buildNewsShareAbs({
-    url: h.url,
-    title: h.title,
-    source: h.source,
-    publishedAt: h.publishedAt,
-    image: thumb.startsWith("http")
-      ? thumb
-      : `https://libertysoldiers.com${thumb}`,
-    summary: h.summary,
-  });
+        const shareHrefAbs = buildNewsShareAbs({
+          url: h.url,
+          title: h.title,
+          source: h.source,
+          publishedAt: h.publishedAt,
+          image: thumb.startsWith("http")
+            ? thumb
+            : `https://libertysoldiers.com${thumb}`,
+          summary: h.summary,
+        });
 
-  const bullets = bulletsFromSummary(h.summary);
+        const bullets = bulletsFromSummary(h.summary);
+
         return (
           <div
             key={`${h.url}-${idx}`}
             className="shrink-0 w-[88%] sm:w-[520px] lg:w-[640px]"
           >
-            <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 h-[420px] flex flex-col">
+            <div className="flex h-[420px] flex-col rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5">
               <div className="mb-3 flex-shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50">
                 <div className="relative w-full pt-[56.25%]">
                   <FallbackImg
                     src={thumb}
                     alt=""
-                    className="absolute inset-0 block w-full h-full object-cover"
-                    style={{ objectPosition: "50% 15%" }}   // ✅ guaranteed
+                    className="absolute inset-0 block h-full w-full object-cover"
+                    style={{ objectPosition: "50% 15%" }}
                     loading="lazy"
                     fallback={fallback}
                   />
@@ -353,14 +335,14 @@ export default async function HomeHeadlines({
                 {h.source}
               </span>
 
-              <a href={h.url} className="block mt-1">
-                <h3 className="text-zinc-900 font-semibold leading-snug hover:underline line-clamp-2">
+              <a href={h.url} className="mt-1 block" target="_blank" rel="noreferrer">
+                <h3 className="line-clamp-2 font-semibold leading-snug text-zinc-900 hover:underline">
                   {h.title}
                 </h3>
               </a>
 
               {bullets.length > 0 && (
-                <ul className="mt-3 space-y-1 text-sm text-zinc-600 line-clamp-3">
+                <ul className="mt-3 line-clamp-3 space-y-1 text-sm text-zinc-600">
                   {bullets.map((b, i) => (
                     <li key={i} className="flex gap-2">
                       <span className="text-zinc-400">•</span>
@@ -378,15 +360,16 @@ export default async function HomeHeadlines({
                 </div>
               )}
 
-              <div className="mt-auto pt-4 flex items-center justify-between gap-3">
+              <div className="mt-auto flex items-center justify-between gap-3 pt-4">
                 <span className="text-xs text-zinc-500">
                   {humanAgo(h.publishedAt)}
                 </span>
-               <ShareButton
-  shareUrl={shareHrefAbs}
-  title={h.title}
-  summary={h.summary}
-/>
+                <a
+                  href={shareHrefAbs}
+                  className="text-sm font-semibold text-zinc-900 hover:underline"
+                >
+                  Share →
+                </a>
               </div>
             </div>
           </div>
