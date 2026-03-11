@@ -66,8 +66,6 @@ export default function CrisisWindowReportPage() {
             Major societal changes rarely arrive during calm.
           </p>
 
-     
-
           <p>
             Moments of fear compress time. Debate shortens. Urgency replaces reflection.
             When populations feel threatened — economically, physically, or socially —
@@ -75,14 +73,13 @@ export default function CrisisWindowReportPage() {
             can suddenly appear necessary. Technologies that once raised concern may be
             reframed as solutions.
           </p>
+          
           <img
-              src="/crisis-window.jpg"
-              alt="Crisis window visual showing instability and rapid change"
-              className="w-full rounded-2xl border border-zinc-200 bg-white shadow-sm"
-              loading="lazy"
-            />
-          </div>
-        
+            src="/crisis-window.jpg"
+            alt="Crisis window visual"
+            className="w-full rounded-2xl border border-zinc-200 bg-white shadow-sm"
+          />
+          
           <p>
             Political strategist Rahm Emanuel once described this dynamic bluntly:
             “You never want a serious crisis to go to waste… it’s an opportunity to do
