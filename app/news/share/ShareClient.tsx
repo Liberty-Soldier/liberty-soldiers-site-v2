@@ -49,6 +49,12 @@ function cleanSummary(summary?: string): string {
     .trim();
 }
 
+function truncate(text: string, max = 260) {
+  if (!text) return "";
+  if (text.length <= max) return text;
+  return text.slice(0, max).replace(/\s+\S*$/, "").trim() + "…";
+}
+
 function bulletsFromSummary(summary?: string): string[] {
   const clean = cleanSummary(summary);
   if (!clean) return [];
@@ -60,7 +66,7 @@ function bulletsFromSummary(summary?: string): string[] {
 
   if (preBullets.length >= 3) {
     return preBullets
-      .slice(0, 2)
+      .slice(0, 3)
       .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
   }
 
@@ -69,14 +75,15 @@ function bulletsFromSummary(summary?: string): string[] {
     .map((s) => s.trim())
     .filter(Boolean);
 
-  if (parts.length >= 2) return parts.slice(0, 2);
+  if (parts.length >= 2) return parts.slice(0, 3);
 
-  const chunk1 = clean.slice(0, 95).trim();
-  const chunk2 = clean.slice(95, 190).trim();
+  const chunk1 = clean.slice(0, 110).trim();
+  const chunk2 = clean.slice(110, 220).trim();
+  const chunk3 = clean.slice(220, 320).trim();
 
-  return [chunk1, chunk2]
+  return [chunk1, chunk2, chunk3]
     .filter(Boolean)
-    .slice(0, 2)
+    .slice(0, 3)
     .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
 }
 
@@ -94,49 +101,48 @@ export default function ShareClient({ searchParams }: SP) {
   const tRaw = searchParams.t;
   const sRaw = searchParams.s;
   const pRaw = searchParams.p;
-  const iRaw = searchParams.i; // image
-  const xRaw = searchParams.x; // summary
+  const iRaw = searchParams.i;
+  const xRaw = searchParams.x;
 
   const url = typeof uRaw === "string" ? safeDecode(uRaw) : "";
   const title = typeof tRaw === "string" ? safeDecode(tRaw) : "Shared Headline";
   const source = typeof sRaw === "string" ? safeDecode(sRaw) : hostFromUrl(url);
-
   const publishedAt =
     typeof pRaw === "string" ? Number(safeDecode(pRaw)) : undefined;
+  const image = typeof iRaw === "string" ? safeDecode(iRaw) : "";
+  const rawSummary = typeof xRaw === "string" ? safeDecode(xRaw) : "";
 
   const when = humanWhen(publishedAt);
-
-  const image = typeof iRaw === "string" ? safeDecode(iRaw) : "";
-  const summary = typeof xRaw === "string" ? safeDecode(xRaw) : "";
-
-  const thumb = image || (url ? faviconFromUrl(url) : "/briefing-fallback.jpg");
+  const summary = cleanSummary(rawSummary);
+  const summaryLead = truncate(summary, 260);
   const bullets = bulletsFromSummary(summary);
 
-  // ✅ COPY SHOULD COPY THE ORIGINAL SOURCE URL (clean + short)
-  const copyTarget = url || wrapperUrl || "";
+  const thumb = image || (url ? faviconFromUrl(url) : "/briefing-fallback.jpg");
 
   const doCopy = async () => {
-  const textToCopy = window.location.href;
+    const textToCopy = window.location.href;
+    const ok = await copyText(textToCopy);
 
-  const ok = await copyText(textToCopy);
-  if (ok) {
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1200);
-  } else {
-    window.prompt("Copy this link:", textToCopy);
-  }
-};
+    if (ok) {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } else {
+      window.prompt("Copy this link:", textToCopy);
+    }
+  };
 
-  // ✅ X SHARE: use x.com intent + put URL inside text for best mobile behavior
   const xIntentUrl = useMemo(() => {
-    const shareLink = wrapperUrl || (typeof window !== "undefined" ? window.location.href : "");
-    const shareText = title ? `${title} ${shareLink}` : `Shared via Liberty Soldiers ${shareLink}`;
+    const shareLink =
+      wrapperUrl || (typeof window !== "undefined" ? window.location.href : "");
+    const shareText = title
+      ? `${title}\n\n${shareLink}`
+      : `Shared via Liberty Soldiers\n\n${shareLink}`;
     return `https://x.com/intent/post?text=${encodeURIComponent(shareText)}`;
   }, [wrapperUrl, title]);
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4">
           <a href="/news" className="text-sm text-zinc-700 hover:text-zinc-900">
             ← Back to News
@@ -147,8 +153,7 @@ export default function ShareClient({ searchParams }: SP) {
           </a>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-6">
-          {/* Thumbnail */}
+        <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="mb-4 overflow-hidden rounded-xl border border-zinc-200 bg-zinc-100">
             <img
               src={thumb}
@@ -158,11 +163,11 @@ export default function ShareClient({ searchParams }: SP) {
             />
           </div>
 
-          <p className="text-[11px] uppercase tracking-wide text-zinc-500">
-            Shared via Liberty Soldiers
+          <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">
+            Liberty Soldiers Intelligence Brief
           </p>
 
-          <h1 className="mt-2 text-2xl sm:text-3xl font-extrabold leading-tight">
+          <h1 className="mt-2 text-2xl font-extrabold leading-tight sm:text-3xl">
             {title}
           </h1>
 
@@ -173,29 +178,46 @@ export default function ShareClient({ searchParams }: SP) {
               </span>
             ) : null}
 
-            {when ? <span>• {when}</span> : null}
+            {when ? (
+              <span className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5">
+                Published: {when}
+              </span>
+            ) : null}
           </div>
 
-          {/* Bullets */}
+          {summaryLead ? (
+            <div className="mt-5 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
+              <p className="text-sm leading-6 text-zinc-800">{summaryLead}</p>
+            </div>
+          ) : null}
+
           {bullets.length > 0 && (
-            <ul className="mt-4 space-y-1 text-sm text-zinc-700">
-              {bullets.map((b, i) => (
-                <li key={i} className="flex gap-2">
-                  <span className="text-zinc-400">•</span>
-                  <span className="leading-snug">{b}</span>
-                </li>
-              ))}
-            </ul>
+            <div className="mt-5">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-900">
+                Quick takeaways
+              </h2>
+              <ul className="mt-3 space-y-2 text-sm text-zinc-700">
+                {bullets.map((b, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="mt-[2px] text-zinc-400">•</span>
+                    <span className="leading-snug">{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
-        
-       <h3 className="mt-4 text-sm font-semibold uppercase tracking-wide text-zinc-900">
-          Defending Truth in the Information War
-        </h3>
-        
-        <p className="mt-2 text-sm text-zinc-700">
-          This link is shared for situational awareness. External sources are
-          not endorsements. Liberty Soldiers provides context and analysis.
-        </p>
+
+          <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-900">
+              Why this is being shared
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-zinc-700">
+              This report is being shared for situational awareness. External
+              reporting is not an endorsement. Liberty Soldiers tracks the
+              intersection of power, control, conflict, and prophecy, then adds
+              context where needed.
+            </p>
+          </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
             <a
@@ -207,7 +229,6 @@ export default function ShareClient({ searchParams }: SP) {
               Open original source →
             </a>
 
-            {/* ✅ Use anchor link for mobile reliability */}
             <a
               href={xIntentUrl}
               target="_blank"
@@ -234,8 +255,8 @@ export default function ShareClient({ searchParams }: SP) {
         </div>
 
         <p className="mt-6 text-xs text-zinc-500">
-          Tip: use “Open original source” for the full article. This page exists
-          to preserve context when shared on social platforms.
+          This wrapper preserves context when links are shared across social
+          platforms, chats, and reposts.
         </p>
       </div>
     </main>
