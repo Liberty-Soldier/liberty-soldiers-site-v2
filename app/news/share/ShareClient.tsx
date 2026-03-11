@@ -49,42 +49,48 @@ function cleanSummary(summary?: string): string {
     .trim();
 }
 
-function truncate(text: string, max = 260) {
+function truncate(text: string, max = 220) {
   if (!text) return "";
   if (text.length <= max) return text;
   return text.slice(0, max).replace(/\s+\S*$/, "").trim() + "…";
 }
 
-function bulletsFromSummary(summary?: string): string[] {
+function buildBriefingLead(summary?: string): string {
+  const clean = cleanSummary(summary);
+  if (!clean) return "";
+  return truncate(clean, 220);
+}
+
+function takeawaysFromSummary(summary?: string): string[] {
   const clean = cleanSummary(summary);
   if (!clean) return [];
 
-  const preBullets = clean
-    .split(/(?:•|·|\u2022|\s-\s|\s—\s)/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  if (preBullets.length >= 3) {
-    return preBullets
-      .slice(0, 3)
-      .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
-  }
-
-  const parts = clean
+  const sentences = clean
     .split(/(?<=[.!?])\s+/)
     .map((s) => s.trim())
     .filter(Boolean);
 
-  if (parts.length >= 2) return parts.slice(0, 3);
+  const normalized = sentences.map((s) =>
+    /[.!?]$/.test(s) ? s : s + "."
+  );
 
-  const chunk1 = clean.slice(0, 110).trim();
-  const chunk2 = clean.slice(110, 220).trim();
-  const chunk3 = clean.slice(220, 320).trim();
+  if (normalized.length >= 3) {
+    return normalized
+      .filter((s) => s.length > 35)
+      .slice(0, 3);
+  }
 
-  return [chunk1, chunk2, chunk3]
+  if (normalized.length === 2) {
+    return normalized;
+  }
+
+  const chunk1 = clean.slice(0, 160).trim();
+  const chunk2 = clean.slice(160, 320).trim();
+
+  return [chunk1, chunk2]
     .filter(Boolean)
-    .slice(0, 3)
-    .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
+    .map((s) => (/[.!?]$/.test(s) ? s : s + "."))
+    .filter((s) => s.length > 30);
 }
 
 type SP = { searchParams: Record<string, string | string[] | undefined> };
@@ -114,8 +120,8 @@ export default function ShareClient({ searchParams }: SP) {
 
   const when = humanWhen(publishedAt);
   const summary = cleanSummary(rawSummary);
-  const summaryLead = truncate(summary, 260);
-  const bullets = bulletsFromSummary(summary);
+  const briefingLead = buildBriefingLead(summary);
+  const takeaways = takeawaysFromSummary(summary);
 
   const thumb = image || (url ? faviconFromUrl(url) : "/briefing-fallback.jpg");
 
@@ -185,22 +191,28 @@ export default function ShareClient({ searchParams }: SP) {
             ) : null}
           </div>
 
-          {summaryLead ? (
+          {briefingLead ? (
             <div className="mt-5 rounded-xl border border-zinc-200 bg-zinc-50 p-4">
-              <p className="text-sm leading-6 text-zinc-800">{summaryLead}</p>
+              <div className="text-xs font-semibold uppercase tracking-wide text-zinc-700">
+                Briefing Snapshot
+              </div>
+              <p className="mt-2 text-sm leading-6 text-zinc-800">
+                {briefingLead}
+              </p>
             </div>
           ) : null}
 
-          {bullets.length > 0 && (
+          {takeaways.length > 0 && (
             <div className="mt-5">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-900">
-                Quick takeaways
+                Quick Takeaways
               </h2>
-              <ul className="mt-3 space-y-2 text-sm text-zinc-700">
-                {bullets.map((b, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="mt-[2px] text-zinc-400">•</span>
-                    <span className="leading-snug">{b}</span>
+
+              <ul className="mt-3 space-y-3 text-sm text-zinc-700">
+                {takeaways.map((item, i) => (
+                  <li key={i} className="flex gap-3">
+                    <span className="mt-[3px] text-zinc-400">•</span>
+                    <span className="leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -212,10 +224,10 @@ export default function ShareClient({ searchParams }: SP) {
               Why this is being shared
             </h3>
             <p className="mt-2 text-sm leading-6 text-zinc-700">
-              This report is being shared for situational awareness. External
+              This article is being shared for situational awareness. External
               reporting is not an endorsement. Liberty Soldiers tracks the
-              intersection of power, control, conflict, and prophecy, then adds
-              context where needed.
+              intersection of power, control, conflict, finance, ideology, and
+              prophecy, then adds context where needed.
             </p>
           </div>
 
