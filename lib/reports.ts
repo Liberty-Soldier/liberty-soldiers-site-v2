@@ -11,6 +11,15 @@ export type Report = {
 
 export const REPORTS: Report[] = [
   {
+  slug: "crisis-window",
+  title: "The Crisis Window: How Fear Accelerates Change and Expands Public Consent",
+  excerpt:
+    "Periods of instability often accelerate systemic change. This report examines crisis psychology, rapid policy shifts, and how fear can expand what populations are willing to accept.",
+  dateISO: "2026-03-11",
+  byline: "Black Signal",
+  coverImage: "/crisis-window.jpg",
+},
+  {
   slug: "signal-vs-noise",
   title: "Signal vs Noise: How Modern Narratives Shape Public Perception",
   excerpt:
