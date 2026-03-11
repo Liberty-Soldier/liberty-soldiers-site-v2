@@ -307,42 +307,40 @@ export default function NewsFeedClient({
         {view === "cards" ? (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {list.map((h, idx) => {
-              // ✅ FIX: share a clean Liberty Soldiers URL (no /news/share?u=...)
-              const shareHrefAbs = buildNewsShareAbs({
-  url: h.url,
-  title: h.title,
-  source: h.source,
-  publishedAt: h.publishedAt,
-  image: thumb.startsWith("http")
-    ? thumb
-    : `https://libertysoldiers.com${thumb}`,
-  summary: h.summary,
-});
+  const fallback = fallbackForCategory(h.hardCategory || h.category);
 
-              const fallback = fallbackForCategory(h.hardCategory || h.category);
+  const raw = (h.image || "").trim();
 
-              const raw = (h.image || "").trim();
-              
-              // Treat your generic default as "no image" so category cards can show
-              const isGenericDefault =
-                raw === "/og-default.jpg" ||
-                raw === "/og-default.jpeg" ||
-                raw === "/default-og.jpg" ||
-                raw === "/default-og.jpeg" ||
-                raw.includes("og-default") ||
-                raw.includes("default-og");
-              
-              const thumb = raw && !isGenericDefault ? raw : fallback;
+  // Treat your generic default as "no image" so category cards can show
+  const isGenericDefault =
+    raw === "/og-default.jpg" ||
+    raw === "/og-default.jpeg" ||
+    raw === "/default-og.jpg" ||
+    raw === "/default-og.jpeg" ||
+    raw.includes("og-default") ||
+    raw.includes("default-og");
 
-                const isFallbackThumb =
-                  thumb.startsWith("/og-") ||
-                  thumb === "/og-default.jpg" ||
-                  thumb === "/default-og.jpg";
-                
-                const bullets = bulletsFromSummary(h.summary);
+  const thumb = raw && !isGenericDefault ? raw : fallback;
 
-          
-              return (
+  const shareHrefAbs = buildNewsShareAbs({
+    url: h.url,
+    title: h.title,
+    source: h.source,
+    publishedAt: h.publishedAt,
+    image: thumb.startsWith("http")
+      ? thumb
+      : `https://libertysoldiers.com${thumb}`,
+    summary: h.summary,
+  });
+
+  const isFallbackThumb =
+    thumb.startsWith("/og-") ||
+    thumb === "/og-default.jpg" ||
+    thumb === "/default-og.jpg";
+
+  const bullets = bulletsFromSummary(h.summary);
+
+  return (
                 <div key={`${h.url}-${idx}`} className="contents">
 
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-zinc-300 transition">
