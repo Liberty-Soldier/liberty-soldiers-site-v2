@@ -386,11 +386,11 @@ export default function NewsFeedClient({
                       </div>
                     )}
 
-                    <a href={h.url} className="mt-1 block" target="_blank" rel="noreferrer">
-                      <h3 className="font-semibold leading-snug hover:underline">
-                        {h.title}
-                      </h3>
-                    </a>
+                   <a href={h.url} className="mt-1 block">
+  <h3 className="font-semibold leading-snug hover:underline">
+    {h.title}
+  </h3>
+</a>
 
                     {previewFromSummary(h.summary) && (
   <p className="mt-3 text-sm text-zinc-700 leading-relaxed line-clamp-3">
@@ -455,15 +455,13 @@ export default function NewsFeedClient({
                       </div>
 
                       <a
-                        href={h.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="mt-1 block"
-                      >
-                        <div className="break-words font-semibold text-zinc-900 hover:underline">
-                          {h.title}
-                        </div>
-                      </a>
+  href={h.url}
+  className="mt-1 block"
+>
+  <div className="break-words font-semibold text-zinc-900 hover:underline">
+    {h.title}
+  </div>
+</a>
 
                       <div className="mt-1 text-[11px] text-zinc-500">
                         {humanAgo(h.publishedAt)}
