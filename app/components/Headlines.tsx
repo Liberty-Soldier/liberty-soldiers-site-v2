@@ -256,11 +256,11 @@ export default async function HomeHeadlines({
                 {h.source}
               </span>
 
-              <a href={h.url} className="mt-1 block" target="_blank" rel="noreferrer">
-                <h3 className="font-semibold leading-snug text-zinc-900 hover:underline">
-                  {h.title}
-                </h3>
-              </a>
+              <a href={h.url} className="mt-1 block">
+  <h3 className="font-semibold leading-snug text-zinc-900 hover:underline">
+    {h.title}
+  </h3>
+</a>
 
               {previewFromSummary(h.summary) && (
   <p className="mt-3 text-sm text-zinc-700 leading-relaxed line-clamp-3">
@@ -346,11 +346,11 @@ export default async function HomeHeadlines({
                 {h.source}
               </span>
 
-              <a href={h.url} className="mt-1 block" target="_blank" rel="noreferrer">
-                <h3 className="line-clamp-2 font-semibold leading-snug text-zinc-900 hover:underline">
-                  {h.title}
-                </h3>
-              </a>
+              <a href={h.url} className="mt-1 block">
+  <h3 className="line-clamp-2 font-semibold leading-snug text-zinc-900 hover:underline">
+    {h.title}
+  </h3>
+</a>
 
               {previewFromSummary(h.summary) && (
   <p className="mt-3 text-sm text-zinc-700 leading-relaxed line-clamp-3">
