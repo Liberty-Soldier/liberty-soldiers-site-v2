@@ -1,6 +1,6 @@
 // app/news/war-beyond-the-battlefield/page.tsx
 
-import ShareButton from "../news/ShareButton";
+import ShareButton from "../ShareButton";
 
 export const metadata = {
   title:
