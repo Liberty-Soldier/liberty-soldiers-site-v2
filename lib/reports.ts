@@ -11,6 +11,16 @@ export type Report = {
 
 export const REPORTS: Report[] = [
   {
+  slug: "war-beyond-the-battlefield",
+  title:
+    "War Beyond the Battlefield: Oil Shock, Shipping Risk, and the Expanding Iran Crisis",
+  excerpt:
+    "Oil volatility, tanker security risks, and rising policy pressure signal a widening conflict beyond traditional front lines. This field report examines how energy shocks, global trade stress, and geopolitical escalation are reshaping economic expectations and public stability.",
+  dateISO: "2026-03-12",
+  byline: "Black Signal",
+  coverImage: "/hero-war-energy-shipping.jpg",
+},
+  {
   slug: "crisis-window",
   title: "The Crisis Window: How Fear Accelerates Change and Expands Public Consent",
   excerpt:
