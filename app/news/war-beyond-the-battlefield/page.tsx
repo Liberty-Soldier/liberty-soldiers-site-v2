@@ -113,9 +113,17 @@ export default function WarBeyondBattlefieldPage() {
   return (
     <main className="min-h-screen bg-white text-zinc-900">
       <article className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
-        <a href="/news" className="text-sm text-zinc-600 hover:text-zinc-900">
-          ← Back to News
-        </a>
+       <div className="flex flex-wrap items-center justify-between gap-3">
+  <a href="/news" className="text-sm text-zinc-600 hover:text-zinc-900">
+    ← Back to News
+  </a>
+
+  <ShareButton
+    shareUrl="https://libertysoldiers.com/news/war-beyond-the-battlefield"
+    title="War Beyond the Battlefield: Oil Shock, Shipping Risk, and the Expanding Iran Crisis"
+    summary="Oil volatility, shipping risks, and rising policy pressure signal a widening conflict beyond traditional front lines."
+  />
+</div>
 
         <header className="mt-6">
           <div className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">
@@ -431,9 +439,17 @@ export default function WarBeyondBattlefieldPage() {
 
         <footer className="mt-14 border-t border-zinc-200 pt-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <a href="/news" className="text-sm text-zinc-600 hover:text-zinc-900">
-              ← Back to News Feed
-            </a>
+            <div className="mt-8 border-t border-zinc-200 pt-6">
+  <div className="text-sm font-semibold text-zinc-900 mb-3">
+    Share this report
+  </div>
+
+  <ShareButton
+    shareUrl="https://libertysoldiers.com/news/war-beyond-the-battlefield"
+    title="War Beyond the Battlefield: Oil Shock, Shipping Risk, and the Expanding Iran Crisis"
+    summary="Oil volatility, shipping risks, and rising policy pressure signal a widening conflict beyond traditional front lines."
+  />
+</div>
 
             <a href="/" className="text-sm text-zinc-600 hover:text-zinc-900">
               Home
