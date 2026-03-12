@@ -143,7 +143,7 @@ export default function WarBeyondBattlefieldPage() {
         </header>
 
         <SectionImage
-          src="/news/war-beyond-the-battlefield/hero.jpg"
+          src="/hero-war-energy-shipping.jpg"
           alt="War Beyond the Battlefield hero image"
           caption="Suggested visual: tanker traffic, regional map overlays, market stress graphics, and conflict headlines in a clean Liberty Soldiers treatment."
         />
@@ -213,7 +213,7 @@ export default function WarBeyondBattlefieldPage() {
             </p>
 
             <SectionImage
-              src="/news/war-beyond-the-battlefield/hormuz-shipping.jpg"
+              src="/global-trade-port.jpg"
               alt="Strait of Hormuz and Gulf shipping visual"
               caption="Suggested visual: Strait of Hormuz or Gulf shipping lane map with vessel routes, chokepoint overlays, and risk labels."
             />
@@ -254,7 +254,7 @@ export default function WarBeyondBattlefieldPage() {
             </p>
 
             <SectionImage
-              src="/news/war-beyond-the-battlefield/oil-shock.jpg"
+              src="/oil-price-shock.jpg"
               alt="Oil chart and market reaction visual"
               caption="Suggested visual: crude price chart crossing $100 with market reaction styling, red risk bands, and freight/oil iconography."
             />
@@ -315,7 +315,7 @@ export default function WarBeyondBattlefieldPage() {
             </p>
 
             <SectionImage
-              src="/news/war-beyond-the-battlefield/policy-pressure.jpg"
+              src="/policy-briefing-emergency.jpg"
               alt="Global policy pressure visual"
               caption="Suggested visual: split-screen of ports, fuel terminals, government briefings, and logistics dashboards."
             />
@@ -426,31 +426,6 @@ export default function WarBeyondBattlefieldPage() {
                 </li>
               </ul>
             </div>
-
-            <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-              <div className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">
-                Editor note
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-zinc-700">
-                Replace the placeholder images in this page with your own custom
-                Liberty Soldiers graphics or properly licensed visuals. The local
-                file paths are already in place for a polished longform layout.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
-              <div className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">
-                Suggested local assets
-              </div>
-              <ul className="mt-3 space-y-2 text-sm text-zinc-700">
-                <li>/public/news/war-beyond-the-battlefield/hero.jpg</li>
-                <li>/public/news/war-beyond-the-battlefield/hormuz-shipping.jpg</li>
-                <li>/public/news/war-beyond-the-battlefield/oil-shock.jpg</li>
-                <li>/public/news/war-beyond-the-battlefield/policy-pressure.jpg</li>
-              </ul>
-            </div>
-          </aside>
-        </div>
 
         <footer className="mt-14 border-t border-zinc-200 pt-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
