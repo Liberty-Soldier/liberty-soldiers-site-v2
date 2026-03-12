@@ -1,7 +1,7 @@
 // app/reports/page.tsx
 import Link from "next/link";
 import { getAllReports } from "@/lib/reports";
-import ShareButton from "@/app/components/ShareButton";
+import ShareButton from "@/app/news/ShareButton";
 
 export const metadata = {
   title: "Reports | Liberty Soldiers",
