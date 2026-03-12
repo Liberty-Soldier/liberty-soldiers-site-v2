@@ -25,7 +25,8 @@ export const REPORTS: Report[] = [
   readTime: "3 min",
   featured: false,
   priority: 0.85
-}
+},
+  {
   slug: "war-beyond-the-battlefield",
   title:
     "War Beyond the Battlefield: Oil Shock, Shipping Risk, and the Expanding Iran Crisis",
