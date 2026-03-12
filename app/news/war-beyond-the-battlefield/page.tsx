@@ -13,10 +13,10 @@ export const metadata = {
     url: "https://libertysoldiers.com/news/war-beyond-the-battlefield",
     images: [
       {
-        url: "https://libertysoldiers.com/war-beyond-the-battlefield.jpg",
+        url: "https://libertysoldiers.com/hero-war-energy-shipping.jpg",
         width: 1200,
         height: 630,
-        alt: "War Beyond the Battlefield – Liberty Soldiers",
+        alt: "War Beyond the Battlefield cover image",
       },
     ],
   },
@@ -26,7 +26,7 @@ export const metadata = {
       "War Beyond the Battlefield: Oil Shock, Shipping Risk, and the Expanding Iran Crisis",
     description:
       "A Liberty Soldiers field report on oil shocks, shipping attacks, geopolitical pressure, and the widening systemic effects of the Iran war.",
-    images: ["https://libertysoldiers.com/war-beyond-the-battlefield.jpg"],
+    images: ["https://libertysoldiers.com/hero-war-energy-shipping.jpg"],
   },
 };
 
@@ -129,8 +129,8 @@ export default function WarBeyondBattlefieldPage() {
 
           <p className="mt-4 max-w-3xl text-lg leading-relaxed text-zinc-600">
             What begins as a regional war rarely stays confined to missiles and
-            maps. Once shipping lanes, energy flows, and inflation expectations
-            are hit, the battlefield expands into everyday life.
+            military targets. Once shipping lanes, energy flows, and inflation
+            expectations are hit, the battlefield expands into everyday life.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-xs text-zinc-500">
@@ -144,8 +144,8 @@ export default function WarBeyondBattlefieldPage() {
 
         <SectionImage
           src="/hero-war-energy-shipping.jpg"
-          alt="War Beyond the Battlefield hero image"
-          caption="Suggested visual: tanker traffic, regional map overlays, market stress graphics, and conflict headlines in a clean Liberty Soldiers treatment."
+          alt="Oil tanker and conflict-driven shipping tension"
+          caption="Oil, shipping, and geopolitical stress are no longer separate stories. They are converging in real time."
         />
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -214,8 +214,8 @@ export default function WarBeyondBattlefieldPage() {
 
             <SectionImage
               src="/global-trade-port.jpg"
-              alt="Strait of Hormuz and Gulf shipping visual"
-              caption="Suggested visual: Strait of Hormuz or Gulf shipping lane map with vessel routes, chokepoint overlays, and risk labels."
+              alt="Container ship and port under trade stress"
+              caption="Trade routes do not need to fully collapse to create disruption. Rising insecurity alone can reset costs, timing, and expectations."
             />
 
             <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
@@ -255,8 +255,8 @@ export default function WarBeyondBattlefieldPage() {
 
             <SectionImage
               src="/oil-price-shock.jpg"
-              alt="Oil chart and market reaction visual"
-              caption="Suggested visual: crude price chart crossing $100 with market reaction styling, red risk bands, and freight/oil iconography."
+              alt="Oil market price shock graphic"
+              caption="Oil crossing psychologically important levels changes more than markets. It changes expectations, messaging, and policy urgency."
             />
 
             <h2 className="pt-4 text-2xl font-bold tracking-tight text-zinc-900">
@@ -316,8 +316,8 @@ export default function WarBeyondBattlefieldPage() {
 
             <SectionImage
               src="/policy-briefing-emergency.jpg"
-              alt="Global policy pressure visual"
-              caption="Suggested visual: split-screen of ports, fuel terminals, government briefings, and logistics dashboards."
+              alt="Government briefing and policy response atmosphere"
+              caption="As economic and energy stress rise, military language often gives way to stabilization language, emergency planning, and coordinated response."
             />
 
             <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
@@ -426,6 +426,8 @@ export default function WarBeyondBattlefieldPage() {
                 </li>
               </ul>
             </div>
+          </aside>
+        </div>
 
         <footer className="mt-14 border-t border-zinc-200 pt-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
