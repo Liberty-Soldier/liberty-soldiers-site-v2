@@ -1,12 +1,17 @@
 // lib/reports.ts
 
 export type Report = {
-  slug: string; // folder name under /news/{slug}/page.tsx
+  slug: string;
   title: string;
   excerpt: string;
-  dateISO: string; // "YYYY-MM-DD"
-  byline: string;  // pseudonym, e.g. "Black Signal"
-  coverImage?: string; // optional: "/images/reports/xyz.jpg"
+  dateISO: string;
+  byline: string;
+  coverImage: string;
+  category?: string;
+  hardCategory?: string;
+  readTime?: string;
+  featured?: boolean;
+  priority?: number;
 };
 
 export const REPORTS: Report[] = [
