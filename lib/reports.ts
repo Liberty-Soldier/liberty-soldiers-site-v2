@@ -11,6 +11,21 @@ export type Report = {
 
 export const REPORTS: Report[] = [
   {
+  slug: "jones-act-oil-surge",
+  title:
+    "Oil Shock and the Jones Act: Crisis Policy Moves Amid the Iran Conflict",
+  excerpt:
+    "As oil prices surge during escalating tensions tied to the Iran conflict, U.S. officials are weighing emergency policy options — including temporarily bypassing the century-old Jones Act to ease fuel supply constraints and stabilize markets.",
+  dateISO: "2026-03-12",
+  byline: "Black Signal",
+  coverImage: "/hero-war-energy-shipping-2.jpg",
+
+  category: "Systemic Risk",
+  hardCategory: "Energy",
+  readTime: "3 min",
+  featured: false,
+  priority: 0.85
+}
   slug: "war-beyond-the-battlefield",
   title:
     "War Beyond the Battlefield: Oil Shock, Shipping Risk, and the Expanding Iran Crisis",
