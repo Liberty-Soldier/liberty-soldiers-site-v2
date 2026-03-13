@@ -25,16 +25,16 @@ const SECONDARY_FEEDS = [
   href: "https://www.youtube.com/watch?v=Ap-UM1O9RBU",
 },
 {
-  title: "DW News Live",
-  source: "Deutsche Welle",
-  region: "Europe / Global",
-  status: "LIVE",
-  description:
-    "DW News live coverage from Europe with global reporting on geopolitics, economics, and international developments.",
-  embedUrl:
-    "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1&cc_load_policy=1&cc_lang_pref=en",
-  href: "https://www.youtube.com/watch?v=LuKwFajn37U",
-}
+    title: "Al Jazeera English Live",
+    source: "Al Jazeera English",
+    region: "Middle East / Global",
+    status: "LIVE",
+    description:
+      "Broad live coverage across conflict zones, regional power shifts, and diplomatic escalation.",
+   embedUrl:
+  "https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1&mute=1&playsinline=1&cc_load_policy=1&cc_lang_pref=en",
+   href: "https://www.youtube.com/watch?v=gCNeDWCI0vo",
+  },
 ];
 export default function LiveSignalDesk() {
   return (
