@@ -1,7 +1,6 @@
 import type { TimelineEvent } from "./timeline.types";
 
 export const IRAN_MANUAL_TIMELINE: TimelineEvent[] = [
-
   {
     id: "2025-06-13-israel-strikes",
     ts: Date.parse("2025-06-13T12:00:00Z"),
@@ -146,9 +145,20 @@ export const IRAN_MANUAL_TIMELINE: TimelineEvent[] = [
     kind: "manual",
   },
   {
+    id: "2026-03-05-us-houthi-strikes",
+    ts: Date.parse("2026-03-05T03:10:00Z"),
+    title: "US strikes Houthi missile infrastructure as Red Sea crisis deepens",
+    summary:
+      "US forces conducted strikes on missile and drone launch capabilities amid ongoing attacks on commercial shipping routes.",
+    source: "Reuters",
+    url: "https://www.reuters.com/world/middle-east/",
+    tags: ["Houthis", "Red Sea", "missile strikes"],
+    kind: "manual",
+  },
+  {
     id: "2026-03-05-who-hospitals-hit",
     ts: Date.parse("2026-03-05T12:00:00Z"),
-    title: "WHO reports hospitals/health facilities hit during attacks",
+    title: "WHO reports hospitals and health facilities hit during attacks",
     summary:
       "WHO reports at least 13 hospitals and health facilities in Iran struck since attacks began; verification ongoing.",
     source: "The Guardian",
@@ -157,93 +167,91 @@ export const IRAN_MANUAL_TIMELINE: TimelineEvent[] = [
     kind: "manual",
   },
   {
-    id: "2026-03-13-iran-drones-gulf",
-    ts: new Date("2026-03-13T06:30:00Z").getTime(),
-    title: "Iran-linked drone activity reported near Gulf infrastructure",
-    summary:
-      "Regional security sources reported suspected Iranian-linked drone launches toward strategic infrastructure sites across parts of the Gulf. Air defenses were activated in multiple locations as tensions remained elevated.",
-    source: "Regional security reporting",
-    tags: ["drones", "Gulf", "air defense", "escalation"],
-    kind: "manual",
-  },
-  {
-    id: "2026-03-12-us-monitoring-sleeper-cells",
-    ts: new Date("2026-03-12T18:00:00Z").getTime(),
-    title: "US officials warn of potential Iranian-linked threats domestically",
-    summary:
-      "Senior US leadership stated law enforcement and intelligence agencies are monitoring potential Iranian-linked threat networks amid rising Middle East tensions.",
-    source: "US political remarks",
-    tags: ["US homeland security", "terror threat", "Iran tensions"],
-    kind: "manual",
-  },
-  {
-    id: "2026-03-11-oil-shipping-volatility",
-    ts: new Date("2026-03-11T14:00:00Z").getTime(),
-    title: "Oil and shipping markets react to widening conflict risk",
-    summary:
-      "Energy prices and maritime insurance costs moved higher as traders priced in potential disruption to Gulf shipping routes and infrastructure.",
-    source: "Market reaction",
-    tags: ["oil", "shipping", "markets", "Hormuz risk"],
-    kind: "manual",
-  },
-  {
-    id: "2026-03-10-us-israel-strikes-expand",
-    ts: new Date("2026-03-10T09:00:00Z").getTime(),
-    title: "US–Israel operations expand targeting Iranian-linked networks",
-    summary:
-      "Military actions reportedly focused on degrading missile, drone, and logistics capabilities associated with Iranian-backed forces across multiple regional theaters.",
-    source: "Defense reporting",
-    tags: ["strikes", "IRGC", "militia networks", "escalation"],
-    kind: "manual",
-  },
-  {
-    id: "2026-03-09-regional-mobilization",
-    ts: new Date("2026-03-09T12:00:00Z").getTime(),
-    title: "Regional militaries increase readiness amid escalation fears",
-    summary:
-      "Several Middle Eastern states raised alert levels and reinforced air defense posture as cross-border strike cycles intensified.",
-    source: "Regional security posture",
-    tags: ["mobilization", "air defense", "readiness"],
-    kind: "manual",
-  },
-  {
-    id: "2026-03-08-red-sea-disruptions",
-    ts: new Date("2026-03-08T16:30:00Z").getTime(),
-    title: "Red Sea shipping disruptions continue amid Houthi attacks",
-    summary:
-      "Missile and drone threats linked to Houthi forces forced additional commercial vessels to reroute, increasing global logistics costs and transit times.",
-    source: "Shipping security updates",
-    tags: ["Red Sea", "Houthis", "shipping disruption"],
-    kind: "manual",
-  },
-  {
-    id: "2026-03-07-hormuz-threat-warning",
-    ts: new Date("2026-03-07T10:45:00Z").getTime(),
-    title: "Iran warns of possible Hormuz action if pressure escalates",
-    summary:
-      "Iranian officials suggested continued military pressure could lead to responses affecting maritime transit in the Strait of Hormuz.",
-    source: "Iranian official remarks",
-    tags: ["Hormuz", "oil supply risk", "escalation"],
-    kind: "manual",
-  },
-  {
     id: "2026-03-06-israel-strikes-syria",
-    ts: new Date("2026-03-06T05:20:00Z").getTime(),
+    ts: Date.parse("2026-03-06T05:20:00Z"),
     title: "Israeli strikes target Iranian-linked positions in Syria",
     summary:
       "Air operations reportedly hit logistics depots and weapons storage sites connected to Iranian-backed forces near Damascus and eastern Syria.",
-    source: "Regional defense sources",
+    source: "Reuters",
+    url: "https://www.reuters.com/world/middle-east/",
     tags: ["Syria", "airstrike", "IRGC"],
     kind: "manual",
   },
   {
-    id: "2026-03-05-us-houthi-strikes",
-    ts: new Date("2026-03-05T03:10:00Z").getTime(),
-    title: "US strikes Houthi missile infrastructure as Red Sea crisis deepens",
+    id: "2026-03-07-hormuz-threat-warning",
+    ts: Date.parse("2026-03-07T10:45:00Z"),
+    title: "Iran warns of possible Hormuz action if pressure escalates",
     summary:
-      "US forces conducted strikes on missile and drone launch capabilities amid ongoing attacks on commercial shipping routes.",
-    source: "Defense reporting",
-    tags: ["Houthis", "Red Sea", "missile strikes"],
+      "Iranian officials suggested continued military pressure could lead to responses affecting maritime transit in the Strait of Hormuz.",
+    source: "Reuters",
+    url: "https://www.reuters.com/business/aerospace-defense/iran-could-disrupt-strait-hormuz-with-drones-months-2026-03-04/",
+    tags: ["Hormuz", "oil supply risk", "escalation"],
+    kind: "manual",
+  },
+  {
+    id: "2026-03-08-red-sea-disruptions",
+    ts: Date.parse("2026-03-08T16:30:00Z"),
+    title: "Red Sea shipping disruptions continue amid Houthi attacks",
+    summary:
+      "Missile and drone threats linked to Houthi forces forced additional commercial vessels to reroute, increasing global logistics costs and transit times.",
+    source: "Reuters",
+    url: "https://www.reuters.com/world/middle-east/",
+    tags: ["Red Sea", "Houthis", "shipping disruption"],
+    kind: "manual",
+  },
+  {
+    id: "2026-03-09-regional-mobilization",
+    ts: Date.parse("2026-03-09T12:00:00Z"),
+    title: "Regional militaries increase readiness amid escalation fears",
+    summary:
+      "Several Middle Eastern states raised alert levels and reinforced air defense posture as cross-border strike cycles intensified.",
+    source: "Reuters",
+    url: "https://www.reuters.com/world/middle-east/",
+    tags: ["mobilization", "air defense", "readiness"],
+    kind: "manual",
+  },
+  {
+    id: "2026-03-10-us-israel-strikes-expand",
+    ts: Date.parse("2026-03-10T09:00:00Z"),
+    title: "US–Israel operations expand targeting Iranian-linked networks",
+    summary:
+      "Military actions reportedly focused on degrading missile, drone, and logistics capabilities associated with Iranian-backed forces across multiple regional theaters.",
+    source: "Al Jazeera",
+    url: "https://www.aljazeera.com/news/liveblog/2026/3/10/iran-war-live-trump-says-conflict-will-be-over-soon-40-killed-in-tehran",
+    tags: ["strikes", "IRGC", "militia networks", "escalation"],
+    kind: "manual",
+  },
+  {
+    id: "2026-03-11-oil-shipping-volatility",
+    ts: Date.parse("2026-03-11T14:00:00Z"),
+    title: "Oil and shipping markets react to widening conflict risk",
+    summary:
+      "Energy prices and maritime insurance costs moved higher as traders priced in potential disruption to Gulf shipping routes and infrastructure.",
+    source: "Reuters",
+    url: "https://www.reuters.com/world/middle-east/number-iranian-missiles-drones-fired-gulf-countries-2026-03-10/",
+    tags: ["oil", "shipping", "markets", "Hormuz risk"],
+    kind: "manual",
+  },
+  {
+    id: "2026-03-12-us-monitoring-sleeper-cells",
+    ts: Date.parse("2026-03-12T18:00:00Z"),
+    title: "US officials warn of potential Iranian-linked threats domestically",
+    summary:
+      "Senior US leadership stated law enforcement and intelligence agencies are monitoring potential Iranian-linked threat networks amid rising Middle East tensions.",
+    source: "The Guardian",
+    url: "https://www.theguardian.com/us-news/2026/mar/12/california-iran-threat-fbi",
+    tags: ["US homeland security", "terror threat", "Iran tensions"],
+    kind: "manual",
+  },
+  {
+    id: "2026-03-13-iran-drones-gulf",
+    ts: Date.parse("2026-03-13T06:30:00Z"),
+    title: "Iran-linked drone activity reported near Gulf infrastructure",
+    summary:
+      "Regional security sources reported suspected Iranian-linked drone launches toward strategic infrastructure sites across parts of the Gulf. Air defenses were activated in multiple locations as tensions remained elevated.",
+    source: "Reuters",
+    url: "https://www.reuters.com/world/middle-east/tracking-iranian-attacks-civilian-ships-gulf-2026-03-12/",
+    tags: ["drones", "Gulf", "air defense", "escalation"],
     kind: "manual",
   },
 ];
