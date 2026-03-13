@@ -5,8 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   FaXTwitter,
-  FaYoutube,
-  FaPlay,
   FaNewspaper,
   FaFileLines,
   FaVideo,
@@ -26,7 +24,6 @@ const NAV_LEFT = [
 ];
 
 const NAV_RIGHT = [
-  { href: "/videos", label: "Videos", icon: FaVideo },
   { href: "/store", label: "Store", icon: FaBolt },
 ];
 
@@ -175,25 +172,6 @@ export default function Header() {
               >
                 <FaXTwitter className="h-4 w-4" />
               </a>
-              <a
-                href="https://www.youtube.com/@LibertySoldiers"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Liberty Soldiers on YouTube"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-              >
-                <FaYoutube className="h-4 w-4" />
-              </a>
-              <a
-                href="https://rumble.com/c/LibertySoldiers"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Liberty Soldiers on Rumble"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
-              >
-                <FaPlay className="h-4 w-4" />
-              </a>
-            </div>
           </div>
 
           {/* Mobile menu button */}
@@ -261,26 +239,6 @@ export default function Header() {
                 onClick={close}
               >
                 <FaXTwitter />
-              </a>
-              <a
-                href="https://www.youtube.com/@LibertySoldiers"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
-                aria-label="YouTube"
-                onClick={close}
-              >
-                <FaYoutube />
-              </a>
-              <a
-                href="https://rumble.com/c/LibertySoldiers"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white text-zinc-700"
-                aria-label="Rumble"
-                onClick={close}
-              >
-                <FaPlay />
               </a>
             </div>
           </nav>
