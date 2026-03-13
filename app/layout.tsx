@@ -8,6 +8,7 @@ import ClearSW from "../components/ClearSW";
 import "../styles/globals.css";
 
 const GA_MEASUREMENT_ID = "G-6HE5GBG1H2";
+const GOOGLE_ADS_ID = "AW-17340858149";
 
 const SITE_URL = "https://libertysoldiers.com";
 const SITE_NAME = "Liberty Soldiers";
@@ -65,13 +66,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-zinc-50 text-zinc-900">
       <body className="min-h-screen bg-zinc-50 text-zinc-900">
-        {/* GA4: load gtag.js */}
+
+        {/* GA4 */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
         />
-
-        {/* GA4: init */}
         <Script id="ga4-init" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
@@ -84,7 +84,21 @@ export default function RootLayout({
           `}
         </Script>
 
-               {/* ✅ JSON-LD: Organization */}
+        {/* ✅ GOOGLE ADS TAG (VERY IMPORTANT) */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GOOGLE_ADS_ID}');
+          `}
+        </Script>
+
+        {/* JSON-LD Organization */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -99,7 +113,7 @@ export default function RootLayout({
           }}
         />
 
-        {/* ✅ JSON-LD: WebSite */}
+        {/* JSON-LD WebSite */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -134,8 +148,8 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+
       </body>
     </html>
   );
 }
-
