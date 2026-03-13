@@ -222,7 +222,10 @@ export default async function TimelinePage() {
   const manual = sortedEvents.filter((e) => e.kind === "manual");
   const auto = sortedEvents
   .filter((e) => e.kind === "auto")
-  .filter((e) => classify(e) !== "economy");
+  .filter((e) => {
+    const k = classify(e);
+    return k === "strike" || k === "diplomacy" || k === "humanitarian";
+  });
 
   const totalKey = manual.length;
   const totalLive = auto.length;
