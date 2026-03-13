@@ -18,14 +18,16 @@ const NAV_LEFT = [
   { href: "/news", label: "News", icon: FaNewspaper },
   { href: "/live", label: "Live Desk", icon: FaVideo },
   { href: "/war-escalation", label: "War Radar", icon: FaSatelliteDish },
-  { href: "/timeline/us-israel-iran-war-timeline", label: "Timeline", icon: FaTimeline },
+  {
+    href: "/timeline/us-israel-iran-war-timeline",
+    label: "Timeline",
+    icon: FaTimeline,
+  },
   { href: "/reports", label: "Reports", icon: FaFileLines },
   { href: "/search", label: "Search", icon: FaMagnifyingGlass },
 ];
 
-const NAV_RIGHT = [
-  { href: "/store", label: "Store", icon: FaBolt },
-];
+const NAV_RIGHT = [{ href: "/store", label: "Store", icon: FaBolt }];
 
 const NAV_ALL = [...NAV_LEFT, ...NAV_RIGHT];
 
@@ -44,7 +46,6 @@ export default function Header() {
     }
   }, []);
 
-  // prevent scroll behind mobile menu
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => {
@@ -54,23 +55,22 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur">
-      {/* TOP STRIP */}
       <div className="border-b border-zinc-200 bg-gradient-to-r from-zinc-950 to-zinc-900 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-10 flex items-center justify-between">
+        <div className="mx-auto flex h-10 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 text-xs font-semibold tracking-wide">
             <span className="inline-flex items-center gap-2">
               <span className="inline-flex h-2 w-2 rounded-full bg-red-500 motion-safe:animate-pulse" />
               LIVE BRIEFING
             </span>
-            <span className="hidden sm:inline text-white/70">•</span>
-            <span className="hidden sm:inline text-white/80">{nowLabel}</span>
+            <span className="hidden text-white/70 sm:inline">•</span>
+            <span className="hidden text-white/80 sm:inline">{nowLabel}</span>
           </div>
 
           <div className="flex items-center gap-2 text-xs">
             <Link
               href="/war-escalation"
               onClick={close}
-              className="hidden sm:inline-flex items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 hover:bg-white/15"
+              className="hidden items-center gap-2 rounded-lg bg-white/10 px-3 py-1.5 hover:bg-white/15 sm:inline-flex"
             >
               <FaSatelliteDish className="h-3.5 w-3.5" />
               US-Iran War Updates
@@ -88,36 +88,37 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MAIN BAR */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
+      <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-3">
-          {/* Brand */}
-          <Link href="/" className="flex items-center gap-3 group min-w-0 shrink-0" onClick={close}>
+          <Link
+            href="/"
+            className="group flex min-w-0 shrink-0 items-center gap-3"
+            onClick={close}
+          >
             <div className="relative shrink-0">
               <Image
                 src="/liberty-logo.png"
                 alt="Liberty Soldiers Logo"
                 width={44}
                 height={44}
-                className="rounded-full ring-2 ring-zinc-900/10 group-hover:ring-zinc-900/25 transition"
+                className="rounded-full ring-2 ring-zinc-900/10 transition group-hover:ring-zinc-900/25"
                 priority
               />
               <span className="absolute -bottom-1 -right-1 h-3 w-3 rounded-full bg-red-500 ring-2 ring-white" />
             </div>
 
-            <div className="leading-tight min-w-0">
-             <div className="font-extrabold tracking-widest text-base sm:text-lg text-zinc-900 whitespace-nowrap overflow-hidden text-ellipsis max-w-[52vw]">
+            <div className="min-w-0 leading-tight">
+              <div className="max-w-[52vw] overflow-hidden text-ellipsis whitespace-nowrap text-base font-extrabold tracking-widest text-zinc-900 sm:text-lg">
                 LIBERTY SOLDIERS
               </div>
-              <div className="hidden sm:block text-[11px] text-zinc-600 whitespace-nowrap overflow-hidden text-ellipsis">
+              <div className="hidden overflow-hidden text-ellipsis whitespace-nowrap text-[11px] text-zinc-600 sm:block">
                 Signal over noise • Real-time monitoring
               </div>
             </div>
           </Link>
 
-          {/* Desktop nav (one line, smaller) */}
-          <div className="hidden md:flex items-center gap-3 min-w-0 flex-1 justify-start ml-6">
-           <div className="min-w-0 flex items-center gap-2">
+          <div className="ml-6 hidden min-w-0 flex-1 items-center justify-start gap-3 md:flex">
+            <div className="min-w-0 flex items-center gap-2">
               <nav className="flex flex-wrap items-center gap-2">
                 {NAV_LEFT.map((item) => {
                   const Icon = item.icon;
@@ -126,7 +127,7 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={close}
-                      className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-[11px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+                      className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-[11px] font-semibold text-zinc-900 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50"
                     >
                       <Icon className="h-3.5 w-3.5 text-zinc-700" />
                       {item.label}
@@ -135,7 +136,7 @@ export default function Header() {
                 })}
               </nav>
 
-              <nav className="hidden lg:flex flex-wrap items-center gap-2 border-l border-zinc-200 pl-2">
+              <nav className="hidden flex-wrap items-center gap-2 border-l border-zinc-200 pl-2 lg:flex">
                 {NAV_RIGHT.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -143,7 +144,7 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={close}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-[11px] font-semibold text-zinc-900 shadow-sm hover:bg-zinc-50 hover:border-zinc-300 transition"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-[11px] font-semibold text-zinc-900 shadow-sm transition hover:border-zinc-300 hover:bg-zinc-50"
                     >
                       <Icon className="h-3.5 w-3.5 text-zinc-700" />
                       {item.label}
@@ -156,28 +157,28 @@ export default function Header() {
             <Link
               href="/news"
               onClick={close}
-              className="hidden xl:inline-flex items-center gap-2 rounded-lg bg-zinc-900 px-3 py-2 text-[12px] font-extrabold text-white shadow-sm hover:bg-zinc-800 transition shrink-0"
+              className="hidden shrink-0 items-center gap-2 rounded-lg bg-zinc-900 px-3 py-2 text-[12px] font-extrabold text-white shadow-sm transition hover:bg-zinc-800 xl:inline-flex"
             >
               <FaBolt className="h-3.5 w-3.5" />
               Latest Briefings
             </Link>
 
-            <div className="flex items-center gap-2 pl-2 border-l border-zinc-200 shrink-0">
+            <div className="flex shrink-0 items-center gap-2 border-l border-zinc-200 pl-2">
               <a
                 href="https://x.com/LibertySoldierz"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Liberty Soldiers on X"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50 hover:text-zinc-900 transition"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-700 transition hover:bg-zinc-50 hover:text-zinc-900"
               >
                 <FaXTwitter className="h-4 w-4" />
               </a>
+            </div>
           </div>
 
-          {/* Mobile menu button */}
           <button
             onClick={() => setOpen((v) => !v)}
-            className="md:hidden inline-flex items-center gap-2 px-4 py-2.5 border border-zinc-300 rounded-xl text-sm font-semibold text-zinc-900 bg-white shadow-sm shrink-0"
+            className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-semibold text-zinc-900 shadow-sm md:hidden"
             aria-expanded={open}
             aria-controls="mobile-nav"
             aria-label="Toggle menu"
@@ -188,21 +189,21 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile dropdown + backdrop */}
       {open && (
         <>
           <button
             aria-label="Close menu backdrop"
             onClick={close}
-            className="md:hidden fixed inset-0 top-[104px] z-40 bg-black/10"
+            className="fixed inset-0 top-[104px] z-40 bg-black/10 md:hidden"
           />
+
           <nav
             id="mobile-nav"
-            className="md:hidden fixed left-0 right-0 top-[104px] z-50 bg-white border-t border-zinc-200 px-4 py-4 flex flex-col gap-3 text-base text-zinc-900 shadow-lg max-h-[calc(100vh-104px)] overflow-y-auto"
+            className="fixed left-0 right-0 top-[104px] z-50 flex max-h-[calc(100vh-104px)] flex-col gap-3 overflow-y-auto border-t border-zinc-200 bg-white px-4 py-4 text-base text-zinc-900 shadow-lg md:hidden"
           >
             <Link
               href="/war-escalation"
-              className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-950 text-white px-4 py-3 shadow-sm"
+              className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-zinc-950 px-4 py-3 text-white shadow-sm"
               onClick={close}
             >
               <span className="flex items-center gap-3 font-extrabold">
