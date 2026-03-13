@@ -14,15 +14,15 @@ const PRIMARY_FEED = {
 
 const SECONDARY_FEEDS = [
   {
-    title: "CBS Live",
-  source: "CBS",
+    title: "France 24 English Live",
+  source: "France 24",
   region: "Global",
   status: "LIVE",
   description:
-    "Bloomberg Television live coverage of global markets, geopolitics, and economic developments.",
+    "France 24 Television live coverage of global markets, geopolitics, and economic developments.",
   embedUrl:
-    "https://www.youtube.com/watch?v=uDDoQFKVaas?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
-  href: "https://www.youtube.com/watch?v=uDDoQFKVaas",
+    "https://www.youtube.com/watch?v=Ap-UM1O9RBU?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
+  href: "https://www.youtube.com/watch?v=Ap-UM1O9RBU",
 },
   {
   title: "DW News Live",
