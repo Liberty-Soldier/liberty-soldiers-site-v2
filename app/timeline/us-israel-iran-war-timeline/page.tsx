@@ -220,7 +220,9 @@ export default async function TimelinePage() {
 
   const sortedEvents = [...events].sort((a, b) => b.ts - a.ts);
   const manual = sortedEvents.filter((e) => e.kind === "manual");
-  const auto = sortedEvents.filter((e) => e.kind === "auto");
+  const auto = sortedEvents
+  .filter((e) => e.kind === "auto")
+  .filter((e) => classify(e) !== "economy");
 
   const totalKey = manual.length;
   const totalLive = auto.length;
