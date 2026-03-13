@@ -13,18 +13,18 @@ const PRIMARY_FEED = {
 }
 
 const SECONDARY_FEEDS = [
-  {
-    title: "France 24 English Live",
+{
+  title: "France 24 English Live",
   source: "France 24",
   region: "Global",
   status: "LIVE",
   description:
     "France 24 Television live coverage of global markets, geopolitics, and economic developments.",
   embedUrl:
-    "https://www.youtube.com/watch?v=Ap-UM1O9RBU?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
+    "https://www.youtube.com/embed/Ap-UM1O9RBU?autoplay=1&mute=1&playsinline=1&cc_load_policy=1&cc_lang_pref=en",
   href: "https://www.youtube.com/watch?v=Ap-UM1O9RBU",
 },
-  {
+{
   title: "DW News Live",
   source: "Deutsche Welle",
   region: "Europe / Global",
@@ -32,7 +32,7 @@ const SECONDARY_FEEDS = [
   description:
     "DW News live coverage from Europe with global reporting on geopolitics, economics, and international developments.",
   embedUrl:
-    "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
+    "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1&cc_load_policy=1&cc_lang_pref=en",
   href: "https://www.youtube.com/watch?v=LuKwFajn37U",
 }
 ];
