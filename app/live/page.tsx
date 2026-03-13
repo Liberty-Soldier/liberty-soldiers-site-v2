@@ -54,8 +54,8 @@ const FEEDS = [
     description:
       "Broad live coverage across conflict zones, regional power shifts, and diplomatic escalation.",
     embedUrl:
-      "https://www.youtube.com/embed/bNyUyrR0PHo?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
-    href: "https://www.youtube.com/watch?v=bNyUyrR0PHo",
+      "https://www.youtube.com/watch?v=gCNeDWCI0vo?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
+    href: "https://www.youtube.com/watch?v=gCNeDWCI0vo",
   },
   {
     title: "France 24 English Live",
@@ -65,8 +65,8 @@ const FEEDS = [
     description:
       "International live desk covering geopolitical shifts, world events, and policy developments.",
     embedUrl:
-      "https://www.youtube.com/embed/l8PMl7tUDIE?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
-    href: "https://www.youtube.com/watch?v=l8PMl7tUDIE",
+      "https://www.youtube.com/watch?v=Ap-UM1O9RBU?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
+    href: "https://www.youtube.com/watch?v=Ap-UM1O9RBU",
   },
   {
     title: "DW News Live",
