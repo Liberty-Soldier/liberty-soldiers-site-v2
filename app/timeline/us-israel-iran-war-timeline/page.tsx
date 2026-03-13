@@ -81,7 +81,11 @@ function classify(e: TimelineEvent): EventKind {
     t.includes("rocket") ||
     t.includes("intercept") ||
     t.includes("explosion") ||
-    t.includes("irgc")
+    t.includes("irgc") ||
+    t.includes("military") ||
+    t.includes("forces") ||
+    t.includes("air defense") ||
+    t.includes("mobilization")
   ) {
     return "strike";
   }
@@ -219,29 +223,33 @@ export default async function TimelinePage() {
   const events: TimelineEvent[] = Array.isArray(data?.events) ? data.events : [];
 
   const sortedEvents = [...events].sort((a, b) => b.ts - a.ts);
-  const manual = sortedEvents.filter((e) => e.kind === "manual");
-  const auto = sortedEvents
-  .filter((e) => e.kind === "auto")
-  .filter((e) => {
+
+  const manual = sortedEvents
+    .filter((e) => e.kind === "manual")
+    .reverse();
+
+  const auto = sortedEvents.filter((e) => {
+    if (e.kind !== "auto") return false;
     const k = classify(e);
     return k === "strike" || k === "diplomacy" || k === "humanitarian";
   });
 
   const totalKey = manual.length;
   const totalLive = auto.length;
-  const totalEvents = events.length;
+  const totalDisplayed = totalKey + totalLive;
   const latestTs = sortedEvents[0]?.ts ?? data?.updatedAt ?? Date.now();
 
   return (
     <main>
-      <section className="relative h-[420px] overflow-hidden sm:h-[520px]">
+      <section className="relative h-[380px] overflow-hidden sm:h-[440px]">
         <img
           src="/og-iran-war.jpg"
           alt="US–Israel–Iran conflict map"
           className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/65 to-black/30" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/35" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
 
         <div className="relative z-10 mx-auto flex h-full max-w-5xl flex-col justify-center px-4 sm:px-6 lg:px-8">
           <span className="inline-flex w-fit items-center gap-2 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white shadow">
@@ -254,8 +262,8 @@ export default async function TimelinePage() {
           </h1>
 
           <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">
-            Real-time escalation signals, military developments, economic pressure points,
-            and humanitarian fallout — structured into one continuously updated timeline.
+            Real-time escalation signals, military developments, and humanitarian fallout —
+            structured into one continuously updated timeline.
           </p>
 
           <div className="mt-5 flex flex-wrap gap-2">
@@ -273,9 +281,12 @@ export default async function TimelinePage() {
             </a>
           </div>
 
-          <p className="mt-4 text-sm text-white/80">
-            Latest update: {fmt(latestTs)} • Feed refreshed frequently • Total tracked items:{" "}
-            {totalEvents}
+          <p className="mt-3 text-xs text-white/70">
+            Updated continuously • Signal-focused • Real-time escalation tracking
+          </p>
+
+          <p className="mt-2 text-sm text-white/80">
+            Latest update: {fmt(latestTs)} • Total displayed items: {totalDisplayed}
           </p>
         </div>
       </section>
@@ -298,15 +309,13 @@ export default async function TimelinePage() {
                 </h2>
 
                 <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-700 sm:text-lg">
-                  A continuously updated conflict timeline built to separate
-                  <span className="font-semibold text-zinc-900"> signal from noise</span> —
-                  combining real-time feed items with curated key milestones so readers can
-                  see both the latest developments and the bigger picture fast.
+                  Live signal flow stays focused on conflict developments, while the key events
+                  timeline shows how the situation built from the earliest milestones to the
+                  latest major turns.
                 </p>
 
                 <p className="mt-4 text-sm text-zinc-500">
-                  Latest update: {fmt(latestTs)} • Feed refreshed frequently • Total tracked
-                  items: {totalEvents}
+                  Latest update: {fmt(latestTs)} • Displayed items: {totalDisplayed}
                 </p>
               </div>
 
@@ -316,8 +325,7 @@ export default async function TimelinePage() {
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-zinc-700">
                   Strikes, retaliatory signals, military movements, diplomatic developments,
-                  shipping and energy pressure, and humanitarian fallout tied to the current
-                  US–Israel–Iran escalation.
+                  and humanitarian fallout tied to the current US–Israel–Iran escalation.
                 </p>
 
                 <div className="mt-4 border-t border-zinc-100 pt-4">
@@ -330,8 +338,7 @@ export default async function TimelinePage() {
                       <span className="h-2.5 w-2.5 rounded-full bg-blue-600" /> Diplomacy
                     </span>
                     <span className="inline-flex items-center gap-2">
-                      <span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Economy /
-                      Shipping
+                      <span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Economy
                     </span>
                     <span className="inline-flex items-center gap-2">
                       <span className="h-2.5 w-2.5 rounded-full bg-emerald-600" /> Humanitarian
@@ -346,12 +353,12 @@ export default async function TimelinePage() {
             <StatCard
               label="Live Feed Items"
               value={totalLive}
-              hint="Automatic incoming signals"
+              hint="Automatic signal-only updates"
             />
             <StatCard
               label="Key Events"
               value={totalKey}
-              hint="Curated milestones and major turns"
+              hint="Manual escalation milestones"
             />
             <StatCard
               label="Last Signal"
@@ -365,8 +372,8 @@ export default async function TimelinePage() {
               <div className="text-sm font-extrabold text-zinc-900">Why this page matters</div>
               <p className="mt-2 text-sm leading-relaxed text-zinc-700">
                 Most coverage either overwhelms readers with fragmented updates or strips away
-                the sequence that makes developments meaningful. This page is structured to
-                show both the live signal flow and the larger escalation pattern in one place.
+                the sequence that makes developments meaningful. This page is designed to show
+                both the immediate signal flow and the larger escalation arc in one place.
               </p>
             </div>
           </section>
@@ -376,7 +383,7 @@ export default async function TimelinePage() {
               <div>
                 <h2 className="text-lg font-extrabold text-zinc-900">Live Timeline</h2>
                 <p className="text-xs text-zinc-500">
-                  Recent incoming signals from the auto feed
+                  Newest first • filtered to live conflict signals
                 </p>
               </div>
               <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-700">
@@ -402,9 +409,11 @@ export default async function TimelinePage() {
           <section id="key-events" className="scroll-mt-24">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-extrabold text-zinc-900">Key Events</h2>
+                <h2 className="text-lg font-extrabold text-zinc-900">
+                  What Started All This
+                </h2>
                 <p className="text-xs text-zinc-500">
-                  Curated milestones that define the escalation arc
+                  Oldest first • escalation timeline with source links
                 </p>
               </div>
               <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-700">
@@ -481,7 +490,7 @@ function EventCard({
                   : k === "diplomacy"
                   ? "Diplomacy"
                   : k === "economy"
-                  ? "Economy / Shipping"
+                  ? "Economy"
                   : "Humanitarian"}
               </span>
             )}
