@@ -34,6 +34,50 @@ export const metadata: Metadata = {
 };
 
 const FEEDS = [
+   {
+    title: "Al Jazeera English Live",
+    source: "Al Jazeera English",
+    region: "Middle East / Global",
+    status: "LIVE",
+    description:
+      "Broad live coverage across conflict zones, regional power shifts, and diplomatic escalation.",
+   embedUrl:
+  "https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1&mute=1&playsinline=1&cc_load_policy=1&cc_lang_pref=en",
+   href: "https://www.youtube.com/watch?v=gCNeDWCI0vo",
+  },
+    {
+    title: "France 24 English Live",
+    source: "France 24",
+    region: "Europe / Global",
+    status: "LIVE",
+    description:
+      "International live desk covering geopolitical shifts, world events, and policy developments.",
+    embedUrl:
+      "https://www.youtube.com/embed/Ap-UM1O9RBU?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
+    href: "https://www.youtube.com/watch?v=Ap-UM1O9RBU",
+  },
+    {
+    title: "Sky News Live",
+    source: "Sky News",
+    region: "UK / Global",
+    status: "LIVE",
+    description:
+      "Sky News live coverage of global politics, conflict, and major international developments.",
+    embedUrl:
+      "https://www.youtube.com/embed/YDvsBbKfLPA?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
+    href: "https://www.youtube.com/watch?v=YDvsBbKfLPA",
+  },
+    {
+    title: "CBS News Live",
+    source: "CBS News",
+    region: "United States / Global",
+    status: "LIVE",
+    description:
+      "CBS News live coverage of breaking global events and major geopolitical developments.",
+    embedUrl:
+      "https://www.youtube.com/embed/E0XsFF5ySr0?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
+    href: "https://www.youtube.com/watch?v=E0XsFF5ySr0",
+  },
   {
     title: "Bloomberg Live",
     source: "Bloomberg",
@@ -47,28 +91,6 @@ const FEEDS = [
     featured: true,
   },
   {
-    title: "Al Jazeera English Live",
-    source: "Al Jazeera English",
-    region: "Middle East / Global",
-    status: "LIVE",
-    description:
-      "Broad live coverage across conflict zones, regional power shifts, and diplomatic escalation.",
-   embedUrl:
-  "https://www.youtube.com/embed/gCNeDWCI0vo?autoplay=1&mute=1&playsinline=1&cc_load_policy=1&cc_lang_pref=en",
-   href: "https://www.youtube.com/watch?v=gCNeDWCI0vo",
-  },
-  {
-    title: "France 24 English Live",
-    source: "France 24",
-    region: "Europe / Global",
-    status: "LIVE",
-    description:
-      "International live desk covering geopolitical shifts, world events, and policy developments.",
-    embedUrl:
-      "https://www.youtube.com/embed/Ap-UM1O9RBU?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
-    href: "https://www.youtube.com/watch?v=Ap-UM1O9RBU",
-  },
-  {
     title: "DW News Live",
     source: "Deutsche Welle",
     region: "Europe / Global",
@@ -78,28 +100,6 @@ const FEEDS = [
     embedUrl:
       "https://www.youtube.com/embed/LuKwFajn37U?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
     href: "https://www.youtube.com/watch?v=LuKwFajn37U",
-  },
-  {
-    title: "Sky News Live",
-    source: "Sky News",
-    region: "UK / Global",
-    status: "LIVE",
-    description:
-      "Sky News live coverage of global politics, conflict, and major international developments.",
-    embedUrl:
-      "https://www.youtube.com/embed/YDvsBbKfLPA?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
-    href: "https://www.youtube.com/watch?v=YDvsBbKfLPA",
-  },
-  {
-    title: "CBS News Live",
-    source: "CBS News",
-    region: "United States / Global",
-    status: "LIVE",
-    description:
-      "CBS News live coverage of breaking global events and major geopolitical developments.",
-    embedUrl:
-      "https://www.youtube.com/embed/E0XsFF5ySr0?autoplay=1&mute=1&playsinline=1&cc_load_policy=1_lang_pref=en",
-    href: "https://www.youtube.com/watch?v=E0XsFF5ySr0",
   },
 ];
 
