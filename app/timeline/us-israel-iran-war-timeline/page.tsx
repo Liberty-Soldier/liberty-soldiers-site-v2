@@ -515,8 +515,6 @@ function EventCard({
         {e.url && (
           <a
             href={e.url}
-            target="_blank"
-            rel="noopener noreferrer"
             className="shrink-0 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-extrabold text-zinc-900 shadow-sm hover:bg-zinc-50"
             aria-label={`Open source for ${e.title}`}
           >
