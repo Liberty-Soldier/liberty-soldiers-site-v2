@@ -1,3 +1,27 @@
+<section className="relative h-[420px] sm:h-[520px] overflow-hidden">
+  <img
+    src="/hero-iran-war.jpg"
+    alt="Middle East conflict map"
+    className="absolute inset-0 w-full h-full object-cover"
+  />
+
+  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20" />
+
+  <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
+    <span className="inline-flex w-fit items-center gap-2 rounded-full bg-red-600 px-3 py-1 text-xs font-bold text-white shadow">
+      ● LIVE CONFLICT TRACKING
+    </span>
+
+    <h1 className="mt-4 text-3xl sm:text-5xl font-extrabold text-white max-w-3xl">
+      US–Israel–Iran Escalation Timeline
+    </h1>
+
+    <p className="mt-3 text-white/90 max-w-2xl text-base sm:text-lg leading-relaxed">
+      Real-time escalation signals, military developments, economic pressure points,
+      and humanitarian fallout — structured into one continuously updated timeline.
+    </p>
+  </div>
+</section>
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 
@@ -9,12 +33,12 @@ const CANONICAL = `${SITE}/timeline/us-israel-iran-war-timeline`;
 export const metadata: Metadata = {
   title: "US–Israel–Iran War Timeline | Liberty Soldiers",
   description:
-    "Major escalation events and live conflict signals — a continuously updated US–Israel–Iran timeline.",
+    "Major escalation events, live conflict signals, and key milestones in one continuously updated US–Israel–Iran timeline.",
   alternates: { canonical: CANONICAL },
   openGraph: {
     title: "US–Israel–Iran War Timeline | Liberty Soldiers",
     description:
-      "Major escalation events + live conflict signals — updated frequently.",
+      "Major escalation events, live conflict signals, and key milestones — updated frequently.",
     url: CANONICAL,
     siteName: "Liberty Soldiers",
     type: "website",
@@ -50,18 +74,25 @@ function absoluteUrl(path: string) {
 function classify(
   e: TimelineEvent
 ): "strike" | "diplomacy" | "economy" | "humanitarian" | "other" {
-  const t = `${e.title ?? ""} ${e.summary ?? ""} ${(e.tags ?? []).join(" ")}`.toLowerCase();
+  const t =
+    `${e.title ?? ""} ${e.summary ?? ""} ${(e.tags ?? []).join(" ")}`.toLowerCase();
 
   if (
     t.includes("strike") ||
     t.includes("missile") ||
     t.includes("drone") ||
     t.includes("bomb") ||
-    t.includes("air") ||
     t.includes("attack") ||
+    t.includes("airstrike") ||
+    t.includes("air strike") ||
+    t.includes("air raid") ||
+    t.includes("rocket") ||
+    t.includes("intercept") ||
+    t.includes("explosion") ||
     t.includes("irgc")
-  )
+  ) {
     return "strike";
+  }
 
   if (
     t.includes("talk") ||
@@ -70,9 +101,12 @@ function classify(
     t.includes("deal") ||
     t.includes("diplom") ||
     t.includes("oman") ||
-    t.includes("geneva")
-  )
+    t.includes("geneva") ||
+    t.includes("summit") ||
+    t.includes("truce")
+  ) {
     return "diplomacy";
+  }
 
   if (
     t.includes("sanction") ||
@@ -82,19 +116,28 @@ function classify(
     t.includes("market") ||
     t.includes("energy") ||
     t.includes("rial") ||
-    t.includes("econom")
-  )
+    t.includes("econom") ||
+    t.includes("inflation") ||
+    t.includes("supply") ||
+    t.includes("trade")
+  ) {
     return "economy";
+  }
 
   if (
     t.includes("hospital") ||
-    t.includes("who") ||
     t.includes("civilian") ||
     t.includes("health") ||
     t.includes("aid") ||
-    t.includes("casualt")
-  )
+    t.includes("casualt") ||
+    t.includes("refugee") ||
+    t.includes("wounded") ||
+    t.includes("killed") ||
+    t.includes("injured") ||
+    t.includes("humanitarian")
+  ) {
     return "humanitarian";
+  }
 
   return "other";
 }
@@ -124,6 +167,41 @@ function Badge({ children }: { children: React.ReactNode }) {
   );
 }
 
+function StatCard({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: React.ReactNode;
+  hint?: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <div className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+        {label}
+      </div>
+      <div className="mt-1 text-2xl font-extrabold text-zinc-900">{value}</div>
+      {hint && <div className="mt-1 text-xs text-zinc-500">{hint}</div>}
+    </div>
+  );
+}
+
+function EmptyState({
+  title,
+  body,
+}: {
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-dashed border-zinc-300 bg-white p-6 text-center shadow-sm">
+      <h3 className="text-base font-extrabold text-zinc-900">{title}</h3>
+      <p className="mt-2 text-sm text-zinc-600">{body}</p>
+    </div>
+  );
+}
+
 export default async function TimelinePage() {
   const url = absoluteUrl("/api/timeline/iran");
 
@@ -133,7 +211,7 @@ export default async function TimelinePage() {
 
   if (!res.ok) {
     return (
-      <main className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+      <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-extrabold text-zinc-900">
           US–Israel–Iran War Timeline
         </h1>
@@ -145,107 +223,185 @@ export default async function TimelinePage() {
   }
 
   const data = await res.json();
-  const events: TimelineEvent[] = data?.events ?? [];
+  const events: TimelineEvent[] = Array.isArray(data?.events) ? data.events : [];
 
-  const manual = events
-    .filter((e) => e.kind === "manual")
-    .sort((a, b) => b.ts - a.ts);
+  const sortedEvents = [...events].sort((a, b) => b.ts - a.ts);
 
-  const auto = events
-    .filter((e) => e.kind === "auto")
-    .sort((a, b) => b.ts - a.ts);
+  const manual = sortedEvents.filter((e) => e.kind === "manual");
+  const auto = sortedEvents.filter((e) => e.kind === "auto");
 
   const totalKey = manual.length;
   const totalLive = auto.length;
+  const totalEvents = events.length;
+  const latestTs = sortedEvents[0]?.ts ?? data?.updatedAt ?? Date.now();
 
   return (
     <main className="relative">
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white via-white to-zinc-50" />
-      <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(circle_at_20%_10%,rgba(0,0,0,0.06),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(220,38,38,0.08),transparent_40%)]" />
+      <div className="pointer-events-none absolute inset-0 [background-image:radial-gradient(circle_at_20%_10%,rgba(0,0,0,0.05),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(220,38,38,0.08),transparent_40%)]" />
 
-      <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+      <div className="relative mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
         <header className="mb-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-zinc-900">
-                US–Israel–Iran War Timeline
-              </h1>
-              <p className="mt-2 max-w-2xl text-zinc-700">
-                Major escalation events + live conflict signals — updated frequently to separate
-                signal from noise.
-              </p>
-
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-1 text-xs font-semibold text-white">
-                  <span className="h-2 w-2 rounded-full bg-red-500" />
-                  Live
-                </span>
-                <span className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-900">
-                  Live Items: {totalLive}
-                </span>
-                <span className="inline-flex items-center rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-900">
-                  Key Events: {totalKey}
-                </span>
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-3xl">
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-zinc-900 px-3 py-1 text-xs font-semibold text-white">
+                <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse" />
+                Live Tracking
               </div>
 
-              <p className="mt-3 text-sm text-zinc-500">
-                Updated: {fmt(data?.updatedAt ?? Date.now())} • Events tracked: {events.length}
+              <h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl">
+                US–Israel–Iran War Timeline
+              </h1>
+
+              <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-700 sm:text-lg">
+                A continuously updated conflict timeline built to separate
+                <span className="font-semibold text-zinc-900"> signal from noise</span> —
+                combining real-time feed items with curated key milestones so readers can see
+                both the latest developments and the bigger picture fast.
+              </p>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                <a
+                  href="#live-timeline"
+                  className="rounded-xl bg-zinc-900 px-4 py-2 text-sm font-extrabold text-white shadow-sm hover:bg-zinc-800"
+                >
+                  Jump to Live Timeline
+                </a>
+                <a
+                  href="#key-events"
+                  className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-sm font-extrabold text-zinc-900 shadow-sm hover:bg-zinc-50"
+                >
+                  Jump to Key Events
+                </a>
+              </div>
+
+              <p className="mt-4 text-sm text-zinc-500">
+                Latest update: {fmt(latestTs)} • Feed refreshed frequently • Total tracked items:{" "}
+                {totalEvents}
               </p>
             </div>
 
-            <div className="rounded-2xl border border-zinc-200 bg-white/90 px-4 py-3 shadow-sm backdrop-blur">
-              <div className="mb-2 text-xs font-semibold text-zinc-900">Legend</div>
-              <div className="flex flex-wrap gap-2 text-xs">
-                <span className="inline-flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-red-600" /> Strikes
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-blue-600" /> Diplomacy
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Economy / Hormuz
-                </span>
-                <span className="inline-flex items-center gap-2">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-600" /> Humanitarian
-                </span>
+            <div className="rounded-2xl border border-zinc-200 bg-white/95 p-4 shadow-sm backdrop-blur lg:max-w-sm">
+              <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                What this page tracks
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-700">
+                Strikes, retaliatory signals, military movements, diplomatic developments,
+                shipping and energy pressure, and humanitarian fallout tied to the current
+                US–Israel–Iran escalation.
+              </p>
+
+              <div className="mt-4 border-t border-zinc-100 pt-4">
+                <div className="mb-2 text-xs font-semibold text-zinc-900">Legend</div>
+                <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs">
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-red-600" /> Strikes
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-blue-600" /> Diplomacy
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Economy / Shipping
+                  </span>
+                  <span className="inline-flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-emerald-600" /> Humanitarian
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </header>
 
-        {/* LIVE TIMELINE FIRST */}
+        <section className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <StatCard
+            label="Live Feed Items"
+            value={totalLive}
+            hint="Automatic incoming signals"
+          />
+          <StatCard
+            label="Key Events"
+            value={totalKey}
+            hint="Curated milestones and major turns"
+          />
+          <StatCard
+            label="Last Signal"
+            value={
+              <span className="text-lg sm:text-xl">
+                {fmt(latestTs)}
+              </span>
+            }
+            hint="Most recent tracked update"
+          />
+        </section>
+
         <section className="mb-12">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-extrabold text-zinc-900">Live Timeline</h2>
-            <span className="text-xs text-zinc-500">Recent signals (auto feed)</span>
-          </div>
-
-          <div className="relative space-y-6 pl-8">
-            <div className="absolute left-[10px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-zinc-200 via-zinc-200 to-transparent" />
-
-            {auto.map((e) => (
-              <EventCard key={e.id} e={e} variant="live" />
-            ))}
+          <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+            <div className="text-sm font-extrabold text-zinc-900">
+              Why this page matters
+            </div>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-700">
+              Most coverage either overwhelms readers with fragmented updates or strips away
+              the sequence that makes developments meaningful. This page is structured to show
+              both the live signal flow and the larger escalation pattern in one place.
+            </p>
           </div>
         </section>
 
-        {/* KEY EVENTS SECOND */}
-        {manual.length > 0 && (
-          <section>
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-extrabold text-zinc-900">Key Events</h2>
-              <span className="text-xs text-zinc-500">Curated milestones (manual)</span>
+        <section id="live-timeline" className="mb-12 scroll-mt-24">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-extrabold text-zinc-900">Live Timeline</h2>
+              <p className="text-xs text-zinc-500">
+                Recent incoming signals from the auto feed
+              </p>
             </div>
+            <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-700">
+              {totalLive} items
+            </span>
+          </div>
 
+          {auto.length === 0 ? (
+            <EmptyState
+              title="No live feed items yet"
+              body="Automatic updates have not populated yet. Check back shortly for incoming signals."
+            />
+          ) : (
             <div className="relative space-y-6 pl-8">
-              <div className="absolute left-[10px] top-0 bottom-0 w-[2px] bg-gradient-to-b from-zinc-200 via-zinc-200 to-transparent" />
+              <div className="absolute bottom-0 left-[10px] top-0 w-[2px] bg-gradient-to-b from-zinc-200 via-zinc-200 to-transparent" />
+              {auto.map((e) => (
+                <EventCard key={e.id} e={e} variant="live" />
+              ))}
+            </div>
+          )}
+        </section>
 
+        <section id="key-events" className="scroll-mt-24">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-extrabold text-zinc-900">Key Events</h2>
+              <p className="text-xs text-zinc-500">
+                Curated milestones that define the escalation arc
+              </p>
+            </div>
+            <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-700">
+              {totalKey} items
+            </span>
+          </div>
+
+          {manual.length === 0 ? (
+            <EmptyState
+              title="No key events added yet"
+              body="Curated milestone entries have not been added yet. Live feed updates are still being tracked above."
+            />
+          ) : (
+            <div className="relative space-y-6 pl-8">
+              <div className="absolute bottom-0 left-[10px] top-0 w-[2px] bg-gradient-to-b from-zinc-200 via-zinc-200 to-transparent" />
               {manual.map((e) => (
                 <EventCard key={e.id} e={e} variant="key" />
               ))}
             </div>
-          </section>
-        )}
+          )}
+        </section>
       </div>
     </main>
   );
@@ -287,6 +443,12 @@ function EventCard({
               </span>
             )}
 
+            {variant === "live" && (
+              <span className="rounded-full bg-red-50 px-2 py-0.5 text-[11px] font-semibold text-red-700 border border-red-200">
+                LIVE
+              </span>
+            )}
+
             {k !== "other" && (
               <span className="rounded-full border border-zinc-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-zinc-800">
                 {k === "strike"
@@ -321,7 +483,10 @@ function EventCard({
         {e.url && (
           <a
             href={e.url}
+            target="_blank"
+            rel="noopener noreferrer"
             className="shrink-0 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm font-extrabold text-zinc-900 shadow-sm hover:bg-zinc-50"
+            aria-label={`Open source for ${e.title}`}
           >
             Source
           </a>
