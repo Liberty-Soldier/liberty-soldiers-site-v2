@@ -3,7 +3,6 @@ import { XMLParser } from "fast-xml-parser";
 import { NEWS_FEEDS, NOISE_FEEDS, PINNED_LINKS, BLACKLIST } from "./news.config";
 import { toHardCategory } from "./hardCategories";
 
-
 export type Headline = {
   title: string;
   url: string;
@@ -11,22 +10,21 @@ export type Headline = {
   publishedAt?: number;
   image?: string;
   summary?: string;
-  category?: string;      // current badge label (Finance, Biosecurity, etc.)
-  hardCategory?: string;  // new: 5-bucket taxonomy for filters
+  category?: string;
+  hardCategory?: string;
 };
 
 type FeedInput =
   | string
   | {
       url: string;
-      category?: string; // e.g. "crypto" | "finance" | "world" | ...
+      category?: string;
     };
 
 const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: "@_",
   trimValues: true,
-  // do NOT force arrays globally; we’ll normalize below
 });
 
 /* -------------------------------------------------- */
@@ -60,7 +58,6 @@ function resolveUrl(raw: any, base?: string): string {
 
   if (s.startsWith("//")) return "https:" + s;
   if (/^https?:\/\//i.test(s)) return s;
-
   if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s)) return "https://" + s;
 
   if (base) {
@@ -83,6 +80,7 @@ function pickDate(it: any): number | undefined {
 
   const t = Array.isArray(d) ? d[0] : d;
   if (!t) return undefined;
+
   const ms = Date.parse(String(t));
   return Number.isFinite(ms) ? ms : undefined;
 }
@@ -90,7 +88,6 @@ function pickDate(it: any): number | undefined {
 function isIranRelated(title: string, summary?: string): boolean {
   const t = `${title} ${summary ?? ""}`.toLowerCase();
 
-  // strict-ish Iran / escalation terms
   const iranTerms = [
     "iran",
     "tehran",
@@ -100,7 +97,6 @@ function isIranRelated(title: string, summary?: string): boolean {
     "quds force",
     "ayatollah",
     "khamenei",
-    "raisi",
     "natanz",
     "isfahan",
     "fordow",
@@ -113,7 +109,6 @@ function isIranRelated(title: string, summary?: string): boolean {
     "shahed",
   ];
 
-  // include “proxy war” terms only if Iran is also mentioned
   const proxyTerms = [
     "hezbollah",
     "houthi",
@@ -132,9 +127,9 @@ function isIranRelated(title: string, summary?: string): boolean {
   return false;
 }
 
-// --------------------------------------------------
-// IRAN PAGE BALANCING (post-filter)
-// --------------------------------------------------
+/* -------------------------------------------------- */
+/* iran page balancing                                */
+/* -------------------------------------------------- */
 
 type SourceGroup =
   | "antiwar"
@@ -145,28 +140,25 @@ type SourceGroup =
   | "israel"
   | "other";
 
-// Map domains → perspective group
 const SOURCE_GROUP_BY_DOMAIN: Record<string, SourceGroup> = {
-  // Anti-war / restraint
   "antiwar.com": "antiwar",
   "responsiblestatecraft.org": "antiwar",
 
-  // Regional
   "aljazeera.com": "regional",
   "middleeasteye.net": "regional",
   "trtworld.com": "regional",
   "france24.com": "regional",
+  "alarabiya.net": "regional",
 
-  // Iranian narrative / Iran-based outlets (if you add them later)
   "presstv.ir": "iran",
   "tehrantimes.com": "iran",
-  "en.mehrnews.com": "iran",
-  "en.irna.ir": "iran",
+  "mehrnews.com": "iran",
+  "irna.ir": "iran",
   "tasnimnews.com": "iran",
 
-  // Western / wire / mainstream
   "reuters.com": "western",
   "apnews.com": "western",
+  "bbc.com": "western",
   "bbc.co.uk": "western",
   "theguardian.com": "western",
   "cnn.com": "western",
@@ -174,15 +166,13 @@ const SOURCE_GROUP_BY_DOMAIN: Record<string, SourceGroup> = {
   "cbsnews.com": "western",
   "abcnews.go.com": "western",
   "dw.com": "western",
-  "sky.com": "western",
+  "skynews.com": "western",
   "foxnews.com": "western",
 
-  // Think tank / analysis
   "warontherocks.com": "thinktank",
   "foreignpolicy.com": "thinktank",
   "crisisgroup.org": "thinktank",
 
-  // Israel-focused
   "jpost.com": "israel",
   "timesofisrael.com": "israel",
   "allisrael.com": "israel",
@@ -192,11 +182,15 @@ const SOURCE_GROUP_BY_DOMAIN: Record<string, SourceGroup> = {
 };
 
 function groupOfHeadline(h: Headline): SourceGroup {
-  const d = host(h.url);
-  return SOURCE_GROUP_BY_DOMAIN[d] ?? "other";
+  const d = host(h.url).toLowerCase();
+
+  for (const [domain, group] of Object.entries(SOURCE_GROUP_BY_DOMAIN)) {
+    if (d === domain || d.endsWith(`.${domain}`)) return group;
+  }
+
+  return "other";
 }
 
-// Hard cap repeats from any one domain on the Iran page
 function limitByDomain(items: Headline[], maxPerDomain = 2): Headline[] {
   const counts = new Map<string, number>();
   const out: Headline[] = [];
@@ -208,12 +202,13 @@ function limitByDomain(items: Headline[], maxPerDomain = 2): Headline[] {
     counts.set(d, n + 1);
     out.push(it);
   }
+
   return out;
 }
 
-// Round-robin the first screen so you don’t get 12 “airstrike” headlines in a row
 function roundRobinByGroup(items: Headline[], take = 40): Headline[] {
   const buckets = new Map<SourceGroup, Headline[]>();
+
   for (const it of items) {
     const g = groupOfHeadline(it);
     if (!buckets.has(g)) buckets.set(g, []);
@@ -249,13 +244,20 @@ function roundRobinByGroup(items: Headline[], take = 40): Headline[] {
   return out;
 }
 
-// Public helper you can import and use on the Iran page
 export function balanceIranHeadlines(items: Headline[], take = 30): Headline[] {
-  // items should already be newest-first
-  let out = roundRobinByGroup(items, Math.max(take, 40));
+  const newestFirst = items
+    .slice()
+    .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+
+  const relevant = newestFirst.filter((it) => isIranRelated(it.title, it.summary));
+  const fallback = relevant.length >= Math.min(12, take) ? relevant : newestFirst;
+
+  let out = roundRobinByGroup(fallback, Math.max(take, 40));
   out = limitByDomain(out, 2);
+
   return out.slice(0, take);
 }
+
 function toFeedInput(x: FeedInput): { url: string; category?: string } {
   if (typeof x === "string") return { url: x };
   return { url: x.url, category: x.category };
@@ -265,7 +267,6 @@ function feedCategoryLabel(cat?: string): string | undefined {
   if (!cat) return undefined;
   const c = String(cat).toLowerCase().trim();
 
-  // IMPORTANT: These labels are what shows in the badge (pill)
   if (c === "crypto") return "Crypto";
   if (c === "finance") return "Finance";
   if (c === "world") return "World Briefing";
@@ -274,6 +275,7 @@ function feedCategoryLabel(cat?: string): string | undefined {
   if (c === "health") return "Health";
   if (c === "prophecy") return "Prophecy Watch";
   if (c === "iran-war") return "Iran War";
+  if (c === "religion") return "Religion";
 
   return undefined;
 }
@@ -286,65 +288,58 @@ function categorize(
 ): string {
   const t = `${title} ${summary ?? ""}`.toLowerCase();
   const s = (src ?? "").toLowerCase();
-// --------------------------------------------------
-// HARD DOMAIN OVERRIDES (prevent obvious mislabels)
-// --------------------------------------------------
-if (s.includes("marketwatch")) return "Finance";
-if (s.includes("bloomberg")) return "Finance";
-if (s.includes("wsj")) return "Finance";
-if (s.includes("ft.com")) return "Finance";
 
-if (
-  s.includes("coindesk") ||
-  s.includes("cointelegraph") ||
-  s.includes("cryptopotato")
-) {
-  return "Crypto";
-}
+  // hard domain overrides
+  if (s.includes("marketwatch")) return "Finance";
+  if (s.includes("bloomberg")) return "Finance";
+  if (s.includes("wsj")) return "Finance";
+  if (s.includes("ft.com")) return "Finance";
 
-  // --------------------------------------------------
-  // Source-based fallback (NOT a return)
-  // --------------------------------------------------
+  if (
+    s.includes("coindesk") ||
+    s.includes("cointelegraph") ||
+    s.includes("cryptopotato") ||
+    s.includes("thedefiant")
+  ) {
+    return "Crypto";
+  }
+
+  // source fallback (soft)
   let fallback: string | undefined;
-
   if (s.includes("bbc")) fallback = "World Briefing";
   if (s.includes("aljazeera")) fallback = "World Briefing";
 
-  // --------------------------------------------------
-  // High-signal categories (ALWAYS win)
-  // --------------------------------------------------
+  // persecution watch
+  const hasReligion =
+    t.includes("church") ||
+    t.includes("christian") ||
+    t.includes("jewish") ||
+    t.includes("synagogue") ||
+    t.includes("mosque") ||
+    t.includes("pastor") ||
+    t.includes("imam") ||
+    t.includes("religion");
 
-// Persecution Watch (requires coercion + religion)
-const hasReligion =
-  t.includes("church") ||
-  t.includes("christian") ||
-  t.includes("jewish") ||
-  t.includes("synagogue") ||
-  t.includes("mosque") ||
-  t.includes("pastor") ||
-  t.includes("imam");
+  const hasPressure =
+    t.includes("persecution") ||
+    t.includes("arrest") ||
+    t.includes("arrested") ||
+    t.includes("detained") ||
+    t.includes("raid") ||
+    t.includes("ban") ||
+    t.includes("banned") ||
+    t.includes("charged") ||
+    t.includes("sentenced") ||
+    t.includes("hate speech") ||
+    t.includes("blasphemy") ||
+    t.includes("religious freedom") ||
+    t.includes("closed down");
 
-const hasPressure =
-  t.includes("persecution") ||
-  t.includes("arrest") ||
-  t.includes("arrested") ||
-  t.includes("detained") ||
-  t.includes("raid") ||
-  t.includes("ban") ||
-  t.includes("banned") ||
-  t.includes("charged") ||
-  t.includes("sentenced") ||
-  t.includes("hate speech") ||
-  t.includes("blasphemy") ||
-  t.includes("religious freedom") ||
-  t.includes("closed down");
+  if (hasPressure && hasReligion) {
+    return "Persecution Watch";
+  }
 
-if (hasPressure && (hasReligion || t.includes("religion"))) {
-  return "Persecution Watch";
-}
-    // --------------------------------------------------
-  // Prophecy (HIGH-signal)
-  // --------------------------------------------------
+  // prophecy
   const isProphecy =
     t.includes("prophecy") ||
     t.includes("end time") ||
@@ -358,15 +353,15 @@ if (hasPressure && (hasReligion || t.includes("religion"))) {
     t.includes("daniel") ||
     t.includes("eschatology");
 
-  // Source/domain assist (OliveTreeReviews)
   const isProphecySource =
-    s.includes("olivetreeviews") || s.includes("olivetreeviews.org");
+    s.includes("olivetreeviews") ||
+    s.includes("olivetreeviews.org");
 
   if (isProphecy || isProphecySource) {
     return "Prophecy Watch";
   }
 
-  // Control systems / surveillance / ID / CBDC
+  // control / surveillance
   if (
     t.includes("cbdc") ||
     t.includes("digital currency") ||
@@ -383,7 +378,7 @@ if (hasPressure && (hasReligion || t.includes("religion"))) {
     return "Control Systems";
   }
 
-  // Censorship / information control
+  // censorship
   if (
     t.includes("censorship") ||
     t.includes("censor") ||
@@ -396,7 +391,7 @@ if (hasPressure && (hasReligion || t.includes("religion"))) {
     return "Censorship & Speech";
   }
 
-  // Biosecurity / emergency powers
+  // biosecurity
   if (
     t.includes("pandemic") ||
     t.includes("outbreak") ||
@@ -412,7 +407,7 @@ if (hasPressure && (hasReligion || t.includes("religion"))) {
     return "Biosecurity";
   }
 
-  // War / geopolitics
+  // war / geopolitics
   if (
     t.includes("gaza") ||
     t.includes("israel") ||
@@ -425,32 +420,30 @@ if (hasPressure && (hasReligion || t.includes("religion"))) {
     t.includes("strike") ||
     t.includes("ceasefire") ||
     t.includes("nato") ||
-    t.includes("war")
+    t.includes("war") ||
+    t.includes("houthi") ||
+    t.includes("hezbollah") ||
+    t.includes("hormuz")
   ) {
     return "Geopolitics & War";
   }
 
-  // --------------------------------------------------
-  // Source-only defaults (low-signal)
-  // --------------------------------------------------
+  // source-only defaults
   if (s.includes("biometricupdate")) return "Control Systems";
   if (s.includes("reclaimthenet")) return "Censorship & Speech";
-  if (s.includes("expose-news")) return "Control Systems";
-  if (s.includes("endtimeheadlines")) return "Persecution Watch";
-  if (s.includes("prophecynewswatch")) return "Persecution Watch";
+  if (s.includes("endtimeheadlines")) return "Prophecy Watch";
+  if (s.includes("prophecynewswatch")) return "Prophecy Watch";
   if (s.includes("israel365news")) return "Geopolitics & War";
   if (s.includes("timesofisrael")) return "Geopolitics & War";
+  if (s.includes("tehrantimes")) return "Geopolitics & War";
+  if (s.includes("presstv")) return "Geopolitics & War";
   if (s.includes("reuters")) return "Geopolitics & War";
 
-  // --------------------------------------------------
-  // Final fallback (feed category beats "General")
-  // --------------------------------------------------
   return fallback || feedFallback || "General";
 }
 
 function stripHtml(s: any): string {
   const raw = String(s ?? "");
-  // remove tags + decode common entities minimally
   return raw
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
@@ -463,19 +456,7 @@ function stripHtml(s: any): string {
     .trim();
 }
 
-const DEFAULT_OG = "/og-default.jpg";
-
-// Tune these over time
-const BAD_IMAGE_HINTS = [
-  "1x1",
-  "pixel",
-  "spacer",
-  "blank",
-  "tracking",
-  "tracker",
-];
-
-const BAD_IMAGE_EXTS: string[] = []; // don't block svg/gif here (too aggressive)
+const BAD_IMAGE_HINTS = ["1x1", "pixel", "spacer", "blank", "tracking", "tracker"];
 
 function isGoodImage(url?: string): boolean {
   if (!url) return false;
@@ -485,13 +466,8 @@ function isGoodImage(url?: string): boolean {
 
   const lower = u.toLowerCase();
 
-  // data URIs are usually junk for our use
   if (lower.startsWith("data:")) return false;
-
-  // must be http(s)
   if (!/^https?:\/\//i.test(u)) return false;
-
-  // only block obvious tracker-ish hints
   if (BAD_IMAGE_HINTS.some((hint) => lower.includes(hint))) return false;
 
   return true;
@@ -503,7 +479,6 @@ function pickImage(extracted?: string, base?: string): string | undefined {
 }
 
 function extractSummary(it: any): string {
-  // Prefer short description/summary first
   const cand =
     it?.description ??
     it?.summary ??
@@ -512,13 +487,11 @@ function extractSummary(it: any): string {
     "";
 
   const text = stripHtml(Array.isArray(cand) ? cand[0] : cand);
-  // keep it reasonably short so cards don’t blow up
   if (!text) return "";
   return text.length > 360 ? text.slice(0, 357).trimEnd() + "…" : text;
 }
 
 function extractImage(it: any): string {
-  // RSS enclosure: <enclosure url="..." type="image/jpeg" />
   const enc = it?.enclosure;
   const encUrl = enc?.["@_url"] || enc?.url;
   const encType = enc?.["@_type"] || enc?.type;
@@ -527,7 +500,6 @@ function extractImage(it: any): string {
     if (u) return u;
   }
 
-  // Media RSS: <media:thumbnail url="..." />
   const mt = it?.["media:thumbnail"];
   const mtArr = arrify(mt);
   for (const m of mtArr) {
@@ -535,7 +507,6 @@ function extractImage(it: any): string {
     if (u) return u;
   }
 
-  // Media RSS: <media:content url="..." />
   const mc = it?.["media:content"];
   const mcArr = arrify(mc);
   for (const m of mcArr) {
@@ -544,7 +515,6 @@ function extractImage(it: any): string {
     if (u && (!t || t.startsWith("image/"))) return u;
   }
 
-  // Some feeds include <image><url>…</url></image> inside item
   const img = it?.image?.url || it?.image;
   const u2 = normalizeUrl(img);
   if (u2) return u2;
@@ -557,15 +527,12 @@ function extractImage(it: any): string {
 /* -------------------------------------------------- */
 
 function extractItems(feedJson: any): any[] {
-  // RSS 2.0
   const rssItems = feedJson?.rss?.channel?.item;
   if (rssItems) return arrify(rssItems);
 
-  // Atom
   const atomItems = feedJson?.feed?.entry;
   if (atomItems) return arrify(atomItems);
 
-  // Some “flat” variants
   if (Array.isArray(feedJson?.item)) return feedJson.item;
   if (Array.isArray(feedJson?.entries)) return feedJson.entries;
 
@@ -573,25 +540,18 @@ function extractItems(feedJson: any): any[] {
 }
 
 function extractLink(it: any): string {
-  // Common simple RSS
   if (typeof it?.link === "string") return it.link;
-
-  // Atom and mixed forms:
-  //  - link: { "@_href": "…" }
   if (it?.link?.["@_href"]) return it.link["@_href"];
 
-  //  - link: [{ rel, "@_href" }, …] → prefer rel="alternate", else first
   if (Array.isArray(it?.link)) {
-    const alt = it.link.find(
-      (l: any) => (l?.rel || l?.["@_rel"]) === "alternate"
-    );
+    const alt = it.link.find((l: any) => (l?.rel || l?.["@_rel"]) === "alternate");
     if (alt?.["@_href"]) return alt["@_href"];
+
     const first = it.link[0];
     if (first?.["@_href"]) return first["@_href"];
     if (typeof first === "string") return first;
   }
 
-  // Fall back to guid/url-like fields if they look like URLs
   if (typeof it?.guid === "string" && /^https?:\/\//i.test(it.guid)) return it.guid;
   if (typeof it?.url === "string") return it.url;
   if (typeof it?.["dc:identifier"] === "string") return it["dc:identifier"];
@@ -625,37 +585,35 @@ function normalizeFeed(
       const url = normalizeUrl(rawLink);
       const source = host(url) || sourceFallback;
 
-   const extractedImage = extractImage(it) || undefined;
-const image = pickImage(extractedImage, url || feedUrl);
-const summary = extractSummary(it) || undefined;
+      const extractedImage = extractImage(it) || undefined;
+      const image = pickImage(extractedImage, url || feedUrl);
+      const summary = extractSummary(it) || undefined;
 
-const category = categorize(title, summary, source, feedFallbackLabel);
+      const category = categorize(title, summary, source, feedFallbackLabel);
+      let hardCategory = toHardCategory(category);
 
-let hardCategory = toHardCategory(feedCategory);
+      const domain = host(url).toLowerCase();
+      const src = (source || "").toLowerCase();
+      const text = `${title} ${summary ?? ""}`.toLowerCase();
 
-// ✅ OliveTreeReviews: only move to Prophecy Watch when prophecy-like
-const domain = host(url).toLowerCase();
-const src = (source || "").toLowerCase();
-const text = `${title} ${summary ?? ""}`.toLowerCase();
+      const isOliveTree =
+        domain.includes("olivetreeviews") || src.includes("olivetreeviews");
 
-const isOliveTree =
-  domain.includes("olivetreeviews") || src.includes("olivetreeviews");
+      const looksProphetic =
+        text.includes("prophecy") ||
+        text.includes("end time") ||
+        text.includes("end-time") ||
+        text.includes("endtime") ||
+        text.includes("rapture") ||
+        text.includes("tribulation") ||
+        text.includes("antichrist") ||
+        text.includes("mark of the beast") ||
+        text.includes("revelation") ||
+        text.includes("daniel");
 
-const looksProphetic =
-  text.includes("prophecy") ||
-  text.includes("end time") ||
-  text.includes("end-time") ||
-  text.includes("endtime") ||
-  text.includes("rapture") ||
-  text.includes("tribulation") ||
-  text.includes("antichrist") ||
-  text.includes("mark of the beast") ||
-  text.includes("revelation") ||
-  text.includes("daniel");
-
-if (isOliveTree && looksProphetic) {
-  hardCategory = "Prophecy Watch";
-}
+      if (isOliveTree && looksProphetic) {
+        hardCategory = "Prophecy Watch";
+      }
 
       return {
         title,
@@ -686,7 +644,7 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
         "user-agent": "Mozilla/5.0 (LibertySoldiersBot)",
         accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
       },
-      next: { revalidate: 600 },
+      next: { revalidate: 180 },
     });
 
     const xml = await res.text();
@@ -700,11 +658,11 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
 }
 
 /* -------------------------------------------------- */
-/* caps + dedupe (safe, conservative)                  */
+/* caps + dedupe                                      */
 /* -------------------------------------------------- */
 
-const MAX_PER_SOURCE = 10; // cap per source
-const MAX_TOTAL = 220; // cap total returned (excluding pinned)
+const MAX_PER_SOURCE = 4;
+const MAX_TOTAL = 220;
 
 function normalizeForDedupeTitle(s: string): string {
   return String(s || "")
@@ -762,14 +720,9 @@ function jaccard(a: Set<string>, b: Set<string>): number {
   return union ? inter / union : 0;
 }
 
-/**
- * Conservative fuzzy dedupe:
- * - only compares against a small rolling window of recently kept items
- * - high similarity threshold to avoid wrong merges
- */
 function dedupeBySimilarTitle(items: Headline[]): Headline[] {
   const FUZZY_THRESHOLD = 0.9;
-  const WINDOW = 80; // limits comparisons so performance stays safe
+  const WINDOW = 80;
 
   const kept: Headline[] = [];
   const keptTokens: Set<string>[] = [];
@@ -778,7 +731,6 @@ function dedupeBySimilarTitle(items: Headline[]): Headline[] {
     const ts = titleTokens(it.title);
     let dup = false;
 
-    // compare against recent kept window only
     const start = Math.max(0, kept.length - WINDOW);
     for (let i = kept.length - 1; i >= start; i--) {
       if (jaccard(ts, keptTokens[i]) >= FUZZY_THRESHOLD) {
@@ -801,7 +753,7 @@ function capBySource(items: Headline[]): Headline[] {
   const out: Headline[] = [];
 
   for (const it of items) {
-    const s = (it.source || "unknown").toLowerCase().trim();
+    const s = (it.source || host(it.url) || "unknown").toLowerCase().trim();
     const c = perSource.get(s) || 0;
     if (c >= MAX_PER_SOURCE) continue;
 
@@ -812,85 +764,6 @@ function capBySource(items: Headline[]): Headline[] {
   }
 
   return out;
-}
-
-const MIN_PER_CATEGORY = 9; // ✅ your request
-
-function selectWithCategoryMins(items: Headline[]): Headline[] {
-  const perSource = new Map<string, number>();
-  const perCat = new Map<string, number>();
-  const selected: Headline[] = [];
-
-  const catOf = (h: Headline) => (h.hardCategory || "Power & Control").trim();
-
-  // Categories we do NOT force-minimum for
-  const EXCLUDE = new Set(["Pinned"]);
-
-  // Determine which categories are eligible (present + not excluded)
-  const eligibleCats = Array.from(
-    new Set(items.map(catOf).filter((c) => c && !EXCLUDE.has(c)))
-  );
-
-  const needMore = (c: string) => (perCat.get(c) || 0) < MIN_PER_CATEGORY;
-
-  const canTake = (h: Headline) => {
-    const s = (h.source || "unknown").toLowerCase().trim();
-    const sc = perSource.get(s) || 0;
-    return sc < MAX_PER_SOURCE;
-  };
-
-  const take = (h: Headline) => {
-    const s = (h.source || "unknown").toLowerCase().trim();
-    const c = catOf(h);
-    perSource.set(s, (perSource.get(s) || 0) + 1);
-    perCat.set(c, (perCat.get(c) || 0) + 1);
-    selected.push(h);
-  };
-
-  // PASS 1: satisfy category minimums (newest-first), respecting per-source cap
-  // We loop a few rounds so categories don't starve if early items hit source caps.
-  const alreadyPicked = new Set<string>();
-  const maxRounds = 4;
-
-  for (let round = 0; round < maxRounds; round++) {
-    let progressed = false;
-
-    for (const h of items) {
-      if (selected.length >= MAX_TOTAL) break;
-
-      const key = h.url.trim();
-      if (!key || alreadyPicked.has(key)) continue;
-
-      const c = catOf(h);
-      if (EXCLUDE.has(c)) continue;
-      if (!eligibleCats.includes(c)) continue;
-
-      if (needMore(c) && canTake(h)) {
-        take(h);
-        alreadyPicked.add(key);
-        progressed = true;
-      }
-    }
-
-    // stop early if all eligible categories met mins or no progress possible
-    const allMet = eligibleCats.every((c) => !needMore(c));
-    if (allMet || !progressed) break;
-  }
-
-  // PASS 2: fill remaining slots by recency, still respecting per-source cap
-  for (const h of items) {
-    if (selected.length >= MAX_TOTAL) break;
-
-    const key = h.url.trim();
-    if (!key || alreadyPicked.has(key)) continue;
-
-    if (!canTake(h)) continue;
-
-    take(h);
-    alreadyPicked.add(key);
-  }
-
-  return selected;
 }
 
 /* -------------------------------------------------- */
@@ -907,7 +780,6 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
     }
   }
 
-  // de-dup by URL
   const seen = new Set<string>();
   const unique = all.filter((h) => {
     const key = h.url.trim();
@@ -916,25 +788,18 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
     return true;
   });
 
-  // sort newest → oldest
   unique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
 
-  // ✅ conservative fuzzy title de-dupe
-const fuzzyUnique = dedupeBySimilarTitle(unique);
+  const fuzzyUnique = dedupeBySimilarTitle(unique);
+  const capped = capBySource(fuzzyUnique);
 
-// ✅ NEW: enforce 6-min per category (when available) + caps
-const balanced = selectWithCategoryMins(fuzzyUnique);
-
-return balanced;
+  return capped;
 }
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
-  // SIGNAL (your existing feeds)
   const feeds = (NEWS_FEEDS as unknown as FeedInput[]) ?? [];
-
   const headlines = await fetchHeadlinesFromFeeds(feeds);
 
-  // pinned first (always stay on top)
   const pinned: Headline[] = PINNED_LINKS.map((p) => ({
     title: p.title,
     url: p.url,
@@ -943,9 +808,9 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
     image: undefined,
     summary: undefined,
     category: "Pinned",
+    hardCategory: undefined,
   }));
 
-  // pinned take priority in de-dup
   const seen = new Set<string>();
 
   const pinnedUnique = pinned.filter((h) => {
@@ -965,7 +830,6 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
   return [...pinnedUnique, ...restUnique];
 }
 
-// ✅ New: fetch NOISE headlines (no pinned)
 export async function fetchNoiseHeadlines(): Promise<Headline[]> {
   const feeds = (NOISE_FEEDS as unknown as FeedInput[]) ?? [];
   return fetchHeadlinesFromFeeds(feeds);
