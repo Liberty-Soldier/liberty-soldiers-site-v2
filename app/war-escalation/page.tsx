@@ -1,8 +1,9 @@
 // app/war-escalation/page.tsx
 import type { Metadata } from "next";
-import { fetchAllHeadlines } from "../../lib/rss";
+import Link from "next/link";
+import { fetchAllHeadlines, balanceIranHeadlines } from "../../lib/rss";
 
-export const revalidate = 300; // refresh often (good for "live" pages)
+export const revalidate = 180;
 
 const SITE = "https://libertysoldiers.com";
 const CANONICAL = `${SITE}/war-escalation`;
@@ -11,13 +12,13 @@ const OG_IMAGE = "/og-iran-war.jpg";
 export const metadata: Metadata = {
   title: "Iran War & Escalation Radar | Liberty Soldiers",
   description:
-  "Live Iran war escalation tracker covering strikes, proxy activity, Hormuz risk, diplomacy, and strategic signals across the Middle East.",
- alternates: {
-  canonical: CANONICAL,
-  types: {
-    "application/rss+xml": `${SITE}/war-escalation/rss`,
+    "Live Iran war escalation tracker covering strikes, proxy activity, Hormuz risk, diplomacy, and strategic signals across the Middle East.",
+  alternates: {
+    canonical: CANONICAL,
+    types: {
+      "application/rss+xml": `${SITE}/war-escalation/rss`,
+    },
   },
-},
   openGraph: {
     title: "Iran War & Escalation Radar | Liberty Soldiers",
     description:
@@ -43,6 +44,7 @@ function hostFromUrl(u: string) {
     return "";
   }
 }
+
 function cleanSummary(summary?: string): string {
   if (!summary) return "";
   return summary
@@ -58,27 +60,25 @@ function displayTime(ms?: number) {
   const d = new Date(ms);
   if (Number.isNaN(d.getTime())) return "";
 
-  return d.toLocaleString("en-US", {
-    timeZone: "UTC",
-    month: "short",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-  }) + " UTC";
+  return (
+    d.toLocaleString("en-US", {
+      timeZone: "UTC",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }) + " UTC"
+  );
 }
 
-/**
- * IMPORTANT: avoid spaces in public asset filenames. Use hyphens.
- * Make sure these files exist under /public.
- */
 const SOURCE_OG_MAP: Record<string, string> = {
   "aljazeera.com": "/og-aljazeera.jpg",
-  "worthynews.com": "/og-worthy news.jpg",
-  "realclearreligion.org": "/og-real clear religion.jpg",
+  "worthynews.com": "/og-worthy-news.jpg",
+  "realclearreligion.org": "/og-real-clear-religion.jpg",
   "cbn.com": "/og-cbn.jpg",
-  "olivetreeviews.org": "/og-olive tree ministries.jpg",
+  "olivetreeviews.org": "/og-olive-tree-ministries.jpg",
   "zerohedge.com": "/og-zerohedge.jpg",
-  "endtimeheadlines.org": "/og-endtimesheadlines.jpg",
+  "endtimeheadlines.org": "/og-endtimeheadlines.jpg",
 };
 
 function sourceFallbackOg(url: string): string | undefined {
@@ -89,26 +89,59 @@ function sourceFallbackOg(url: string): string | undefined {
 
 function looksRelevant(text: string) {
   const t = text.toLowerCase();
-  return (
-    t.includes("iran") ||
-    t.includes("tehran") ||
-    t.includes("israel") ||
-    t.includes("hezbollah") ||
-    t.includes("houthi") ||
-    t.includes("strait of hormuz") ||
-    t.includes("hormuz") ||
-    t.includes("missile") ||
-    t.includes("airstrike") ||
-    t.includes("strike") ||
-    t.includes("retaliat") ||
-    t.includes("drone") ||
-    t.includes("proxy") ||
-    t.includes("escalat")
-  );
+
+  const coreIran = [
+    "iran",
+    "tehran",
+    "irgc",
+    "revolutionary guard",
+    "quds force",
+    "khamenei",
+    "fordow",
+    "natanz",
+    "isfahan",
+    "arak",
+    "bushehr",
+    "strait of hormuz",
+    "hormuz",
+    "persian gulf",
+  ];
+
+  const regional = [
+    "israel",
+    "hezbollah",
+    "houthi",
+    "lebanon",
+    "syria",
+    "iraq",
+    "yemen",
+    "red sea",
+    "gaza",
+  ];
+
+  const escalation = [
+    "missile",
+    "airstrike",
+    "strike",
+    "retaliat",
+    "drone",
+    "proxy",
+    "escalat",
+    "military",
+    "attack",
+    "ceasefire",
+    "sanction",
+  ];
+
+  const hasCoreIran = coreIran.some((k) => t.includes(k));
+  if (hasCoreIran) return true;
+
+  const hasRegional = regional.some((k) => t.includes(k));
+  const hasEscalation = escalation.some((k) => t.includes(k));
+
+  return hasRegional && hasEscalation;
 }
 
-// Build a link to your existing /news/share wrapper page that accepts searchParams:
-// u, t, s, p, i, x
 function shareWrapperHref(args: {
   url: string;
   title: string;
@@ -119,7 +152,6 @@ function shareWrapperHref(args: {
 }) {
   const sp = new URLSearchParams();
 
-  // ✅ DO NOT pre-encode; URLSearchParams will handle encoding.
   sp.set("u", args.url);
   sp.set("t", args.title);
 
@@ -133,26 +165,25 @@ function shareWrapperHref(args: {
   if (args.image) sp.set("i", args.image);
   if (args.summary) sp.set("x", args.summary);
 
-  // ✅ IMPORTANT: your share page route is /news/share (NOT /share)
   return `/news/share?${sp.toString()}`;
 }
 
 export default async function WarEscalationPage() {
   const all = await fetchAllHeadlines();
 
-  const items = all
-    .filter((h) => looksRelevant(`${h.title} ${h.summary ?? ""}`))
-    .slice(0, 120);
+  const relevant = all.filter((h) =>
+    looksRelevant(`${h.title} ${h.summary ?? ""}`)
+  );
+
+  const items = balanceIranHeadlines(relevant, 60);
 
   const latest = items.find((x) => typeof x.publishedAt === "number")?.publishedAt;
-const latestIso = latest
-  ? new Date(latest).toISOString()
-  : new Date().toISOString();
+  const latestIso = latest ? new Date(latest).toISOString() : new Date().toISOString();
 
-     const pageJsonLd = {
-      "@context": "https://schema.org",
-      "@type": "CollectionPage",
-      dateModified: latestIso,
+  const pageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    dateModified: latestIso,
     name: "War & Escalation Radar",
     description:
       "Real-time monitoring of Iran-related escalation signals, regional conflict, proxy activity, maritime risk, and strategic messaging across key geopolitical flashpoints.",
@@ -183,7 +214,6 @@ const latestIso = latest
     })),
   };
 
-  // Optional: share link for the page itself (uses your wrapper too)
   const shareThisPage = shareWrapperHref({
     url: CANONICAL,
     title: "War & Escalation Radar | Liberty Soldiers",
@@ -204,18 +234,17 @@ const latestIso = latest
         dangerouslySetInnerHTML={{ __html: JSON.stringify(feedJsonLd) }}
       />
 
-      {/* Header / intro */}
       <section className="border-b border-zinc-200 bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-3xl">
               <div className="text-xs uppercase tracking-wider text-zinc-500">Live Monitor</div>
 
-              <h1 className="mt-2 text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-900">
+              <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
                 War &amp; Escalation Radar
               </h1>
 
-              <p className="mt-3 text-base sm:text-lg text-zinc-700 leading-relaxed">
+              <p className="mt-3 text-base leading-relaxed text-zinc-700 sm:text-lg">
                 Real-time monitoring of Iran-related escalation signals across the Middle East —
                 including regional conflict, proxy activity, maritime risk, and strategic messaging that
                 can shift the trajectory of war. This page aggregates breaking headlines and provides a
@@ -225,91 +254,56 @@ const latestIso = latest
               <div className="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
                 <h2 className="text-lg font-bold text-zinc-900">What this radar tracks</h2>
                 <ul className="mt-3 space-y-2 text-sm text-zinc-700">
-                  <li>
-                    <span className="font-semibold text-zinc-900">Iran &amp; Tehran:</span>{" "}
-                    leadership statements, military posture, retaliation cycles, and doctrine.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-zinc-900">Proxy networks:</span>{" "}
-                    Hezbollah, Houthis, militias, and cross-border escalation indicators.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-zinc-900">Maritime chokepoints:</span>{" "}
-                    Strait of Hormuz risk, shipping disruptions, drones, and missile threats.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-zinc-900">Regional spillover:</span>{" "}
-                    Israel, Lebanon, Syria, Iraq, Yemen and wider Middle East dynamics.
-                  </li>
-                  <li>
-                    <span className="font-semibold text-zinc-900">Markets &amp; policy:</span>{" "}
-                    energy impacts, sanctions, diplomatic moves, and US/UK/EU positioning.
-                  </li>
+                  <li><span className="font-semibold text-zinc-900">Iran &amp; Tehran:</span> leadership statements, military posture, retaliation cycles, and doctrine.</li>
+                  <li><span className="font-semibold text-zinc-900">Proxy networks:</span> Hezbollah, Houthis, militias, and cross-border escalation indicators.</li>
+                  <li><span className="font-semibold text-zinc-900">Maritime chokepoints:</span> Strait of Hormuz risk, shipping disruptions, drones, and missile threats.</li>
+                  <li><span className="font-semibold text-zinc-900">Regional spillover:</span> Israel, Lebanon, Syria, Iraq, Yemen and wider Middle East dynamics.</li>
+                  <li><span className="font-semibold text-zinc-900">Markets &amp; policy:</span> energy impacts, sanctions, diplomatic moves, and US/UK/EU positioning.</li>
                 </ul>
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                <a
-                  href="/news"
-                  className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition"
-                >
+                <Link href="/news" className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50">
                   Full news feed →
-                </a>
-              
-                <a
-                  href="/reports"
-                  className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-black transition"
-                >
+                </Link>
+
+                <Link href="/reports" className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-black">
                   Read reports →
-                </a>
-              
-                <a
-                  href="/"
-                  className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition"
-                >
+                </Link>
+
+                <Link href="/" className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50">
                   ← Home
-                </a>
-              
-                <a
-                  href={shareThisPage}
-                  className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition"
-                >
+                </Link>
+
+                <a href={shareThisPage} className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50">
                   Share this page →
                 </a>
-              
-                <a
-                  href="/war-escalation/rss"
-                  className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 transition"
-                >
+
+                <Link href="/war-escalation/rss" className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50">
                   RSS →
-                </a>
+                </Link>
               </div>
-              <p className="mt-6 text-xs text-zinc-500 leading-relaxed">
+
+              <p className="mt-6 text-xs leading-relaxed text-zinc-500">
                 Note: Links below point to external sources. Liberty Soldiers monitors narrative shifts and
                 escalation patterns for situational awareness — not financial advice or operational guidance.
               </p>
 
-             <div className="mt-3 text-xs text-zinc-500">
+              <div className="mt-3 text-xs text-zinc-500">
                 Updated:{" "}
-                {latest ? (
-                  <time dateTime={latestIso}>{displayTime(latest)}</time>
-                ) : (
-                  "—"
-                )}{" "}
-                • Times shown in UTC.
+                {latest ? <time dateTime={latestIso}>{displayTime(latest)}</time> : "—"} • Times shown in UTC.
               </div>
             </div>
 
-            <div className="hidden sm:block text-right text-xs text-zinc-500 whitespace-nowrap">
+            <div className="hidden whitespace-nowrap text-right text-xs text-zinc-500 sm:block">
               {items.length ? <>Showing {items.length} signals</> : <>No signals found</>}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Feed */}
       <section className="bg-zinc-50/50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
           {items.length === 0 ? (
             <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-zinc-600">
               No matching items yet. Check back shortly.
@@ -320,24 +314,22 @@ const latestIso = latest
                 const og = it.image || sourceFallbackOg(it.url) || OG_IMAGE;
                 const src = it.source || hostFromUrl(it.url);
                 const time = displayTime(it.publishedAt);
+                const summary = cleanSummary(it.summary);
 
-                // Build share wrapper link for THIS item
                 const shareHref = shareWrapperHref({
                   url: it.url,
                   title: it.title,
                   source: src,
                   publishedAt: it.publishedAt,
-                  // share wrapper can show thumb; if og is relative, make it absolute
                   image: og.startsWith("http") ? og : `${SITE}${og}`,
-                  summary: cleanSummary(it.summary),
+                  summary,
                 });
 
                 return (
                   <div
                     key={it.url}
-                    className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-md transition"
+                    className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md"
                   >
-                    {/* Main clickable area to source */}
                     <a href={it.url} className="block">
                       <div className="relative">
                         <div className="h-40 w-full bg-zinc-100">
@@ -349,7 +341,7 @@ const latestIso = latest
                             referrerPolicy="no-referrer"
                           />
                         </div>
-                        <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/30 via-black/0 to-black/0" />
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-black/0" />
                       </div>
 
                       <div className="p-4">
@@ -359,20 +351,19 @@ const latestIso = latest
                           {time ? <span className="truncate">{time}</span> : null}
                         </div>
 
-                        <div className="mt-2 text-sm font-semibold text-zinc-900 group-hover:underline underline-offset-4 line-clamp-3">
+                        <div className="mt-2 line-clamp-3 text-sm font-semibold text-zinc-900 group-hover:underline underline-offset-4">
                           {it.title}
                         </div>
 
-                        {it.summary ? (
-                          <div className="mt-2 text-sm text-zinc-600 line-clamp-3">
-                            {it.summary}
+                        {summary ? (
+                          <div className="mt-2 line-clamp-3 text-sm text-zinc-600">
+                            {summary}
                           </div>
                         ) : null}
                       </div>
                     </a>
 
-                    {/* Footer actions */}
-                    <div className="px-4 pb-4 pt-0 flex items-center justify-between">
+                    <div className="flex items-center justify-between px-4 pb-4 pt-0">
                       <a
                         href={it.url}
                         className="text-sm font-medium text-zinc-900 hover:underline"
@@ -380,7 +371,6 @@ const latestIso = latest
                         Open source →
                       </a>
 
-                      {/* Share via your existing /news/share wrapper */}
                       <a
                         href={shareHref}
                         className="text-sm font-semibold text-zinc-900 hover:underline"
