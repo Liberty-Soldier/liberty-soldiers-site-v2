@@ -10,7 +10,7 @@ export const metadata = {
   alternates: { canonical: "https://libertysoldiers.com/news" },
 };
 
-export const revalidate = 600;
+export const revalidate = 180;
 
 type Item = {
   title: string;
@@ -20,11 +20,12 @@ type Item = {
   image?: string;
   summary?: string;
   category?: string;
-  hardCategory?: string; 
+  hardCategory?: string;
 };
 
 export default async function NewsPage() {
   let items: Item[] = [];
+
   try {
     items = (await fetchAllHeadlines()) as Item[];
   } catch {
@@ -33,22 +34,22 @@ export default async function NewsPage() {
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="mb-6 flex items-end justify-between gap-6">
           <div className="flex items-center gap-3">
             <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
               News Feed
             </h1>
-            <span className="hidden sm:inline text-zinc-300">/</span>
-            <h2 className="hidden sm:block text-2xl font-extrabold tracking-tight text-red-600">
+            <span className="hidden text-zinc-300 sm:inline">/</span>
+            <h2 className="hidden text-2xl font-extrabold tracking-tight text-red-600 sm:block">
               Latest Headlines
             </h2>
           </div>
 
           <Link
             href="/"
-            className="text-sm text-zinc-700 hover:text-zinc-900 whitespace-nowrap"
+            className="whitespace-nowrap text-sm text-zinc-700 hover:text-zinc-900"
           >
             ← Home
           </Link>
@@ -68,6 +69,3 @@ export default async function NewsPage() {
     </main>
   );
 }
-
-
-
