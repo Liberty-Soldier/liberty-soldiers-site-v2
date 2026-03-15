@@ -98,6 +98,23 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.cbsnews.com/latest/rss/world", category: "iran-war" },
   { url: "https://abcnews.go.com/abcnews/internationalheadlines", category: "iran-war" },
 
+  // 🇮🇷 Iran state / narrative ecosystem (VERY HIGH SIGNAL)
+
+{ url: "https://www.tehrantimes.com/rss", category: "iran-war" },
+
+{ url: "https://en.irna.ir/rss", category: "iran-war" },
+
+{ url: "https://www.tasnimnews.com/rss", category: "iran-war" },
+
+{ url: "https://www.farsnews.ir/rss", category: "iran-war" },
+
+{ url: "https://en.mehrnews.com/rss", category: "iran-war" },
+
+{ url: "https://www.isna.ir/rss", category: "iran-war" },
+
+{ url: "https://www.didbaniran.ir/rss", category: "iran-war" },
+  
+
   // Search-targeted Iran war boosters
   { url: "https://news.google.com/rss/search?q=when:24h+Iran+Reuters&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
   { url: "https://news.google.com/rss/search?q=when:24h+Iran+AP&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
@@ -198,5 +215,6 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // "example.com"
 ];
+
 
 
