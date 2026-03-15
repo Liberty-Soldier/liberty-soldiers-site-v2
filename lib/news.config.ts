@@ -30,6 +30,13 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "http://rss.cnn.com/rss/edition_world.rss", category: "world" },
   { url: "https://www.theguardian.com/world/rss", category: "world" },
   { url: "https://www.france24.com/en/live-news/rss", category: "world" },
+  { url: "https://news.google.com/rss/search?q=when:24h+site:reuters.com+world&hl=en-US&gl=US&ceid=US:en", category: "world" },
+{ url: "https://news.google.com/rss/search?q=when:24h+site:apnews.com+world&hl=en-US&gl=US&ceid=US:en", category: "world" },
+{ url: "https://news.google.com/rss/search?q=when:24h+site:bbc.com+world&hl=en-US&gl=US&ceid=US:en", category: "world" },
+{ url: "https://news.google.com/rss/search?q=when:24h+site:nbcnews.com+world&hl=en-US&gl=US&ceid=US:en", category: "world" },
+{ url: "https://news.google.com/rss/search?q=when:24h+site:cbsnews.com+world&hl=en-US&gl=US&ceid=US:en", category: "world" },
+{ url: "https://news.google.com/rss/search?q=when:24h+site:abcnews.go.com+world&hl=en-US&gl=US&ceid=US:en", category: "world" },
+{ url: "https://news.google.com/rss/search?q=when:24h+site:theguardian.com+world&hl=en-US&gl=US&ceid=US:en", category: "world" },
 
   // AP hard-news working RSS-style endpoints
   { url: "https://apnews.com/hub/apf-topnews?output=rss", category: "world" },
@@ -58,6 +65,12 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://news.google.com/rss/search?q=when:24h+Middle+East+Reuters&hl=en-US&gl=US&ceid=US:en", category: "middle-east" },
   { url: "https://news.google.com/rss/search?q=when:24h+Middle+East+AP&hl=en-US&gl=US&ceid=US:en", category: "middle-east" },
   { url: "https://news.google.com/rss/search?q=when:24h+Middle+East+BBC&hl=en-US&gl=US&ceid=US:en", category: "middle-east" },
+  { url: "https://news.google.com/rss/search?q=when:24h+Middle+East+site:reuters.com&hl=en-US&gl=US&ceid=US:en", category: "middle-east" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Middle+East+site:apnews.com&hl=en-US&gl=US&ceid=US:en", category: "middle-east" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Middle+East+site:bbc.com&hl=en-US&gl=US&ceid=US:en", category: "middle-east" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Middle+East+site:aljazeera.com&hl=en-US&gl=US&ceid=US:en", category: "middle-east" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Middle+East+site:france24.com&hl=en-US&gl=US&ceid=US:en", category: "middle-east" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Middle+East+site:timesofisrael.com&hl=en-US&gl=US&ceid=US:en", category: "middle-east" },
 
   // =========================================================
   // IRAN / WAR ESCALATION
@@ -97,6 +110,18 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://news.google.com/rss/search?q=when:24h+Strait+of+Hormuz+AP&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
   { url: "https://news.google.com/rss/search?q=when:24h+Hezbollah+Iran&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
   { url: "https://news.google.com/rss/search?q=when:24h+Houthis+Iran&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+  { url: "https://news.google.com/rss/search?q=when:24h+Iran+site:reuters.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Iran+site:apnews.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Iran+site:bbc.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Iran+site:nbcnews.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Iran+site:cbsnews.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Iran+site:abcnews.go.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Israel+Iran+site:reuters.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Israel+Iran+site:apnews.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Strait+of+Hormuz+site:reuters.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Strait+of+Hormuz+site:apnews.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Houthis+Iran+site:reuters.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+{ url: "https://news.google.com/rss/search?q=when:24h+Hezbollah+Iran+site:reuters.com&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
 
   // =========================================================
   // TECH / CONTROL SYSTEMS
@@ -124,6 +149,9 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://feeds.feedburner.com/zerohedge/feed", category: "finance" },
   { url: "https://www.federalreserve.gov/feeds/press_all.xml", category: "finance" },
   { url: "https://news.google.com/rss/search?q=when:24h+oil+price+OR+Hormuz+markets&hl=en-US&gl=US&ceid=US:en", category: "finance" },
+  { url: "https://news.google.com/rss/search?q=when:24h+oil+price+Hormuz&hl=en-US&gl=US&ceid=US:en", category: "finance" },
+{ url: "https://news.google.com/rss/search?q=when:24h+shipping+rates+Middle+East&hl=en-US&gl=US&ceid=US:en", category: "finance" },
+{ url: "https://news.google.com/rss/search?q=when:24h+sanctions+Iran+markets&hl=en-US&gl=US&ceid=US:en", category: "finance" },
 
   // =========================================================
   // HEALTH / MEDICAL / BIO
@@ -133,6 +161,9 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.nih.gov/news-events/news-releases/rss.xml", category: "health" },
   { url: "https://www.statnews.com/feed/", category: "health" },
   { url: "https://www.fiercehealthcare.com/rss/xml", category: "health" },
+  { url: "https://news.google.com/rss/search?q=when:7d+CBDC&hl=en-US&gl=US&ceid=US:en", category: "tech" },
+{ url: "https://news.google.com/rss/search?q=when:7d+%22digital+ID%22&hl=en-US&gl=US&ceid=US:en", category: "tech" },
+{ url: "https://news.google.com/rss/search?q=when:7d+biometrics+surveillance&hl=en-US&gl=US&ceid=US:en", category: "tech" },
 
   // =========================================================
   // RELIGION / IDEOLOGY
@@ -166,3 +197,4 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // "example.com"
 ];
+
