@@ -83,7 +83,8 @@ export const NEWS_FEEDS: NewsFeed[] = [
 
   // Regional / Iran-side / adversarial narratives
   { url: "https://www.tehrantimes.com/rss", category: "iran-war" },
-  { url: "https://www.presstv.ir/rss.xml", category: "iran-war" },
+  { url: "https://news.google.com/rss/search?q=when:24h+site:presstv.ir&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
+  { url: "https://news.google.com/rss/search?q=when:24h+Iran+site:presstv.ir&hl=en-US&gl=US&ceid=US:en", category: "iran-war" },
   { url: "https://tass.com/rss/v2.xml", category: "iran-war" },
   { url: "https://www.xinhuanet.com/english/rss/worldrss.xml", category: "iran-war" },
   { url: "https://api.globaltimes.cn/rss/outbound/home.xml", category: "iran-war" },
@@ -197,4 +198,5 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // "example.com"
 ];
+
 
