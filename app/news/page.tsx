@@ -39,7 +39,7 @@ export default async function NewsPage() {
       <section className="relative overflow-hidden border-b border-zinc-200 bg-zinc-900">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url(/og-default.jpg)" }}
+          style={{ backgroundImage: "url(/global-trade-port.jpg)" }}
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/55 to-black/40" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -95,3 +95,4 @@ export default async function NewsPage() {
     </main>
   );
 }
+
