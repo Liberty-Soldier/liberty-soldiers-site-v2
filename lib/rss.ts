@@ -661,8 +661,8 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
 /* caps + dedupe                                      */
 /* -------------------------------------------------- */
 
-const MAX_PER_SOURCE = 4;
-const MAX_TOTAL = 220;
+const MAX_PER_SOURCE = 7;
+const MAX_TOTAL = 320;
 
 function normalizeForDedupeTitle(s: string): string {
   return String(s || "")
