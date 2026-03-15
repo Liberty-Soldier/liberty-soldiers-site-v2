@@ -661,8 +661,8 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
 /* caps + dedupe                                      */
 /* -------------------------------------------------- */
 
-const MAX_PER_SOURCE = 7;
-const MAX_TOTAL = 320;
+const MAX_PER_SOURCE = 14;
+const MAX_TOTAL = 500;
 
 function normalizeForDedupeTitle(s: string): string {
   return String(s || "")
@@ -790,10 +790,8 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
 
   unique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
 
-  const fuzzyUnique = dedupeBySimilarTitle(unique);
-  const capped = capBySource(fuzzyUnique);
-
-  return capped;
+const capped = capBySource(unique);
+return capped;
 }
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
