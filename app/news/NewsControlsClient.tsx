@@ -10,7 +10,7 @@ type Item = {
   image?: string;
   summary?: string;
   category?: string;
-  hardCategory?: string; // ✅ NEW
+  hardCategory?: string;
 };
 
 type Props = {
@@ -20,10 +20,10 @@ type Props = {
 
 const HARD_CATEGORIES = [
   "All",
-  "Power & Control",
-  "Markets & Finance",
-  "Digital ID / Technocracy",
   "War & Geopolitics",
+  "Power & Control",
+  "Digital ID / Technocracy",
+  "Markets & Finance",
   "Religion & Ideology",
   "Prophecy Watch",
 ] as const;
@@ -31,21 +31,21 @@ const HARD_CATEGORIES = [
 function uniqHardCats(items: Item[]) {
   const set = new Set<string>();
   for (const it of items) {
+    if (it.category === "Pinned") continue;
     if (it.hardCategory) set.add(it.hardCategory);
   }
-  // Only show categories that exist in current data (+ All)
   return HARD_CATEGORIES.filter((c) => c === "All" || set.has(c));
 }
 
 function weightHard(c?: string) {
   switch ((c || "").toLowerCase()) {
-    case "markets & finance":
-      return 0;
-    case "digital id / technocracy":
-      return 1;
     case "war & geopolitics":
-      return 2;
+      return 0;
     case "power & control":
+      return 1;
+    case "digital id / technocracy":
+      return 2;
+    case "markets & finance":
       return 3;
     case "religion & ideology":
       return 4;
@@ -54,6 +54,34 @@ function weightHard(c?: string) {
     default:
       return 50;
   }
+}
+
+function rebalanceVisible(items: Item[], cat: string) {
+  const out: Item[] = [];
+  const perSource = new Map<string, number>();
+  const perCategory = new Map<string, number>();
+
+  const maxPerSource = cat === "All" ? 2 : 3;
+  const maxProphecyOnAll = 4;
+
+  for (const item of items) {
+    const sourceKey = (item.source || "unknown").toLowerCase().trim();
+    const hard = (item.hardCategory || "Power & Control").trim();
+
+    const sourceCount = perSource.get(sourceKey) || 0;
+    if (sourceCount >= maxPerSource) continue;
+
+    if (cat === "All") {
+      const catCount = perCategory.get(hard) || 0;
+      if (hard === "Prophecy Watch" && catCount >= maxProphecyOnAll) continue;
+    }
+
+    perSource.set(sourceKey, sourceCount + 1);
+    perCategory.set(hard, (perCategory.get(hard) || 0) + 1);
+    out.push(item);
+  }
+
+  return out;
 }
 
 export default function NewsControlsClient({ items, render }: Props) {
@@ -66,12 +94,10 @@ export default function NewsControlsClient({ items, render }: Props) {
   const filtered = useMemo(() => {
     let out = items.filter((x) => x.category !== "Pinned");
 
-    // ✅ Filter by HARD category
     if (cat !== "All") {
       out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
     }
 
-    // sort
     if (sort === "newest") {
       out = out.slice().sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
     } else {
@@ -83,13 +109,14 @@ export default function NewsControlsClient({ items, render }: Props) {
       });
     }
 
+    out = rebalanceVisible(out, cat);
+
     return out;
   }, [items, cat, sort]);
 
   return (
     <div>
-      {/* Sticky controls */}
-      <div className="sticky top-0 z-20 -mx-4 sm:mx-0 px-4 sm:px-0 py-3 bg-white/90 backdrop-blur border-b border-zinc-200">
+      <div className="sticky top-0 z-20 -mx-4 border-b border-zinc-200 bg-white/90 px-4 py-3 backdrop-blur sm:mx-0 sm:px-0">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <div className="text-xs text-zinc-600">
@@ -101,7 +128,7 @@ export default function NewsControlsClient({ items, render }: Props) {
             <div className="flex items-center gap-2">
               <select
                 value={sort}
-                onChange={(e) => setSort(e.target.value as any)}
+                onChange={(e) => setSort(e.target.value as "newest" | "signal")}
                 className="rounded-xl border border-zinc-200 bg-white px-3 py-2 text-xs font-semibold text-zinc-800"
               >
                 <option value="newest">Newest</option>
@@ -117,9 +144,8 @@ export default function NewsControlsClient({ items, render }: Props) {
             </div>
           </div>
 
-          {/* HARD category chips */}
-          <div className="-mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto">
-            <div className="flex gap-2 w-max">
+          <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+            <div className="flex w-max gap-2">
               {categories.map((c) => {
                 const active = c === cat;
                 return (
@@ -141,7 +167,6 @@ export default function NewsControlsClient({ items, render }: Props) {
         </div>
       </div>
 
-      {/* Render list */}
       <div className="mt-6">{render(filtered, view)}</div>
     </div>
   );
