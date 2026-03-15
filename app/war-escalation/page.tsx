@@ -8,6 +8,7 @@ export const revalidate = 180;
 const SITE = "https://libertysoldiers.com";
 const CANONICAL = `${SITE}/war-escalation`;
 const OG_IMAGE = "/og-iran-war.jpg";
+const HERO_IMAGE = "/hero-war-energy-shipping-2.jpg";
 
 export const metadata: Metadata = {
   title: "Iran War & Escalation Radar | Liberty Soldiers",
@@ -234,17 +235,66 @@ export default async function WarEscalationPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(feedJsonLd) }}
       />
 
+      <section className="relative overflow-hidden border-b border-zinc-200 bg-zinc-900">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${HERO_IMAGE})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/45" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="max-w-3xl">
+            <div className="text-xs uppercase tracking-[0.2em] text-red-300">
+              Live Monitor
+            </div>
+
+            <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+              War &amp; Escalation Radar
+            </h1>
+
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-zinc-200 sm:text-lg">
+              Live tracking of Iran-related escalation signals across the Middle East —
+              including strikes, proxy activity, maritime chokepoints, diplomatic pressure,
+              and market-moving strategic developments.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/news"
+                className="inline-flex items-center rounded-xl bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100"
+              >
+                Full news feed →
+              </Link>
+
+              <Link
+                href="/reports"
+                className="inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
+              >
+                Read reports →
+              </Link>
+
+              <a
+                href={shareThisPage}
+                className="inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
+              >
+                Share this page →
+              </a>
+            </div>
+
+            <div className="mt-6 text-xs text-zinc-300">
+              Updated:{" "}
+              {latest ? <time dateTime={latestIso}>{displayTime(latest)}</time> : "—"} • Times shown in UTC.
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="border-b border-zinc-200 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
           <div className="flex items-start justify-between gap-6">
             <div className="max-w-3xl">
-              <div className="text-xs uppercase tracking-wider text-zinc-500">Live Monitor</div>
-
-              <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-                War &amp; Escalation Radar
-              </h1>
-
-              <p className="mt-3 text-base leading-relaxed text-zinc-700 sm:text-lg">
+              <p className="text-base leading-relaxed text-zinc-700 sm:text-lg">
                 Real-time monitoring of Iran-related escalation signals across the Middle East —
                 including regional conflict, proxy activity, maritime risk, and strategic messaging that
                 can shift the trajectory of war. This page aggregates breaking headlines and provides a
@@ -263,21 +313,9 @@ export default async function WarEscalationPage() {
               </div>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                <Link href="/news" className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50">
-                  Full news feed →
-                </Link>
-
-                <Link href="/reports" className="inline-flex items-center rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-black">
-                  Read reports →
-                </Link>
-
                 <Link href="/" className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50">
                   ← Home
                 </Link>
-
-                <a href={shareThisPage} className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50">
-                  Share this page →
-                </a>
 
                 <Link href="/war-escalation/rss" className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50">
                   RSS →
@@ -288,11 +326,6 @@ export default async function WarEscalationPage() {
                 Note: Links below point to external sources. Liberty Soldiers monitors narrative shifts and
                 escalation patterns for situational awareness — not financial advice or operational guidance.
               </p>
-
-              <div className="mt-3 text-xs text-zinc-500">
-                Updated:{" "}
-                {latest ? <time dateTime={latestIso}>{displayTime(latest)}</time> : "—"} • Times shown in UTC.
-              </div>
             </div>
 
             <div className="hidden whitespace-nowrap text-right text-xs text-zinc-500 sm:block">
