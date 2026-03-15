@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import FallbackImg from "@/app/components/FallbackImg";
 
@@ -19,16 +18,21 @@ function humanAgo(input?: number | string | Date): string {
   if (!input) return "Just now";
   const ts = typeof input === "number" ? input : new Date(input).getTime();
   if (!Number.isFinite(ts)) return "Just now";
+
   const diff = Date.now() - ts;
   const sec = Math.max(1, Math.floor(diff / 1000));
   if (sec < 60) return `${sec}s ago`;
+
   const min = Math.floor(sec / 60);
   if (min < 60) return `${min}m ago`;
+
   const hr = Math.floor(min / 60);
   if (hr < 24) return `${hr}h ago`;
+
   const d = Math.floor(hr / 24);
   return `${d}d ago`;
 }
+
 function previewFromSummary(summary?: string): string {
   if (!summary) return "";
 
@@ -104,52 +108,37 @@ function fallbackForCategory(cat?: string) {
   return "/og-power-control.jpg";
 }
 
-function bulletsFromSummary(summary?: string): string[] {
-  if (!summary) return [];
-  const clean = summary.replace(/\s+/g, " ").trim();
-  if (!clean) return [];
-
-  const parts = clean
-    .split(/(?:\.|\!|\?)\s+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  if (parts.length >= 2) {
-    return parts.slice(0, 2).map((s) => (/[.!?]$/.test(s) ? s : s + "."));
-  }
-
-  const chunk1 = clean.slice(0, 90).trim();
-  const chunk2 = clean.slice(90, 180).trim();
-
-  return [chunk1, chunk2]
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((s) => (/[.!?]$/.test(s) ? s : s + "."));
-}
-
 const HARD_ORDER = [
   "All",
-  "Markets & Finance",
+  "War & Geopolitics",
   "Power & Control",
   "Digital ID / Technocracy",
-  "War & Geopolitics",
+  "Markets & Finance",
   "Religion & Ideology",
   "Prophecy Watch",
 ] as const;
 
-function buildCategories(_: Item[]) {
-  return HARD_ORDER;
+function buildCategories(items: Item[]) {
+  const present = new Set<string>();
+
+  for (const item of items) {
+    if (item.category === "Pinned") continue;
+    const hc = (item.hardCategory || "").trim();
+    if (hc) present.add(hc);
+  }
+
+  return HARD_ORDER.filter((c) => c === "All" || present.has(c));
 }
 
 function signalWeightHard(c?: string) {
   switch ((c || "").toLowerCase()) {
-    case "markets & finance":
-      return 0;
-    case "digital id / technocracy":
-      return 1;
     case "war & geopolitics":
-      return 2;
+      return 0;
     case "power & control":
+      return 1;
+    case "digital id / technocracy":
+      return 2;
+    case "markets & finance":
       return 3;
     case "religion & ideology":
       return 4;
@@ -209,6 +198,59 @@ function buildNewsShareAbs(args: {
   return `https://libertysoldiers.com/news/share?${sp.toString()}`;
 }
 
+function sortItems(items: Item[], sort: "newest" | "signal") {
+  const out = items.slice();
+
+  if (sort === "newest") {
+    out.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+    return out;
+  }
+
+  out.sort((a, b) => {
+    const wa = signalWeightHard(a.hardCategory);
+    const wb = signalWeightHard(b.hardCategory);
+
+    if (wa !== wb) return wa - wb;
+    return (b.publishedAt || 0) - (a.publishedAt || 0);
+  });
+
+  return out;
+}
+
+function rebalanceVisible(items: Item[], cat: string) {
+  const out: Item[] = [];
+  const perSource = new Map<string, number>();
+  const perCategory = new Map<string, number>();
+
+  const maxPerSource = cat === "All" ? 2 : 3;
+  const maxProphecyOnAll = 4;
+
+  for (const item of items) {
+    const sourceKey = (item.source || hostFromUrl(item.url) || "unknown")
+      .toLowerCase()
+      .trim();
+
+    const hard = (item.hardCategory || "Power & Control").trim();
+    const sourceCount = perSource.get(sourceKey) || 0;
+
+    if (sourceCount >= maxPerSource) continue;
+
+    if (cat === "All") {
+      const catCount = perCategory.get(hard) || 0;
+
+      if (hard === "Prophecy Watch" && catCount >= maxProphecyOnAll) {
+        continue;
+      }
+    }
+
+    perSource.set(sourceKey, sourceCount + 1);
+    perCategory.set(hard, (perCategory.get(hard) || 0) + 1);
+    out.push(item);
+  }
+
+  return out;
+}
+
 export default function NewsFeedClient({
   items,
 }: {
@@ -224,6 +266,7 @@ export default function NewsFeedClient({
     const apply = () => {
       if (window.innerWidth < 640) setView("cards");
     };
+
     apply();
     window.addEventListener("resize", apply);
     return () => window.removeEventListener("resize", apply);
@@ -236,18 +279,8 @@ export default function NewsFeedClient({
       out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
     }
 
-    if (sort === "newest") {
-      out = out
-        .slice()
-        .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
-    } else {
-      out = out.slice().sort((a, b) => {
-        const wa = signalWeightHard(a.hardCategory);
-        const wb = signalWeightHard(b.hardCategory);
-        if (wa !== wb) return wa - wb;
-        return (b.publishedAt || 0) - (a.publishedAt || 0);
-      });
-    }
+    out = sortItems(out, sort);
+    out = rebalanceVisible(out, cat);
 
     return out;
   }, [items, cat, sort]);
@@ -292,6 +325,7 @@ export default function NewsFeedClient({
             <div className="flex w-max gap-2 pr-4">
               {categories.map((c) => {
                 const active = c === cat;
+
                 return (
                   <button
                     key={c}
@@ -344,8 +378,6 @@ export default function NewsFeedClient({
                 thumb === "/og-default.jpg" ||
                 thumb === "/default-og.jpg";
 
-              const bullets = bulletsFromSummary(h.summary);
-
               return (
                 <div key={`${h.url}-${idx}`} className="contents">
                   <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition hover:border-zinc-300 hover:shadow-md">
@@ -386,18 +418,19 @@ export default function NewsFeedClient({
                       </div>
                     )}
 
-                   <a href={h.url} className="mt-1 block">
-  <h3 className="font-semibold leading-snug hover:underline">
-    {h.title}
-  </h3>
-</a>
+                    <a href={h.url} className="mt-1 block">
+                      <h3 className="font-semibold leading-snug hover:underline">
+                        {h.title}
+                      </h3>
+                    </a>
 
                     {previewFromSummary(h.summary) && (
-  <p className="mt-3 text-sm text-zinc-700 leading-relaxed line-clamp-3">
-    {previewFromSummary(h.summary)}
-  </p>
-)}
-                    <div className="mt-4 pb-1 flex items-center justify-end">
+                      <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-zinc-700">
+                        {previewFromSummary(h.summary)}
+                      </p>
+                    )}
+
+                    <div className="mt-4 flex items-center justify-end pb-1">
                       <a
                         href={shareHrefAbs}
                         className="text-sm font-semibold text-zinc-900 hover:underline"
@@ -454,14 +487,11 @@ export default function NewsFeedClient({
                         ) : null}
                       </div>
 
-                      <a
-  href={h.url}
-  className="mt-1 block"
->
-  <div className="break-words font-semibold text-zinc-900 hover:underline">
-    {h.title}
-  </div>
-</a>
+                      <a href={h.url} className="mt-1 block">
+                        <div className="break-words font-semibold text-zinc-900 hover:underline">
+                          {h.title}
+                        </div>
+                      </a>
 
                       <div className="mt-1 text-[11px] text-zinc-500">
                         {humanAgo(h.publishedAt)}
