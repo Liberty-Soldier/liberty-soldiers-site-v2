@@ -11,28 +11,64 @@ export const HARD_CATEGORIES = [
 
 export type HardCategory = (typeof HARD_CATEGORIES)[number];
 
-// Map your existing feed buckets -> your hard categories (display taxonomy)
-export function toHardCategory(feedCategory?: string): HardCategory {
-  switch ((feedCategory || "").toLowerCase()) {
-    case "tech":
-      return "Digital ID / Technocracy";
+// Maps BOTH feed buckets and final display labels -> hard categories
+export function toHardCategory(input?: string): HardCategory {
+  const v = (input || "").toLowerCase().trim();
 
-    case "prophecy":
-      return "Prophecy Watch";
-
-    case "middle-east":
-    case "world":
-    case "iran-war":
-      return "War & Geopolitics";
-
-    case "religion":
-    return "Religion & Ideology";
-
+  switch (v) {
+    // -------------------------
+    // MARKETS / FINANCE
+    // -------------------------
     case "finance":
     case "crypto":
+    case "markets":
+    case "markets & finance":
+    case "finance & markets":
       return "Markets & Finance";
 
+    // -------------------------
+    // DIGITAL / TECH / ID
+    // -------------------------
+    case "tech":
+    case "digital id / technocracy":
+    case "control systems":
+      return "Digital ID / Technocracy";
+
+    // -------------------------
+    // WAR / GEO
+    // -------------------------
+    case "world":
+    case "world briefing":
+    case "middle-east":
+    case "middle east":
+    case "iran-war":
+    case "iran war":
+    case "geopolitics & war":
+    case "war & geopolitics":
+      return "War & Geopolitics";
+
+    // -------------------------
+    // RELIGION / IDEOLOGY
+    // -------------------------
+    case "religion":
+    case "religion & ideology":
+    case "persecution watch":
+      return "Religion & Ideology";
+
+    // -------------------------
+    // PROPHECY
+    // -------------------------
+    case "prophecy":
+    case "prophecy watch":
+      return "Prophecy Watch";
+
+    // -------------------------
+    // POWER / CONTROL
+    // -------------------------
     case "health":
+    case "biosecurity":
+    case "censorship & speech":
+    case "power & control":
       return "Power & Control";
 
     default:
