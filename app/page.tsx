@@ -248,7 +248,7 @@ export default async function Home() {
             <div className="rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
               <Carousel title="">
                 <Suspense fallback={<HeadlinesFallback />}>
-                  <HomeHeadlines variant="carousel" />
+                  <HomeHeadlines variant="carousel" items={all} />
                 </Suspense>
               </Carousel>
             </div>
@@ -256,7 +256,7 @@ export default async function Home() {
 
           <div className="hidden sm:block">
             <Suspense fallback={<HeadlinesFallback />}>
-              <HomeHeadlines variant="grid" />
+              <HomeHeadlines variant="grid" items={all} />
             </Suspense>
 
             <div className="mt-6">
