@@ -158,8 +158,10 @@ export const reports: Report[] = [
   },
 ];
 
+export const REPORTS = reports;
+
 export function getAllReports(): Report[] {
-  return [...REPORTS].sort((a, b) => (a.dateISO < b.dateISO ? 1 : -1));
+  return [...reports].sort((a, b) => (a.dateISO < b.dateISO ? 1 : -1));
 }
 
 export function getLatestReports(limit = 10): Report[] {
