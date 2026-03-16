@@ -4,29 +4,7 @@ import {
   NEWS_FEEDS,
   NOISE_FEEDS,
   PINNED_LINKS,
-  BLACKLIST
-   Collecting page data ...
- ⚠ Found lockfile missing swc dependencies, run next locally to automatically patch
-   Generating static pages (0/42) ...
-   Generating static pages (10/42) 
-   Generating static pages (19/42) 
-   Generating static pages (20/42) 
- ⚠ Sending SIGTERM signal to static worker due to timeout of 60 seconds. Subsequent errors may be a result of the worker exiting.
- ⨯ Static worker exited with code: null and signal: SIGTERM
- ⚠ Restarted static page generation for /news because it took more than 60 seconds
- ⚠ See more info here https://nextjs.org/docs/messages/static-page-generation-timeout
- ⚠ Restarted static page generation for /news/signal-vs-noise because it took more than 60 seconds
- ⚠ Restarted static page generation for /news/us-iran-abrahamic-endtimes because it took more than 60 seconds
- ⚠ Restarted static page generation for /news/war-beyond-the-battlefield because it took more than 60 seconds
- ⚠ Restarted static page generation for / because it took more than 60 seconds
- ⚠ Restarted static page generation for /prayer because it took more than 60 seconds
- ⚠ Restarted static page generation for /reports because it took more than 60 seconds
- ⚠ Restarted static page generation for /search because it took more than 60 seconds
- ⚠ Restarted static page generation for /timeline/us-israel-iran-war-timeline because it took more than 60 seconds
- ⚠ Restarted static page generation for /videos because it took more than 60 seconds
- ⚠ Restarted static page generation for /war-escalation because it took more than 60 seconds
- ⚠ Restarted static page generation for /news/doomsday-clock/opengraph-image.png because it took more than 60 seconds
-,
+  BLACKLIST,
 } from "./news.config";
 import { toHardCategory } from "./hardCategories";
 
@@ -824,8 +802,7 @@ async function normalizeFeed(
 let image = pickImage(extractedImage, url || feedUrl);
 
 if (!image && url && shouldTryArticleOgFallback(url)) {
-  // temporarily disabled to avoid build-time timeouts on Vercel
-  // image = await fetchOgImageFromArticle(url);
+  image = await fetchOgImageFromArticle(url);
 }
       const summary = extractSummary(it) || undefined;
 
