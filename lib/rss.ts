@@ -85,7 +85,6 @@ const ARTICLE_OG_FALLBACK_DOMAINS = [
   "europeanconservative.com",
   "middleeasteye.net",
   "aljazeera.com",
-  "original.antiwar.com",
   "warontherocks.com",
   
 ];
