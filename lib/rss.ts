@@ -530,9 +530,6 @@ const BAD_IMAGE_HINTS = [
   "tracking",
   "tracker",
   "pixel",
-  "emoji",
-  "avatar",
-  "icon",
 ];
 
 function isGoodImage(url?: string): boolean {
@@ -543,11 +540,28 @@ function isGoodImage(url?: string): boolean {
 
   const lower = u.toLowerCase();
 
+  // reject inline junk
   if (lower.startsWith("data:")) return false;
+
+  // must be absolute
   if (!/^https?:\/\//i.test(u)) return false;
+
+  // reject tracking pixels / spacers
   if (BAD_IMAGE_HINTS.some((hint) => lower.includes(hint))) return false;
 
-  return true;
+  // allow common real image patterns OR CDN transforms
+  const looksLikeImage =
+    /\.(jpg|jpeg|png|webp|gif|avif)(\?|$)/i.test(lower) ||
+    lower.includes("/wp-content/uploads/") ||
+    lower.includes("/uploads/") ||
+    lower.includes("/media/") ||
+    lower.includes("/image/") ||
+    lower.includes("/images/") ||
+    lower.includes("cloudfront") ||
+    lower.includes("cdn") ||
+    lower.includes("img");
+
+  return looksLikeImage;
 }
 
 function pickImage(extracted?: string, base?: string): string | undefined {
@@ -572,19 +586,40 @@ function firstImgFromHtml(html: any, base?: string): string {
   const raw = String(Array.isArray(html) ? html[0] : html ?? "");
   if (!raw) return "";
 
-  const m = raw.match(/<img[^>]+src=["']([^"' >]+)["']/i);
-  if (!m?.[1]) return "";
+  const patterns = [
+    /<img[^>]+src=["']([^"' >]+)["']/i,
+    /<img[^>]+data-src=["']([^"' >]+)["']/i,
+    /<img[^>]+data-lazy-src=["']([^"' >]+)["']/i,
+    /<img[^>]+srcset=["']([^"']+)["']/i,
+  ];
 
-  return resolveUrl(m[1], base) || "";
+  for (const rx of patterns) {
+    const m = raw.match(rx);
+    if (!m?.[1]) continue;
+
+    let candidate = m[1];
+
+    if (rx.source.includes("srcset")) {
+      candidate = candidate.split(",")[0]?.trim().split(" ")[0]?.trim() || "";
+    }
+
+    const resolved = resolveUrl(candidate, base);
+    if (resolved) return resolved;
+  }
+
+  return "";
 }
 
 function extractImage(it: any, base?: string): string {
   const enc = it?.enclosure;
-  const encUrl = enc?.["@_url"] || enc?.url;
-  const encType = enc?.["@_type"] || enc?.type;
-  if (encUrl && (!encType || String(encType).startsWith("image/"))) {
-    const u = normalizeUrl(encUrl);
-    if (u) return u;
+  const encArr = arrify(enc);
+  for (const e of encArr) {
+    const encUrl = e?.["@_url"] || e?.url;
+    const encType = e?.["@_type"] || e?.type;
+    if (encUrl && (!encType || String(encType).startsWith("image/"))) {
+      const u = normalizeUrl(encUrl);
+      if (u) return u;
+    }
   }
 
   const mt = it?.["media:thumbnail"];
@@ -602,15 +637,36 @@ function extractImage(it: any, base?: string): string {
     if (u && (!t || t.startsWith("image/"))) return u;
   }
 
-  const img = it?.image?.url || it?.image;
-  const u2 = normalizeUrl(img);
-  if (u2) return u2;
+  const mediaGroup = it?.["media:group"];
+  const mediaGroupContent = arrify(mediaGroup?.["media:content"]);
+  for (const m of mediaGroupContent) {
+    const u = normalizeUrl(m?.["@_url"] || m?.url);
+    const t = String(m?.["@_type"] || m?.type || "");
+    if (u && (!t || t.startsWith("image/"))) return u;
+  }
+
+  const imageFields = [
+    it?.image?.url,
+    it?.image,
+    it?.thumbnail,
+    it?.thumb,
+    it?.["itunes:image"]?.["@_href"],
+    it?.["media:credit"],
+  ];
+
+  for (const field of imageFields) {
+    const u = normalizeUrl(field);
+    if (u) return u;
+  }
 
   const fromContent = firstImgFromHtml(it?.["content:encoded"], base);
   if (fromContent) return fromContent;
 
   const fromDescription = firstImgFromHtml(it?.description, base);
   if (fromDescription) return fromDescription;
+
+  const fromSummary = firstImgFromHtml(it?.summary, base);
+  if (fromSummary) return fromSummary;
 
   return "";
 }
