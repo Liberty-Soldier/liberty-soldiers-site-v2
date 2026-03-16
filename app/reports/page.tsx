@@ -1,13 +1,37 @@
 // app/reports/page.tsx
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getAllReports } from "@/lib/reports";
-import ShareButton from "../news/ShareButton";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Reports | Liberty Soldiers",
   description:
     "Original Liberty Soldiers investigative reports, intelligence briefings, and long-form analysis.",
   alternates: { canonical: "https://libertysoldiers.com/reports/" },
+  openGraph: {
+    title: "Reports | Liberty Soldiers",
+    description:
+      "Original Liberty Soldiers investigative reports, intelligence briefings, and long-form analysis.",
+    url: "https://libertysoldiers.com/reports/",
+    siteName: "Liberty Soldiers",
+    type: "website",
+    images: [
+      {
+        url: "https://libertysoldiers.com/og-default.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Liberty Soldiers Reports",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Reports | Liberty Soldiers",
+    description:
+      "Original Liberty Soldiers investigative reports, intelligence briefings, and long-form analysis.",
+    images: ["https://libertysoldiers.com/og-default.jpg"],
+  },
 };
 
 function formatDate(iso: string) {
@@ -18,6 +42,34 @@ function formatDate(iso: string) {
     month: "short",
     day: "numeric",
   });
+}
+
+function typeLabel(kind?: string) {
+  switch (kind) {
+    case "news":
+      return "News Article";
+    case "brief":
+      return "Briefing";
+    case "analysis":
+      return "Field Analysis";
+    case "report":
+    default:
+      return "Investigative Brief";
+  }
+}
+
+function bottomLabel(kind?: string) {
+  switch (kind) {
+    case "news":
+      return "Original news";
+    case "brief":
+      return "Original briefing";
+    case "analysis":
+      return "Original analysis";
+    case "report":
+    default:
+      return "Original report";
+  }
 }
 
 export default function ReportsPage() {
@@ -144,45 +196,58 @@ export default function ReportsPage() {
                     Featured intelligence report
                   </div>
 
-                  <div className="p-6 sm:p-8">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="inline-flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-700">
-                          Investigative Brief
-                        </span>
-                        <span className="text-zinc-300">•</span>
-                        <span className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">
-                          Filed: {formatDate(featured.dateISO)}
+                  <div className="grid lg:grid-cols-[1.1fr_0.9fr]">
+                    <div className="p-6 sm:p-8">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="inline-flex flex-wrap items-center gap-2">
+                          <span className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-700">
+                            {typeLabel(featured.kind)}
+                          </span>
+                          <span className="text-zinc-300">•</span>
+                          <span className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">
+                            Filed: {formatDate(featured.dateISO)}
+                          </span>
+                        </div>
+
+                        <span className="hidden sm:inline-flex items-center text-sm font-semibold text-zinc-900">
+                          Read Report
+                          <span className="ml-1 transition-transform group-hover:translate-x-1">
+                            →
+                          </span>
                         </span>
                       </div>
 
-                      <span className="hidden sm:inline-flex items-center text-sm font-semibold text-zinc-900">
-                        Read Report
-                        <span className="ml-1 transition-transform group-hover:translate-x-1">
-                          →
-                        </span>
-                      </span>
+                      <h2 className="mt-5 max-w-4xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
+                        {featured.title}
+                      </h2>
+
+                      <p className="mt-4 max-w-3xl text-base leading-relaxed text-zinc-700">
+                        {featured.excerpt}
+                      </p>
+
+                      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+                        <div className="text-sm text-zinc-600">
+                          By{" "}
+                          <span className="font-semibold text-zinc-900">
+                            {featured.byline}
+                          </span>
+                        </div>
+
+                        <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-700">
+                          {bottomLabel(featured.kind)}
+                        </div>
+                      </div>
                     </div>
 
-                    <h2 className="mt-5 max-w-4xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl">
-                      {featured.title}
-                    </h2>
-
-                    <p className="mt-4 max-w-3xl text-base leading-relaxed text-zinc-700">
-                      {featured.excerpt}
-                    </p>
-
-                    <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                      <div className="text-sm text-zinc-600">
-                        By{" "}
-                        <span className="font-semibold text-zinc-900">
-                          {featured.byline}
-                        </span>
-                      </div>
-
-                      <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-700">
-                        Original analysis
-                      </div>
+                    <div className="relative min-h-[260px] border-t border-zinc-200 bg-zinc-100 lg:min-h-full lg:border-l lg:border-t-0">
+                      <Image
+                        src={featured.coverImage || "/og-default.jpg"}
+                        alt={featured.title}
+                        fill
+                        priority
+                        className="object-cover transition duration-300 group-hover:scale-[1.02]"
+                        sizes="(max-width: 1024px) 100vw, 40vw"
+                      />
                     </div>
                   </div>
                 </Link>
@@ -204,39 +269,51 @@ export default function ReportsPage() {
                   <Link
                     key={r.slug}
                     href={`/news/${r.slug}`}
-                    className="group flex h-full flex-col rounded-2xl border border-zinc-200 bg-white p-5 transition hover:border-zinc-300 hover:shadow-sm"
+                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition hover:border-zinc-300 hover:shadow-sm"
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <span className="rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-700">
-                        Field Analysis
-                      </span>
-                      <span className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 whitespace-nowrap">
-                        {formatDate(r.dateISO)}
-                      </span>
+                    <div className="relative aspect-[16/9] bg-zinc-100">
+                      <Image
+                        src={r.coverImage || "/og-default.jpg"}
+                        alt={r.title}
+                        fill
+                        className="object-cover transition duration-300 group-hover:scale-[1.02]"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
                     </div>
 
-                    <h3 className="mt-4 text-lg font-extrabold leading-tight tracking-tight text-zinc-900">
-                      {r.title}
-                    </h3>
-
-                    <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-zinc-700">
-                      {r.excerpt}
-                    </p>
-
-                    <div className="mt-auto pt-5 flex items-center justify-between gap-3">
-                      <div className="text-xs text-zinc-600">
-                        By{" "}
-                        <span className="font-semibold text-zinc-900">
-                          {r.byline}
+                    <div className="flex h-full flex-col p-5">
+                      <div className="flex items-start justify-between gap-3">
+                        <span className="rounded-full border border-zinc-200 bg-zinc-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-zinc-700">
+                          {typeLabel(r.kind)}
+                        </span>
+                        <span className="whitespace-nowrap text-[11px] uppercase tracking-[0.18em] text-zinc-500">
+                          {formatDate(r.dateISO)}
                         </span>
                       </div>
 
-                      <span className="inline-flex items-center text-xs font-semibold tracking-wide text-zinc-900">
-                        Open Brief
-                        <span className="ml-1 transition-transform group-hover:translate-x-1">
-                          →
+                      <h3 className="mt-4 text-lg font-extrabold leading-tight tracking-tight text-zinc-900">
+                        {r.title}
+                      </h3>
+
+                      <p className="mt-3 line-clamp-4 text-sm leading-relaxed text-zinc-700">
+                        {r.excerpt}
+                      </p>
+
+                      <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+                        <div className="text-xs text-zinc-600">
+                          By{" "}
+                          <span className="font-semibold text-zinc-900">
+                            {r.byline}
+                          </span>
+                        </div>
+
+                        <span className="inline-flex items-center text-xs font-semibold tracking-wide text-zinc-900">
+                          Open Brief
+                          <span className="ml-1 transition-transform group-hover:translate-x-1">
+                            →
+                          </span>
                         </span>
-                      </span>
+                      </div>
                     </div>
                   </Link>
                 ))}
