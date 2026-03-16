@@ -3,6 +3,7 @@ import React from "react";
 import Script from "next/script";
 
 import Header from "./components/Header";
+import TopicStrip from "./components/TopicStrip";
 import EmailSignup from "./components/EmailSignup";
 import ClearSW from "../components/ClearSW";
 import "../styles/globals.css";
