@@ -36,6 +36,63 @@ const parser = new XMLParser({
 /* utils                                              */
 /* -------------------------------------------------- */
 
+async function fetchOgImageFromArticle(url: string): Promise<string | undefined> {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "user-agent": "Mozilla/5.0 (LibertySoldiersBot)",
+        accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8",
+      },
+      next: { revalidate: 1800 },
+    });
+
+    if (!res.ok) return undefined;
+
+    const html = await res.text();
+    if (!html) return undefined;
+
+    const patterns = [
+      /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+      /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i,
+      /<meta[^>]+name=["']twitter:image:src["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image:src["']/i,
+      /<link[^>]+rel=["']image_src["'][^>]+href=["']([^"']+)["']/i,
+    ];
+
+    for (const rx of patterns) {
+      const m = html.match(rx);
+      if (!m?.[1]) continue;
+
+      const candidate = resolveUrl(m[1], url);
+      if (isGoodImage(candidate)) return candidate;
+    }
+
+    return undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+const ARTICLE_OG_FALLBACK_DOMAINS = [
+  "schneier.com",
+  "christianpost.com",
+  "realclearreligion.org",
+  "endtimeheadlines.org",
+  "religionnews.com",
+  "tass.com",
+  "europeanconservative.com",
+  "middleeasteye.net",
+  "aljazeera.com",
+];
+
+function shouldTryArticleOgFallback(url: string): boolean {
+  const d = host(url).toLowerCase();
+  return ARTICLE_OG_FALLBACK_DOMAINS.some(
+    (domain) => d === domain || d.endsWith(`.${domain}`)
+  );
+}
 function arrify<T>(x: T | T[] | undefined | null): T[] {
   return x == null ? [] : Array.isArray(x) ? x : [x];
 }
@@ -724,7 +781,7 @@ function extractSource(feedJson: any, url: string): string {
 /* normalize                                          */
 /* -------------------------------------------------- */
 
-function normalizeFeed(
+async function normalizeFeed(
   feedJson: any,
   feedUrl: string,
   feedCategory?: string
@@ -733,14 +790,18 @@ function normalizeFeed(
   const sourceFallback = extractSource(feedJson, feedUrl);
   const feedFallbackLabel = feedCategoryLabel(feedCategory);
 
-  return items
-    .map((it: any) => {
+  const mapped = await Promise.all(
+  items.map(async (it: any) => {
       const title = stripHtml(it?.title ?? "").trim();
       const url = extractLink(it, feedUrl);
       const source = host(url) || sourceFallback;
 
-      const extractedImage = extractImage(it, url || feedUrl) || undefined;
-      const image = pickImage(extractedImage, url || feedUrl);
+     const extractedImage = extractImage(it, url || feedUrl) || undefined;
+let image = pickImage(extractedImage, url || feedUrl);
+
+if (!image && url && shouldTryArticleOgFallback(url)) {
+  image = await fetchOgImageFromArticle(url);
+}
       const summary = extractSummary(it) || undefined;
 
       const category = categorize(title, summary, source, feedFallbackLabel);
@@ -779,8 +840,10 @@ function normalizeFeed(
         category,
         hardCategory,
       };
-    })
-    .filter((h) => {
+})
+);
+
+return mapped.filter((h) => {
       if (!h.title || !h.url) return false;
       const d = host(h.url).toLowerCase();
       return !BLACKLIST.some((b) => d.includes(String(b).toLowerCase()));
@@ -807,7 +870,7 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
     if (!res.ok || !xml) return [];
 
     const json = parser.parse(xml);
-    return normalizeFeed(json, feed.url, feed.category);
+   return await normalizeFeed(json, feed.url, feed.category);
   } catch {
     return [];
   }
