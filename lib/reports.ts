@@ -20,7 +20,7 @@ export const REPORTS: Report[] = [
   slug: "information-war-intensifies",
   title:
     "Information War Intensifies as Conflicting Reports Shape Global Perception",
-  description:
+  excerpt:
     "An investigative briefing on how conflicting reports, selective leaks, propaganda, and narrative management are shaping public perception during the current war cycle.",
   date: "2026-03-16",
   coverImage: "/og-information-war.jpg",
