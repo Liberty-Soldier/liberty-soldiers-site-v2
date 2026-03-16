@@ -1,6 +1,11 @@
 // lib/rss.ts
 import { XMLParser } from "fast-xml-parser";
-import { NEWS_FEEDS, NOISE_FEEDS, PINNED_LINKS, BLACKLIST } from "./news.config";
+import {
+  NEWS_FEEDS,
+  NOISE_FEEDS,
+  PINNED_LINKS,
+  BLACKLIST,
+} from "./news.config";
 import { toHardCategory } from "./hardCategories";
 
 export type Headline = {
@@ -171,7 +176,10 @@ function isIranRelated(title: string, summary?: string): boolean {
   if (hasIranCore) return true;
 
   const hasProxy = proxyTerms.some((k) => t.includes(k));
-  if (hasProxy && (t.includes("iran") || t.includes("tehran") || t.includes("irgc"))) {
+  if (
+    hasProxy &&
+    (t.includes("iran") || t.includes("tehran") || t.includes("irgc"))
+  ) {
     return true;
   }
 
@@ -300,7 +308,9 @@ export function balanceIranHeadlines(items: Headline[], take = 30): Headline[] {
     .slice()
     .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
 
-  const relevant = newestFirst.filter((it) => isIranRelated(it.title, it.summary));
+  const relevant = newestFirst.filter((it) =>
+    isIranRelated(it.title, it.summary)
+  );
   const fallback = relevant.length >= Math.min(12, take) ? relevant : newestFirst;
 
   let out = roundRobinByGroup(fallback, Math.max(take, 40));
@@ -401,8 +411,7 @@ function categorize(
     t.includes("eschatology");
 
   const isProphecySource =
-    s.includes("olivetreeviews") ||
-    s.includes("olivetreeviews.org");
+    s.includes("olivetreeviews") || s.includes("olivetreeviews.org");
 
   if (isProphecy || isProphecySource) {
     return "Prophecy Watch";
@@ -472,7 +481,24 @@ function categorize(
   }
 
   if (s.includes("biometricupdate")) return "Control Systems";
-  if (s.includes("reclaimthenet")) return "Censorship & Speech";
+
+  if (s.includes("reclaimthenet")) {
+    if (
+      t.includes("ai") ||
+      t.includes("artificial intelligence") ||
+      t.includes("medical") ||
+      t.includes("health") ||
+      t.includes("records") ||
+      t.includes("privacy") ||
+      t.includes("surveillance") ||
+      t.includes("biometric") ||
+      t.includes("digital id")
+    ) {
+      return "Control Systems";
+    }
+    return "Censorship & Speech";
+  }
+
   if (s.includes("endtimeheadlines")) return "Prophecy Watch";
   if (s.includes("prophecynewswatch")) return "Prophecy Watch";
   if (s.includes("israel365news")) return "Geopolitics & War";
@@ -498,7 +524,16 @@ function stripHtml(s: any): string {
     .trim();
 }
 
-const BAD_IMAGE_HINTS = ["1x1", "spacer", "tracking", "tracker", "pixel"];
+const BAD_IMAGE_HINTS = [
+  "1x1",
+  "spacer",
+  "tracking",
+  "tracker",
+  "pixel",
+  "emoji",
+  "avatar",
+  "icon",
+];
 
 function isGoodImage(url?: string): boolean {
   if (!url) return false;
@@ -533,7 +568,17 @@ function extractSummary(it: any): string {
   return text.length > 360 ? text.slice(0, 357).trimEnd() + "…" : text;
 }
 
-function extractImage(it: any): string {
+function firstImgFromHtml(html: any, base?: string): string {
+  const raw = String(Array.isArray(html) ? html[0] : html ?? "");
+  if (!raw) return "";
+
+  const m = raw.match(/<img[^>]+src=["']([^"' >]+)["']/i);
+  if (!m?.[1]) return "";
+
+  return resolveUrl(m[1], base) || "";
+}
+
+function extractImage(it: any, base?: string): string {
   const enc = it?.enclosure;
   const encUrl = enc?.["@_url"] || enc?.url;
   const encType = enc?.["@_type"] || enc?.type;
@@ -561,6 +606,12 @@ function extractImage(it: any): string {
   const u2 = normalizeUrl(img);
   if (u2) return u2;
 
+  const fromContent = firstImgFromHtml(it?.["content:encoded"], base);
+  if (fromContent) return fromContent;
+
+  const fromDescription = firstImgFromHtml(it?.description, base);
+  if (fromDescription) return fromDescription;
+
   return "";
 }
 
@@ -587,7 +638,9 @@ function extractLink(it: any, feedUrl?: string): string {
   if (typeof it?.link === "string") raw = it.link;
   else if (it?.link?.["@_href"]) raw = it.link["@_href"];
   else if (Array.isArray(it?.link)) {
-    const alt = it.link.find((l: any) => (l?.rel || l?.["@_rel"]) === "alternate");
+    const alt = it.link.find(
+      (l: any) => (l?.rel || l?.["@_rel"]) === "alternate"
+    );
     if (alt?.["@_href"]) raw = alt["@_href"];
     else {
       const first = it.link[0];
@@ -630,7 +683,7 @@ function normalizeFeed(
       const url = extractLink(it, feedUrl);
       const source = host(url) || sourceFallback;
 
-      const extractedImage = extractImage(it) || undefined;
+      const extractedImage = extractImage(it, url || feedUrl) || undefined;
       const image = pickImage(extractedImage, url || feedUrl);
       const summary = extractSummary(it) || undefined;
 
@@ -708,7 +761,7 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
 /* caps + dedupe                                      */
 /* -------------------------------------------------- */
 
-const MAX_PER_SOURCE = 8;
+const MAX_PER_SOURCE = 12;
 const MAX_TOTAL = 500;
 
 function normalizeForDedupeTitle(s: string): string {
