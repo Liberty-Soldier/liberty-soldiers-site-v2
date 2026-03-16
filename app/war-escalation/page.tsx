@@ -88,9 +88,49 @@ function sourceFallbackOg(url: string): string | undefined {
   return key ? SOURCE_OG_MAP[key] : undefined;
 }
 
-function looksRelevant(text: string) {
-  const t = text.toLowerCase();
+function looksRelevant(item: {
+  title: string;
+  summary?: string;
+  category?: string;
+  hardCategory?: string;
+}) {
+  const t = `${item.title} ${item.summary ?? ""}`.toLowerCase();
 
+  // 1) Only allow items already classified into war bucket
+  const hard = (item.hardCategory || "").toLowerCase().trim();
+  if (hard !== "war & geopolitics") return false;
+
+  // 2) Exclude obvious non-war / culture / sports / entertainment noise
+  const excludeTerms = [
+    "oscar",
+    "oscars",
+    "academy awards",
+    "grammy",
+    "grammys",
+    "emmy",
+    "emmys",
+    "festival",
+    "box office",
+    "movie",
+    "film",
+    "celebrity",
+    "red carpet",
+    "fashion week",
+    "premiere",
+    "concert",
+    "album",
+    "sports",
+    "football",
+    "soccer",
+    "nba",
+    "nfl",
+    "mlb",
+    "tennis",
+  ];
+
+  if (excludeTerms.some((k) => t.includes(k))) return false;
+
+  // 3) Strong Iran-core terms
   const coreIran = [
     "iran",
     "tehran",
@@ -106,8 +146,15 @@ function looksRelevant(text: string) {
     "strait of hormuz",
     "hormuz",
     "persian gulf",
+    "iranian missile",
+    "iranian drone",
+    "iranian strike",
+    "iran sanctions",
   ];
 
+  if (coreIran.some((k) => t.includes(k))) return true;
+
+  // 4) Regional conflict terms must appear with a real escalation signal
   const regional = [
     "israel",
     "hezbollah",
@@ -132,15 +179,35 @@ function looksRelevant(text: string) {
     "attack",
     "ceasefire",
     "sanction",
+    "naval",
+    "shipping",
+    "tanker",
+    "blockade",
+    "militia",
   ];
-
-  const hasCoreIran = coreIran.some((k) => t.includes(k));
-  if (hasCoreIran) return true;
 
   const hasRegional = regional.some((k) => t.includes(k));
   const hasEscalation = escalation.some((k) => t.includes(k));
 
-  return hasRegional && hasEscalation;
+  if (!(hasRegional && hasEscalation)) return false;
+
+  // 5) Require at least one extra strategic signal so generic Gaza/news doesn't leak in
+  const strategic = [
+    "iran",
+    "tehran",
+    "hormuz",
+    "persian gulf",
+    "proxy",
+    "hezbollah",
+    "houthi",
+    "militia",
+    "shipping",
+    "tanker",
+    "sanction",
+    "irgc",
+  ];
+
+  return strategic.some((k) => t.includes(k));
 }
 
 function shareWrapperHref(args: {
@@ -172,9 +239,14 @@ function shareWrapperHref(args: {
 export default async function WarEscalationPage() {
   const all = await fetchAllHeadlines();
 
-  const relevant = all.filter((h) =>
-    looksRelevant(`${h.title} ${h.summary ?? ""}`)
-  );
+ const relevant = all.filter((h) =>
+  looksRelevant({
+    title: h.title,
+    summary: h.summary,
+    category: h.category,
+    hardCategory: h.hardCategory,
+  })
+);
 
   const items = balanceIranHeadlines(relevant, 60);
 
