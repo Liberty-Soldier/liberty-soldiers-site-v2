@@ -33,6 +33,22 @@ export const reports: Report[] = [
     kind: "analysis",
   },
   {
+  slug: "hormuz-flashpoint",
+  title:
+    "Hormuz Flashpoint: Oil, Shipping, and War Pressure Rise as Coalition Support Falters",
+  excerpt:
+    "A Liberty Soldiers update on the Strait of Hormuz crisis, shipping disruption, Fujairah attacks, oil volatility, and the widening pressure now moving from battlefield escalation into global energy and market risk.",
+  dateISO: "2026-03-16",
+  byline: "Liberty Soldiers",
+  coverImage: "/og-hormuz-flashpoint.jpg",
+  category: "Systemic Risk",
+  hardCategory: "Energy",
+  readTime: "3 min",
+  featured: true,
+  priority: 0.96,
+  kind: "news",
+},
+  {
     slug: "jones-act-oil-surge",
     title:
       "Oil Shock and the Jones Act: Crisis Policy Moves Amid the Iran Conflict",
