@@ -12,6 +12,7 @@ import LatestReportBand from "./components/LatestReportBand";
 import IranWarCarousel from "./components/IranWarCarousel";
 import { fetchAllHeadlines } from "../lib/rss";
 
+export const dynamic = "force-dynamic";
 export const revalidate = 600;
 
 const OG_IMAGE = "/og-default.jpg";
