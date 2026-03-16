@@ -1,7 +1,7 @@
 // app/search/page.tsx
 import Link from "next/link";
 import { fetchAllHeadlines } from "@/lib/rss";
-import { REPORTS } from "@/lib/reports";
+import { reports } from "@/lib/reports";
 
 export const revalidate = 300;
 
@@ -17,9 +17,8 @@ function scoreMatch(haystack: string, qTokens: string[]) {
   let score = 0;
   for (const t of qTokens) {
     if (!t) continue;
-    if (haystack.includes(t)) score += 2; // token present
+    if (haystack.includes(t)) score += 2;
   }
-  // small boost if exact phrase appears
   const phrase = qTokens.join(" ");
   if (phrase.length > 2 && haystack.includes(phrase)) score += 3;
   return score;
@@ -45,16 +44,15 @@ export default async function SearchPage({
 
   const [headlines] = await Promise.all([fetchAllHeadlines()]);
 
-  // Reports search
-  const reportHits = REPORTS.map((r) => {
-    const hay = norm(`${r.title} ${r.excerpt} ${r.byline ?? ""}`);
-    return { r, score: scoreMatch(hay, qTokens) };
-  })
+  const reportHits = reports
+    .map((r) => {
+      const hay = norm(`${r.title} ${r.excerpt} ${r.byline ?? ""}`);
+      return { r, score: scoreMatch(hay, qTokens) };
+    })
     .filter((x) => (q ? x.score > 0 : true))
     .sort((a, b) => b.score - a.score)
     .slice(0, 20);
 
-  // Headlines search
   const headlineHits = headlines
     .map((h) => {
       const hay = norm(`${h.title} ${h.summary ?? ""} ${h.source ?? ""}`);
@@ -75,7 +73,6 @@ export default async function SearchPage({
         </p>
       </div>
 
-      {/* Search box */}
       <form action="/search" method="get" className="mt-6">
         <div className="flex gap-2">
           <input
@@ -93,9 +90,7 @@ export default async function SearchPage({
         </div>
       </form>
 
-      {/* Results */}
       <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Reports */}
         <section className="rounded-2xl border border-zinc-200 bg-white p-5">
           <div className="flex items-end justify-between">
             <h2 className="text-xl font-bold text-zinc-900">Reports</h2>
@@ -130,7 +125,6 @@ export default async function SearchPage({
           </div>
         </section>
 
-        {/* Headlines */}
         <section className="rounded-2xl border border-zinc-200 bg-white p-5">
           <div className="flex items-end justify-between">
             <h2 className="text-xl font-bold text-zinc-900">Live Headlines</h2>
@@ -177,7 +171,6 @@ export default async function SearchPage({
         </section>
       </div>
 
-      {/* Tip */}
       <div className="mt-8 text-sm text-zinc-500">
         Tip: use 1–3 keywords for best results.
       </div>
