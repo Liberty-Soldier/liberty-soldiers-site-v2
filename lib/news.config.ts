@@ -31,6 +31,8 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.theguardian.com/world/rss", category: "world" },
   { url: "https://www.france24.com/en/live-news/rss", category: "world" },
   { url: "https://www.rt.com/rss/news/", category: "world" },
+  { url: "https://kenyatimes.co.ke/feed/", category: "world" },
+  { url: "https://europeanconservative.com/feed/", category: "world" },
  
   // AP hard-news working RSS-style endpoints
   { url: "https://apnews.com/hub/apf-topnews?output=rss", category: "world" },
@@ -94,11 +96,12 @@ export const NEWS_FEEDS: NewsFeed[] = [
   // =========================================================
   // TECH / CONTROL SYSTEMS
   // =========================================================
-  { url: "https://reclaimthenet.org/feed/", category: "tech" },
   { url: "https://www.biometricupdate.com/feed/", category: "tech" },
   { url: "https://www.eff.org/rss/updates.xml", category: "tech" },
   { url: "https://www.schneier.com/feed/", category: "tech" },
   { url: "https://www.rt.com/rss/news/tech/", category: "tech" },
+  { url: "https://reclaimthenet.org/feed/", category: "tech" },
+  { url: "https://raweggnationalist.substack.com/feed", category: "tech" },
  
 
   // =========================================================
@@ -112,7 +115,6 @@ export const NEWS_FEEDS: NewsFeed[] = [
   // =========================================================
   // FINANCE
   // =========================================================
-  { url: "https://www.marketwatch.com/rss/topstories", category: "finance" },
   { url: "https://www.bis.org/rss/all.xml", category: "finance" },
   { url: "https://www.imf.org/external/rss/feeds.aspx?feed=imf_blog", category: "finance" },
   { url: "https://feeds.feedburner.com/zerohedge/feed", category: "finance" },
@@ -161,6 +163,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // "example.com"
 ];
+
 
 
 
