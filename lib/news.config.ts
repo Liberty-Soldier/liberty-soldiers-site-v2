@@ -21,11 +21,8 @@ export const NEWS_FEEDS: NewsFeed[] = [
   // WORLD / GLOBAL HARD NEWS
   // =========================================================
   { url: "https://rss.dw.com/rdf/rss-en-all", category: "world" },
-  { url: "https://feeds.bbci.co.uk/news/world/rss.xml", category: "world" },
-  { url: "https://feeds.bbci.co.uk/news/rss.xml", category: "world" },
   { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "world" },
   { url: "https://feeds.skynews.com/feeds/rss/world.xml", category: "world" },
-  { url: "https://feeds.skynews.com/feeds/rss/home.xml", category: "world" },
   { url: "https://feeds.foxnews.com/foxnews/world", category: "world" },
   { url: "http://rss.cnn.com/rss/edition_world.rss", category: "world" },
   { url: "https://www.theguardian.com/world/rss", category: "world" },
@@ -65,14 +62,13 @@ export const NEWS_FEEDS: NewsFeed[] = [
 { url: "https://www.rt.com/rss/news/line/", category: "iran-war" },
 
   // Regional / Iran-side / adversarial narratives
-  { url: "https://www.tehrantimes.com/rss", category: "iran-war" },
   { url: "https://tass.com/rss/v2.xml", category: "iran-war" },
   { url: "https://www.xinhuanet.com/english/rss/worldrss.xml", category: "iran-war" },
-  { url: "https://api.globaltimes.cn/rss/outbound/home.xml", category: "iran-war" },
+
 
   // Defense / military framing
   { url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/global/?outputType=xml", category: "iran-war" },
-  { url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/air/?outputType=xml", category: "iran-war" },
+
 
   // Major network direct feeds
   { url: "https://feeds.nbcnews.com/nbcnews/public/world", category: "iran-war" },
@@ -87,7 +83,6 @@ export const NEWS_FEEDS: NewsFeed[] = [
 { url: "https://www.farsnews.ir/rss", category: "iran-war" },
 { url: "https://en.mehrnews.com/rss", category: "iran-war" },
 { url: "https://www.isna.ir/rss", category: "iran-war" },
-{ url: "https://www.didbaniran.ir/rss", category: "iran-war" },
   
 
   // Search-targeted Iran war boosters
@@ -138,9 +133,8 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.christianpost.com/rss", category: "religion" },
   { url: "https://www.firstthings.com/rss/web-exclusives", category: "religion" },
   { url: "https://www.realclearreligion.org/index.xml", category: "religion" },
-  { url: "https://www.mnnonline.org/rss/pubNewsTease.rdf", category: "religion" },
   { url: "https://feeds.christianitytoday.com/christianitytoday/ctmag", category: "religion" },
-  { url: "https://www.christiancentury.org/taxonomy/term/44163/feed", category: "religion" },
+
 
   // =========================================================
   // CRYPTO
@@ -163,6 +157,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // "example.com"
 ];
+
 
 
 
