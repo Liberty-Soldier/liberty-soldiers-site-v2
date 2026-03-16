@@ -1,60 +1,63 @@
 import ShareButton from "../ShareButton";
 
+const ARTICLE_URL =
+  "https://libertysoldiers.com/news/information-war-intensifies";
+
+const ARTICLE_TITLE =
+  "Information War Intensifies as Conflicting Reports Shape Global Perception";
+
+const ARTICLE_SUMMARY =
+  "An investigative briefing on how conflicting reports, selective leaks, propaganda, and narrative management are shaping public perception during the current war cycle.";
+
 export const metadata = {
-  title:
-    "Information War Intensifies as Conflicting Reports Shape Global Perception | Liberty Soldiers",
-  description:
-    "An investigative briefing on how conflicting reports, selective leaks, propaganda, and narrative management are shaping public perception during the current war cycle.",
+  title: `${ARTICLE_TITLE} | Liberty Soldiers`,
+  description: ARTICLE_SUMMARY,
   openGraph: {
-  title:
-    "Information War Intensifies as Conflicting Reports Shape Global Perception",
-  description:
-    "Conflicting battlefield claims, selective leaks, and narrative warfare are shaping global perception.",
-  url: "https://libertysoldiers.com/news/information-war-intensifies",
-  images: [
-    {
-      url: "https://libertysoldiers.com/og-information-war.jpg",
-      width: 1200,
-      height: 630,
-      alt: "Information War Intensifies | Liberty Soldiers",
-    },
-  ],
-},
-twitter: {
-  card: "summary_large_image",
-  title:
-    "Information War Intensifies as Conflicting Reports Shape Global Perception",
-  description:
-    "Conflicting reports and perception warfare are becoming part of the conflict itself.",
-  images: ["https://libertysoldiers.com/og-information-war.jpg"],
-},
+    title: ARTICLE_TITLE,
+    description:
+      "Conflicting battlefield claims, selective leaks, and narrative warfare are shaping global perception.",
+    url: ARTICLE_URL,
+    images: [
+      {
+        url: "https://libertysoldiers.com/og-information-war.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Information War Intensifies | Liberty Soldiers",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: ARTICLE_TITLE,
+    description:
+      "Conflicting reports and perception warfare are becoming part of the conflict itself.",
+    images: ["https://libertysoldiers.com/og-information-war.jpg"],
+  },
 };
 
 export default function InformationWarIntensifiesPage() {
   return (
     <main className="min-h-screen bg-white text-black">
       <article className="mx-auto max-w-3xl px-6 py-12 md:px-8">
+        <div className="relative mb-10">
+          <img
+            src="/og-information-war.jpg"
+            alt="Information War Intensifies"
+            className="w-full rounded-lg border border-black/10"
+          />
+          <div className="absolute bottom-0 left-0 right-0 rounded-b-lg bg-black/70 px-4 py-2 text-sm text-white">
+            Conflicting reports and perception warfare now form part of the
+            battlefield.
+          </div>
+        </div>
 
-  <div className="mb-10 relative">
-  <img
-    src="/og-information-war.jpg"
-    alt="Information War Intensifies"
-    className="w-full rounded-lg border border-black/10"
-  />
-
-  <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white text-sm px-4 py-2 rounded-b-lg">
-    Conflicting reports and perception warfare now form part of the battlefield.
-  </div>
-</div>
-
-  <div className="mb-6">
+        <div className="mb-6">
           <div className="mb-3 inline-block rounded-full border border-black/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-black/70">
             Narrative Warfare
           </div>
 
           <h1 className="text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
-            Information War Intensifies as Conflicting Reports Shape Global
-            Perception
+            {ARTICLE_TITLE}
           </h1>
 
           <p className="mt-4 text-sm text-black/60">
@@ -63,10 +66,14 @@ export default function InformationWarIntensifiesPage() {
         </div>
 
         <div className="mb-8">
-          <ShareButton />
+          <ShareButton
+            shareUrl={ARTICLE_URL}
+            title={ARTICLE_TITLE}
+            summary={ARTICLE_SUMMARY}
+          />
         </div>
 
-        <div className="prose prose-lg max-w-none prose-headings:font-extrabold prose-p:text-black/85 prose-a:text-black prose-strong:text-black">
+        <div className="prose prose-lg max-w-none prose-headings:font-extrabold prose-p:text-black/85 prose-strong:text-black prose-a:text-black">
           <p>
             Modern war is no longer fought only with missiles, drones, and troop
             movements. It is also fought through headlines, viral clips,
@@ -140,8 +147,9 @@ export default function InformationWarIntensifiesPage() {
           <p>
             In previous eras, propaganda supported war. Today, the information
             layer is fused into war. Governments, intelligence agencies,
-            military spokesmen, legacy media, independent analysts, bot-amplified
-            social accounts, and algorithmic platforms all collide in real time.
+            military spokesmen, legacy media, independent analysts,
+            bot-amplified social accounts, and algorithmic platforms all collide
+            in real time.
           </p>
 
           <p>
@@ -164,9 +172,9 @@ export default function InformationWarIntensifiesPage() {
             that appears strong may deter retaliation even if underlying
             vulnerabilities remain. A state that successfully portrays itself as
             under existential threat may secure diplomatic cover, more aid, or
-            greater public sympathy. A coalition that maintains message discipline
-            can shape how global audiences interpret every development before the
-            fog clears.
+            greater public sympathy. A coalition that maintains message
+            discipline can shape how global audiences interpret every development
+            before the fog clears.
           </p>
 
           <p>
@@ -208,9 +216,10 @@ export default function InformationWarIntensifiesPage() {
 
           <p>
             That distinction matters. Because once perception is captured, public
-            reaction can be managed. And once public reaction is managed, the path
-            opens for deeper escalation, broader compliance, and policies that may
-            have been rejected if events were seen clearly from the start.
+            reaction can be managed. And once public reaction is managed, the
+            path opens for deeper escalation, broader compliance, and policies
+            that may have been rejected if events were seen clearly from the
+            start.
           </p>
 
           <p>
@@ -233,7 +242,11 @@ export default function InformationWarIntensifiesPage() {
         </div>
 
         <div className="mt-10 border-t border-black/10 pt-6">
-          <ShareButton />
+          <ShareButton
+            shareUrl={ARTICLE_URL}
+            title={ARTICLE_TITLE}
+            summary={ARTICLE_SUMMARY}
+          />
         </div>
       </article>
     </main>
