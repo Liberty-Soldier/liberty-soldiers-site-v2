@@ -456,7 +456,7 @@ function stripHtml(s: any): string {
     .trim();
 }
 
-const BAD_IMAGE_HINTS = ["1x1", "pixel", "spacer", "blank", "tracking", "tracker"];
+const BAD_IMAGE_HINTS = ["1x1", "spacer", "tracking", "tracker"];
 
 function isGoodImage(url?: string): boolean {
   if (!url) return false;
