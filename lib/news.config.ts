@@ -30,6 +30,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "http://rss.cnn.com/rss/edition_world.rss", category: "world" },
   { url: "https://www.theguardian.com/world/rss", category: "world" },
   { url: "https://www.france24.com/en/live-news/rss", category: "world" },
+  { url: "https://www.rt.com/rss/news/", category: "world" },
  
   // AP hard-news working RSS-style endpoints
   { url: "https://apnews.com/hub/apf-topnews?output=rss", category: "world" },
@@ -58,6 +59,8 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://responsiblestatecraft.org/feed/", category: "iran-war" },
   { url: "http://original.antiwar.com/feed/", category: "iran-war" },
   { url: "https://warontherocks.com/feed/", category: "iran-war" },
+  { url: "https://www.rt.com/rss/op-ed/", category: "iran-war" },
+{ url: "https://www.rt.com/rss/news/line/", category: "iran-war" },
 
   // Regional / Iran-side / adversarial narratives
   { url: "https://www.tehrantimes.com/rss", category: "iran-war" },
@@ -95,6 +98,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.biometricupdate.com/feed/", category: "tech" },
   { url: "https://www.eff.org/rss/updates.xml", category: "tech" },
   { url: "https://www.schneier.com/feed/", category: "tech" },
+  { url: "https://www.rt.com/rss/news/tech/", category: "tech" },
  
 
   // =========================================================
@@ -113,6 +117,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.imf.org/external/rss/feeds.aspx?feed=imf_blog", category: "finance" },
   { url: "https://feeds.feedburner.com/zerohedge/feed", category: "finance" },
   { url: "https://www.federalreserve.gov/feeds/press_all.xml", category: "finance" },
+  { url: "https://www.rt.com/rss/business/", category: "finance" },
  
 
   // =========================================================
@@ -156,6 +161,7 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // "example.com"
 ];
+
 
 
 
