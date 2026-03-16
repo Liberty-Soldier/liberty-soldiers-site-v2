@@ -1,4 +1,3 @@
-import { fetchAllHeadlines } from "@/lib/rss";
 import FallbackImg from "@/app/components/FallbackImg";
 
 type Item = {
@@ -373,18 +372,13 @@ function HeadlineCard({
     </div>
   );
 }
-
-export default async function HomeHeadlines({
+export default function HomeHeadlines({
   variant = "grid",
+  items = [],
 }: {
   variant?: "grid" | "carousel";
+  items?: Item[];
 }) {
-  let items: Item[] = [];
-  try {
-    items = (await fetchAllHeadlines()) as Item[];
-  } catch {
-    items = [];
-  }
 
   const top =
     variant === "grid" ? pickBalanced(items, 9) : pickBalanced(items, 20);
