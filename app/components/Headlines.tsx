@@ -122,6 +122,25 @@ function fallbackForCategory(cat?: string) {
   return "/og-power-control.jpg";
 }
 
+function sourceFallbackForUrl(url: string): string | undefined {
+  const h = hostFromUrl(url).toLowerCase();
+
+  if (h.includes("reuters")) return "/og-reuters.jpg";
+  if (h.includes("apnews")) return "/og-ap.jpg";
+  if (h.includes("bbc")) return "/og-bbc.jpg";
+  if (h.includes("cnn")) return "/og-cnn.jpg";
+  if (h.includes("foxnews")) return "/og-fox.jpg";
+  if (h.includes("aljazeera")) return "/og-aljazeera.jpg";
+  if (h.includes("france24")) return "/og-france24.jpg";
+  if (h.includes("timesofisrael")) return "/og-timesofisrael.jpg";
+  if (h.includes("jpost")) return "/og-jpost.jpg";
+  if (h.includes("tehrantimes")) return "/og-tehrantimes.jpg";
+  if (h.includes("presstv")) return "/og-presstv.jpg";
+  if (h.includes("zerohedge")) return "/og-zerohedge.jpg";
+
+  return undefined;
+}
+
 function bulletsFromSummary(summary?: string): string[] {
   if (!summary) return [];
   const clean = summary.replace(/\s+/g, " ").trim();
@@ -210,19 +229,23 @@ export default async function HomeHeadlines({
     return (
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {top.map((h, idx) => {
-          const fallback = fallbackForCategory(h.hardCategory || h.category);
-          const raw = (h.image || "").trim();
+         const categoryFallback = fallbackForCategory(h.hardCategory || h.category);
+const sourceFallback = sourceFallbackForUrl(h.url);
 
-          const isGenericDefault =
-            raw === "/og-default.jpg" ||
-            raw === "/og-default.jpeg" ||
-            raw === "/default-og.jpg" ||
-            raw === "/default-og.jpeg" ||
-            raw.includes("og-default") ||
-            raw.includes("default-og");
+const raw = (h.image || "").trim();
 
-          const thumb = raw && !isGenericDefault ? raw : fallback;
+const isGenericDefault =
+  raw === "/og-default.jpg" ||
+  raw === "/og-default.jpeg" ||
+  raw === "/default-og.jpg" ||
+  raw === "/default-og.jpeg" ||
+  raw.includes("og-default") ||
+  raw.includes("default-og");
 
+const fallback = sourceFallback || categoryFallback;
+
+const thumb = raw && !isGenericDefault ? raw : fallback;
+        
           const shareHrefAbs = buildNewsShareAbs({
             url: h.url,
             title: h.title,
@@ -297,19 +320,23 @@ export default async function HomeHeadlines({
   return (
     <>
       {top.map((h, idx) => {
-        const fallback = fallbackForCategory(h.hardCategory || h.category);
+      const categoryFallback = fallbackForCategory(h.hardCategory || h.category);
+const sourceFallback = sourceFallbackForUrl(h.url);
 
-        const raw = (h.image || "").trim();
-        const isGenericDefault =
-          raw === "/og-default.jpg" ||
-          raw === "/og-default.jpeg" ||
-          raw === "/default-og.jpg" ||
-          raw === "/default-og.jpeg" ||
-          raw.includes("og-default") ||
-          raw.includes("default-og");
+const raw = (h.image || "").trim();
 
-        const thumb = raw && !isGenericDefault ? raw : fallback;
+const isGenericDefault =
+  raw === "/og-default.jpg" ||
+  raw === "/og-default.jpeg" ||
+  raw === "/default-og.jpg" ||
+  raw === "/default-og.jpeg" ||
+  raw.includes("og-default") ||
+  raw.includes("default-og");
 
+const fallback = sourceFallback || categoryFallback;
+
+const thumb = raw && !isGenericDefault ? raw : fallback;
+      
         const shareHrefAbs = buildNewsShareAbs({
           url: h.url,
           title: h.title,
