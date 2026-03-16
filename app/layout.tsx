@@ -127,11 +127,12 @@ export default function RootLayout({
           }}
         />
 
-        <ClearSW />
-        <Header />
+       <ClearSW />
+<Header />
+<TopicStrip />
 
-        <main>{children}</main>
-
+<main>{children}</main>
+        
         <footer className="border-t border-zinc-200 py-8 mt-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-6">
