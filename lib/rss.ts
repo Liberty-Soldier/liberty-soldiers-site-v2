@@ -785,7 +785,7 @@ async function normalizeFeed(
   feedJson: any,
   feedUrl: string,
   feedCategory?: string
-): Headline[] {
+): Promise<Headline[]> {
   const items = extractItems(feedJson);
   const sourceFallback = extractSource(feedJson, feedUrl);
   const feedFallbackLabel = feedCategoryLabel(feedCategory);
