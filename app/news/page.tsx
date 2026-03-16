@@ -26,7 +26,155 @@ type Item = {
   byline?: string;
   isOriginal?: boolean;
 };
+function classifyLane(item: Item): string {
+  const c = `${item.category || ""} ${item.hardCategory || ""}`.toLowerCase();
+  const t = `${item.title} ${item.summary || ""}`.toLowerCase();
 
+  if (
+    c.includes("war") ||
+    c.includes("geopolitics") ||
+    c.includes("iran war") ||
+    t.includes("iran") ||
+    t.includes("israel") ||
+    t.includes("gaza") ||
+    t.includes("russia") ||
+    t.includes("ukraine") ||
+    t.includes("china") ||
+    t.includes("taiwan") ||
+    t.includes("missile") ||
+    t.includes("drone") ||
+    t.includes("strike") ||
+    t.includes("war") ||
+    t.includes("military")
+  ) {
+    return "geopolitics-war";
+  }
+
+  if (
+    c.includes("power") ||
+    c.includes("control") ||
+    c.includes("technocracy") ||
+    c.includes("digital id") ||
+    c.includes("control systems") ||
+    c.includes("censorship") ||
+    c.includes("speech") ||
+    t.includes("digital id") ||
+    t.includes("biometric") ||
+    t.includes("surveillance") ||
+    t.includes("facial recognition") ||
+    t.includes("censorship") ||
+    t.includes("social credit") ||
+    t.includes("cbdc")
+  ) {
+    return "power-control";
+  }
+
+  if (
+    c.includes("finance") ||
+    c.includes("markets") ||
+    c.includes("crypto") ||
+    t.includes("market") ||
+    t.includes("stocks") ||
+    t.includes("bond") ||
+    t.includes("yield") ||
+    t.includes("fed") ||
+    t.includes("inflation") ||
+    t.includes("oil") ||
+    t.includes("crude") ||
+    t.includes("bitcoin") ||
+    t.includes("ethereum") ||
+    t.includes("crypto")
+  ) {
+    return "markets-finance";
+  }
+
+  if (
+    c.includes("religion") ||
+    c.includes("ideology") ||
+    c.includes("persecution") ||
+    t.includes("church") ||
+    t.includes("christian") ||
+    t.includes("jewish") ||
+    t.includes("mosque") ||
+    t.includes("synagogue") ||
+    t.includes("religion") ||
+    t.includes("pastor") ||
+    t.includes("imam") ||
+    t.includes("persecution")
+  ) {
+    return "religion-ideology";
+  }
+
+  if (
+    c.includes("prophecy") ||
+    t.includes("prophecy") ||
+    t.includes("end time") ||
+    t.includes("end-time") ||
+    t.includes("endtime") ||
+    t.includes("tribulation") ||
+    t.includes("rapture") ||
+    t.includes("antichrist") ||
+    t.includes("mark of the beast") ||
+    t.includes("revelation") ||
+    t.includes("daniel") ||
+    t.includes("eschatology")
+  ) {
+    return "prophecy-watch";
+  }
+
+  if (
+    c.includes("biosecurity") ||
+    c.includes("health") ||
+    t.includes("pandemic") ||
+    t.includes("outbreak") ||
+    t.includes("quarantine") ||
+    t.includes("lockdown") ||
+    t.includes("public health") ||
+    t.includes("emergency powers") ||
+    t.includes("bird flu")
+  ) {
+    return "biosecurity";
+  }
+
+  return "other";
+}
+
+function pickAllNewsBalanced(items: Item[], take = 80): Item[] {
+  const sorted = items
+    .slice()
+    .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+
+  const requiredLanes = [
+    "geopolitics-war",
+    "power-control",
+    "markets-finance",
+    "religion-ideology",
+    "prophecy-watch",
+    "biosecurity",
+  ];
+
+  const picked: Item[] = [];
+  const used = new Set<string>();
+
+  for (const lane of requiredLanes) {
+    const match = sorted.find(
+      (item) => !used.has(item.url) && classifyLane(item) === lane
+    );
+    if (match) {
+      picked.push(match);
+      used.add(match.url);
+    }
+  }
+
+  for (const item of sorted) {
+    if (picked.length >= take) break;
+    if (used.has(item.url)) continue;
+    picked.push(item);
+    used.add(item.url);
+  }
+
+  return picked;
+}
 export default async function NewsPage() {
   let externalItems: Item[] = [];
   let originalItems: Item[] = [];
@@ -61,9 +209,10 @@ export default async function NewsPage() {
     originalItems = [];
   }
 
-  const items: Item[] = [...originalItems, ...externalItems].sort(
-    (a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)
-  );
+  const items: Item[] = pickAllNewsBalanced(
+  [...originalItems, ...externalItems],
+  80
+);
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
