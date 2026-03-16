@@ -12,74 +12,104 @@ export type Report = {
   readTime?: string;
   featured?: boolean;
   priority?: number;
+  kind: "report" | "analysis" | "brief" | "news";
 };
 
 export const REPORTS: Report[] = [
   {
-  slug: "jones-act-oil-surge",
-  title:
-    "Oil Shock and the Jones Act: Crisis Policy Moves Amid the Iran Conflict",
-  excerpt:
-    "As oil prices surge during escalating tensions tied to the Iran conflict, U.S. officials are weighing emergency policy options — including temporarily bypassing the century-old Jones Act to ease fuel supply constraints and stabilize markets.",
-  dateISO: "2026-03-12",
-  byline: "Black Signal",
-  coverImage: "/hero-war-energy-shipping-2.jpg",
-
-  category: "Systemic Risk",
-  hardCategory: "Energy",
-  readTime: "3 min",
-  featured: false,
-  priority: 0.85
-},
+    slug: "jones-act-oil-surge",
+    title:
+      "Oil Shock and the Jones Act: Crisis Policy Moves Amid the Iran Conflict",
+    excerpt:
+      "As oil prices surge during escalating tensions tied to the Iran conflict, U.S. officials are weighing emergency policy options — including temporarily bypassing the century-old Jones Act to ease fuel supply constraints and stabilize markets.",
+    dateISO: "2026-03-12",
+    byline: "Black Signal",
+    coverImage: "/hero-war-energy-shipping-2.jpg",
+    category: "Systemic Risk",
+    hardCategory: "Energy",
+    readTime: "3 min",
+    featured: false,
+    priority: 0.85,
+    kind: "analysis",
+  },
   {
-  slug: "war-beyond-the-battlefield",
-  title:
-    "War Beyond the Battlefield: Oil Shock, Shipping Risk, and the Expanding Iran Crisis",
-  excerpt:
-    "Oil volatility, tanker security risks, and rising policy pressure signal a widening conflict beyond traditional front lines. This field report examines how energy shocks, global trade stress, and geopolitical escalation are reshaping economic expectations and public stability.",
-  dateISO: "2026-03-12",
-  byline: "Black Signal",
-  coverImage: "/hero-war-energy-shipping.jpg",
-},
+    slug: "war-beyond-the-battlefield",
+    title:
+      "War Beyond the Battlefield: Oil Shock, Shipping Risk, and the Expanding Iran Crisis",
+    excerpt:
+      "Oil volatility, tanker security risks, and rising policy pressure signal a widening conflict beyond traditional front lines. This field report examines how energy shocks, global trade stress, and geopolitical escalation are reshaping economic expectations and public stability.",
+    dateISO: "2026-03-12",
+    byline: "Black Signal",
+    coverImage: "/hero-war-energy-shipping.jpg",
+    category: "Systemic Risk",
+    hardCategory: "Energy",
+    readTime: "4 min",
+    featured: true,
+    priority: 0.95,
+    kind: "report",
+  },
   {
-  slug: "crisis-window",
-  title: "The Crisis Window: How Fear Accelerates Change and Expands Public Consent",
-  excerpt:
-    "Periods of instability often accelerate systemic change. This report examines crisis psychology, rapid policy shifts, and how fear can expand what populations are willing to accept.",
-  dateISO: "2026-03-11",
-  byline: "Black Signal",
-  coverImage: "/crisis-window.jpg",
-},
+    slug: "crisis-window",
+    title:
+      "The Crisis Window: How Fear Accelerates Change and Expands Public Consent",
+    excerpt:
+      "Periods of instability often accelerate systemic change. This report examines crisis psychology, rapid policy shifts, and how fear can expand what populations are willing to accept.",
+    dateISO: "2026-03-11",
+    byline: "Black Signal",
+    coverImage: "/crisis-window.jpg",
+    category: "Systemic Risk",
+    hardCategory: "Policy",
+    readTime: "4 min",
+    featured: false,
+    priority: 0.9,
+    kind: "report",
+  },
   {
-  slug: "signal-vs-noise",
-  title: "Signal vs Noise: How Modern Narratives Shape Public Perception",
-  excerpt:
-    "Narrative cycles, desensitization, and the hidden why behind modern information overload.",
-  dateISO: "2026-02-13",
-  byline: "Black Signal",
-  coverImage: "/signal-vs-noise.jpg",
-},
-
-{
-  slug: "doomsday-clock",
-  title: "The Doomsday Clock Isn’t a Prediction — It’s a Psychological Instrument",
-  excerpt:
-    "The Doomsday Clock isn’t measuring time. It’s a psychological device used to manufacture urgency, suppress scrutiny, and condition populations to accept control as protection.",
-  dateISO: "2026-01-30",
-  byline: "D.U.M.B.",
-  coverImage: "doomsday-clock.png",
-},
-  
+    slug: "signal-vs-noise",
+    title: "Signal vs Noise: How Modern Narratives Shape Public Perception",
+    excerpt:
+      "Narrative cycles, desensitization, and the hidden why behind modern information overload.",
+    dateISO: "2026-02-13",
+    byline: "Black Signal",
+    coverImage: "/signal-vs-noise.jpg",
+    category: "Narrative Control",
+    hardCategory: "Media",
+    readTime: "3 min",
+    featured: false,
+    priority: 0.8,
+    kind: "analysis",
+  },
   {
-  slug: "us-iran-abrahamic-endtimes",
-  title: "U.S.–Iran Escalation and the Abrahamic End-Time Lens",
-  excerpt:
-    "After prior U.S. strikes and amid renewed escalation signals, competing end-time frameworks across Judaism, Christianity, and Islam shape public perception.",
-  dateISO: "2026-01-29",
-  byline: "Dead Reckoning",
-  coverImage: "/IRAN.jpg",
-},
-  
+    slug: "doomsday-clock",
+    title:
+      "The Doomsday Clock Isn’t a Prediction — It’s a Psychological Instrument",
+    excerpt:
+      "The Doomsday Clock isn’t measuring time. It’s a psychological device used to manufacture urgency, suppress scrutiny, and condition populations to accept control as protection.",
+    dateISO: "2026-01-30",
+    byline: "D.U.M.B.",
+    coverImage: "/doomsday-clock.png",
+    category: "Narrative Control",
+    hardCategory: "Psychology",
+    readTime: "4 min",
+    featured: false,
+    priority: 0.75,
+    kind: "analysis",
+  },
+  {
+    slug: "us-iran-abrahamic-endtimes",
+    title: "U.S.–Iran Escalation and the Abrahamic End-Time Lens",
+    excerpt:
+      "After prior U.S. strikes and amid renewed escalation signals, competing end-time frameworks across Judaism, Christianity, and Islam shape public perception.",
+    dateISO: "2026-01-29",
+    byline: "Dead Reckoning",
+    coverImage: "/IRAN.jpg",
+    category: "Religion & Ideology",
+    hardCategory: "Geopolitics",
+    readTime: "5 min",
+    featured: false,
+    priority: 0.7,
+    kind: "report",
+  },
   {
     slug: "dispensationalism-middle-east",
     title: "How Dispensationalism Scripts the Middle East",
@@ -88,6 +118,12 @@ export const REPORTS: Report[] = [
     dateISO: "2026-01-20",
     byline: "The Ledger",
     coverImage: "/briefing-fallback.jpg",
+    category: "Religion & Ideology",
+    hardCategory: "Geopolitics",
+    readTime: "5 min",
+    featured: false,
+    priority: 0.7,
+    kind: "report",
   },
   {
     slug: "first-report",
@@ -97,11 +133,16 @@ export const REPORTS: Report[] = [
     dateISO: "2026-01-18",
     byline: "Grey Index",
     coverImage: "/briefing-fallback.jpg",
+    category: "Narrative Control",
+    hardCategory: "Systems",
+    readTime: "4 min",
+    featured: false,
+    priority: 0.65,
+    kind: "analysis",
   },
 ];
 
 export function getAllReports(): Report[] {
-  // Newest first
   return [...REPORTS].sort((a, b) => (a.dateISO < b.dateISO ? 1 : -1));
 }
 
