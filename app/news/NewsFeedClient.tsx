@@ -320,27 +320,6 @@ export default function NewsFeedClient({
               </button>
             </div>
           </div>
-
-          <div className="-mx-4 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-            <div className="flex w-max gap-2 pr-4">
-              {categories.map((c) => {
-                const active = c === cat;
-
-                return (
-                  <button
-                    key={c}
-                    onClick={() => setCat(c)}
-                    className={
-                      active
-                        ? "shrink-0 rounded-full border border-zinc-900 bg-zinc-900 px-3 py-1 text-xs font-semibold text-white"
-                        : "shrink-0 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-semibold text-zinc-800 hover:bg-zinc-50"
-                    }
-                  >
-                    {c}
-                  </button>
-                );
-              })}
-            </div>
           </div>
         </div>
       </div>
