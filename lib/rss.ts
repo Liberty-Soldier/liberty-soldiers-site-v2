@@ -882,87 +882,357 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
 /* caps + dedupe                                      */
 /* -------------------------------------------------- */
 
+/* -------------------------------------------------- */
+/* caps + smarter narrative dedupe                    */
+/* -------------------------------------------------- */
+
 const MAX_PER_SOURCE = 12;
 const MAX_TOTAL = 500;
 
-function normalizeForDedupeTitle(s: string): string {
-  return String(s || "")
-    .toLowerCase()
-    .replace(/&amp;/g, "&")
+const STOPWORDS = new Set([
+  "the",
+  "a",
+  "an",
+  "and",
+  "or",
+  "to",
+  "of",
+  "in",
+  "on",
+  "for",
+  "with",
+  "as",
+  "at",
+  "by",
+  "from",
+  "after",
+  "before",
+  "over",
+  "under",
+  "into",
+  "is",
+  "are",
+  "was",
+  "were",
+  "be",
+  "been",
+  "being",
+  "it",
+  "its",
+  "this",
+  "that",
+  "these",
+  "those",
+  "their",
+  "his",
+  "her",
+  "our",
+  "your",
+  "but",
+  "not",
+  "than",
+  "then",
+  "amid",
+  "during",
+  "about",
+  "around",
+  "new",
+  "latest",
+  "live",
+  "update",
+  "updates",
+  "says",
+  "say",
+  "report",
+  "reports",
+  "reported",
+  "reportedly",
+  "video",
+  "photos",
+  "photo",
+  "watch",
+  "analysis",
+  "opinion",
+  "why",
+  "what",
+  "how",
+]);
+
+const NOISE_TOKENS = new Set([
+  "breaking",
+  "exclusive",
+  "urgent",
+  "developing",
+  "alert",
+  "news",
+  "headline",
+]);
+
+const CANONICAL_TOKEN_MAP: Array<[RegExp, string]> = [
+  [/\bu\.?s\.?\b/g, "us"],
+  [/\bunited states\b/g, "us"],
+  [/\bu\.?k\.?\b/g, "uk"],
+  [/\bunited kingdom\b/g, "uk"],
+  [/\bisraeli\b/g, "israel"],
+  [/\biranian\b/g, "iran"],
+  [/\brussian\b/g, "russia"],
+  [/\bukrainian\b/g, "ukraine"],
+  [/\bchinese\b/g, "china"],
+  [/\bhouthis\b/g, "houthi"],
+  [/\bhezbollah\b/g, "hezbollah"],
+  [/\bhamas\b/g, "hamas"],
+  [/\bstrait of hormuz\b/g, "hormuz"],
+  [/\bpersian gulf\b/g, "gulf"],
+  [/\btehran\b/g, "iran tehran"],
+  [/\bwashington\b/g, "us washington"],
+  [/\bmoscow\b/g, "russia moscow"],
+  [/\bkyiv\b/g, "ukraine kyiv"],
+  [/\bjerusalem\b/g, "israel jerusalem"],
+  [/\bmissile(s)?\b/g, "missile"],
+  [/\bdrone(s)?\b/g, "drone"],
+  [/\bstrike(s|d|ing)?\b/g, "strike"],
+  [/\bsanction(s|ed|ing)?\b/g, "sanctions"],
+  [/\btariff(s)?\b/g, "tariff"],
+  [/\bcease-fire\b/g, "ceasefire"],
+  [/\bcease fire\b/g, "ceasefire"],
+];
+
+function normalizeForDedupeText(s: string): string {
+  let out = String(s || "").toLowerCase();
+
+  out = out
+    .replace(/&amp;/g, " and ")
     .replace(/&#39;/g, "'")
+    .replace(/&quot;/g, " ")
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[-–—/:|]/g, " ");
+
+  for (const [rx, repl] of CANONICAL_TOKEN_MAP) {
+    out = out.replace(rx, repl);
+  }
+
+  out = out
     .replace(/[^a-z0-9\s]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+
+  return out;
 }
 
-function titleTokens(s: string): Set<string> {
-  const stop = new Set([
-    "the",
-    "a",
-    "an",
-    "and",
-    "or",
-    "to",
-    "of",
-    "in",
-    "on",
-    "for",
-    "with",
-    "as",
-    "at",
-    "by",
-    "from",
-    "after",
-    "before",
-    "over",
-    "under",
-    "into",
-    "is",
-    "are",
-    "was",
-    "were",
-    "be",
-    "been",
-    "it",
-    "this",
-    "that",
-  ]);
+function tokenizeSignificant(s: string): string[] {
+  return normalizeForDedupeText(s)
+    .split(" ")
+    .map((x) => x.trim())
+    .filter(Boolean)
+    .filter((t) => !STOPWORDS.has(t))
+    .filter((t) => !NOISE_TOKENS.has(t))
+    .filter((t) => t.length > 2 || /^\d+$/.test(t));
+}
 
-  const cleaned = normalizeForDedupeTitle(s);
-  const toks = cleaned.split(" ").filter(Boolean).filter((t) => !stop.has(t));
-  return new Set(toks);
+function tokenSet(s: string): Set<string> {
+  return new Set(tokenizeSignificant(s));
 }
 
 function jaccard(a: Set<string>, b: Set<string>): number {
   if (!a.size || !b.size) return 0;
+
   let inter = 0;
-  for (const x of a) if (b.has(x)) inter++;
+  for (const x of a) {
+    if (b.has(x)) inter++;
+  }
+
   const union = a.size + b.size - inter;
   return union ? inter / union : 0;
 }
 
-function dedupeBySimilarTitle(items: Headline[]): Headline[] {
-  const FUZZY_THRESHOLD = 0.9;
-  const WINDOW = 80;
+function intersects(a: Set<string>, b: Set<string>): boolean {
+  for (const x of a) {
+    if (b.has(x)) return true;
+  }
+  return false;
+}
 
+function pickTopTokens(tokens: string[], max = 6): string[] {
+  const counts = new Map<string, number>();
+
+  for (const t of tokens) {
+    counts.set(t, (counts.get(t) || 0) + 1);
+  }
+
+  return [...counts.entries()]
+    .sort((a, b) => {
+      if (b[1] !== a[1]) return b[1] - a[1];
+      if (b[0].length !== a[0].length) return b[0].length - a[0].length;
+      return a[0].localeCompare(b[0]);
+    })
+    .slice(0, max)
+    .map(([t]) => t);
+}
+
+function storySignature(h: Headline): string {
+  const combined = `${h.title} ${h.summary ?? ""}`;
+  const toks = tokenizeSignificant(combined).filter(
+    (t) => !["said", "says", "warns", "warning", "told"].includes(t)
+  );
+
+  return pickTopTokens(toks, 5).sort().join("|");
+}
+
+function extractEntityHints(h: Headline): Set<string> {
+  const text = normalizeForDedupeText(`${h.title} ${h.summary ?? ""}`);
+  const found = new Set<string>();
+
+  const entities = [
+    "iran",
+    "israel",
+    "us",
+    "uk",
+    "russia",
+    "ukraine",
+    "china",
+    "taiwan",
+    "gaza",
+    "hormuz",
+    "houthi",
+    "hezbollah",
+    "hamas",
+    "trump",
+    "biden",
+    "putin",
+    "xi",
+    "khamenei",
+    "nato",
+    "eu",
+    "fed",
+    "bitcoin",
+    "ethereum",
+    "oil",
+    "gold",
+  ];
+
+  for (const e of entities) {
+    if (text.includes(e)) found.add(e);
+  }
+
+  return found;
+}
+
+function extractThemeHints(h: Headline): Set<string> {
+  const text = normalizeForDedupeText(`${h.title} ${h.summary ?? ""}`);
+  const found = new Set<string>();
+
+  const themes: Array<[string, string[]]> = [
+    ["military", ["missile", "drone", "strike", "attack", "troops", "airstrike"]],
+    ["shipping", ["shipping", "tanker", "maritime", "vessel", "port", "hormuz"]],
+    ["energy", ["oil", "gas", "crude", "refinery", "energy"]],
+    ["markets", ["stocks", "market", "bond", "yield", "trader", "futures"]],
+    ["sanctions", ["sanctions", "embargo", "restriction"]],
+    ["diplomacy", ["talks", "deal", "ceasefire", "negotiation", "summit"]],
+    ["religion", ["church", "christian", "jewish", "mosque", "religion", "pastor"]],
+    ["control", ["digital", "surveillance", "biometric", "censorship", "speech", "id"]],
+    ["biosecurity", ["pandemic", "outbreak", "quarantine", "bird flu", "health"]],
+  ];
+
+  for (const [label, words] of themes) {
+    if (words.some((w) => text.includes(w))) found.add(label);
+  }
+
+  return found;
+}
+
+function hoursApart(a?: number, b?: number): number {
+  if (!a || !b) return Number.POSITIVE_INFINITY;
+  return Math.abs(a - b) / (1000 * 60 * 60);
+}
+
+function qualityScore(h: Headline): number {
+  let score = 0;
+
+  if (h.publishedAt) score += 8;
+  if (h.image) score += 3;
+  if (h.summary && h.summary.length > 80) score += 4;
+  if (h.title) score += Math.min(6, Math.floor(h.title.length / 24));
+
+  const domain = host(h.url).toLowerCase();
+  if (
+    domain.includes("reuters") ||
+    domain.includes("apnews") ||
+    domain.includes("bbc") ||
+    domain.includes("ft.com") ||
+    domain.includes("bloomberg")
+  ) {
+    score += 2;
+  }
+
+  return score;
+}
+
+function compareHeadlinesForDedupe(a: Headline, b: Headline): boolean {
+  const aTitle = tokenSet(a.title);
+  const bTitle = tokenSet(b.title);
+
+  const aFull = tokenSet(`${a.title} ${a.summary ?? ""}`);
+  const bFull = tokenSet(`${b.title} ${b.summary ?? ""}`);
+
+  const titleSim = jaccard(aTitle, bTitle);
+  const fullSim = jaccard(aFull, bFull);
+
+  const aEnt = extractEntityHints(a);
+  const bEnt = extractEntityHints(b);
+
+  const aTheme = extractThemeHints(a);
+  const bTheme = extractThemeHints(b);
+
+  const sameEntity = intersects(aEnt, bEnt);
+  const sameTheme = intersects(aTheme, bTheme);
+  const sameHardCategory =
+    (a.hardCategory || "").toLowerCase() === (b.hardCategory || "").toLowerCase();
+
+  const sigA = storySignature(a);
+  const sigB = storySignature(b);
+
+  const hrs = hoursApart(a.publishedAt, b.publishedAt);
+
+  if (titleSim >= 0.86) return true;
+
+  if (sigA && sigA === sigB && hrs <= 30) return true;
+
+  if (titleSim >= 0.68 && sameEntity && sameTheme && hrs <= 24) return true;
+
+  if (titleSim >= 0.6 && fullSim >= 0.55 && sameEntity && hrs <= 18) return true;
+
+  if (fullSim >= 0.72 && sameEntity && sameHardCategory && hrs <= 16) return true;
+
+  return false;
+}
+
+function dedupeByNarrative(items: Headline[]): Headline[] {
+  const WINDOW = 120;
   const kept: Headline[] = [];
-  const keptTokens: Set<string>[] = [];
 
   for (const it of items) {
-    const ts = titleTokens(it.title);
-    let dup = false;
-
+    let duplicateIndex = -1;
     const start = Math.max(0, kept.length - WINDOW);
+
     for (let i = kept.length - 1; i >= start; i--) {
-      if (jaccard(ts, keptTokens[i]) >= FUZZY_THRESHOLD) {
-        dup = true;
+      if (compareHeadlinesForDedupe(it, kept[i])) {
+        duplicateIndex = i;
         break;
       }
     }
 
-    if (!dup) {
+    if (duplicateIndex === -1) {
       kept.push(it);
-      keptTokens.push(ts);
+      continue;
+    }
+
+    const existing = kept[duplicateIndex];
+    const challengerScore = qualityScore(it);
+    const existingScore = qualityScore(existing);
+
+    if (challengerScore > existingScore) {
+      kept[duplicateIndex] = it;
     }
   }
 
@@ -1009,15 +1279,20 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
     return true;
   });
 
-  const fuzzyDeduped = dedupeBySimilarTitle(uniqueByUrl);
+  const newestFirst = uniqueByUrl
+    .slice()
+    .sort((a, b) => {
+      const ta = a.publishedAt || 0;
+      const tb = b.publishedAt || 0;
 
-  fuzzyDeduped.sort((a, b) => {
-    const ta = a.publishedAt || 0;
-    const tb = b.publishedAt || 0;
-    return tb - ta;
-  });
+      if (tb !== ta) return tb - ta;
 
-  const capped = capBySource(fuzzyDeduped);
+      return qualityScore(b) - qualityScore(a);
+    });
+
+  const narrativeDeduped = dedupeByNarrative(newestFirst);
+  const capped = capBySource(narrativeDeduped);
+
   return capped;
 }
 
