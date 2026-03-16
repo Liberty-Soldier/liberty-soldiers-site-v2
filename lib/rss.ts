@@ -802,7 +802,7 @@ async function normalizeFeed(
 let image = pickImage(extractedImage, url || feedUrl);
 
 if (!image && url && shouldTryArticleOgFallback(url)) {
-  image = await fetchOgImageFromArticle(url);
+  // disabled temporarily to avoid build-time timeouts
 }
       const summary = extractSummary(it) || undefined;
 
