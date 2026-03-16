@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 
 import { useEffect, useMemo, useState } from "react";
 import FallbackImg from "@/app/components/FallbackImg";
@@ -388,14 +388,10 @@ export default function NewsFeedClient({
                         loading="lazy"
                         fallback={fallback}
                         className={`absolute inset-0 h-full w-full object-cover object-[50%_12%] ${
-                          isFallbackThumb ? "opacity-45 saturate-50 contrast-90" : ""
-                        }`}
+                        isFallbackThumb ? "opacity-100 saturate-100 contrast-100" : ""
+                      }`}
                       />
-
-                      {isFallbackThumb && (
-                        <div className="absolute inset-0 bg-white/25" />
-                      )}
-
+           
                       {!isFallbackThumb && (
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                       )}
