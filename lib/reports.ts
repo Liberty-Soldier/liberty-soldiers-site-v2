@@ -15,23 +15,23 @@ export type Report = {
   kind: "report" | "analysis" | "brief" | "news";
 };
 
-export const REPORTS: Report[] = [
-{
-  slug: "information-war-intensifies",
-  title:
-    "Information War Intensifies as Conflicting Reports Shape Global Perception",
-  excerpt:
-    "Conflicting battlefield claims, intelligence leaks, media framing, and narrative control are becoming part of the conflict itself in the modern information war environment.",
-  dateISO: "2026-03-16",
-  byline: "Liberty Soldiers",
-  coverImage: "/og-information-war.jpg",
-  category: "Narrative Warfare",
-  hardCategory: "War & Geopolitics",
-  readTime: "4 min",
-  featured: true,
-  priority: 0.92,
-  kind: "analysis",
-},
+export const reports: Report[] = [
+  {
+    slug: "information-war-intensifies",
+    title:
+      "Information War Intensifies as Conflicting Reports Shape Global Perception",
+    excerpt:
+      "Conflicting battlefield claims, intelligence leaks, media framing, and narrative control are becoming part of the conflict itself in the modern information war environment.",
+    dateISO: "2026-03-16",
+    byline: "Liberty Soldiers",
+    coverImage: "/og-information-war.jpg",
+    category: "Narrative Warfare",
+    hardCategory: "War & Geopolitics",
+    readTime: "4 min",
+    featured: true,
+    priority: 0.92,
+    kind: "analysis",
+  },
   {
     slug: "jones-act-oil-surge",
     title:
