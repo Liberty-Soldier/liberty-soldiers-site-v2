@@ -108,27 +108,6 @@ function fallbackForCategory(cat?: string) {
   return "/og-power-control.jpg";
 }
 
-const HARD_ORDER = [
-  "All",
-  "War & Geopolitics",
-  "Power & Control",
-  "Digital ID / Technocracy",
-  "Markets & Finance",
-  "Religion & Ideology",
-  "Prophecy Watch",
-] as const;
-
-function buildCategories(items: Item[]) {
-  const present = new Set<string>();
-
-  for (const item of items) {
-    if (item.category === "Pinned") continue;
-    const hc = (item.hardCategory || "").trim();
-    if (hc) present.add(hc);
-  }
-
-  return HARD_ORDER.filter((c) => c === "All" || present.has(c));
-}
 
 function signalWeightHard(c?: string) {
   switch ((c || "").toLowerCase()) {
@@ -256,9 +235,7 @@ export default function NewsFeedClient({
 }: {
   items: Item[];
 }) {
-  const categories = useMemo(() => buildCategories(items), [items]);
 
-  const [cat, setCat] = useState<(typeof HARD_ORDER)[number]>("All");
   const [sort, setSort] = useState<"newest" | "signal">("newest");
   const [view, setView] = useState<"cards" | "compact">("cards");
 
@@ -274,20 +251,14 @@ export default function NewsFeedClient({
 
   const list = useMemo(() => {
     let out = items.filter((x) => x.category !== "Pinned");
-
-    if (cat !== "All") {
-      out = out.filter((x) => (x.hardCategory || "Power & Control") === cat);
-    }
-
     out = sortItems(out, sort);
-    out = rebalanceVisible(out, cat);
-
+    out = rebalanceVisible(out, "All");
     return out;
-  }, [items, cat, sort]);
+  }, [items, sort]);
 
   return (
     <div>
-      <div className="sticky top-0 z-20 -mx-4 border-b border-zinc-200 bg-white/90 px-4 py-3 backdrop-blur sm:mx-0 sm:px-0">
+           <div className="sticky top-0 z-20 -mx-4 border-b border-zinc-200 bg-white/90 px-4 py-3 backdrop-blur sm:mx-0 sm:px-0">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <div className="text-xs text-zinc-600">
@@ -319,7 +290,6 @@ export default function NewsFeedClient({
                 {view === "cards" ? "Compact" : "Cards"}
               </button>
             </div>
-          </div>
           </div>
         </div>
       </div>
