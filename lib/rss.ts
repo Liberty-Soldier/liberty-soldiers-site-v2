@@ -69,6 +69,57 @@ function resolveUrl(raw: any, base?: string): string {
   return "";
 }
 
+function canonicalUrl(raw: string): string {
+  try {
+    const u = new URL(raw);
+    u.hash = "";
+
+    const dropParams = [
+      "utm_source",
+      "utm_medium",
+      "utm_campaign",
+      "utm_term",
+      "utm_content",
+      "utm_name",
+      "utm_cid",
+      "utm_reader",
+      "utm_referrer",
+      "utm_social",
+      "utm_social-type",
+      "src",
+      "source",
+      "feature",
+      "features",
+      "ref",
+      "ref_src",
+      "ref_url",
+      "rss",
+      "output",
+      "spm",
+      "fbclid",
+      "gclid",
+      "mc_cid",
+      "mc_eid",
+    ];
+
+    for (const p of dropParams) u.searchParams.delete(p);
+
+    if (
+      (u.protocol === "https:" && u.port === "443") ||
+      (u.protocol === "http:" && u.port === "80")
+    ) {
+      u.port = "";
+    }
+
+    u.hostname = u.hostname.toLowerCase();
+    u.pathname = u.pathname.replace(/\/+$/, "") || "/";
+
+    return u.toString();
+  } catch {
+    return raw.trim();
+  }
+}
+
 function pickDate(it: any): number | undefined {
   const d =
     it?.pubDate ||
@@ -289,7 +340,6 @@ function categorize(
   const t = `${title} ${summary ?? ""}`.toLowerCase();
   const s = (src ?? "").toLowerCase();
 
-  // hard domain overrides
   if (s.includes("marketwatch")) return "Finance";
   if (s.includes("bloomberg")) return "Finance";
   if (s.includes("wsj")) return "Finance";
@@ -304,12 +354,10 @@ function categorize(
     return "Crypto";
   }
 
-  // source fallback (soft)
   let fallback: string | undefined;
   if (s.includes("bbc")) fallback = "World Briefing";
   if (s.includes("aljazeera")) fallback = "World Briefing";
 
-  // persecution watch
   const hasReligion =
     t.includes("church") ||
     t.includes("christian") ||
@@ -339,7 +387,6 @@ function categorize(
     return "Persecution Watch";
   }
 
-  // prophecy
   const isProphecy =
     t.includes("prophecy") ||
     t.includes("end time") ||
@@ -361,7 +408,6 @@ function categorize(
     return "Prophecy Watch";
   }
 
-  // control / surveillance
   if (
     t.includes("cbdc") ||
     t.includes("digital currency") ||
@@ -378,7 +424,6 @@ function categorize(
     return "Control Systems";
   }
 
-  // censorship
   if (
     t.includes("censorship") ||
     t.includes("censor") ||
@@ -391,7 +436,6 @@ function categorize(
     return "Censorship & Speech";
   }
 
-  // biosecurity
   if (
     t.includes("pandemic") ||
     t.includes("outbreak") ||
@@ -407,7 +451,6 @@ function categorize(
     return "Biosecurity";
   }
 
-  // war / geopolitics
   if (
     t.includes("gaza") ||
     t.includes("israel") ||
@@ -428,7 +471,6 @@ function categorize(
     return "Geopolitics & War";
   }
 
-  // source-only defaults
   if (s.includes("biometricupdate")) return "Control Systems";
   if (s.includes("reclaimthenet")) return "Censorship & Speech";
   if (s.includes("endtimeheadlines")) return "Prophecy Watch";
@@ -456,7 +498,7 @@ function stripHtml(s: any): string {
     .trim();
 }
 
-const BAD_IMAGE_HINTS = ["1x1", "spacer", "tracking", "tracker"];
+const BAD_IMAGE_HINTS = ["1x1", "spacer", "tracking", "tracker", "pixel"];
 
 function isGoodImage(url?: string): boolean {
   if (!url) return false;
@@ -539,24 +581,28 @@ function extractItems(feedJson: any): any[] {
   return [];
 }
 
-function extractLink(it: any): string {
-  if (typeof it?.link === "string") return it.link;
-  if (it?.link?.["@_href"]) return it.link["@_href"];
+function extractLink(it: any, feedUrl?: string): string {
+  let raw = "";
 
-  if (Array.isArray(it?.link)) {
+  if (typeof it?.link === "string") raw = it.link;
+  else if (it?.link?.["@_href"]) raw = it.link["@_href"];
+  else if (Array.isArray(it?.link)) {
     const alt = it.link.find((l: any) => (l?.rel || l?.["@_rel"]) === "alternate");
-    if (alt?.["@_href"]) return alt["@_href"];
-
-    const first = it.link[0];
-    if (first?.["@_href"]) return first["@_href"];
-    if (typeof first === "string") return first;
+    if (alt?.["@_href"]) raw = alt["@_href"];
+    else {
+      const first = it.link[0];
+      if (first?.["@_href"]) raw = first["@_href"];
+      else if (typeof first === "string") raw = first;
+    }
+  } else if (typeof it?.guid === "string" && /^https?:\/\//i.test(it.guid)) {
+    raw = it.guid;
+  } else if (typeof it?.url === "string") {
+    raw = it.url;
+  } else if (typeof it?.["dc:identifier"] === "string") {
+    raw = it["dc:identifier"];
   }
 
-  if (typeof it?.guid === "string" && /^https?:\/\//i.test(it.guid)) return it.guid;
-  if (typeof it?.url === "string") return it.url;
-  if (typeof it?.["dc:identifier"] === "string") return it["dc:identifier"];
-
-  return "";
+  return canonicalUrl(resolveUrl(raw, feedUrl));
 }
 
 function extractSource(feedJson: any, url: string): string {
@@ -580,9 +626,8 @@ function normalizeFeed(
 
   return items
     .map((it: any) => {
-      const title = String(it?.title ?? "").trim();
-      const rawLink = extractLink(it);
-      const url = normalizeUrl(rawLink);
+      const title = stripHtml(it?.title ?? "").trim();
+      const url = extractLink(it, feedUrl);
       const source = host(url) || sourceFallback;
 
       const extractedImage = extractImage(it) || undefined;
@@ -626,9 +671,11 @@ function normalizeFeed(
         hardCategory,
       };
     })
-    .filter(
-      (h) => h.title && h.url && !BLACKLIST.some((b) => host(h.url).includes(b))
-    );
+    .filter((h) => {
+      if (!h.title || !h.url) return false;
+      const d = host(h.url).toLowerCase();
+      return !BLACKLIST.some((b) => d.includes(String(b).toLowerCase()));
+    });
 }
 
 /* -------------------------------------------------- */
@@ -661,7 +708,7 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
 /* caps + dedupe                                      */
 /* -------------------------------------------------- */
 
-const MAX_PER_SOURCE = 14;
+const MAX_PER_SOURCE = 8;
 const MAX_TOTAL = 500;
 
 function normalizeForDedupeTitle(s: string): string {
@@ -781,17 +828,23 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
   }
 
   const seen = new Set<string>();
-  const unique = all.filter((h) => {
-    const key = h.url.trim();
+  const uniqueByUrl = all.filter((h) => {
+    const key = canonicalUrl(h.url.trim());
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 
-  unique.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+  const fuzzyDeduped = dedupeBySimilarTitle(uniqueByUrl);
 
-const capped = capBySource(unique);
-return capped;
+  fuzzyDeduped.sort((a, b) => {
+    const ta = a.publishedAt || 0;
+    const tb = b.publishedAt || 0;
+    return tb - ta;
+  });
+
+  const capped = capBySource(fuzzyDeduped);
+  return capped;
 }
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
@@ -800,7 +853,7 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
 
   const pinned: Headline[] = PINNED_LINKS.map((p) => ({
     title: p.title,
-    url: p.url,
+    url: canonicalUrl(p.url),
     source: p.source ? String(p.source) : host(p.url),
     publishedAt: undefined,
     image: undefined,
@@ -812,14 +865,14 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
   const seen = new Set<string>();
 
   const pinnedUnique = pinned.filter((h) => {
-    const key = h.url.trim();
+    const key = canonicalUrl(h.url.trim());
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
   });
 
   const restUnique = headlines.filter((h) => {
-    const key = h.url.trim();
+    const key = canonicalUrl(h.url.trim());
     if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
