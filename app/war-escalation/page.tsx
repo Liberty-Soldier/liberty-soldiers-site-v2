@@ -1,7 +1,8 @@
 // app/war-escalation/page.tsx
 import type { Metadata } from "next";
 import Link from "next/link";
-import { fetchAllHeadlines, balanceIranHeadlines } from "../../lib/rss";
+import { fetchAllHeadlines } from "../../lib/rss";
+import { pickIranRadarHeadlines } from "../../lib/news.select";
 
 export const revalidate = 180;
 
@@ -248,7 +249,7 @@ export default async function WarEscalationPage() {
   })
 );
 
-  const items = balanceIranHeadlines(relevant, 60);
+  const items = pickIranRadarHeadlines(all, 60);
 
   const latest = items.find((x) => typeof x.publishedAt === "number")?.publishedAt;
   const latestIso = latest ? new Date(latest).toISOString() : new Date().toISOString();
