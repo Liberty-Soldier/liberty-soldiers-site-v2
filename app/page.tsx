@@ -18,7 +18,6 @@ import {
   pickHomepageCarouselHeadlines,
   pickIranRadarHeadlines,
 } from "../lib/news.select";
-import { CATEGORY_DEFS } from "../lib/news.taxonomy";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 600;
@@ -72,10 +71,10 @@ export default async function Home() {
   const latestReport = (await getLatestReport()) ?? null;
   const all = await fetchAllHeadlines(); // still needed for some panels
 
-const headlines = pickHomepageHeadlines(all);
-const carouselHeadlines = pickHomepageCarouselHeadlines(all);
-const iranItems = pickIranRadarHeadlines(all);
-
+const headlines = pickHomepageHeadlines(all, 9);
+const carouselHeadlines = pickHomepageCarouselHeadlines(all, 20);
+const iranItems = pickIranRadarHeadlines(all, 24);
+  
   const nowIso = new Date().toISOString();
 
   const jsonLd = [
