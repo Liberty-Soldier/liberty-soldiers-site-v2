@@ -1,281 +1,325 @@
-// app/news/page.tsx
-import { fetchAllHeadlines } from "@/lib/rss";
-import { getAllReports } from "@/lib/reports";
-import Link from "next/link";
-import NewsFeedClient from "./NewsFeedClient";
+// app/page.tsx
+import type { Metadata } from "next";
+import Carousel from "./components/Carousel";
+import { Suspense } from "react";
+import HomeHeadlines from "./components/Headlines";
+import { getLatestReport } from "../lib/reports";
+import LiveBriefingAuto from "./components/LiveBriefingAuto";
+import LiveSignalDesk from "./components/LiveSignalDesk";
+import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
+import EmailBand from "./components/EmailBand";
+import LatestReportBand from "./components/LatestReportBand";
+import IranWarCarousel from "./components/IranWarCarousel";
+import { fetchAllHeadlines } from "../lib/rss";
+import {
+  pickHomepageHeadlines,
+  pickHomepageCarouselHeadlines,
+  pickIranRadarHeadlines,
+} from "../lib/news.select";
+import { CATEGORY_DEFS } from "../lib/news.taxonomy";
 
-export const metadata = {
-  title: "News Feed | Liberty Soldiers",
+export const revalidate = 600;
+
+const OG_IMAGE = "/og-default.jpg";
+
+export const metadata: Metadata = {
+  title: "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
   description:
-    "Live headlines for situational awareness plus original Liberty Soldiers reports, articles, and analysis.",
-  alternates: { canonical: "https://libertysoldiers.com/news" },
+    "Independent investigative analysis of geopolitics, global power structures, media narratives, digital control systems, and emerging technologies shaping world events.",
+  alternates: {
+    canonical: "https://libertysoldiers.com/",
+  },
+  openGraph: {
+    title: "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
+    description:
+      "Independent investigative analysis of geopolitics, global power structures, media narratives, digital control systems, and emerging technologies shaping world events.",
+    url: "https://libertysoldiers.com/",
+    siteName: "Liberty Soldiers",
+    type: "website",
+    images: [
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Liberty Soldiers - Independent Geopolitical Analysis",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Liberty Soldiers | Independent Geopolitical & Investigative Analysis",
+    description:
+      "Independent investigative analysis of geopolitics, global power structures, media narratives, digital control systems, and emerging technologies shaping world events.",
+    images: [OG_IMAGE],
+  },
 };
 
-export const revalidate = 180;
-
-type Item = {
-  title: string;
-  url: string;
-  source: string;
-  publishedAt?: number;
-  image?: string;
-  summary?: string;
-  category?: string;
-  hardCategory?: string;
-  kind?: "external" | "report" | "analysis" | "brief" | "news";
-  byline?: string;
-  isOriginal?: boolean;
-};
-function classifyLane(item: Item): string {
-  const c = `${item.category || ""} ${item.hardCategory || ""}`.toLowerCase();
-  const t = `${item.title} ${item.summary || ""}`.toLowerCase();
-
-  if (
-    c.includes("war") ||
-    c.includes("geopolitics") ||
-    c.includes("iran war") ||
-    t.includes("iran") ||
-    t.includes("israel") ||
-    t.includes("gaza") ||
-    t.includes("russia") ||
-    t.includes("ukraine") ||
-    t.includes("china") ||
-    t.includes("taiwan") ||
-    t.includes("missile") ||
-    t.includes("drone") ||
-    t.includes("strike") ||
-    t.includes("war") ||
-    t.includes("military")
-  ) {
-    return "geopolitics-war";
-  }
-
-  if (
-    c.includes("power") ||
-    c.includes("control") ||
-    c.includes("technocracy") ||
-    c.includes("digital id") ||
-    c.includes("control systems") ||
-    c.includes("censorship") ||
-    c.includes("speech") ||
-    t.includes("digital id") ||
-    t.includes("biometric") ||
-    t.includes("surveillance") ||
-    t.includes("facial recognition") ||
-    t.includes("censorship") ||
-    t.includes("social credit") ||
-    t.includes("cbdc")
-  ) {
-    return "power-control";
-  }
-
-  if (
-    c.includes("finance") ||
-    c.includes("markets") ||
-    c.includes("crypto") ||
-    t.includes("market") ||
-    t.includes("stocks") ||
-    t.includes("bond") ||
-    t.includes("yield") ||
-    t.includes("fed") ||
-    t.includes("inflation") ||
-    t.includes("oil") ||
-    t.includes("crude") ||
-    t.includes("bitcoin") ||
-    t.includes("ethereum") ||
-    t.includes("crypto")
-  ) {
-    return "markets-finance";
-  }
-
-  if (
-    c.includes("religion") ||
-    c.includes("ideology") ||
-    c.includes("persecution") ||
-    t.includes("church") ||
-    t.includes("christian") ||
-    t.includes("jewish") ||
-    t.includes("mosque") ||
-    t.includes("synagogue") ||
-    t.includes("religion") ||
-    t.includes("pastor") ||
-    t.includes("imam") ||
-    t.includes("persecution")
-  ) {
-    return "religion-ideology";
-  }
-
-  if (
-    c.includes("prophecy") ||
-    t.includes("prophecy") ||
-    t.includes("end time") ||
-    t.includes("end-time") ||
-    t.includes("endtime") ||
-    t.includes("tribulation") ||
-    t.includes("rapture") ||
-    t.includes("antichrist") ||
-    t.includes("mark of the beast") ||
-    t.includes("revelation") ||
-    t.includes("daniel") ||
-    t.includes("eschatology")
-  ) {
-    return "prophecy-watch";
-  }
-
-  if (
-    c.includes("biosecurity") ||
-    c.includes("health") ||
-    t.includes("pandemic") ||
-    t.includes("outbreak") ||
-    t.includes("quarantine") ||
-    t.includes("lockdown") ||
-    t.includes("public health") ||
-    t.includes("emergency powers") ||
-    t.includes("bird flu")
-  ) {
-    return "biosecurity";
-  }
-
-  return "other";
+function HeadlinesFallback() {
+  return (
+    <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 text-zinc-600">
+      Loading headlines…
+    </div>
+  );
 }
 
-function pickAllNewsBalanced(items: Item[], take = 80): Item[] {
-  const sorted = items
-    .slice()
-    .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+export default async function Home() {
+  const latestReport = (await getLatestReport()) ?? null;
+  const all = await fetchAllHeadlines();
 
-  const requiredLanes = [
-    "geopolitics-war",
-    "power-control",
-    "markets-finance",
-    "religion-ideology",
-    "prophecy-watch",
-    "biosecurity",
+  const homepageGrid = pickHomepageHeadlines(all, 9);
+  const homepageCarousel = pickHomepageCarouselHeadlines(all, 20);
+  const iranItems = pickIranRadarHeadlines(all, 24);
+
+  const nowIso = new Date().toISOString();
+
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Liberty Soldiers",
+      url: "https://libertysoldiers.com/",
+      description:
+        "Independent analysis examining power, perception, media narratives, and emerging systems shaping the world.",
+      sameAs: ["https://x.com/LibertySoldierz"],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsMediaOrganization",
+      name: "Liberty Soldiers",
+      url: "https://libertysoldiers.com/",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://libertysoldiers.com/logo.png",
+      },
+      sameAs: ["https://x.com/LibertySoldierz"],
+      publishingPrinciples: "https://libertysoldiers.com/about",
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: "Liberty Soldiers",
+      url: "https://libertysoldiers.com/",
+      dateModified: nowIso,
+      publisher: {
+        "@type": "Organization",
+        name: "Liberty Soldiers",
+        url: "https://libertysoldiers.com/",
+      },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: "https://libertysoldiers.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "Liberty Soldiers | Geopolitics, Global Conflict & Power Analysis",
+      url: "https://libertysoldiers.com/",
+      dateModified: nowIso,
+      isPartOf: {
+        "@type": "WebSite",
+        name: "Liberty Soldiers",
+        url: "https://libertysoldiers.com/",
+      },
+    },
   ];
 
-  const picked: Item[] = [];
-  const used = new Set<string>();
-
-  for (const lane of requiredLanes) {
-    const match = sorted.find(
-      (item) => !used.has(item.url) && classifyLane(item) === lane
-    );
-    if (match) {
-      picked.push(match);
-      used.add(match.url);
-    }
-  }
-
-  for (const item of sorted) {
-    if (picked.length >= take) break;
-    if (used.has(item.url)) continue;
-    picked.push(item);
-    used.add(item.url);
-  }
-
-  return picked;
-}
-export default async function NewsPage() {
-  let externalItems: Item[] = [];
-  let originalItems: Item[] = [];
-
-  try {
-    externalItems = ((await fetchAllHeadlines()) as Item[]).map((item) => ({
-      ...item,
-      kind: "external",
-      isOriginal: false,
-    }));
-  } catch {
-    externalItems = [];
-  }
-
-  try {
-    originalItems = getAllReports().map((r) => ({
-      title: r.title,
-      url: `/news/${r.slug}`,
-      source: "Liberty Soldiers",
-      publishedAt: r.dateISO
-        ? new Date(`${r.dateISO}T12:00:00Z`).getTime()
-        : 0,
-      image: r.coverImage,
-      summary: r.excerpt,
-      category: r.category,
-      hardCategory: r.hardCategory,
-      kind: r.kind,
-      byline: r.byline,
-      isOriginal: true,
-    }));
-  } catch {
-    originalItems = [];
-  }
-
-  const items: Item[] = pickAllNewsBalanced(
-  [...originalItems, ...externalItems],
-  80
-);
-
   return (
-    <main className="min-h-screen bg-zinc-50 text-zinc-900">
-      {/* ===== HERO BAND ===== */}
-      <section className="relative overflow-hidden border-b border-zinc-200 bg-zinc-900">
+    <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <section className="relative flex min-h-[32vh] w-full items-center py-10 sm:h-[32vh] sm:py-0">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: "url(/global-trade-port.jpg)" }}
+          style={{ backgroundImage: "url('/hero.jpg')" }}
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black" />
 
-        {/* Slightly reduced overlay darkness */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/45 to-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+        <div className="relative z-10 mx-auto max-w-7xl w-full px-4 text-white sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+              LIBERTY SOLDIERS
+            </h1>
+            <p className="mt-4 max-w-2xl text-base text-white/90 sm:text-lg">
+              Independent analysis of geopolitical conflict, financial systems,
+              technological control structures, and emerging global narratives
+              shaping the future.
+            </p>
 
-        <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="max-w-2xl">
-            <div className="text-xs uppercase tracking-[0.2em] text-red-400">
-              Live Monitor
+            <div className="mt-6 flex flex-wrap gap-3">
+              <a
+                href="/reports"
+                className="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100"
+              >
+                Read Reports →
+              </a>
+              <a
+                href="/news"
+                className="inline-flex items-center rounded-xl border border-white/40 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Live Intelligence →
+              </a>
             </div>
 
-            <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Global News Signal Feed
-            </h1>
-
-            <p className="mt-3 text-sm leading-relaxed text-zinc-200 sm:text-base">
-              Real-time situational awareness headlines across geopolitics,
-              financial stress signals, military escalation, technological
-              control systems, and narrative shifts shaping global perception —
-              plus original Liberty Soldiers reports and articles.
+            <p className="mt-4 max-w-2xl text-base text-white/90 sm:text-lg">
+              Tracking power, conflict, and the narratives shaping the world.
             </p>
           </div>
         </div>
       </section>
 
-      {/* ===== CONTENT ===== */}
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="mb-6 flex items-end justify-between gap-6">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
-            <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Latest Headlines
+      <section className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mb-2">
+            <h2 className="text-lg font-semibold text-neutral-900">
+              War & Escalation Radar
             </h2>
+            <p className="text-sm text-neutral-500">
+              Real-time headlines referencing Iran, regional escalation, and
+              related conflict signals.
+            </p>
           </div>
 
-          <Link
-            href="/"
-            className="whitespace-nowrap text-sm text-zinc-700 hover:text-zinc-900"
-          >
-            ← Home
-          </Link>
+          <IranWarCarousel items={iranItems} />
         </div>
+      </section>
 
-        <section className="border-t border-zinc-200 pt-6">
-          {items.length === 0 ? (
-            <div className="rounded-xl border border-zinc-200 bg-white p-6 text-zinc-700">
-              No headlines yet. If this persists, check{" "}
-              <code className="text-zinc-900">lib/news.config.ts</code>.
-            </div>
-          ) : (
-            <NewsFeedClient items={items} />
-          )}
-        </section>
+      <LiveBriefingAuto />
+
+      <LiveSignalDesk />
+
+      <div className="hidden sm:block">
+        <EmailBand />
       </div>
-    </main>
+
+      <div className="hidden sm:block">
+        <LatestReportBand report={latestReport} />
+      </div>
+
+      <section className="border-t border-zinc-200 bg-zinc-50/50 py-12 sm:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+              <div>
+                <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
+                  Latest Headlines
+                </h2>
+                <p className="mt-1 text-sm text-zinc-600 sm:text-base">
+                  External signals being monitored across systems, policy,
+                  conflict, and finance.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <a
+                href="/news"
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
+              >
+                Full feed <span className="text-red-600">→</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="mb-4 flex flex-wrap gap-2">
+            {CATEGORY_DEFS.map((cat) => (
+              <a
+                key={cat.slug}
+                href={`/category/${cat.slug}`}
+                className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
+              >
+                {cat.label}
+              </a>
+            ))}
+          </div>
+
+          <div className="sm:hidden">
+            <div className="rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
+              <Carousel title="">
+                <Suspense fallback={<HeadlinesFallback />}>
+                  <HomeHeadlines
+                    variant="carousel"
+                    items={homepageCarousel}
+                    limit={20}
+                  />
+                </Suspense>
+              </Carousel>
+            </div>
+          </div>
+
+          <div className="hidden sm:block">
+            <Suspense fallback={<HeadlinesFallback />}>
+              <HomeHeadlines variant="grid" items={homepageGrid} limit={9} />
+            </Suspense>
+
+            <div className="mt-6">
+              <a
+                href="/news"
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
+              >
+                View full News Feed <span className="text-red-600">→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <SignalVsNoiseAuto />
+
+      <section className="border-t border-zinc-200 py-12 sm:py-16">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="hidden sm:block">
+            <h2 className="text-2xl font-bold text-zinc-900 sm:text-3xl">
+              Liberty Soldiers is an independent investigative media platform
+              for geopolitical analysis.
+            </h2>
+
+            <p className="mt-3 leading-relaxed text-zinc-800">
+              We publish investigative reporting and analytical research on
+              global geopolitics, modern conflict, information warfare,
+              psychological operations, and the power structures and belief
+              systems that shape public perception and policy.
+            </p>
+
+            <p className="mt-3 leading-relaxed text-zinc-700">
+              Our reports connect breaking news and world events to historical
+              patterns, strategic doctrine, and long-term ideological
+              frameworks—separating signal from noise, fact from propaganda,
+              and context from narrative—so readers gain situational awareness
+              and clarity, not partisan opinion.
+            </p>
+
+            <p className="mt-2 text-sm text-zinc-500">
+              Topics include geopolitics, global conflict, media manipulation,
+              surveillance systems, digital identity, financial power, and
+              narrative control.
+            </p>
+          </div>
+
+          <div className="sm:hidden">
+            <h2 className="text-xl font-extrabold text-zinc-900">
+              Independent analysis of power, perception, and control.
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-700">
+              Reports connect headlines to historical patterns—separating
+              signal from noise.
+            </p>
+            <div className="mt-3">
+              <a
+                href="/about"
+                className="inline-flex items-center text-sm font-semibold text-zinc-900 hover:underline"
+              >
+                Read the mission →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
