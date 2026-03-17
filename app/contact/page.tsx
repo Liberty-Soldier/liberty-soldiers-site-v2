@@ -95,7 +95,7 @@ export default function ContactPage() {
             className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-800 transition hover:bg-zinc-100"
           >
             YouTube
-          </a>
+          </Link>
         </div>
       </section>
     </main>
