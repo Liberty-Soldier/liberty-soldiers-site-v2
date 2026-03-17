@@ -788,7 +788,7 @@ async function normalizeFeed(
   feedUrl: string,
   feedCategory?: string
 ): Promise<Headline[]> {
- const items = extractItems(feedJson).slice(0, 12);
+ const items = extractItems(feedJson).slice(0, 18);
   const sourceFallback = extractSource(feedJson, feedUrl);
   const feedFallbackLabel = feedCategoryLabel(feedCategory);
 
@@ -1022,7 +1022,7 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
 }
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
- const feeds = ((NEWS_FEEDS as unknown as FeedInput[]) ?? []).slice(0, 12);
+ const feeds = (NEWS_FEEDS as unknown as FeedInput[]) ?? [];
   const headlines = await fetchHeadlinesFromFeeds(feeds);
 
   const pinned: Headline[] = PINNED_LINKS.map((p) => ({
@@ -1056,6 +1056,6 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
 }
 
 export async function fetchNoiseHeadlines(): Promise<Headline[]> {
-  const feeds = ((NOISE_FEEDS as unknown as FeedInput[]) ?? []).slice(0, 12);
+  const feeds = (NOISE_FEEDS as unknown as FeedInput[]) ?? [];
   return fetchHeadlinesFromFeeds(feeds);
 }
