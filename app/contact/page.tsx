@@ -55,10 +55,10 @@ export default function ContactPage() {
           </h2>
           <p className="mt-3 text-sm leading-6 text-zinc-600">Email:</p>
           <a
-            href="mailto:briefings@libertysoldiers.com"
+            href="mailto:contact@libertysoldiers.com"
             className="mt-1 inline-block text-base font-medium text-zinc-900 underline underline-offset-4"
           >
-            briefings@libertysoldiers.com
+            contact@libertysoldiers.com
           </a>
         </section>
 
