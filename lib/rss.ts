@@ -212,6 +212,91 @@ function feedCategoryLabel(cat?: string): string | undefined {
   return undefined;
 }
 
+function safeFeedFallback(
+  feedFallback?: string,
+  source?: string,
+  text?: string
+): string | undefined {
+  if (!feedFallback) return undefined;
+
+  const s = (source ?? "").toLowerCase();
+  const t = (text ?? "").toLowerCase();
+
+  if (feedFallback === "Finance") return "Finance";
+  if (feedFallback === "Crypto") return "Crypto";
+  if (feedFallback === "World Briefing") return "World Briefing";
+  if (feedFallback === "Middle East") return "Middle East";
+  if (feedFallback === "Iran War") return "Iran War";
+
+  if (feedFallback === "Control Systems") {
+    const fits =
+      t.includes("ai") ||
+      t.includes("artificial intelligence") ||
+      t.includes("digital id") ||
+      t.includes("biometric") ||
+      t.includes("facial recognition") ||
+      t.includes("surveillance") ||
+      t.includes("social credit") ||
+      t.includes("cbdc") ||
+      t.includes("cashless") ||
+      t.includes("privacy");
+    return fits ? "Control Systems" : undefined;
+  }
+
+  if (feedFallback === "Prophecy Watch") {
+    const fits =
+      s.includes("olivetreeviews") ||
+      s.includes("prophecynewswatch") ||
+      s.includes("endtimeheadlines") ||
+      t.includes("prophecy") ||
+      t.includes("end time") ||
+      t.includes("end-time") ||
+      t.includes("endtime") ||
+      t.includes("rapture") ||
+      t.includes("tribulation") ||
+      t.includes("antichrist") ||
+      t.includes("mark of the beast") ||
+      t.includes("revelation") ||
+      t.includes("daniel") ||
+      t.includes("eschatology");
+    return fits ? "Prophecy Watch" : undefined;
+  }
+
+  if (feedFallback === "Religion") {
+    const fits =
+      t.includes("church") ||
+      t.includes("christianity") ||
+      t.includes("christian ") ||
+      t.startsWith("christian ") ||
+      t.includes("catholic") ||
+      t.includes("vatican") ||
+      t.includes("pope") ||
+      t.includes("pastor") ||
+      t.includes("bishop") ||
+      t.includes("imam") ||
+      t.includes("mosque") ||
+      t.includes("synagogue") ||
+      t.includes("rabbi") ||
+      t.includes("judaism") ||
+      t.includes("islam") ||
+      t.includes("religious freedom") ||
+      t.includes("blasphemy");
+    return fits ? "Religion" : undefined;
+  }
+
+  if (feedFallback === "Health") {
+    const fits =
+      t.includes("pandemic") ||
+      t.includes("outbreak") ||
+      t.includes("public health") ||
+      t.includes("bird flu") ||
+      t.includes("quarantine");
+    return fits ? "Health" : undefined;
+  }
+
+  return undefined;
+}
+
 function categorize(
   title: string,
   summary?: string,
@@ -220,6 +305,24 @@ function categorize(
 ): string {
   const t = `${title} ${summary ?? ""}`.toLowerCase();
   const s = (src ?? "").toLowerCase();
+
+  // -------------------------------------------------------
+  // HARD SOURCE OVERRIDES FIRST
+  // -------------------------------------------------------
+  if (
+    s.includes("warontherocks") ||
+    s.includes("war on the rocks") ||
+    s.includes("timesofisrael") ||
+    s.includes("israel365news") ||
+    s.includes("tehrantimes") ||
+    s.includes("presstv") ||
+    s.includes("antiwar.com") ||
+    s.includes("responsiblestatecraft") ||
+    s.includes("militarytimes") ||
+    s.includes("defensenews")
+  ) {
+    return "Geopolitics & War";
+  }
 
   if (s.includes("marketwatch")) return "Finance";
   if (s.includes("bloomberg")) return "Finance";
@@ -235,39 +338,51 @@ function categorize(
     return "Crypto";
   }
 
-  let fallback: string | undefined;
-  if (s.includes("bbc")) fallback = "World Briefing";
-  if (s.includes("aljazeera")) fallback = "World Briefing";
-
-  const hasReligion =
-    t.includes("church") ||
-    t.includes("christian") ||
-    t.includes("jewish") ||
-    t.includes("synagogue") ||
-    t.includes("mosque") ||
-    t.includes("pastor") ||
-    t.includes("imam") ||
-    t.includes("religion");
-
-  const hasPressure =
-    t.includes("persecution") ||
-    t.includes("arrest") ||
-    t.includes("arrested") ||
-    t.includes("detained") ||
-    t.includes("raid") ||
-    t.includes("ban") ||
-    t.includes("banned") ||
-    t.includes("charged") ||
-    t.includes("sentenced") ||
-    t.includes("hate speech") ||
-    t.includes("blasphemy") ||
-    t.includes("religious freedom") ||
-    t.includes("closed down");
-
-  if (hasPressure && hasReligion) {
-    return "Persecution Watch";
+  if (s.includes("biometricupdate")) return "Control Systems";
+  if (s.includes("endtimeheadlines")) return "Prophecy Watch";
+  if (s.includes("prophecynewswatch")) return "Prophecy Watch";
+  if (s.includes("reuters")) {
+    if (
+      t.includes("stocks") ||
+      t.includes("bonds") ||
+      t.includes("oil prices") ||
+      t.includes("federal reserve") ||
+      t.includes("inflation") ||
+      t.includes("earnings")
+    ) {
+      return "Finance";
+    }
+    if (
+      t.includes("ai") ||
+      t.includes("chip") ||
+      t.includes("semiconductor") ||
+      t.includes("tech")
+    ) {
+      return "Control Systems";
+    }
+    return "Geopolitics & War";
   }
 
+  if (s.includes("reclaimthenet")) {
+    if (
+      t.includes("ai") ||
+      t.includes("artificial intelligence") ||
+      t.includes("medical") ||
+      t.includes("health") ||
+      t.includes("records") ||
+      t.includes("privacy") ||
+      t.includes("surveillance") ||
+      t.includes("biometric") ||
+      t.includes("digital id")
+    ) {
+      return "Control Systems";
+    }
+    return "Censorship & Speech";
+  }
+
+  // -------------------------------------------------------
+  // PROPHECY
+  // -------------------------------------------------------
   const isProphecy =
     t.includes("prophecy") ||
     t.includes("end time") ||
@@ -288,6 +403,9 @@ function categorize(
     return "Prophecy Watch";
   }
 
+  // -------------------------------------------------------
+  // CONTROL / DIGITAL / AI
+  // -------------------------------------------------------
   if (
     t.includes("cbdc") ||
     t.includes("digital currency") ||
@@ -316,6 +434,9 @@ function categorize(
     return "Censorship & Speech";
   }
 
+  // -------------------------------------------------------
+  // BIO / HEALTH
+  // -------------------------------------------------------
   if (
     t.includes("pandemic") ||
     t.includes("outbreak") ||
@@ -330,7 +451,10 @@ function categorize(
     return "Biosecurity";
   }
 
-  if (
+  // -------------------------------------------------------
+  // GEOPOLITICS BEFORE RELIGION
+  // -------------------------------------------------------
+  const hasGeo =
     t.includes("gaza") ||
     t.includes("israel") ||
     t.includes("iran") ||
@@ -345,39 +469,78 @@ function categorize(
     t.includes("war") ||
     t.includes("houthi") ||
     t.includes("hezbollah") ||
-    t.includes("hormuz")
-  ) {
+    t.includes("hormuz") ||
+    t.includes("military") ||
+    t.includes("troops") ||
+    t.includes("drone") ||
+    t.includes("airstrike") ||
+    t.includes("naval") ||
+    t.includes("defense") ||
+    t.includes("defence") ||
+    t.includes("conflict") ||
+    t.includes("battlefield");
+
+  if (hasGeo) {
     return "Geopolitics & War";
   }
 
-  if (s.includes("biometricupdate")) return "Control Systems";
+  // -------------------------------------------------------
+  // RELIGION / PERSECUTION - TIGHTER THAN BEFORE
+  // -------------------------------------------------------
+  const hasReligion =
+    t.includes("church") ||
+    t.includes("christianity") ||
+    t.includes("christian ") ||
+    t.startsWith("christian ") ||
+    t.includes("catholic") ||
+    t.includes("vatican") ||
+    t.includes("pope") ||
+    t.includes("pastor") ||
+    t.includes("bishop") ||
+    t.includes("imam") ||
+    t.includes("mosque") ||
+    t.includes("synagogue") ||
+    t.includes("rabbi") ||
+    t.includes("judaism") ||
+    t.includes("islam") ||
+    t.includes("religious freedom") ||
+    t.includes("blasphemy") ||
+    t.includes("worshippers") ||
+    t.includes("worshipers");
 
-  if (s.includes("reclaimthenet")) {
-    if (
-      t.includes("ai") ||
-      t.includes("artificial intelligence") ||
-      t.includes("medical") ||
-      t.includes("health") ||
-      t.includes("records") ||
-      t.includes("privacy") ||
-      t.includes("surveillance") ||
-      t.includes("biometric") ||
-      t.includes("digital id")
-    ) {
-      return "Control Systems";
-    }
-    return "Censorship & Speech";
+  const hasPressure =
+    t.includes("persecution") ||
+    t.includes("arrest") ||
+    t.includes("arrested") ||
+    t.includes("detained") ||
+    t.includes("raid") ||
+    t.includes("ban") ||
+    t.includes("banned") ||
+    t.includes("charged") ||
+    t.includes("sentenced") ||
+    t.includes("hate speech") ||
+    t.includes("blasphemy") ||
+    t.includes("religious freedom") ||
+    t.includes("closed down");
+
+  if (hasPressure && hasReligion) {
+    return "Persecution Watch";
   }
 
-  if (s.includes("endtimeheadlines")) return "Prophecy Watch";
-  if (s.includes("prophecynewswatch")) return "Prophecy Watch";
-  if (s.includes("israel365news")) return "Geopolitics & War";
-  if (s.includes("timesofisrael")) return "Geopolitics & War";
-  if (s.includes("tehrantimes")) return "Geopolitics & War";
-  if (s.includes("presstv")) return "Geopolitics & War";
-  if (s.includes("reuters")) return "Geopolitics & War";
+  if (hasReligion) {
+    return "Religion";
+  }
 
-  return fallback || feedFallback || "General";
+  // -------------------------------------------------------
+  // FALLBACKS
+  // -------------------------------------------------------
+  let sourceFallback: string | undefined;
+  if (s.includes("bbc")) sourceFallback = "World Briefing";
+  if (s.includes("aljazeera")) sourceFallback = "World Briefing";
+
+  const feedSafe = safeFeedFallback(feedFallback, s, t);
+
+  return sourceFallback || feedSafe || "General";
 }
 
 function stripHtml(s: any): string {
