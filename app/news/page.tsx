@@ -1,25 +1,21 @@
 // app/page.tsx
-import type { Metadata } from "next";
-import { Suspense } from "react";
+import Carousel from "../components/Carousel";
+import HomeHeadlines from "../components/Headlines";
+import LiveBriefingAuto from "../components/LiveBriefingAuto";
+import LiveSignalDesk from "../components/LiveSignalDesk";
+import SignalVsNoiseAuto from "../components/SignalVsNoiseAuto";
+import EmailBand from "../components/EmailBand";
+import LatestReportBand from "../components/LatestReportBand";
+import IranWarCarousel from "../components/IranWarCarousel";
 
-import Carousel from "./components/Carousel";
-import HomeHeadlines from "./components/Headlines";
-import LiveBriefingAuto from "./components/LiveBriefingAuto";
-import LiveSignalDesk from "./components/LiveSignalDesk";
-import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
-import EmailBand from "./components/EmailBand";
-import LatestReportBand from "./components/LatestReportBand";
-import IranWarCarousel from "./components/IranWarCarousel";
-
-import { getLatestReport } from "../lib/reports";
-import { fetchAllHeadlines } from "../lib/rss";
+import { getLatestReport } from "../../lib/reports";
+import { fetchAllHeadlines } from "../../lib/rss";
 import {
   pickHomepageHeadlines,
   pickHomepageCarouselHeadlines,
   pickIranRadarHeadlines,
-} from "../lib/news/select";
-import { CATEGORY_DEFS } from "../lib/news/taxonomy";
-
+} from "../../lib/news.select";
+import { CATEGORY_DEFS } from "../../lib/news.taxonomy";
 export const revalidate = 600;
 
 const OG_IMAGE = "/og-default.jpg";
