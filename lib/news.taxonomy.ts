@@ -27,11 +27,11 @@ export const CATEGORY_DEFS: {
   },
   {
     slug: "digital-id-technocracy",
-    label: "Digital ID / Technocracy",
+    label: "Biosecurity",
     description:
-      "Digital identity, surveillance infrastructure, algorithmic governance, and technocratic systems.",
-    ogImage: "/og-digital-id.jpg",
-    href: "/news/control-systems",
+      "Outbreak monitoring, public-health policy, emergency powers, health-security narratives, and biosecurity control signals.",
+    ogImage: "/og-power-control.jpg",
+    href: "/news/biosecurity",
   },
   {
     slug: "power-control",
