@@ -7,17 +7,10 @@ import {
   BLACKLIST,
 } from "./news.config";
 import { toHardCategory } from "./hardCategories";
+import { slugFromHardCategory } from "./news.taxonomy";
+import type { Headline } from "./news.types";
 
-export type Headline = {
-  title: string;
-  url: string;
-  source: string;
-  publishedAt?: number;
-  image?: string;
-  summary?: string;
-  category?: string;
-  hardCategory?: string;
-};
+export type { Headline } from "./news.types";
 
 type FeedInput =
   | string
@@ -32,11 +25,9 @@ const parser = new XMLParser({
   trimValues: true,
 });
 
-/* -------------------------------------------------- */
-/* utils                                              */
-/* -------------------------------------------------- */
-
-async function fetchOgImageFromArticle(url: string): Promise<string | undefined> {
+async function fetchOgImageFromArticle(
+  url: string
+): Promise<string | undefined> {
   try {
     const res = await fetch(url, {
       headers: {
@@ -86,7 +77,6 @@ const ARTICLE_OG_FALLBACK_DOMAINS = [
   "middleeasteye.net",
   "aljazeera.com",
   "warontherocks.com",
-  
 ];
 
 function shouldTryArticleOgFallback(url: string): boolean {
@@ -95,6 +85,7 @@ function shouldTryArticleOgFallback(url: string): boolean {
     (domain) => d === domain || d.endsWith(`.${domain}`)
   );
 }
+
 function arrify<T>(x: T | T[] | undefined | null): T[] {
   return x == null ? [] : Array.isArray(x) ? x : [x];
 }
@@ -198,184 +189,6 @@ function pickDate(it: any): number | undefined {
 
   const ms = Date.parse(String(t));
   return Number.isFinite(ms) ? ms : undefined;
-}
-
-function isIranRelated(title: string, summary?: string): boolean {
-  const t = `${title} ${summary ?? ""}`.toLowerCase();
-
-  const iranTerms = [
-    "iran",
-    "tehran",
-    "islamic republic",
-    "irgc",
-    "revolutionary guard",
-    "quds force",
-    "ayatollah",
-    "khamenei",
-    "natanz",
-    "isfahan",
-    "fordow",
-    "arak",
-    "bushehr",
-    "hormuz",
-    "strait of hormuz",
-    "persian gulf",
-    "iranian drone",
-    "shahed",
-  ];
-
-  const proxyTerms = [
-    "hezbollah",
-    "houthi",
-    "hamas",
-    "axis of resistance",
-  ];
-
-  const hasIranCore = iranTerms.some((k) => t.includes(k));
-  if (hasIranCore) return true;
-
-  const hasProxy = proxyTerms.some((k) => t.includes(k));
-  if (
-    hasProxy &&
-    (t.includes("iran") || t.includes("tehran") || t.includes("irgc"))
-  ) {
-    return true;
-  }
-
-  return false;
-}
-
-/* -------------------------------------------------- */
-/* iran page balancing                                */
-/* -------------------------------------------------- */
-
-type SourceGroup =
-  | "antiwar"
-  | "regional"
-  | "iran"
-  | "western"
-  | "thinktank"
-  | "israel"
-  | "other";
-
-const SOURCE_GROUP_BY_DOMAIN: Record<string, SourceGroup> = {
-  "antiwar.com": "antiwar",
-  "responsiblestatecraft.org": "antiwar",
-
-  "aljazeera.com": "regional",
-  "middleeasteye.net": "regional",
-  "trtworld.com": "regional",
-  "france24.com": "regional",
-  "alarabiya.net": "regional",
-
-  "presstv.ir": "iran",
-  "tehrantimes.com": "iran",
-  "mehrnews.com": "iran",
-  "irna.ir": "iran",
-  "tasnimnews.com": "iran",
-
-  "reuters.com": "western",
-  "apnews.com": "western",
-  "bbc.com": "western",
-  "bbc.co.uk": "western",
-  "theguardian.com": "western",
-  "cnn.com": "western",
-  "nbcnews.com": "western",
-  "cbsnews.com": "western",
-  "abcnews.go.com": "western",
-  "dw.com": "western",
-  "skynews.com": "western",
-  "foxnews.com": "western",
-
-  "warontherocks.com": "thinktank",
-  "foreignpolicy.com": "thinktank",
-  "crisisgroup.org": "thinktank",
-
-  "jpost.com": "israel",
-  "timesofisrael.com": "israel",
-  "allisrael.com": "israel",
-  "israel365news.com": "israel",
-  "israeltoday.co.il": "israel",
-  "olivetreeviews.org": "israel",
-};
-
-function groupOfHeadline(h: Headline): SourceGroup {
-  const d = host(h.url).toLowerCase();
-
-  for (const [domain, group] of Object.entries(SOURCE_GROUP_BY_DOMAIN)) {
-    if (d === domain || d.endsWith(`.${domain}`)) return group;
-  }
-
-  return "other";
-}
-
-function limitByDomain(items: Headline[], maxPerDomain = 2): Headline[] {
-  const counts = new Map<string, number>();
-  const out: Headline[] = [];
-
-  for (const it of items) {
-    const d = host(it.url);
-    const n = counts.get(d) ?? 0;
-    if (n >= maxPerDomain) continue;
-    counts.set(d, n + 1);
-    out.push(it);
-  }
-
-  return out;
-}
-
-function roundRobinByGroup(items: Headline[], take = 40): Headline[] {
-  const buckets = new Map<SourceGroup, Headline[]>();
-
-  for (const it of items) {
-    const g = groupOfHeadline(it);
-    if (!buckets.has(g)) buckets.set(g, []);
-    buckets.get(g)!.push(it);
-  }
-
-  const order: SourceGroup[] = [
-    "antiwar",
-    "regional",
-    "iran",
-    "western",
-    "thinktank",
-    "israel",
-    "other",
-  ];
-
-  const out: Headline[] = [];
-  while (out.length < take) {
-    let progressed = false;
-
-    for (const g of order) {
-      const b = buckets.get(g);
-      if (b && b.length) {
-        out.push(b.shift()!);
-        progressed = true;
-        if (out.length >= take) break;
-      }
-    }
-
-    if (!progressed) break;
-  }
-
-  return out;
-}
-
-export function balanceIranHeadlines(items: Headline[], take = 30): Headline[] {
-  const newestFirst = items
-    .slice()
-    .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
-
-  const relevant = newestFirst.filter((it) =>
-    isIranRelated(it.title, it.summary)
-  );
-  const fallback = relevant.length >= Math.min(12, take) ? relevant : newestFirst;
-
-  let out = roundRobinByGroup(fallback, Math.max(take, 40));
-  out = limitByDomain(out, 2);
-
-  return out.slice(0, take);
 }
 
 function toFeedInput(x: FeedInput): { url: string; category?: string } {
@@ -513,7 +326,6 @@ function categorize(
     t.includes("public health") ||
     t.includes(" who ") ||
     t.startsWith("who ") ||
-    t.includes(" bird flu") ||
     t.includes("bird flu")
   ) {
     return "Biosecurity";
@@ -583,13 +395,7 @@ function stripHtml(s: any): string {
     .trim();
 }
 
-const BAD_IMAGE_HINTS = [
-  "1x1",
-  "spacer",
-  "tracking",
-  "tracker",
-  "pixel",
-];
+const BAD_IMAGE_HINTS = ["1x1", "spacer", "tracking", "tracker", "pixel"];
 
 function isGoodImage(url?: string): boolean {
   if (!url) return false;
@@ -599,16 +405,10 @@ function isGoodImage(url?: string): boolean {
 
   const lower = u.toLowerCase();
 
-  // reject inline junk
   if (lower.startsWith("data:")) return false;
-
-  // must be absolute
   if (!/^https?:\/\//i.test(u)) return false;
-
-  // reject tracking pixels / spacers
   if (BAD_IMAGE_HINTS.some((hint) => lower.includes(hint))) return false;
 
-  // allow common real image patterns OR CDN transforms
   const looksLikeImage =
     /\.(jpg|jpeg|png|webp|gif|avif)(\?|$)/i.test(lower) ||
     lower.includes("/wp-content/uploads/") ||
@@ -730,10 +530,6 @@ function extractImage(it: any, base?: string): string {
   return "";
 }
 
-/* -------------------------------------------------- */
-/* extraction                                         */
-/* -------------------------------------------------- */
-
 function extractItems(feedJson: any): any[] {
   const rssItems = feedJson?.rss?.channel?.item;
   if (rssItems) return arrify(rssItems);
@@ -779,33 +575,29 @@ function extractSource(feedJson: any, url: string): string {
   return String(title || fromUrl || "").trim();
 }
 
-/* -------------------------------------------------- */
-/* normalize                                          */
-/* -------------------------------------------------- */
-
 async function normalizeFeed(
   feedJson: any,
   feedUrl: string,
   feedCategory?: string
 ): Promise<Headline[]> {
- const items = extractItems(feedJson).slice(0, 18);
+  const items = extractItems(feedJson).slice(0, 18);
   const sourceFallback = extractSource(feedJson, feedUrl);
   const feedFallbackLabel = feedCategoryLabel(feedCategory);
 
   const mapped = await Promise.all(
-  items.map(async (it: any) => {
+    items.map(async (it: any) => {
       const title = stripHtml(it?.title ?? "").trim();
       const url = extractLink(it, feedUrl);
       const source = host(url) || sourceFallback;
 
-     const extractedImage = extractImage(it, url || feedUrl) || undefined;
-let image = pickImage(extractedImage, url || feedUrl);
+      const extractedImage = extractImage(it, url || feedUrl) || undefined;
+      let image = pickImage(extractedImage, url || feedUrl);
 
-if (!image && url && shouldTryArticleOgFallback(url)) {
-  image = await fetchOgImageFromArticle(url);
-}
+      if (!image && url && shouldTryArticleOgFallback(url)) {
+        image = await fetchOgImageFromArticle(url);
+      }
+
       const summary = extractSummary(it) || undefined;
-
       const category = categorize(title, summary, source, feedFallbackLabel);
       let hardCategory = toHardCategory(category);
 
@@ -841,20 +633,18 @@ if (!image && url && shouldTryArticleOgFallback(url)) {
         summary,
         category,
         hardCategory,
-      };
-})
-);
+        feedCategory,
+        canonicalCategory: slugFromHardCategory(hardCategory),
+      } satisfies Headline;
+    })
+  );
 
-return mapped.filter((h) => {
-      if (!h.title || !h.url) return false;
-      const d = host(h.url).toLowerCase();
-      return !BLACKLIST.some((b) => d.includes(String(b).toLowerCase()));
-    });
+  return mapped.filter((h) => {
+    if (!h.title || !h.url) return false;
+    const d = host(h.url).toLowerCase();
+    return !BLACKLIST.some((b) => d.includes(String(b).toLowerCase()));
+  });
 }
-
-/* -------------------------------------------------- */
-/* fetch + parse                                      */
-/* -------------------------------------------------- */
 
 async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
   const feed = toFeedInput(feedIn);
@@ -872,19 +662,11 @@ async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
     if (!res.ok || !xml) return [];
 
     const json = parser.parse(xml);
-   return await normalizeFeed(json, feed.url, feed.category);
+    return await normalizeFeed(json, feed.url, feed.category);
   } catch {
     return [];
   }
 }
-
-/* -------------------------------------------------- */
-/* caps + dedupe                                      */
-/* -------------------------------------------------- */
-
-/* -------------------------------------------------- */
-/* caps + lightweight dedupe                          */
-/* -------------------------------------------------- */
 
 const MAX_PER_SOURCE = 12;
 const MAX_TOTAL = 500;
@@ -957,8 +739,8 @@ function dedupeBySimilarTitle(items: Headline[]): Headline[] {
     let dup = false;
 
     const currentSource = (it.source || host(it.url) || "").toLowerCase().trim();
-
     const start = Math.max(0, kept.length - WINDOW);
+
     for (let i = kept.length - 1; i >= start; i--) {
       const compareSource = (
         kept[i].source ||
@@ -966,7 +748,6 @@ function dedupeBySimilarTitle(items: Headline[]): Headline[] {
         ""
       ).toLowerCase().trim();
 
-      // only dedupe highly similar titles from the SAME source
       if (
         compareSource === currentSource &&
         jaccard(ts, keptTokens[i]) >= FUZZY_THRESHOLD
@@ -984,6 +765,7 @@ function dedupeBySimilarTitle(items: Headline[]): Headline[] {
 
   return kept;
 }
+
 function capBySource(items: Headline[]): Headline[] {
   const perSource = new Map<string, number>();
   const out: Headline[] = [];
@@ -1020,11 +802,7 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
     return true;
   });
 
-  uniqueByUrl.sort((a, b) => {
-    const ta = a.publishedAt || 0;
-    const tb = b.publishedAt || 0;
-    return tb - ta;
-  });
+  uniqueByUrl.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
 
   const deduped = dedupeBySimilarTitle(uniqueByUrl);
   const capped = capBySource(deduped);
@@ -1033,7 +811,7 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
 }
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
- const feeds = (NEWS_FEEDS as unknown as FeedInput[]) ?? [];
+  const feeds = (NEWS_FEEDS as unknown as FeedInput[]) ?? [];
   const headlines = await fetchHeadlinesFromFeeds(feeds);
 
   const pinned: Headline[] = PINNED_LINKS.map((p) => ({
@@ -1045,6 +823,8 @@ export async function fetchAllHeadlines(): Promise<Headline[]> {
     summary: undefined,
     category: "Pinned",
     hardCategory: undefined,
+    feedCategory: undefined,
+    canonicalCategory: undefined,
   }));
 
   const seen = new Set<string>();
