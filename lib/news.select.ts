@@ -1,7 +1,7 @@
 // lib/news.select.ts
 
-import type { Headline, CanonicalCategorySlug } from "./news.types";
-import { slugFromHardCategory } from "./news.taxonomy";
+import type { Headline, CanonicalCategorySlug } from "../news.types";
+import { slugFromHardCategory } from "../news.taxonomy";
 
 function hostFromUrl(u: string) {
   try {
