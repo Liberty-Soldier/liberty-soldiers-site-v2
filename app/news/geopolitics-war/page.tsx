@@ -3,7 +3,7 @@ import { getAllReports } from "@/lib/reports";
 import Link from "next/link";
 import NewsFeedClient from "../NewsFeedClient";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 
 export const metadata = {
   title: "Geopolitics & War | Liberty Soldiers",
