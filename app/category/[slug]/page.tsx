@@ -6,9 +6,9 @@ import {
   CATEGORY_DEFS,
   getCategoryDef,
   labelFromSlug,
-} from "@/lib/news/taxonomy";
-import { filterCategoryHeadlines } from "@/lib/news/select";
-import type { CanonicalCategorySlug } from "@/lib/news/types";
+} from "@/lib/news.taxonomy";
+import { filterCategoryHeadlines } from "@/lib/news.select";
+import type { CanonicalCategorySlug } from "@/lib/news.types";
 
 export const revalidate = 600;
 
