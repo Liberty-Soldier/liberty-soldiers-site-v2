@@ -1,9 +1,10 @@
+// app/components/SignalVsNoiseAuto.tsx
 import Link from "next/link";
 import { fetchAllHeadlines, fetchNoiseHeadlines, Headline } from "@/lib/rss";
+import { pickSignalHeadlines } from "@/lib/news.select";
 
 export const revalidate = 300;
 
-// Tiny HTML entity cleanup (covers common &#8216; &#8217; etc.)
 function decodeEntities(s: string) {
   if (!s) return s;
   return s
@@ -68,11 +69,10 @@ function Panel({
             return (
               <li key={h.url} className="group">
                 <Link
-                    href={h.url}
-                    className="block rounded-xl border border-zinc-100 bg-white px-3 py-3 hover:border-zinc-200 hover:bg-zinc-50 transition"
-                    title={cleanTitle}
-                  >
-
+                  href={h.url}
+                  className="block rounded-xl border border-zinc-100 bg-white px-3 py-3 hover:border-zinc-200 hover:bg-zinc-50 transition"
+                  title={cleanTitle}
+                >
                   <div className="text-sm sm:text-[15px] font-semibold text-zinc-900 leading-snug">
                     {cleanTitle}
                   </div>
@@ -100,7 +100,7 @@ function Panel({
 
 export default async function SignalVsNoiseAuto() {
   const signalAll = await fetchAllHeadlines();
-  const signal = (signalAll || []).filter((h) => h.category !== "Pinned");
+  const signal = pickSignalHeadlines(signalAll, 10);
   const noise = await fetchNoiseHeadlines();
 
   return (
@@ -121,7 +121,6 @@ export default async function SignalVsNoiseAuto() {
           </div>
         </div>
 
-        {/* Desktop: side-by-side columns */}
         <div className="mt-8 hidden sm:grid grid-cols-2 gap-6">
           <Panel
             title="SIGNAL"
@@ -137,7 +136,6 @@ export default async function SignalVsNoiseAuto() {
           />
         </div>
 
-        {/* Mobile: swipeable panels */}
         <div className="mt-8 sm:hidden">
           <div className="flex items-center justify-between text-[11px] text-zinc-500">
             <span>Swipe</span>
