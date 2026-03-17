@@ -67,8 +67,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="bg-zinc-50 text-zinc-900">
       <body className="min-h-screen bg-zinc-50 text-zinc-900">
-
-        {/* ✅ ADSENSE AUTO ADS SCRIPT (NEW — VERY IMPORTANT) */}
         <Script
           async
           strategy="afterInteractive"
@@ -76,7 +74,6 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
 
-        {/* GA4 */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="afterInteractive"
@@ -93,7 +90,6 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* Google Ads Conversion Tag */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
           strategy="afterInteractive"
@@ -107,7 +103,6 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* JSON-LD Organization */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -122,7 +117,6 @@ export default function RootLayout({
           }}
         />
 
-        {/* JSON-LD WebSite */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -141,41 +135,41 @@ export default function RootLayout({
 
         <main>{children}</main>
 
-       <footer className="border-t border-zinc-200 py-8 mt-12">
-  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div className="mb-6">
-      <EmailSignup
-        title="Get Liberty Soldiers briefings"
-        subtitle="Email only when new reports publish. No spam."
-      />
-    </div>
+        <footer className="mt-12 border-t border-zinc-200 py-8">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-6">
+              <EmailSignup
+                title="Get Liberty Soldiers briefings"
+                subtitle="Email only when new reports publish. No spam."
+              />
+            </div>
 
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-sm text-zinc-600">
-        © {new Date().getFullYear()} Liberty Soldiers. All rights reserved.
-      </p>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-zinc-600">
+                © {new Date().getFullYear()} Liberty Soldiers. All rights
+                reserved.
+              </p>
 
-      <nav
-        aria-label="Footer"
-        className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-600"
-      >
-        <a href="/about" className="hover:text-zinc-900">
-          About
-        </a>
-        <a href="/contact" className="hover:text-zinc-900">
-          Contact
-        </a>
-        <a href="/privacy" className="hover:text-zinc-900">
-          Privacy
-        </a>
-        <a href="/terms" className="hover:text-zinc-900">
-          Terms
-        </a>
-      </nav>
-    </div>
-  </div>
-</footer>
-
+              <nav
+                aria-label="Footer"
+                className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-600"
+              >
+                <a href="/about" className="hover:text-zinc-900">
+                  About
+                </a>
+                <a href="/contact" className="hover:text-zinc-900">
+                  Contact
+                </a>
+                <a href="/privacy" className="hover:text-zinc-900">
+                  Privacy
+                </a>
+                <a href="/terms" className="hover:text-zinc-900">
+                  Terms
+                </a>
+              </nav>
+            </div>
+          </div>
+        </footer>
       </body>
     </html>
   );
