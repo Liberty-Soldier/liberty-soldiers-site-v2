@@ -16,7 +16,11 @@ export type NewsFeed = {
   category: FeedCategory;
 };
 
-export const NEWS_FEEDS: NewsFeed[] = [
+// =========================================================
+// CORE FEEDS
+// Safer / faster / more stable feeds for primary site use
+// =========================================================
+export const CORE_NEWS_FEEDS: NewsFeed[] = [
   // =========================================================
   // WORLD / GLOBAL HARD NEWS
   // =========================================================
@@ -26,14 +30,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.theguardian.com/world/rss", category: "world" },
   { url: "https://www.france24.com/en/live-news/rss", category: "world" },
   { url: "https://www.rt.com/rss/news/", category: "world" },
-  { url: "https://kenyatimes.co.ke/feed/", category: "world" },
-  { url: "https://europeanconservative.com/feed/", category: "world" },
- 
-  // AP hard-news working RSS-style endpoints
   { url: "https://apnews.com/hub/apf-topnews?output=rss", category: "world" },
-
-  // Google News RSS boosters for mainstream / wire pickup
-
 
   // =========================================================
   // MIDDLE EAST
@@ -43,60 +40,51 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.timesofisrael.com/feed/", category: "middle-east" },
   { url: "https://www.allisrael.com/rss", category: "middle-east" },
   { url: "https://english.alarabiya.net/tools/mrss", category: "middle-east" },
+
+  // keep requested
   { url: "https://www.middleeasteye.net/rss", category: "middle-east" },
- 
+
   // =========================================================
   // IRAN / WAR ESCALATION
   // =========================================================
-
-  // Analysis / restraint / non-mainstream strategic framing
   { url: "https://responsiblestatecraft.org/feed/", category: "iran-war" },
+
+  // keep requested
   { url: "http://original.antiwar.com/feed/", category: "iran-war" },
   { url: "https://warontherocks.com/feed/", category: "iran-war" },
+
   { url: "https://www.rt.com/rss/op-ed/", category: "iran-war" },
   { url: "https://www.rt.com/rss/news/line/", category: "iran-war" },
 
-  // Regional / Iran-side / adversarial narratives
+  // keep requested
   { url: "https://tass.com/rss/v2.xml", category: "iran-war" },
+
   { url: "https://www.xinhuanet.com/english/rss/worldrss.xml", category: "iran-war" },
-
-
-  // Defense / military framing
-  { url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/global/?outputType=xml", category: "iran-war" },
-
-
-  // Major network direct feeds
+  {
+    url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/global/?outputType=xml",
+    category: "iran-war",
+  },
   { url: "https://feeds.nbcnews.com/nbcnews/public/world", category: "iran-war" },
   { url: "https://www.cbsnews.com/latest/rss/world", category: "iran-war" },
   { url: "https://abcnews.go.com/abcnews/internationalheadlines", category: "iran-war" },
-
-  // 🇮🇷 Iran state / narrative ecosystem (VERY HIGH SIGNAL)
-
-{ url: "https://www.tehrantimes.com/rss", category: "iran-war" },
-{ url: "https://en.mehrnews.com/rss", category: "iran-war" },
-  
-
-  // Search-targeted Iran war boosters
+  { url: "https://www.tehrantimes.com/rss", category: "iran-war" },
+  { url: "https://en.mehrnews.com/rss", category: "iran-war" },
   { url: "https://english.khamenei.ir/rss", category: "iran-war" },
-
- 
 
   // =========================================================
   // TECH / CONTROL SYSTEMS
   // =========================================================
   { url: "https://www.biometricupdate.com/feed/", category: "tech" },
   { url: "https://www.eff.org/rss/updates.xml", category: "tech" },
-  { url: "https://www.schneier.com/feed/", category: "tech" },
-  { url: "https://www.rt.com/rss/news/tech/", category: "tech" },
   { url: "https://reclaimthenet.org/feed/", category: "tech" },
+  { url: "https://www.rt.com/rss/news/tech/", category: "tech" },
+
+  // keep requested
   { url: "https://raweggnationalist.substack.com/feed", category: "tech" },
- 
 
   // =========================================================
   // PROPHECY / ESCHATOLOGY
-  // Keep this lean so it does not flood the main site.
   // =========================================================
-  { url: "https://endtimeheadlines.org/feed/", category: "prophecy" },
   { url: "https://www.prophecynewswatch.com/rss.xml", category: "prophecy" },
   { url: "https://www1.cbn.com/rss-cbn-news-jerusalemdateline.xml", category: "prophecy" },
 
@@ -108,7 +96,6 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://feeds.feedburner.com/zerohedge/feed", category: "finance" },
   { url: "https://www.federalreserve.gov/feeds/press_all.xml", category: "finance" },
   { url: "https://www.rt.com/rss/business/", category: "finance" },
- 
 
   // =========================================================
   // HEALTH / MEDICAL / BIO
@@ -118,17 +105,12 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.nih.gov/news-events/news-releases/rss.xml", category: "health" },
   { url: "https://www.statnews.com/feed/", category: "health" },
   { url: "https://www.fiercehealthcare.com/rss/xml", category: "health" },
-  { url: "https://raweggnationalist.substack.com/feed", category: "health" },
 
   // =========================================================
   // RELIGION / IDEOLOGY
   // =========================================================
-  { url: "https://religionnews.com/feed/", category: "religion" },
-  { url: "https://www.christianpost.com/rss", category: "religion" },
-  { url: "https://www.firstthings.com/rss/web-exclusives", category: "religion" },
-  { url: "https://www.realclearreligion.org/index.xml", category: "religion" },
   { url: "https://feeds.christianitytoday.com/christianitytoday/ctmag", category: "religion" },
-
+  { url: "https://www.firstthings.com/rss/web-exclusives", category: "religion" },
 
   // =========================================================
   // CRYPTO
@@ -136,6 +118,42 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml", category: "crypto" },
   { url: "https://cryptopotato.com/feed/", category: "crypto" },
   { url: "https://thedefiant.io/feed/", category: "crypto" },
+];
+
+// =========================================================
+// EXTENDED FEEDS
+// Keep these sources, but better for enrichment/background jobs
+// =========================================================
+export const EXTENDED_NEWS_FEEDS: NewsFeed[] = [
+  // WORLD / ANALYSIS / ALT
+  { url: "https://kenyatimes.co.ke/feed/", category: "world" },
+
+  // keep requested
+  { url: "https://europeanconservative.com/feed/", category: "world" },
+
+  // TECH / ANALYSIS / BLOG
+  { url: "https://www.schneier.com/feed/", category: "tech" },
+
+  // PROPHECY / HEAVIER / MORE VARIABLE
+  { url: "https://endtimeheadlines.org/feed/", category: "prophecy" },
+
+  // RELIGION / VARIABLE FORMATTING
+  { url: "https://religionnews.com/feed/", category: "religion" },
+  { url: "https://www.christianpost.com/rss", category: "religion" },
+  { url: "https://www.realclearreligion.org/index.xml", category: "religion" },
+
+  // HEALTH / DUPLICATE ALT SOURCE
+  { url: "https://raweggnationalist.substack.com/feed", category: "health" },
+];
+
+// =========================================================
+// BACKWARD-COMPAT EXPORT
+// Your current code can keep using NEWS_FEEDS for now.
+// Later, main pages should switch to CORE_NEWS_FEEDS only.
+// =========================================================
+export const NEWS_FEEDS: NewsFeed[] = [
+  ...CORE_NEWS_FEEDS,
+  ...EXTENDED_NEWS_FEEDS,
 ];
 
 export const NOISE_FEEDS: { url: string; category?: string }[] = [
@@ -151,10 +169,3 @@ export const PINNED_LINKS: { title: string; url: string; source?: string }[] = [
 export const BLACKLIST: string[] = [
   // "example.com"
 ];
-
-
-
-
-
-
-
