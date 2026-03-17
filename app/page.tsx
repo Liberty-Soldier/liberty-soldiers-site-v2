@@ -19,7 +19,6 @@ import {
   pickIranRadarHeadlines,
 } from "../lib/news.select";
 
-export const dynamic = "force-dynamic";
 export const revalidate = 600;
 
 const OG_IMAGE = "/og-default.jpg";
