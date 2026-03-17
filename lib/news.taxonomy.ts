@@ -7,6 +7,7 @@ export const CATEGORY_DEFS: {
   label: string;
   description: string;
   ogImage: string;
+  href: string;
 }[] = [
   {
     slug: "war-geopolitics",
@@ -14,6 +15,7 @@ export const CATEGORY_DEFS: {
     description:
       "Conflict escalation, state power, military posture, diplomacy, and geopolitical instability.",
     ogImage: "/og-war-geopolitics.jpg",
+    href: "/news/geopolitics-war",
   },
   {
     slug: "markets-finance",
@@ -21,6 +23,7 @@ export const CATEGORY_DEFS: {
     description:
       "Markets, central banking, monetary policy, debt, liquidity, and systemic financial pressure.",
     ogImage: "/og-markets-finance.jpg",
+    href: "/news/markets-finance",
   },
   {
     slug: "digital-id-technocracy",
@@ -28,6 +31,7 @@ export const CATEGORY_DEFS: {
     description:
       "Digital identity, surveillance infrastructure, algorithmic governance, and technocratic systems.",
     ogImage: "/og-digital-id.jpg",
+    href: "/news/control-systems",
   },
   {
     slug: "power-control",
@@ -35,6 +39,7 @@ export const CATEGORY_DEFS: {
     description:
       "Narrative management, censorship, biosecurity policy, institutional power, and social control mechanisms.",
     ogImage: "/og-power-control.jpg",
+    href: "/news/power-control",
   },
   {
     slug: "religion-ideology",
@@ -42,6 +47,7 @@ export const CATEGORY_DEFS: {
     description:
       "Belief systems, institutional religion, ideological conflict, persecution, and worldview narratives.",
     ogImage: "/og-religion-ideology.jpg",
+    href: "/news/religion-ideology",
   },
   {
     slug: "prophecy-watch",
@@ -49,6 +55,7 @@ export const CATEGORY_DEFS: {
     description:
       "Prophetic framing, eschatology, end-times discourse, and narrative intersections with current events.",
     ogImage: "/og-prophecy-watch.jpg",
+    href: "/news/prophecy-watch",
   },
 ];
 
@@ -80,4 +87,8 @@ export function slugFromHardCategory(
 
 export function labelFromSlug(slug: CanonicalCategorySlug): string {
   return getCategoryDef(slug)?.label || "Power & Control";
+}
+
+export function hrefFromSlug(slug: CanonicalCategorySlug): string {
+  return getCategoryDef(slug)?.href || "/news/power-control";
 }
