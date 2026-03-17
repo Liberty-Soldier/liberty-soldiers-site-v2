@@ -10,7 +10,11 @@ import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
 import LatestReportBand from "./components/LatestReportBand";
 import IranWarCarousel from "./components/IranWarCarousel";
-import { fetchAllHeadlines } from "../lib/rss";
+import {
+  pickHomepageHeadlines,
+  pickHomepageCarouselHeadlines,
+  pickIranRadarHeadlines,
+} from "../lib/news/select";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 600;
@@ -62,25 +66,11 @@ function HeadlinesFallback() {
 
 export default async function Home() {
   const latestReport = (await getLatestReport()) ?? null;
-  const all = await fetchAllHeadlines();
+  const all = await fetchAllHeadlines(); // still needed for some panels
 
-  const iranItems = all
-    .filter((h) => {
-      const t = `${h.title} ${h.summary ?? ""}`.toLowerCase();
-      return (
-        t.includes("iran") ||
-        t.includes("tehran") ||
-        t.includes("israel") ||
-        t.includes("hezbollah") ||
-        t.includes("houthi") ||
-        t.includes("strait of hormuz") ||
-        t.includes("missile") ||
-        t.includes("airstrike") ||
-        t.includes("strike") ||
-        t.includes("retaliat")
-      );
-    })
-    .slice(0, 24);
+const headlines = pickHomepageHeadlines(all);
+const carouselHeadlines = pickHomepageCarouselHeadlines(all);
+const iranItems = pickIranRadarHeadlines(all);
 
   const nowIso = new Date().toISOString();
 
@@ -249,7 +239,7 @@ export default async function Home() {
             <div className="rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
               <Carousel title="">
                 <Suspense fallback={<HeadlinesFallback />}>
-                  <HomeHeadlines variant="carousel" items={all} />
+                 <HomeHeadlines variant="carousel" items={carouselHeadlines} />
                 </Suspense>
               </Carousel>
             </div>
@@ -257,7 +247,7 @@ export default async function Home() {
 
           <div className="hidden sm:block">
             <Suspense fallback={<HeadlinesFallback />}>
-              <HomeHeadlines variant="grid" items={all} />
+             <HomeHeadlines variant="grid" items={headlines} />
             </Suspense>
 
             <div className="mt-6">
