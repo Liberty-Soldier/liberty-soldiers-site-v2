@@ -73,16 +73,12 @@ export const NEWS_FEEDS: NewsFeed[] = [
   // 🇮🇷 Iran state / narrative ecosystem (VERY HIGH SIGNAL)
 
 { url: "https://www.tehrantimes.com/rss", category: "iran-war" },
-{ url: "https://en.irna.ir/rss", category: "iran-war" },
-{ url: "https://www.tasnimnews.com/rss", category: "iran-war" },
 { url: "https://en.mehrnews.com/rss", category: "iran-war" },
   
 
   // Search-targeted Iran war boosters
   { url: "https://english.khamenei.ir/rss", category: "iran-war" },
-  { url: "https://presstv.ir/Detail/rss", category: "iran-war" },
-  { url: "https://www.al-monitor.com/rss", category: "iran-war" },
-  { url: "https://www.iranintl.com/en/rss.xml", category: "iran-war" },
+
  
 
   // =========================================================
