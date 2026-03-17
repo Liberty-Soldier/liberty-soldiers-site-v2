@@ -1,20 +1,21 @@
 // app/page.tsx
-import type { Metadata } from "next";
 import Carousel from "./components/Carousel";
-import { Suspense } from "react";
 import HomeHeadlines from "./components/Headlines";
-import { getLatestReport } from "../lib/reports";
 import LiveBriefingAuto from "./components/LiveBriefingAuto";
 import LiveSignalDesk from "./components/LiveSignalDesk";
 import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
 import LatestReportBand from "./components/LatestReportBand";
 import IranWarCarousel from "./components/IranWarCarousel";
+
+import { getLatestReport } from "../lib/reports";
+import { fetchAllHeadlines } from "../lib/rss";
 import {
   pickHomepageHeadlines,
   pickHomepageCarouselHeadlines,
   pickIranRadarHeadlines,
-} from "../lib/news/select";
+} from "../lib/news.select";
+import { CATEGORY_DEFS } from "../lib/news.taxonomy";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 600;
