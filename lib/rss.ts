@@ -9,7 +9,6 @@ import {
 import { toHardCategory } from "./hardCategories";
 import { slugFromHardCategory } from "./news.taxonomy";
 import type { Headline } from "./news.types";
-
 export type { Headline } from "./news.types";
 
 type FeedInput =
