@@ -30,8 +30,11 @@ export function toHardCategory(input?: string): HardCategory {
     // DIGITAL / TECH / ID
     // -------------------------
     case "tech":
-    case "digital id / technocracy":
+    case "control":
     case "control systems":
+    case "digital id":
+    case "digital id / technocracy":
+    case "technocracy":
       return "Digital ID / Technocracy";
 
     // -------------------------
@@ -43,6 +46,7 @@ export function toHardCategory(input?: string): HardCategory {
     case "middle east":
     case "iran-war":
     case "iran war":
+    case "geopolitics":
     case "geopolitics & war":
     case "war & geopolitics":
       return "War & Geopolitics";
@@ -67,8 +71,11 @@ export function toHardCategory(input?: string): HardCategory {
     // -------------------------
     case "health":
     case "biosecurity":
+    case "censorship":
     case "censorship & speech":
     case "power & control":
+    case "general":
+    case "pinned":
       return "Power & Control";
 
     default:
