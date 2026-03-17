@@ -1,7 +1,7 @@
 // lib/rss.ts
 import { XMLParser } from "fast-xml-parser";
 import {
-  NEWS_FEEDS,
+  CORE_NEWS_FEEDS,
   NOISE_FEEDS,
   PINNED_LINKS,
   BLACKLIST,
@@ -810,7 +810,7 @@ async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]
 }
 
 export async function fetchAllHeadlines(): Promise<Headline[]> {
-  const feeds = (NEWS_FEEDS as unknown as FeedInput[]) ?? [];
+  const feeds = (CORE_NEWS_FEEDS as unknown as FeedInput[]) ?? [];
   const headlines = await fetchHeadlinesFromFeeds(feeds);
 
   const pinned: Headline[] = PINNED_LINKS.map((p) => ({
