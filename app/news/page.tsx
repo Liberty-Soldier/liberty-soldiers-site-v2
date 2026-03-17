@@ -15,8 +15,8 @@ import {
   pickHomepageHeadlines,
   pickHomepageCarouselHeadlines,
   pickIranRadarHeadlines,
-} from "../lib/news.select";
-import { CATEGORY_DEFS } from "../lib/news.taxonomy";
+} from "../lib/news/select";
+import { CATEGORY_DEFS } from "../lib/news/taxonomy";
 
 export const revalidate = 600;
 
