@@ -65,82 +65,97 @@ export default async function NewsPage() {
   const featuredItems = pickHomepageHeadlines(gridItems, 9);
 
   return (
-    <section className="border-t border-zinc-200 bg-zinc-50/50 py-12 sm:py-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <Link
-            href="/"
-            className="inline-flex items-center text-sm font-semibold text-zinc-700 hover:underline"
-          >
-            ← Back to home
-          </Link>
+    <>
+      {/* Small black hero */}
+      <section className="border-t border-zinc-900 bg-black">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
+          <div className="max-w-3xl">
+            <div className="mb-4">
+              <Link
+                href="/"
+                className="inline-flex items-center text-sm font-semibold text-zinc-300 transition hover:text-white"
+              >
+                ← Back to home
+              </Link>
+            </div>
 
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-            News Feed
-          </h1>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-red-400">
+              LIVE MONITORING
+            </p>
 
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-zinc-600 sm:text-base">
-            Live external signals across war, geopolitics, finance, digital
-            control systems, religion, ideology, and broader structural change.
-          </p>
-        </div>
+            <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              News Feed
+            </h1>
 
-        <div className="mb-6 flex flex-wrap gap-2">
-          {CATEGORY_DEFS.map((cat) => (
-            <Link
-              key={cat.slug}
-              href={`/category/${cat.slug}`}
-              className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
-            >
-              {cat.label}
-            </Link>
-          ))}
-        </div>
-
-        <div className="mb-10 rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6">
-          <div className="mb-4">
-            <h2 className="text-xl font-bold text-zinc-900 sm:text-2xl">
-              Featured Signals
-            </h2>
-            <p className="mt-1 text-sm text-zinc-600">
-              A balanced selection of high-priority developments.
+            <p className="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-300 sm:text-base">
+              Live external signals across war, geopolitics, finance, digital
+              control systems, religion, ideology, and broader structural
+              change.
             </p>
           </div>
-
-          <Suspense fallback={<HeadlinesFallback />}>
-            <HomeHeadlines variant="grid" items={featuredItems} limit={9} />
-          </Suspense>
         </div>
+      </section>
 
-        <div className="sm:hidden">
-          <div className="rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
-            <Carousel title="Latest Headlines">
-              <Suspense fallback={<HeadlinesFallback />}>
-                <HomeHeadlines
-                  variant="carousel"
-                  items={mobileItems}
-                  limit={24}
-                />
-              </Suspense>
-            </Carousel>
-          </div>
-        </div>
-
-        <div className="hidden sm:block">
-          <div className="mb-4">
-            <h2 className="text-xl font-bold text-zinc-900 sm:text-2xl">
-              All Headlines
-            </h2>
-            <p className="mt-1 text-sm text-zinc-600">
-              Full monitored feed, sorted and normalized.
-            </p>
+      {/* Main content */}
+      <section className="bg-zinc-50 py-10 sm:py-12">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6 flex flex-wrap gap-2">
+            {CATEGORY_DEFS.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/category/${cat.slug}`}
+                className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
+              >
+                {cat.label}
+              </Link>
+            ))}
           </div>
 
-          <Suspense fallback={<HeadlinesFallback />}>
-            <HomeHeadlines variant="grid" items={gridItems} limit={24} />
-          </Suspense>
+          <div className="mb-10 rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6">
+            <div className="mb-4">
+              <h2 className="text-xl font-bold text-zinc-900 sm:text-2xl">
+                Featured Signals
+              </h2>
+              <p className="mt-1 text-sm text-zinc-600">
+                A balanced selection of high-priority developments.
+              </p>
+            </div>
+
+            <Suspense fallback={<HeadlinesFallback />}>
+              <HomeHeadlines variant="grid" items={featuredItems} limit={9} />
+            </Suspense>
+          </div>
+
+          <div className="sm:hidden">
+            <div className="rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
+              <Carousel title="Latest Headlines">
+                <Suspense fallback={<HeadlinesFallback />}>
+                  <HomeHeadlines
+                    variant="carousel"
+                    items={mobileItems}
+                    limit={24}
+                  />
+                </Suspense>
+              </Carousel>
+            </div>
+          </div>
+
+          <div className="hidden sm:block">
+            <div className="mb-4">
+              <h2 className="text-xl font-bold text-zinc-900 sm:text-2xl">
+                All Headlines
+              </h2>
+              <p className="mt-1 text-sm text-zinc-600">
+                Full monitored feed, sorted and normalized.
+              </p>
+            </div>
+
+            <Suspense fallback={<HeadlinesFallback />}>
+              <HomeHeadlines variant="grid" items={gridItems} limit={24} />
+            </Suspense>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
