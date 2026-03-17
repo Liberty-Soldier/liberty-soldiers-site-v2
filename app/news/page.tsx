@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import Carousel from "../components/Carousel";
 import HomeHeadlines from "../components/Headlines";
+import NewsFeedClient from "./NewsFeedClient";
 
 import { fetchAllHeadlines } from "../../lib/rss";
 import {
@@ -150,9 +151,9 @@ export default async function NewsPage() {
               </p>
             </div>
 
-            <Suspense fallback={<HeadlinesFallback />}>
-              <HomeHeadlines variant="grid" items={gridItems} limit={24} />
-            </Suspense>
+            <div className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6">
+              <NewsFeedClient items={gridItems} mode="all" />
+            </div>
           </div>
         </div>
       </section>
