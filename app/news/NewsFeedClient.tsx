@@ -1,4 +1,4 @@
-  "use client";
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import FallbackImg from "@/app/components/FallbackImg";
@@ -108,7 +108,6 @@ function fallbackForCategory(cat?: string) {
   return "/og-power-control.jpg";
 }
 
-
 function signalWeightHard(c?: string) {
   switch ((c || "").toLowerCase()) {
     case "war & geopolitics":
@@ -196,12 +195,12 @@ function sortItems(items: Item[], sort: "newest" | "signal") {
   return out;
 }
 
-function rebalanceVisible(items: Item[], cat: string) {
+function rebalanceVisible(items: Item[]) {
   const out: Item[] = [];
   const perSource = new Map<string, number>();
   const perCategory = new Map<string, number>();
 
-  const maxPerSource = cat === "All" ? 10 : 14;
+  const maxPerSource = 10;
   const maxProphecyOnAll = 12;
 
   for (const item of items) {
@@ -214,16 +213,13 @@ function rebalanceVisible(items: Item[], cat: string) {
 
     if (sourceCount >= maxPerSource) continue;
 
-    if (cat === "All") {
-      const catCount = perCategory.get(hard) || 0;
-
-      if (hard === "Prophecy Watch" && catCount >= maxProphecyOnAll) {
-        continue;
-      }
+    const catCount = perCategory.get(hard) || 0;
+    if (hard === "Prophecy Watch" && catCount >= maxProphecyOnAll) {
+      continue;
     }
 
     perSource.set(sourceKey, sourceCount + 1);
-    perCategory.set(hard, (perCategory.get(hard) || 0) + 1);
+    perCategory.set(hard, catCount + 1);
     out.push(item);
   }
 
@@ -232,10 +228,11 @@ function rebalanceVisible(items: Item[], cat: string) {
 
 export default function NewsFeedClient({
   items,
+  mode = "category",
 }: {
   items: Item[];
+  mode?: "all" | "category";
 }) {
-
   const [sort, setSort] = useState<"newest" | "signal">("newest");
   const [view, setView] = useState<"cards" | "compact">("cards");
 
@@ -252,13 +249,17 @@ export default function NewsFeedClient({
   const list = useMemo(() => {
     let out = items.filter((x) => x.category !== "Pinned");
     out = sortItems(out, sort);
-    out = rebalanceVisible(out, "All");
+
+    if (mode === "all") {
+      out = rebalanceVisible(out);
+    }
+
     return out;
-  }, [items, sort]);
+  }, [items, sort, mode]);
 
   return (
     <div>
-           <div className="sticky top-0 z-20 -mx-4 border-b border-zinc-200 bg-white/90 px-4 py-3 backdrop-blur sm:mx-0 sm:px-0">
+      <div className="sticky top-0 z-20 -mx-4 border-b border-zinc-200 bg-white/90 px-4 py-3 backdrop-blur sm:mx-0 sm:px-0">
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <div className="text-xs text-zinc-600">
@@ -337,10 +338,10 @@ export default function NewsFeedClient({
                         loading="lazy"
                         fallback={fallback}
                         className={`absolute inset-0 h-full w-full object-cover object-[50%_12%] ${
-                        isFallbackThumb ? "opacity-100 saturate-100 contrast-100" : ""
-                      }`}
+                          isFallbackThumb ? "opacity-100 saturate-100 contrast-100" : ""
+                        }`}
                       />
-           
+
                       {!isFallbackThumb && (
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                       )}
