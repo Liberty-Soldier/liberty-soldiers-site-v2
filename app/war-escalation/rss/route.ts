@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { fetchAllHeadlines } from "../../../lib/rss";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 function hostFromUrl(u: string) {
   try {
