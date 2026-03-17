@@ -20,11 +20,9 @@ export const NEWS_FEEDS: NewsFeed[] = [
   // =========================================================
   // WORLD / GLOBAL HARD NEWS
   // =========================================================
-  { url: "https://rss.dw.com/rdf/rss-en-all", category: "world" },
   { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "world" },
   { url: "https://feeds.skynews.com/feeds/rss/world.xml", category: "world" },
   { url: "https://feeds.foxnews.com/foxnews/world", category: "world" },
-  { url: "http://rss.cnn.com/rss/edition_world.rss", category: "world" },
   { url: "https://www.theguardian.com/world/rss", category: "world" },
   { url: "https://www.france24.com/en/live-news/rss", category: "world" },
   { url: "https://www.rt.com/rss/news/", category: "world" },
@@ -41,14 +39,11 @@ export const NEWS_FEEDS: NewsFeed[] = [
   // MIDDLE EAST
   // =========================================================
   { url: "https://www.france24.com/en/middle-east/rss", category: "middle-east" },
-  { url: "https://feeds.bbci.co.uk/news/world/middle_east/rss.xml", category: "middle-east" },
   { url: "https://www.jpost.com/rss/rss.xml", category: "middle-east" },
   { url: "https://www.timesofisrael.com/feed/", category: "middle-east" },
   { url: "https://www.allisrael.com/rss", category: "middle-east" },
   { url: "https://english.alarabiya.net/tools/mrss", category: "middle-east" },
   { url: "https://www.middleeasteye.net/rss", category: "middle-east" },
-  { url: "https://www.trtworld.com/rss", category: "middle-east" },
-  { url: "https://www.merip.org/feed", category: "middle-east" },
  
   // =========================================================
   // IRAN / WAR ESCALATION
@@ -59,7 +54,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "http://original.antiwar.com/feed/", category: "iran-war" },
   { url: "https://warontherocks.com/feed/", category: "iran-war" },
   { url: "https://www.rt.com/rss/op-ed/", category: "iran-war" },
-{ url: "https://www.rt.com/rss/news/line/", category: "iran-war" },
+  { url: "https://www.rt.com/rss/news/line/", category: "iran-war" },
 
   // Regional / Iran-side / adversarial narratives
   { url: "https://tass.com/rss/v2.xml", category: "iran-war" },
@@ -80,12 +75,14 @@ export const NEWS_FEEDS: NewsFeed[] = [
 { url: "https://www.tehrantimes.com/rss", category: "iran-war" },
 { url: "https://en.irna.ir/rss", category: "iran-war" },
 { url: "https://www.tasnimnews.com/rss", category: "iran-war" },
-{ url: "https://www.farsnews.ir/rss", category: "iran-war" },
 { url: "https://en.mehrnews.com/rss", category: "iran-war" },
-{ url: "https://www.isna.ir/rss", category: "iran-war" },
   
 
   // Search-targeted Iran war boosters
+  { url: "https://english.khamenei.ir/rss", category: "iran-war" },
+  { url: "https://presstv.ir/Detail/rss", category: "iran-war" },
+  { url: "https://www.al-monitor.com/rss", category: "iran-war" },
+  { url: "https://www.iranintl.com/en/rss.xml", category: "iran-war" },
  
 
   // =========================================================
@@ -125,6 +122,7 @@ export const NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.nih.gov/news-events/news-releases/rss.xml", category: "health" },
   { url: "https://www.statnews.com/feed/", category: "health" },
   { url: "https://www.fiercehealthcare.com/rss/xml", category: "health" },
+  { url: "https://raweggnationalist.substack.com/feed", category: "health" },
 
   // =========================================================
   // RELIGION / IDEOLOGY
