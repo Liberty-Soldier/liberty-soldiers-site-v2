@@ -1,8 +1,7 @@
 // app/components/LiveBriefingAuto.tsx
 import LiveBriefing, { LiveBriefingItem } from "./LiveBriefing";
 import { fetchAllHeadlines } from "@/lib/rss";
-import { pickLiveBriefingHeadlines } from "@/lib/news/select";
-
+import { pickLiveBriefingHeadlines } from "@/lib/news.select";
 export const revalidate = 300;
 
 export default async function LiveBriefingAuto() {
