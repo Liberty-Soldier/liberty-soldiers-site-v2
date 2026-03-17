@@ -946,7 +946,7 @@ function jaccard(a: Set<string>, b: Set<string>): number {
 }
 
 function dedupeBySimilarTitle(items: Headline[]): Headline[] {
-  const FUZZY_THRESHOLD = 0.9;
+  const FUZZY_THRESHOLD = 0.94;
   const WINDOW = 50;
 
   const kept: Headline[] = [];
@@ -956,9 +956,21 @@ function dedupeBySimilarTitle(items: Headline[]): Headline[] {
     const ts = titleTokens(it.title);
     let dup = false;
 
+    const currentSource = (it.source || host(it.url) || "").toLowerCase().trim();
+
     const start = Math.max(0, kept.length - WINDOW);
     for (let i = kept.length - 1; i >= start; i--) {
-      if (jaccard(ts, keptTokens[i]) >= FUZZY_THRESHOLD) {
+      const compareSource = (
+        kept[i].source ||
+        host(kept[i].url) ||
+        ""
+      ).toLowerCase().trim();
+
+      // only dedupe highly similar titles from the SAME source
+      if (
+        compareSource === currentSource &&
+        jaccard(ts, keptTokens[i]) >= FUZZY_THRESHOLD
+      ) {
         dup = true;
         break;
       }
@@ -972,7 +984,6 @@ function dedupeBySimilarTitle(items: Headline[]): Headline[] {
 
   return kept;
 }
-
 function capBySource(items: Headline[]): Headline[] {
   const perSource = new Map<string, number>();
   const out: Headline[] = [];
