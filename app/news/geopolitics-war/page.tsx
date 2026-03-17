@@ -63,12 +63,22 @@ function isGeopoliticsWar(item: Item) {
   );
 }
 
+async function fetchAllHeadlinesWithTimeout(ms = 8000): Promise<Item[]> {
+  return Promise.race([
+    fetchAllHeadlines() as Promise<Item[]>,
+    new Promise<Item[]>((resolve) =>
+      setTimeout(() => resolve([]), ms)
+    ),
+  ]);
+}
+
 export default async function GeopoliticsWarPage() {
   let externalItems: Item[] = [];
   let originalItems: Item[] = [];
 
   try {
-    const headlines = (await fetchAllHeadlines()) as Item[];
+    const headlines = await fetchAllHeadlinesWithTimeout(8000);
+
     externalItems = headlines
       .filter(isGeopoliticsWar)
       .map((item) => ({
@@ -102,7 +112,7 @@ export default async function GeopoliticsWarPage() {
     originalItems = [];
   }
 
-  const items = [...originalItems, ...externalItems].sort(
+  const items: Item[] = [...originalItems, ...externalItems].sort(
     (a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)
   );
 
