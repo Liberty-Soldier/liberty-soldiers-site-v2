@@ -1,6 +1,5 @@
 // app/contact/page.tsx
 import type { Metadata } from "next";
-import Link from "next/link";
 
 const SITE_URL = "https://libertysoldiers.com";
 
@@ -54,9 +53,7 @@ export default function ContactPage() {
           <h2 className="text-xl font-semibold text-zinc-900">
             General Contact
           </h2>
-          <p className="mt-3 text-sm leading-6 text-zinc-600">
-            Email:
-          </p>
+          <p className="mt-3 text-sm leading-6 text-zinc-600">Email:</p>
           <a
             href="mailto:briefings@libertysoldiers.com"
             className="mt-1 inline-block text-base font-medium text-zinc-900 underline underline-offset-4"
@@ -82,20 +79,13 @@ export default function ContactPage() {
           Follow Liberty Soldiers
         </h2>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Link
+          <a
             href="https://x.com/LibertySoldierz"
             target="_self"
             className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-800 transition hover:bg-zinc-100"
           >
             X / Twitter
-          </Link>
-          <Link
-            href="https://www.youtube.com/@LibertySoldiers"
-            target="_self"
-            className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-800 transition hover:bg-zinc-100"
-          >
-            YouTube
-          </Link>
+          </a>
         </div>
       </section>
     </main>
