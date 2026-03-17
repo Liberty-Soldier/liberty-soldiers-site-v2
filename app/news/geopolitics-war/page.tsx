@@ -3,6 +3,8 @@ import { getAllReports } from "@/lib/reports";
 import Link from "next/link";
 import NewsFeedClient from "../NewsFeedClient";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Geopolitics & War | Liberty Soldiers",
   description:
@@ -11,8 +13,6 @@ export const metadata = {
     canonical: "https://libertysoldiers.com/news/geopolitics-war",
   },
 };
-
-export const revalidate = 180;
 
 type Item = {
   title: string;
@@ -72,7 +72,7 @@ export default async function GeopoliticsWarPage() {
       .filter(isGeopoliticsWar)
       .map((item) => ({
         ...item,
-        kind: "external",
+        kind: "external" as const,
         isOriginal: false,
       }));
   } catch {
