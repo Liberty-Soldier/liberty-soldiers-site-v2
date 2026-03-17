@@ -1,3 +1,4 @@
+// app/components/Headlines.tsx
 import FallbackImg from "@/app/components/FallbackImg";
 
 type Item = {
@@ -176,105 +177,6 @@ function buildNewsShareAbs(args: {
   return `https://libertysoldiers.com/news/share?${sp.toString()}`;
 }
 
-function categoryBucket(h: Item): string {
-  return (h.hardCategory || h.category || "General").trim();
-}
-
-function categoryPriority(cat: string): number {
-  const c = cat.toLowerCase();
-
-  if (c.includes("war") || c.includes("geopolitics") || c.includes("iran")) return 100;
-  if (c.includes("prophecy")) return 92;
-  if (c.includes("religion") || c.includes("ideology") || c.includes("persecution")) return 88;
-  if (
-    c.includes("digital") ||
-    c.includes("technocracy") ||
-    c.includes("control") ||
-    c.includes("surveillance") ||
-    c.includes("censorship") ||
-    c.includes("speech")
-  ) {
-    return 84;
-  }
-  if (c.includes("power")) return 80;
-  if (c.includes("finance") || c.includes("crypto") || c.includes("markets")) return 55;
-
-  return 65;
-}
-
-function pickBalanced(items: Item[], total: number) {
-  const sorted = items
-    .filter((h) => h.category !== "Pinned")
-    .slice()
-    .sort((a, b) => {
-      const ta = a.publishedAt || 0;
-      const tb = b.publishedAt || 0;
-
-      const pa = categoryPriority(categoryBucket(a));
-      const pb = categoryPriority(categoryBucket(b));
-
-      if (pb !== pa) return pb - pa;
-      return tb - ta;
-    });
-
-  const MONEY = new Set(["Finance", "Crypto", "Markets & Finance"]);
-  const maxMoney = Math.min(3, Math.ceil(total / 3));
-  const perCatMax = total >= 12 ? 3 : 2;
-  const perDomainMax = 1;
-
-  const picked: Item[] = [];
-  const perCat = new Map<string, number>();
-  const perDomain = new Map<string, number>();
-  let moneyCount = 0;
-
-  for (const h of sorted) {
-    if (picked.length >= total) break;
-
-    const cat = categoryBucket(h);
-    const domain = hostFromUrl(h.url).toLowerCase();
-
-    const catCount = perCat.get(cat) || 0;
-    const domainCount = perDomain.get(domain) || 0;
-
-    if (catCount >= perCatMax) continue;
-    if (domain && domainCount >= perDomainMax) continue;
-
-    const isMoney =
-      MONEY.has(h.category || "") ||
-      MONEY.has(h.hardCategory || "") ||
-      cat.toLowerCase().includes("finance") ||
-      cat.toLowerCase().includes("crypto") ||
-      cat.toLowerCase().includes("markets");
-
-    if (isMoney && moneyCount >= maxMoney) continue;
-
-    picked.push(h);
-    perCat.set(cat, catCount + 1);
-    if (domain) perDomain.set(domain, domainCount + 1);
-    if (isMoney) moneyCount += 1;
-  }
-
-  if (picked.length < total) {
-    const used = new Set(picked.map((x) => x.url));
-
-    for (const h of sorted) {
-      if (picked.length >= total) break;
-      if (used.has(h.url)) continue;
-
-      const domain = hostFromUrl(h.url).toLowerCase();
-      const domainCount = perDomain.get(domain) || 0;
-
-      if (domain && domainCount >= 2) continue;
-
-      picked.push(h);
-      used.add(h.url);
-      if (domain) perDomain.set(domain, domainCount + 1);
-    }
-  }
-
-  return picked;
-}
-
 function HeadlineCard({
   h,
   clampTitle = false,
@@ -360,7 +262,13 @@ function HeadlineCard({
         </div>
       )}
 
-      <div className={compact ? "mt-auto flex items-center justify-between gap-3 pt-4" : "mt-3 flex items-center justify-between gap-3"}>
+      <div
+        className={
+          compact
+            ? "mt-auto flex items-center justify-between gap-3 pt-4"
+            : "mt-3 flex items-center justify-between gap-3"
+        }
+      >
         <span className="text-xs text-zinc-500">{humanAgo(h.publishedAt)}</span>
         <a
           href={shareHrefAbs}
@@ -372,16 +280,17 @@ function HeadlineCard({
     </div>
   );
 }
+
 export default function HomeHeadlines({
   variant = "grid",
   items = [],
+  limit,
 }: {
   variant?: "grid" | "carousel";
   items?: Item[];
+  limit?: number;
 }) {
-
-  const top =
-    variant === "grid" ? pickBalanced(items, 9) : pickBalanced(items, 20);
+  const top = items.slice(0, limit ?? (variant === "grid" ? 9 : 20));
 
   if (top.length === 0) {
     return (
