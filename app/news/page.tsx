@@ -104,7 +104,7 @@ export default async function NewsPage() {
             {CATEGORY_DEFS.map((cat) => (
               <Link
                 key={cat.slug}
-                href={`/category/${cat.slug}`}
+               href={cat.href}
                 className="inline-flex items-center rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
               >
                 {cat.label}
