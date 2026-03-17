@@ -30,7 +30,7 @@ type Item = {
 
 function isGeopoliticsWar(item: Item) {
   const c = `${item.category || ""} ${item.hardCategory || ""}`.toLowerCase();
-  const t = `${item.title} ${item.summary || ""}`.toLowerCase();
+  const t = `${item.title || ""} ${item.summary || ""}`.toLowerCase();
 
   if (
     c.includes("war") ||
@@ -68,7 +68,8 @@ export default async function GeopoliticsWarPage() {
   let originalItems: Item[] = [];
 
   try {
-    externalItems = ((await fetchAllHeadlines()) as Item[])
+    const headlines = (await fetchAllHeadlines()) as Item[];
+    externalItems = headlines
       .filter(isGeopoliticsWar)
       .map((item) => ({
         ...item,
@@ -101,7 +102,7 @@ export default async function GeopoliticsWarPage() {
     originalItems = [];
   }
 
-  const items: Item[] = [...originalItems, ...externalItems].sort(
+  const items = [...originalItems, ...externalItems].sort(
     (a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)
   );
 
