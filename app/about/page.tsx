@@ -1,60 +1,78 @@
+import type { Metadata } from "next";
+
+const SITE_URL = "https://libertysoldiers.com";
+
+export const metadata: Metadata = {
+  title: "About | Liberty Soldiers",
+  description:
+    "About Liberty Soldiers — independent situational awareness, geopolitical analysis, and investigative reporting.",
+  alternates: {
+    canonical: `${SITE_URL}/about`,
+  },
+};
+
 export default function AboutPage() {
   return (
-    <main className="min-h-[70vh] px-6 py-16 bg-white">
-      <div className="mx-auto max-w-4xl">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-gray-900">
+    <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mb-8 border-b border-zinc-200 pb-6">
+        <h1 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">
           About Liberty Soldiers
         </h1>
+      </div>
 
-        <p className="mt-6 text-lg text-gray-700 max-w-3xl leading-relaxed">
-          Liberty Soldiers is an independent investigative platform focused on situational awareness,
-          historical context, and the analysis of modern power structures shaping global events.
-          We publish original reports that examine headlines, narratives, and long-term trends —
-          not to provoke outrage, but to understand how perception is formed, reinforced, and directed.
+      <div className="prose prose-zinc max-w-none">
+        <p>
+          Liberty Soldiers is an independent media and analysis platform focused
+          on situational awareness, geopolitical developments, global power
+          structures, economic trends, and emerging technological systems that
+          shape the modern world.
         </p>
 
-        <p className="mt-4 text-gray-700 max-w-3xl leading-relaxed">
-          Our work operates on a simple principle: widely accepted ideas are not always widely examined.
-          Liberty Soldiers exists to question assumptions, track emerging signals, and encourage
-          critical thinking in an era of rapid information flow and narrative competition.
+        <p>
+          The project was created to provide structured monitoring of fast-moving
+          global events and to help readers better understand the signals behind
+          headlines, market shifts, conflicts, and strategic policy changes.
         </p>
 
-        <p className="mt-4 text-gray-700 max-w-3xl leading-relaxed">
-          Analysis is rooted in documented sources, historical patterns, open-source intelligence,
-          and cross-disciplinary research. Institutional messaging, media framing, and ideological
-          positioning are evaluated alongside economic, geopolitical, and technological developments.
+        <h2>Editorial Focus</h2>
+
+        <ul>
+          <li>Geopolitics and military developments</li>
+          <li>Economic and financial system trends</li>
+          <li>Technology, digital identity, and control systems</li>
+          <li>Media narratives and information warfare</li>
+          <li>Long-term global strategic shifts</li>
+        </ul>
+
+        <h2>Independence</h2>
+
+        <p>
+          Liberty Soldiers operates as an independent publishing platform. The
+          site aggregates news signals from multiple sources and also publishes
+          original analysis and investigative reports.
         </p>
 
-        <div className="mt-10 rounded-2xl border border-gray-200 bg-gray-50 p-6">
-          <h2 className="text-xl font-bold text-gray-900">
-            What We Publish
-          </h2>
-          <ul className="mt-4 space-y-2 text-gray-700 list-disc list-inside">
-            <li>Investigative reports tied to real-world events and global headlines</li>
-            <li>Historical analysis of political, financial, technological, and ideological systems</li>
-            <li>Situational awareness briefings focused on long-term patterns and emerging risks</li>
-            <li>Signal tracking of geopolitical escalation, market shifts, and structural change</li>
-          </ul>
-        </div>
+        <p>
+          Content is intended to encourage critical thinking, situational
+          awareness, and informed interpretation of complex global developments.
+        </p>
 
-        <div className="mt-8 rounded-2xl border border-gray-200 bg-gray-50 p-6">
-          <h2 className="text-xl font-bold text-gray-900">
-            Publishing Standard
-          </h2>
-          <p className="mt-3 text-gray-700 leading-relaxed">
-            Liberty Soldiers distinguishes between verified information, analysis, and theory.
-            Claims are examined through historical continuity, documented evidence, and
-            transparent reasoning. When uncertainty exists, it is acknowledged rather than concealed.
-            The objective is clarity — not conformity.
-          </p>
-        </div>
+        <h2>Mission</h2>
 
-        <div className="mt-10">
-          <p className="text-sm text-gray-500 max-w-3xl">
-            This page will continue to expand with contributor guidelines, sourcing methodology,
-            and contact information as the platform grows.
-          </p>
-        </div>
+        <p>
+          The mission of Liberty Soldiers is to track the convergence of power,
+          perception, and emerging systems influencing societies worldwide,
+          while providing readers with structured context and timely insight.
+        </p>
+
+        <h2>Contact</h2>
+
+        <p>
+          For inquiries or media communication, visit the contact page or email{" "}
+          <a href="mailto:briefings@libertysoldiers.com">
+            briefings@libertysoldiers.com
+          </a>.
+        </p>
       </div>
     </main>
   );
