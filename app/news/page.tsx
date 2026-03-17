@@ -1,4 +1,7 @@
 // app/page.tsx
+import type { Metadata } from "next";
+import { Suspense } from "react";
+
 import Carousel from "../components/Carousel";
 import HomeHeadlines from "../components/Headlines";
 import LiveBriefingAuto from "../components/LiveBriefingAuto";
