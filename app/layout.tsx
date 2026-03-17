@@ -68,6 +68,14 @@ export default function RootLayout({
     <html lang="en" className="bg-zinc-50 text-zinc-900">
       <body className="min-h-screen bg-zinc-50 text-zinc-900">
 
+        {/* ✅ ADSENSE AUTO ADS SCRIPT (NEW — VERY IMPORTANT) */}
+        <Script
+          async
+          strategy="afterInteractive"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5473357618900232"
+          crossOrigin="anonymous"
+        />
+
         {/* GA4 */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
@@ -85,7 +93,7 @@ export default function RootLayout({
           `}
         </Script>
 
-        {/* ✅ GOOGLE ADS TAG (VERY IMPORTANT) */}
+        {/* Google Ads Conversion Tag */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
           strategy="afterInteractive"
@@ -127,12 +135,12 @@ export default function RootLayout({
           }}
         />
 
-       <ClearSW />
-<Header />
-<TopicStrip />
+        <ClearSW />
+        <Header />
+        <TopicStrip />
 
-<main>{children}</main>
-        
+        <main>{children}</main>
+
         <footer className="border-t border-zinc-200 py-8 mt-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-6">
