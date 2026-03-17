@@ -1,7 +1,7 @@
 // app/components/SignalVsNoiseAuto.tsx
 import Link from "next/link";
 import { fetchAllHeadlines, fetchNoiseHeadlines, Headline } from "@/lib/rss";
-import { pickSignalHeadlines } from "@/lib/news.select";
+import { pickSignalHeadlines } from "@/lib/news/select";
 
 export const revalidate = 300;
 
