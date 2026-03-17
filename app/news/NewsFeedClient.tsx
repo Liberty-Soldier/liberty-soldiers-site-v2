@@ -201,7 +201,7 @@ function rebalanceVisible(items: Item[], cat: string) {
   const perSource = new Map<string, number>();
   const perCategory = new Map<string, number>();
 
-  const maxPerSource = cat === "All" ? 6 : 8;
+  const maxPerSource = cat === "All" ? 10 : 14;
   const maxProphecyOnAll = 12;
 
   for (const item of items) {
