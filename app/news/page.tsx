@@ -115,9 +115,9 @@ export default async function NewsPage() {
               </p>
             </div>
 
-            <Suspense fallback={<HeadlinesFallback />}>
-              <HomeHeadlines variant="grid" items={featuredItems} limit={9} />
-            </Suspense>
+           <Suspense fallback={<div className="py-10 text-sm opacity-70">Loading headlines...</div>}>
+  <HomeHeadlines variant="grid" items={featuredItems} limit={9} />
+</Suspense>
           </div>
 
           <div className="sm:hidden">
