@@ -16,9 +16,9 @@ import { CATEGORY_DEFS } from "../../lib/news.taxonomy";
 
 export const revalidate = 300;
 
-const OG_IMAGE = "/og-default.jpg";
+const OG_IMAGE = "https://libertysoldiers.com/og-default.jpg";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "News Feed | Liberty Soldiers",
   description:
     "Live news feed tracking geopolitics, conflict, finance, control systems, religion, and emerging global developments.",
@@ -31,7 +31,6 @@ export const metadata: Metadata = {
       "Live news feed tracking geopolitics, conflict, finance, control systems, religion, and emerging global developments.",
     url: "https://libertysoldiers.com/news",
     siteName: "Liberty Soldiers",
-    type: "website",
     images: [
       {
         url: OG_IMAGE,
@@ -40,6 +39,8 @@ export const metadata: Metadata = {
         alt: "Liberty Soldiers News Feed",
       },
     ],
+    locale: "en_US",
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",
@@ -49,14 +50,6 @@ export const metadata: Metadata = {
     images: [OG_IMAGE],
   },
 };
-
-function HeadlinesFallback() {
-  return (
-    <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 text-zinc-600">
-      Loading headlines…
-    </div>
-  );
-}
 
 export default async function NewsPage() {
   const all = await fetchAllHeadlines();
