@@ -122,11 +122,11 @@ export default async function NewsPage() {
 
           <div className="sm:hidden">
             <div className="rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
-              <Carousel title="Latest Headlines">
-                <Suspense fallback={<HeadlinesFallback />}>
-                  <HomeHeadlines
-                    variant="carousel"
-                    items={mobileItems}
+             <Carousel title="Latest Headlines">
+  <Suspense fallback={<div className="py-6 text-sm opacity-70">Loading headlines...</div>}>
+    <HomeHeadlines
+      variant="carousel"
+      items={mobileItems}
                     limit={24}
                   />
                 </Suspense>
