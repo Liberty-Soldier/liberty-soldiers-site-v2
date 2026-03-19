@@ -17,19 +17,19 @@ export type Report = {
 
 export const reports: Report[] = [
   {
-  slug: "information-war-intensifies",
+  slug: "elite-dissent-kent-resignation",
   title:
-    "Information War Intensifies as Conflicting Reports Shape Global Perception",
+    "Elite Dissent: What Joseph Kent’s Wartime Resignation Signals",
   excerpt:
-    "Conflicting battlefield claims, intelligence leaks, media framing, and narrative control are becoming part of the conflict itself as perception battles shape global understanding of events.",
-  dateISO: "2026-03-16",
+    "A rare wartime resignation by a senior U.S. counterterrorism intelligence official is raising strategic questions about internal consensus, escalation risks, and the trajectory of the Iran conflict.",
+  dateISO: "2026-03-19",
   byline: "Liberty Soldiers Analysis Desk",
-  coverImage: "/og-information-war.jpg",
-  category: "Narrative Warfare",
+  coverImage: "/hero-intelligence-resignation.jpg",
+  category: "Strategic Signals",
   hardCategory: "War & Geopolitics",
-  readTime: "4 min",
+  readTime: "6 min",
   featured: true,
-  priority: 0.92,
+  priority: 0.96,
   kind: "analysis",
 },
   {
