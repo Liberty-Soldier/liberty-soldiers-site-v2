@@ -33,7 +33,7 @@ export const reports: Report[] = [
   kind: "analysis",
 },
   
-  {
+{
   slug: "stranded-in-the-gulf-safe-corridor-seafarers",
   title:
     "Stranded in the Gulf: 20,000 Seafarers, a Safe Corridor Push, and the New Hormuz Risk",
