@@ -141,118 +141,88 @@ export default function KentResignationPage() {
           caption="Personnel decisions inside the national security structure can signal deeper strategic disagreements."
         />
 
-        <div className="space-y-6 leading-relaxed text-zinc-800">
+        <h2>Elite Dissent: Why Did Joseph Kent Resign During an Active War?</h2>
 
-          <p className="text-lg font-medium text-zinc-900">
-            The wartime resignation of senior counterterrorism official Joseph
-            Kent may appear at first glance to be just another Washington
-            personnel shift. But departures tied directly to disagreement over
-            active conflict are far less routine — and often carry strategic
-            meaning beyond the headline.
-          </p>
+<p className="text-lg font-semibold text-zinc-900">
+Senior intelligence officials do not normally resign in the middle of a war.
+</p>
 
-          <h2 className="pt-4 text-2xl font-bold tracking-tight text-zinc-900">
-            Why wartime intelligence resignations matter
-          </h2>
+<p>
+Personnel turnover is common in Washington. But resignations tied directly to
+active military operations are rare — and often signal deeper strategic tension
+inside the national security system.
+</p>
 
-          <p>
-            Intelligence agencies operate within a culture that strongly
-            discourages public dissent. Once national policy is set, senior
-            officials are generally expected to maintain institutional unity.
-            Resigning during an active conflict can mean forfeiting influence
-            over strategy at the very moment decisions are most critical.
-          </p>
+<p className="text-lg font-semibold text-zinc-900">
+Joseph Kent served through years of controversial conflicts without walking away.
+</p>
 
-          <p>
-            For this reason, such resignations are relatively rare. When they do
-            occur, they can signal internal disagreements over threat
-            assessments, escalation risks, alliance pressures, or the long-term
-            trajectory of the war itself.
-          </p>
+<p>
+He remained in government roles during the wars in Iraq and Afghanistan, through
+the rise of ISIS, and during major counterterrorism campaigns that reshaped U.S.
+foreign policy. He did not resign then.
+</p>
 
-          <h2 className="pt-4 text-2xl font-bold tracking-tight text-zinc-900">
-            Career context increases the significance
-          </h2>
+<p className="text-lg font-semibold text-zinc-900">
+So why now — during the Iran conflict?
+</p>
 
-          <p>
-            Kent served through multiple major security crises without stepping
-            down. His career spanned the global counterterrorism campaigns that
-            followed the September 11 attacks, the wars in Iraq and Afghanistan,
-            and the multinational effort to dismantle the territorial control of
-            ISIS.
-          </p>
+<h2>His own words raise the stakes</h2>
 
-          <p>
-            Remaining in position during these controversial conflicts suggests
-            his resignation now is less about routine political change and more
-            about a perceived shift in strategic conditions or threat
-            interpretation.
-          </p>
+<p>
+In his resignation letter, Kent wrote that he could not continue supporting the
+war effort.
+</p>
 
-          <SectionImage
-            src="/policy-war-briefing.jpg"
-            alt="Strategic policy briefing environment"
-            caption="Internal threat assessments and escalation debates often shape the direction of conflicts long before public narratives adjust."
-          />
+<blockquote className="rounded-2xl border-l-4 border-zinc-900 bg-zinc-50 px-5 py-4 text-lg font-semibold leading-relaxed text-zinc-900">
+“I cannot in good conscience support the ongoing war in Iran.”
+</blockquote>
 
-          <h2 className="pt-4 text-2xl font-bold tracking-tight text-zinc-900">
-            Signals of consensus strain
-          </h2>
+<p>
+He also challenged the core justification for the conflict, stating that Iran
+did not present an immediate danger to the United States.
+</p>
 
-          <p>
-            Wars require elite consensus to sustain long-term operations.
-            Fractures inside intelligence leadership can indicate disagreement
-            about objectives, risk tolerance, or whether diplomatic off-ramps
-            remain viable.
-          </p>
+<blockquote className="rounded-2xl border-l-4 border-zinc-900 bg-zinc-50 px-5 py-4 text-lg font-semibold leading-relaxed text-zinc-900">
+“Iran posed no imminent threat to our nation.”
+</blockquote>
 
-          <p>
-            Such moments historically appear early in conflicts that later
-            expand. They do not necessarily predict outcomes, but they do suggest
-            that the strategic picture is more contested than public messaging
-            alone may reveal.
-          </p>
+<p>
+Such language from a senior counterterrorism official is not routine dissent.
+It suggests internal disagreement about threat assessments, escalation risks,
+and the decision-making process that led to military action.
+</p>
 
-          <h2 className="pt-4 text-2xl font-bold tracking-tight text-zinc-900">
-            Information war and perception management
-          </h2>
+<h2>When consensus fractures, escalation risk rises</h2>
 
-          <p>
-            In modern conflict, narrative control operates alongside military
-            operations. High-profile resignations can influence public debate,
-            alliance confidence, and investor perception. They can also trigger
-            stronger messaging campaigns aimed at reinforcing unity and
-            legitimacy.
-          </p>
+<p>
+Wars depend on institutional unity. Public messaging often projects certainty:
+the threat is clear, the strategy is justified, the objectives are necessary.
+</p>
 
-          <p>
-            The result is often a widening gap between official certainty and
-            internal caution — a dynamic that has shaped many past conflicts.
-          </p>
+<p>
+But history shows that internal fractures frequently appear before conflicts
+expand. Intelligence officials are trained to assess risk — not shape political
+narratives. When one chooses to walk away during escalation, it raises questions
+about what is happening behind closed doors.
+</p>
 
-          <blockquote className="rounded-2xl border-l-4 border-zinc-900 bg-zinc-50 px-5 py-4 text-lg font-semibold leading-relaxed text-zinc-900">
-            When intelligence leaders walk away during wartime, the signal is
-            rarely about one individual. It is about the stability of the
-            consensus guiding the conflict.
-          </blockquote>
+<ul className="list-disc pl-6 space-y-2">
+<li>Are threat assessments evolving?</li>
+<li>Is policy being driven by momentum rather than strategy?</li>
+<li>Are diplomatic off-ramps narrowing?</li>
+<li>How much internal dissent remains unseen?</li>
+</ul>
 
-          <h2 className="pt-4 text-2xl font-bold tracking-tight text-zinc-900">
-            What to watch next
-          </h2>
+<p>
+Kent’s resignation alone does not determine the future of the conflict. But it
+does highlight a critical reality of modern warfare:
+</p>
 
-          <p>
-            Key indicators include whether additional officials express concern,
-            whether strategic objectives shift, and whether diplomatic pressure
-            intensifies. Personnel changes alone do not determine war outcomes —
-            but they can reveal underlying tensions shaping future decisions.
-          </p>
-
-          <p className="text-lg font-semibold text-zinc-900">
-            In complex conflicts, the most important warnings often come not from
-            the front lines, but from inside the institutions responsible for
-            managing them.
-          </p>
-
+<p className="text-lg font-semibold text-zinc-900">
+The most important warning signs often emerge from inside the institutions
+responsible for managing escalation — not from the battlefield itself.
+</p>
           <hr className="my-10 border-zinc-200" />
 
           <section>
