@@ -17,6 +17,23 @@ export type Report = {
 
 export const reports: Report[] = [
   {
+  slug: "qatar-under-fire-ras-laffan-response",
+  title:
+    "Qatar Under Fire: Ras Laffan, Retaliation, and Doha’s Public Break",
+  excerpt:
+    "The strike on Ras Laffan pulled Qatar directly into the expanding conflict, forcing Doha into a sharper public posture as the war presses deeper into Gulf energy infrastructure.",
+  dateISO: "2026-03-19",
+  byline: "Liberty Soldiers",
+  coverImage: "/hero-qatar-ras-laffan.jpg",
+  category: "Energy & Escalation",
+  hardCategory: "War & Geopolitics",
+  readTime: "5 min",
+  featured: true,
+  priority: 0.95,
+  kind: "analysis",
+},
+  
+  {
   slug: "stranded-in-the-gulf-safe-corridor-seafarers",
   title:
     "Stranded in the Gulf: 20,000 Seafarers, a Safe Corridor Push, and the New Hormuz Risk",
