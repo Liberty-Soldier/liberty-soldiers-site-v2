@@ -17,6 +17,22 @@ export type Report = {
 
 export const reports: Report[] = [
   {
+  slug: "information-war-intensifies",
+  title:
+    "Information War Intensifies as Conflicting Reports Shape Global Perception",
+  excerpt:
+    "Conflicting battlefield claims, intelligence leaks, media framing, and narrative control are becoming part of the conflict itself as perception battles shape global understanding of events.",
+  dateISO: "2026-03-16",
+  byline: "Liberty Soldiers Analysis Desk",
+  coverImage: "/og-information-war.jpg",
+  category: "Narrative Warfare",
+  hardCategory: "War & Geopolitics",
+  readTime: "4 min",
+  featured: true,
+  priority: 0.92,
+  kind: "analysis",
+},
+  {
     slug: "information-war-intensifies",
     title:
       "Information War Intensifies as Conflicting Reports Shape Global Perception",
