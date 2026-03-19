@@ -17,6 +17,22 @@ export type Report = {
 
 export const reports: Report[] = [
   {
+  slug: "stranded-in-the-gulf-safe-corridor-seafarers",
+  title:
+    "Stranded in the Gulf: 20,000 Seafarers, a Safe Corridor Push, and the New Hormuz Risk",
+  excerpt:
+    "A proposed safe corridor for stranded crews shows how badly Gulf shipping has deteriorated as Hormuz disruption evolves from market risk into a managed emergency.",
+  dateISO: "2026-03-19",
+  byline: "Liberty Soldiers",
+  coverImage: "/hero-gulf-safe-corridor.jpg",
+  category: "Shipping & Escalation",
+  hardCategory: "War & Geopolitics",
+  readTime: "5 min",
+  featured: true,
+  priority: 0.93,
+  kind: "analysis",
+},
+  {
   slug: "elite-dissent-kent-resignation",
   title:
     "Elite Dissent: What Joseph Kent’s Wartime Resignation Signals",
