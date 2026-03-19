@@ -17,6 +17,38 @@ export type Report = {
 
 export const reports: Report[] = [
   {
+  slug: "pentagon-war-funding-surge",
+  title:
+    "War Funding Surge: Pentagon Seeks $200 Billion as Iran Conflict Expands",
+  excerpt:
+    "A massive Pentagon funding request signals expectations of prolonged conflict and growing economic pressure.",
+  dateISO: "2026-03-19",
+  byline: "Liberty Soldiers",
+  coverImage: "/hero-war-funding.jpg",
+  category: "War Economics",
+  hardCategory: "War & Geopolitics",
+  readTime: "4 min",
+  featured: true,
+  priority: 0.94,
+  kind: "analysis",
+},
+  {
+  slug: "congress-war-powers-showdown",
+  title:
+    "Congress War Powers Showdown: Senate Backs Continued Iran Operations",
+  excerpt:
+    "The Senate’s rejection of a war-powers resolution highlights institutional backing for continued escalation and raises new questions about constitutional oversight.",
+  dateISO: "2026-03-19",
+  byline: "Liberty Soldiers",
+  coverImage: "/hero-senate-war-powers.jpg",
+  category: "Power & Escalation",
+  hardCategory: "War & Geopolitics",
+  readTime: "5 min",
+  featured: true,
+  priority: 0.97,
+  kind: "analysis",
+},
+  {
   slug: "qatar-under-fire-ras-laffan-response",
   title:
     "Qatar Under Fire: Ras Laffan, Retaliation, and Doha’s Public Break",
