@@ -17,6 +17,22 @@ export type Report = {
 
 export const reports: Report[] = [
   {
+  slug: "global-threat-warning-tourist-targets",
+  title:
+    "Global Threat Expansion: Iranian Warning Signals Conflict May Reach Civilian Zones",
+  excerpt:
+    "Threat rhetoric suggesting U.S. and Israeli personnel may be unsafe even in tourist locations signals a widening psychological and geographic dimension of the conflict.",
+  dateISO: "2026-03-20",
+  byline: "Liberty Soldiers",
+  coverImage: "/hero-global-threat-warning.jpg",
+  category: "Escalation Signals",
+  hardCategory: "War & Geopolitics",
+  readTime: "4 min",
+  featured: true,
+  priority: 0.96,
+  kind: "analysis",
+},
+  {
   slug: "pentagon-war-funding-surge",
   title:
     "War Funding Surge: Pentagon Seeks $200 Billion as Iran Conflict Expands",
