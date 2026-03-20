@@ -19,9 +19,9 @@ export const reports: Report[] = [
   {
   slug: "war-leaves-the-battlefield-global-threat",
   title:
-    "When War Leaves the Battlefield: Iran’s Global Threat Changes the Rules",
+    "Iran’s Global Threat: When War Leaves the Battlefield",
   excerpt:
-    "Iran’s warning that enemy personnel may not be safe even in resorts and tourist centers signals a dangerous shift from regional warfare to global fear, soft-target pressure, and psychological escalation.",
+    "Iranian officials have warned that enemy personnel may not be safe anywhere in the world, including resorts, tourist centers, and recreational areas — signaling a potential shift toward global asymmetric retaliation.",
   dateISO: "2026-03-20",
   byline: "Liberty Soldiers",
   coverImage: "/hero-global-threat-warning.jpg",
