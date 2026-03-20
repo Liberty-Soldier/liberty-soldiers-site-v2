@@ -17,19 +17,19 @@ export type Report = {
 
 export const reports: Report[] = [
   {
-  slug: "global-threat-warning-tourist-targets",
+  slug: "war-leaves-the-battlefield-global-threat",
   title:
-    "Global Threat Expansion: Iranian Warning Signals Conflict May Reach Civilian Zones",
+    "When War Leaves the Battlefield: Iran’s Global Threat Changes the Rules",
   excerpt:
-    "Threat rhetoric suggesting U.S. and Israeli personnel may be unsafe even in tourist locations signals a widening psychological and geographic dimension of the conflict.",
+    "Iran’s warning that enemy personnel may not be safe even in resorts and tourist centers signals a dangerous shift from regional warfare to global fear, soft-target pressure, and psychological escalation.",
   dateISO: "2026-03-20",
   byline: "Liberty Soldiers",
   coverImage: "/hero-global-threat-warning.jpg",
   category: "Escalation Signals",
   hardCategory: "War & Geopolitics",
-  readTime: "4 min",
+  readTime: "5 min",
   featured: true,
-  priority: 0.96,
+  priority: 0.97,
   kind: "analysis",
 },
   {
