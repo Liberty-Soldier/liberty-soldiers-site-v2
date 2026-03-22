@@ -1,19 +1,25 @@
 import ShareButton from "../ShareButton";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL("https://libertysoldiers.com"),
   title:
     "Power as a Weapon: When War Talk Turns the Grid Into a Target | Liberty Soldiers",
   description:
     "As Washington and Tehran openly threaten energy infrastructure, the battlefield is no longer confined overseas. History shows power grids are vulnerable — and modern society is built on uninterrupted electricity.",
+  alternates: {
+    canonical: "/news/power-as-a-weapon-grid-war-homeland-risk",
+  },
   openGraph: {
+    type: "article",
+    url: "/news/power-as-a-weapon-grid-war-homeland-risk",
     title:
       "Power as a Weapon: When War Talk Turns the Grid Into a Target",
     description:
       "Once power plants enter the rhetoric, the battlefield stops being distant. The grid itself becomes part of the target map.",
-    url: "https://libertysoldiers.com/news/power-as-a-weapon-grid-war-homeland-risk",
     images: [
       {
-        url: "https://libertysoldiers.com/hero-power-grid-target.jpg",
+        url: "/hero-power-grid-target.jpg",
         width: 1200,
         height: 630,
         alt: "Power grid infrastructure under geopolitical threat",
@@ -26,7 +32,7 @@ export const metadata = {
       "Power as a Weapon: When War Talk Turns the Grid Into a Target",
     description:
       "Once power plants enter the rhetoric, the battlefield stops being distant.",
-    images: ["https://libertysoldiers.com/hero-power-grid-target.jpg"],
+    images: ["/hero-power-grid-target.jpg"],
   },
 };
 
