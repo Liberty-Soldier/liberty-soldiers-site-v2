@@ -17,6 +17,22 @@ export type Report = {
 
 export const reports: Report[] = [
   {
+  slug: "energy-war-fertilizer-food-crisis-data",
+  title:
+    "From Energy Shock to Food Crisis: Data Signals the Next Phase of the Iran Conflict",
+  excerpt:
+    "Energy disruption in the Gulf threatens fertilizer supply chains that historically precede global food inflation. Institutional warnings suggest the economic fallout may peak months after the battlefield headlines fade.",
+  dateISO: "2026-03-23",
+  byline: "Liberty Soldiers",
+  coverImage: "/hero-energy-food-shock.jpg",
+  category: "Markets & Finance",
+  hardCategory: "Power & Control",
+  readTime: 8,
+  featured: true,
+  priority: 1,
+  kind: "analysis"
+}
+  {
   slug: "power-as-a-weapon-grid-war-homeland-risk",
   title:
     "Power as a Weapon: When War Talk Turns the Grid Into a Target",
