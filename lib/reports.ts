@@ -16,6 +16,22 @@ export type Report = {
 };
 
 export const reports: Report[] = [
+  {
+  slug: "war-as-a-market-event-human-cost-ignored",
+  title:
+    "War as a Market Event: When Financial Fear Matters More Than Human Lives",
+  excerpt:
+    "As missiles fly and civilians die, much of the world is focused on oil prices, stock markets, and betting odds. Modern conflict is increasingly experienced as an economic signal rather than a human tragedy.",
+  dateISO: "2026-03-23",
+  byline: "Liberty Soldiers",
+  coverImage: "/hero-war-market-psychology.jpg",
+  category: "Narrative Warfare",
+  hardCategory: "War & Geopolitics",
+  readTime: "7 min",
+  featured: true,
+  priority: 0.99,
+  kind: "analysis",
+},
 {
   slug: "countdown-global-energy-food-shock",
   title:
