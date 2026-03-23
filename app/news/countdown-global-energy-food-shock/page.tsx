@@ -10,9 +10,9 @@ const ARTICLE_TITLE =
   "They Knew the Cost: Why Escalate Toward Iran If the Fallout Was So Obvious?";
 
 const ARTICLE_SUMMARY =
-  "The harder question behind the Iran confrontation is not whether the economic fallout was foreseeable, but whether U.S. planners understood the downstream damage and moved forward anyway — leaving ordinary households to absorb the delayed cost through fertilizer stress, food inflation, and supply-chain disruption.";
+  "With a trillion-dollar military machine and vast intelligence budgets, U.S. planners could model the economic shock of Hormuz disruption. The real question is whether the fallout was understood — and accepted — before escalation.";
 
-const OG_IMAGE = `${SITE_URL}/og/hero-energy-food-shock.jpg`;
+const OG_IMAGE = `${SITE_URL}/hero-energy-food-shock.jpg`;
 
 export const metadata: Metadata = {
   title: ARTICLE_TITLE,
@@ -65,8 +65,8 @@ export default function Page() {
       </header>
 
       <img
-        src="/og/hero-energy-food-shock.jpg"
-        alt="Energy shock, fertilizer stress, and food inflation risk"
+        src="/hero-energy-food-shock.jpg"
+        alt="Energy disruption and food inflation risk"
         className="mb-8 w-full rounded-lg"
       />
 
