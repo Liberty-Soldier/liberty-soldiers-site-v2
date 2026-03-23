@@ -32,23 +32,21 @@ export const reports: Report[] = [
     priority: 1,
     kind: "analysis",
   },
-
   {
     slug: "power-as-a-weapon-grid-war-homeland-risk",
-  title:
-    "Power as a Weapon: When War Talk Turns the Grid Into a Target",
-  excerpt:
-    "As Washington and Tehran openly threaten energy infrastructure, the battlefield is no longer confined overseas. History shows power grids are vulnerable — and modern society is built on uninterrupted electricity.",
-  dateISO: "2026-03-22",
-  byline: "Liberty Soldiers",
-  coverImage: "/hero-power-grid-target.jpg",
-  category: "Escalation Signals",
-  hardCategory: "War & Geopolitics",
-  readTime: "8 min",
-  featured: true,
-  priority: 0.98,
-  kind: "analysis",
-},
+    title: "Power as a Weapon: When War Talk Turns the Grid Into a Target",
+    excerpt:
+      "As Washington and Tehran openly threaten energy infrastructure, the battlefield is no longer confined overseas. History shows power grids are vulnerable — and modern society is built on uninterrupted electricity.",
+    dateISO: "2026-03-22",
+    byline: "Liberty Soldiers",
+    coverImage: "/hero-power-grid-target.jpg",
+    category: "Escalation Signals",
+    hardCategory: "War & Geopolitics",
+    readTime: "8 min",
+    featured: true,
+    priority: 0.98,
+    kind: "analysis",
+  },
   {
   slug: "war-leaves-the-battlefield-global-threat",
   title:
