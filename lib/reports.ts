@@ -16,25 +16,25 @@ export type Report = {
 };
 
 export const reports: Report[] = [
-   const report = {
-  slug: "countdown-global-energy-food-shock",
-  title:
-    "Countdown to a Global Supply Shock: Energy War Now, Food Crisis Next?",
-  excerpt:
-    "Warnings from the IEA, fertilizer market stress, and chokepoint disruption in the Gulf point to a delayed food-price shock that may hit months after the battlefield headlines fade.",
-  dateISO: "2026-03-23",
-  byline: "Liberty Soldiers",
-  coverImage: "/og/hero-energy-food-shock.jpg",
-  category: "Markets & Finance",
-  hardCategory: "Power & Control",
-  readTime: 8,
-  featured: true,
-  priority: 1,
-  kind: "analysis",
-};
-export default report;
   {
-  slug: "power-as-a-weapon-grid-war-homeland-risk",
+    slug: "countdown-global-energy-food-shock",
+    title:
+      "Countdown to a Global Supply Shock: Energy War Now, Food Crisis Next?",
+    excerpt:
+      "Warnings from the IEA, fertilizer market stress, and chokepoint disruption in the Gulf point to a delayed food-price shock that may hit months after the battlefield headlines fade.",
+    dateISO: "2026-03-23",
+    byline: "Liberty Soldiers",
+    coverImage: "/og/hero-energy-food-shock.jpg",
+    category: "Markets & Finance",
+    hardCategory: "Power & Control",
+    readTime: "8 min",
+    featured: true,
+    priority: 1,
+    kind: "analysis",
+  },
+
+  {
+    slug: "power-as-a-weapon-grid-war-homeland-risk",
   title:
     "Power as a Weapon: When War Talk Turns the Grid Into a Target",
   excerpt:
