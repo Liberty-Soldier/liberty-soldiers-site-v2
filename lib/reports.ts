@@ -16,18 +16,18 @@ export type Report = {
 };
 
 export const reports: Report[] = [
-  {
-  slug: "war-as-a-market-event-human-cost-ignored",
+ {
+  slug: "war-as-spectacle-market-disconnect",
   title:
-    "War as a Market Event: When Financial Fear Matters More Than Human Lives",
+    "War as Spectacle: While Civilians Die, the World Watches the Markets",
   excerpt:
-    "As missiles fly and civilians die, much of the world is focused on oil prices, stock markets, and betting odds. Modern conflict is increasingly experienced as an economic signal rather than a human tragedy.",
+    "Missiles are striking cities and civilians are dying in real time — yet much of the global conversation revolves around oil prices, betting odds, and financial impact.",
   dateISO: "2026-03-23",
   byline: "Liberty Soldiers",
-  coverImage: "/hero-war-market-psychology.jpg",
+  coverImage: "/hero-war-spectacle.jpg",
   category: "Narrative Warfare",
   hardCategory: "War & Geopolitics",
-  readTime: "7 min",
+  readTime: "6 min",
   featured: true,
   priority: 0.99,
   kind: "analysis",
