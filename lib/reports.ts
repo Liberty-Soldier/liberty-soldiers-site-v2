@@ -16,6 +16,22 @@ export type Report = {
 };
 
 export const reports: Report[] = [
+  {
+  slug: "lockdown-2-0-energy-rationing",
+  title:
+    "Lockdown 2.0? Energy Rationing Plans Revive COVID-Style Control Logic",
+  excerpt:
+    "Global energy rationing proposals are reigniting debate over behavioral control, mobility limits, and crisis governance models that resemble pandemic lockdown frameworks.",
+  dateISO: "2026-03-24",
+  byline: "Liberty Soldiers",
+  coverImage: "/hero-lockdown-2-0.jpg",
+  category: "Power & Control",
+  hardCategory: "Policy",
+  readTime: "6 min",
+  featured: true,
+  priority: 0.99,
+  kind: "analysis",
+},
  {
   slug: "war-as-spectacle-market-disconnect",
   title:
