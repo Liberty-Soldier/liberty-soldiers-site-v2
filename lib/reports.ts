@@ -16,6 +16,22 @@ export type Report = {
 };
 
 export const reports: Report[] = [
+  {
+  slug: "highlight-reel-warfare-trump-briefing-concerns",
+  title:
+    "Highlight-Reel Warfare: Concerns Grow Over Trump’s Strike Montage Briefings",
+  excerpt:
+    "Reports that President Trump has been shown rapid-cut video montages of recent U.S. strikes are raising questions about perception, escalation risk, and the gap between battlefield reality and victory messaging.",
+  dateISO: "2026-03-25",
+  byline: "Liberty Soldiers",
+  coverImage: "/hero-highlight-reel-warfare.jpg",
+  category: "Strategic Signals",
+  hardCategory: "War & Geopolitics",
+  readTime: "7 min",
+  featured: true,
+  priority: 1,
+  kind: "analysis",
+},
  {
   slug: "lockdown-2-0-energy-rationing",
   title:
