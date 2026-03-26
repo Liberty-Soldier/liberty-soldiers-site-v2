@@ -9,9 +9,9 @@ import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
 import IranWarCarousel from "./components/IranWarCarousel";
 
-import { getLatestReports } from "./lib/reports";
-import { fetchAllHeadlines } from "./lib/rss";
-import { pickIranRadarHeadlines } from "./lib/news.select";
+import { getLatestReports } from "../lib/reports";
+import { fetchAllHeadlines } from "../lib/rss";
+import { pickIranRadarHeadlines } from "../lib/news.select";
 
 export const revalidate = 600;
 
