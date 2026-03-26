@@ -117,13 +117,6 @@ function ReportCard({
 export default async function Home() {
   const all = await fetchAllHeadlines();
 
-  const latestReports = [...reports]
-    .sort(
-      (a, b) =>
-        new Date(b.dateISO).getTime() - new Date(a.dateISO).getTime()
-    )
-    .slice(0, 10);
-
 const latestReports = getLatestReports(10);
 const latestHeadlines = [...all]
   .sort((a, b) => (b.publishedAt ?? 0) - (a.publishedAt ?? 0))
