@@ -159,15 +159,12 @@ function HeadlineCard({
       rel="noreferrer"
     >
       <div className="relative h-[170px] w-full overflow-hidden bg-zinc-100">
-        <img
-          src={image}
-          alt={item.title}
-          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-          loading="lazy"
-          onError={(e) => {
-            e.currentTarget.src = "/og-default.jpg";
-          }}
-        />
+       <img
+  src={image}
+  alt={item.title}
+  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+  loading="lazy"
+/>
         <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-700">
           <span className="inline-flex h-2 w-2 rounded-full bg-red-600 motion-safe:animate-pulse" />
           External Signal
