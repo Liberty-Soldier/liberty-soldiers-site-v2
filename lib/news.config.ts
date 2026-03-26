@@ -25,12 +25,12 @@ export const CORE_NEWS_FEEDS: NewsFeed[] = [
   // WORLD / GLOBAL HARD NEWS
   // =========================================================
   { url: "https://www.aljazeera.com/xml/rss/all.xml", category: "world" },
-  { url: "https://feeds.skynews.com/feeds/rss/world.xml", category: "world" },
   { url: "https://feeds.foxnews.com/foxnews/world", category: "world" },
   { url: "https://www.theguardian.com/world/rss", category: "world" },
   { url: "https://www.france24.com/en/live-news/rss", category: "world" },
   { url: "https://www.rt.com/rss/news/", category: "world" },
   { url: "https://apnews.com/hub/apf-topnews?output=rss", category: "world" },
+  { url: "https://rss.dw.com/xml/rss-en-all", category: "world" },
 
   // =========================================================
   // MIDDLE EAST
@@ -40,6 +40,7 @@ export const CORE_NEWS_FEEDS: NewsFeed[] = [
   { url: "https://www.timesofisrael.com/feed/", category: "middle-east" },
   { url: "https://www.allisrael.com/rss", category: "middle-east" },
   { url: "https://english.alarabiya.net/tools/mrss", category: "middle-east" },
+  { url: "https://www.ynetnews.com/Integration/StoryRss2.xml", category: "middle-east" },
 
   // keep requested
   { url: "https://www.middleeasteye.net/rss", category: "middle-east" },
@@ -64,12 +65,10 @@ export const CORE_NEWS_FEEDS: NewsFeed[] = [
     url: "https://www.defensenews.com/arc/outboundfeeds/rss/category/global/?outputType=xml",
     category: "iran-war",
   },
-  { url: "https://feeds.nbcnews.com/nbcnews/public/world", category: "iran-war" },
-  { url: "https://www.cbsnews.com/latest/rss/world", category: "iran-war" },
-  { url: "https://abcnews.go.com/abcnews/internationalheadlines", category: "iran-war" },
   { url: "https://www.tehrantimes.com/rss", category: "iran-war" },
   { url: "https://en.mehrnews.com/rss", category: "iran-war" },
   { url: "https://english.khamenei.ir/rss", category: "iran-war" },
+  { url: "https://www.understandingwar.org/rss.xml", category: "iran-war" },
 
   // =========================================================
   // TECH / CONTROL SYSTEMS
@@ -96,6 +95,8 @@ export const CORE_NEWS_FEEDS: NewsFeed[] = [
   { url: "https://feeds.feedburner.com/zerohedge/feed", category: "finance" },
   { url: "https://www.federalreserve.gov/feeds/press_all.xml", category: "finance" },
   { url: "https://www.rt.com/rss/business/", category: "finance" },
+  {url: "https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best", category: "finance"},
+  
 
   // =========================================================
   // HEALTH / MEDICAL / BIO
