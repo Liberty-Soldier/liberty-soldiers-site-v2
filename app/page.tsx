@@ -5,19 +5,13 @@ import { Suspense } from "react";
 import Carousel from "./components/Carousel";
 import HomeHeadlines from "./components/Headlines";
 import LiveBriefingAuto from "./components/LiveBriefingAuto";
-import LiveSignalDesk from "./components/LiveSignalDesk";
 import SignalVsNoiseAuto from "./components/SignalVsNoiseAuto";
 import EmailBand from "./components/EmailBand";
-import LatestReportBand from "./components/LatestReportBand";
 import IranWarCarousel from "./components/IranWarCarousel";
 
-import { getLatestReport } from "../lib/reports";
-import { fetchAllHeadlines } from "../lib/rss";
-import {
-  pickHomepageHeadlines,
-  pickHomepageCarouselHeadlines,
-  pickIranRadarHeadlines,
-} from "../lib/news.select";
+import { getLatestReports } from "./lib/reports";
+import { fetchAllHeadlines } from "./lib/rss";
+import { pickIranRadarHeadlines } from "./lib/news.select";
 
 export const revalidate = 600;
 
@@ -61,19 +55,81 @@ export const metadata: Metadata = {
 function HeadlinesFallback() {
   return (
     <div className="mt-6 rounded-xl border border-zinc-200 bg-white p-6 text-zinc-600">
-      Loading headlines…
+      Loading…
     </div>
   );
 }
 
-export default async function Home() {
-  const latestReport = (await getLatestReport()) ?? null;
-  const all = await fetchAllHeadlines(); // still needed for some panels
+function ReportCard({
+  report,
+}: {
+  report: {
+    slug: string;
+    title: string;
+    excerpt: string;
+    dateISO: string;
+    coverImage: string;
+    readTime?: string;
+    category?: string;
+  };
+}) {
+  return (
+    <a
+      href={`/news/${report.slug}`}
+      className="group block min-w-[300px] max-w-[300px] shrink-0 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:min-w-[340px] sm:max-w-[340px]"
+    >
+      <div className="relative aspect-[16/9] w-full overflow-hidden bg-zinc-100">
+        <img
+          src={report.coverImage}
+          alt={report.title}
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          loading="lazy"
+        />
+        <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white/95 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-red-700">
+          <span className="inline-flex h-2 w-2 rounded-full bg-red-600 motion-safe:animate-pulse" />
+          Latest Intelligence
+        </div>
+      </div>
 
-const headlines = pickHomepageHeadlines(all, 9);
-const carouselHeadlines = pickHomepageCarouselHeadlines(all, 20);
-const iranItems = pickIranRadarHeadlines(all, 24);
-  
+      <div className="p-4">
+        <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-wide text-zinc-500">
+          <span>{report.dateISO}</span>
+          {report.readTime ? <span>• {report.readTime}</span> : null}
+          {report.category ? <span>• {report.category}</span> : null}
+        </div>
+
+        <h3 className="line-clamp-3 text-base font-extrabold leading-tight text-zinc-900 group-hover:text-red-700">
+          {report.title}
+        </h3>
+
+        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-zinc-600">
+          {report.excerpt}
+        </p>
+
+        <div className="mt-4 text-sm font-semibold text-zinc-900 group-hover:text-red-700">
+          Read report →
+        </div>
+      </div>
+    </a>
+  );
+}
+
+export default async function Home() {
+  const all = await fetchAllHeadlines();
+
+  const latestReports = [...reports]
+    .sort(
+      (a, b) =>
+        new Date(b.dateISO).getTime() - new Date(a.dateISO).getTime()
+    )
+    .slice(0, 10);
+
+const latestReports = getLatestReports(10);
+const latestHeadlines = [...all]
+  .sort((a, b) => (b.publishedAt ?? 0) - (a.publishedAt ?? 0))
+  .slice(0, 10);
+const iranItems = pickIranRadarHeadlines(all, 12);
+
   const nowIso = new Date().toISOString();
 
   const jsonLd = [
@@ -136,130 +192,154 @@ const iranItems = pickIranRadarHeadlines(all, 24);
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
+      {/* Live Signal ticker directly under header */}
+      <LiveBriefingAuto />
+
       {/* Hero */}
-      <section className="relative flex min-h-[32vh] w-full items-center py-10 sm:h-[32vh] sm:py-0">
+      <section className="relative flex min-h-[38vh] w-full items-center py-12 sm:min-h-[42vh] sm:py-0">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/hero.jpg')" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/55 to-black" />
 
-        <div className="relative z-10 mx-auto max-w-7xl w-full px-4 text-white sm:px-6 lg:px-8">
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 text-white sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-red-400/30 bg-black/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-200 backdrop-blur-sm">
+              <span className="inline-flex h-2 w-2 rounded-full bg-red-500 motion-safe:animate-pulse" />
+              Live Signals • Active Monitoring
+            </div>
+
+            <h1 className="mt-5 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
               LIBERTY SOLDIERS
             </h1>
-            <p className="mt-4 max-w-2xl text-base text-white/90 sm:text-lg">
-              Independent analysis of geopolitical conflict, financial systems,
-              technological control structures, and emerging global narratives
-              shaping the future.
+
+            <p className="mt-4 max-w-2xl text-xl font-semibold text-white/95 sm:text-2xl">
+              Global escalation is accelerating. Most people are missing it.
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
+              Energy, war, and control systems are converging — and the
+              consequences are already unfolding.
+            </p>
+
+            <div className="mt-7 flex flex-wrap gap-3">
               <a
                 href="/reports"
                 className="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100"
               >
-                Read Reports →
+                Read Latest Intelligence →
               </a>
+
               <a
-                href="/news"
+                href="/war-escalation"
                 className="inline-flex items-center rounded-xl border border-white/40 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
               >
-                Live Intelligence →
+                View Escalation Tracker →
               </a>
             </div>
 
-            <p className="mt-4 max-w-2xl text-base text-white/90 sm:text-lg">
-              Tracking power, conflict, and the narratives shaping the world.
+            <p className="mt-5 max-w-2xl text-sm text-white/70 sm:text-base">
+              Independent situational awareness on conflict, systems, narrative
+              warfare, and the structures shaping world events.
             </p>
           </div>
         </div>
       </section>
 
-      {/* War & Escalation Radar — top band */}
-      <section className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-          <div className="mb-2">
-            <h2 className="text-lg font-semibold text-neutral-900">
-              War & Escalation Radar
-            </h2>
-            <p className="text-sm text-neutral-500">
-              Real-time headlines referencing Iran, regional escalation, and
-              related conflict signals.
-            </p>
-          </div>
-
-          <IranWarCarousel items={iranItems} />
-        </div>
-      </section>
-
-      {/* Live Briefing */}
-      <LiveBriefingAuto />
-
-      {/* Live Signal Desk */}
-      <LiveSignalDesk />
-
-      {/* Email signup — desktop only */}
-      <div className="hidden sm:block">
-        <EmailBand />
-      </div>
-
-      {/* Latest LS Report — desktop only */}
-      <div className="hidden sm:block">
-        <LatestReportBand report={latestReport} />
-      </div>
-
-      {/* Latest Headlines */}
-      <section className="border-t border-zinc-200 bg-zinc-50/50 py-12 sm:py-16">
+      {/* Latest Liberty Soldiers Reports */}
+      <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex items-start gap-3">
               <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
               <div>
                 <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
-                  Latest Headlines
+                  Latest Intelligence
                 </h2>
-                <p className="mt-1 text-sm text-zinc-600 sm:text-base">
-                  External signals being monitored across systems, policy,
-                  conflict, and finance.
+                <p className="mt-1 max-w-2xl text-sm text-zinc-600 sm:text-base">
+                  Original Liberty Soldiers reporting and analysis. Newest 10.
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <a
-                href="/news"
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
-              >
-                Full feed <span className="text-red-600">→</span>
-              </a>
+            <a
+              href="/reports"
+              className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
+            >
+              View all reports <span className="text-red-600">→</span>
+            </a>
+          </div>
+
+          <Carousel
+            title=""
+            subtitle=""
+          >
+            {latestReports.map((report) => (
+              <ReportCard key={report.slug} report={report} />
+            ))}
+          </Carousel>
+        </div>
+      </section>
+
+      {/* War & Escalation Radar */}
+      <section className="border-b border-zinc-200 bg-zinc-50/50 py-10 sm:py-12">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-4 flex items-start gap-3">
+            <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+            <div>
+              <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
+                Escalation Tracker
+              </h2>
+              <p className="mt-1 text-sm text-zinc-600 sm:text-base">
+                Real-time headlines tied to Iran, regional conflict, shipping
+                risk, and military escalation signals.
+              </p>
             </div>
           </div>
 
-          <div className="sm:hidden">
-            <div className="rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
-              <Carousel title="">
-                <Suspense fallback={<HeadlinesFallback />}>
-                 <HomeHeadlines variant="carousel" items={carouselHeadlines} />
-                </Suspense>
-              </Carousel>
+          <IranWarCarousel items={iranItems} />
+        </div>
+      </section>
+
+      {/* Email signup */}
+      <EmailBand />
+
+      {/* Latest Headlines */}
+      <section className="border-t border-zinc-200 bg-white py-12 sm:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+              <div>
+                <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
+                  Active Developments
+                </h2>
+                <p className="mt-1 text-sm text-zinc-600 sm:text-base">
+                  Newest external signals being monitored across war, markets,
+                  policy, and systems. Newest 10.
+                </p>
+              </div>
             </div>
+
+            <a
+              href="/news"
+              className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
+            >
+              Full feed <span className="text-red-600">→</span>
+            </a>
           </div>
 
-          <div className="hidden sm:block">
-            <Suspense fallback={<HeadlinesFallback />}>
-             <HomeHeadlines variant="grid" items={headlines} />
-            </Suspense>
-
-            <div className="mt-6">
-              <a
-                href="/news"
-                className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-5 py-3 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
-              >
-                View full News Feed <span className="text-red-600">→</span>
-              </a>
-            </div>
+          <div className="rounded-2xl border border-zinc-200 bg-zinc-50/60 p-3 sm:p-4 shadow-sm">
+            <Carousel title="">
+              <Suspense fallback={<HeadlinesFallback />}>
+                <HomeHeadlines
+                  variant="carousel"
+                  items={latestHeadlines}
+                  limit={10}
+                />
+              </Suspense>
+            </Carousel>
           </div>
         </div>
       </section>
@@ -286,9 +366,9 @@ const iranItems = pickIranRadarHeadlines(all, 24);
             <p className="mt-3 leading-relaxed text-zinc-700">
               Our reports connect breaking news and world events to historical
               patterns, strategic doctrine, and long-term ideological
-              frameworks—separating signal from noise, fact from propaganda,
-              and context from narrative—so readers gain situational awareness
-              and clarity, not partisan opinion.
+              frameworks — separating signal from noise, fact from propaganda,
+              and context from narrative — so readers gain situational
+              awareness and clarity, not partisan opinion.
             </p>
 
             <p className="mt-2 text-sm text-zinc-500">
@@ -302,18 +382,10 @@ const iranItems = pickIranRadarHeadlines(all, 24);
             <h2 className="text-xl font-extrabold text-zinc-900">
               Independent analysis of power, perception, and control.
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-700">
-              Reports connect headlines to historical patterns—separating
-              signal from noise.
+            <p className="mt-3 text-sm leading-relaxed text-zinc-700">
+              Liberty Soldiers tracks conflict, systems, narratives, and the
+              emerging signals shaping world events.
             </p>
-            <div className="mt-3">
-              <a
-                href="/about"
-                className="inline-flex items-center text-sm font-semibold text-zinc-900 hover:underline"
-              >
-                Read the mission →
-              </a>
-            </div>
           </div>
         </div>
       </section>
