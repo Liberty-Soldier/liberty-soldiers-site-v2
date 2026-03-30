@@ -409,7 +409,7 @@ async function handleDelete() {
   }
   async function handleGenerateDraft() {
   try {
-    const res = await fetch("/api/admin/generate", {
+    const res = await fetch("/api/admin/queue/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
