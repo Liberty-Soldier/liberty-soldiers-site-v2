@@ -423,11 +423,11 @@ async function handleDelete() {
 
     const data = await res.json();
 
-    if (!data.ok) {
-      console.error("Generate failed", data);
-      alert(data.error || "Generate failed");
-      return;
-    }
+  if (!data.ok) {
+  console.error("Generate failed", data);
+  alert(data.details || data.error || "Generate failed");
+  return;
+}
 
     if (Array.isArray(data.queue)) {
       setQueue(data.queue);

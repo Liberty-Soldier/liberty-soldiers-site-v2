@@ -125,7 +125,7 @@ ${intakeNotes}
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-5.4-mini",
+        model: "gpt-4o-mini",
         messages: [
           { role: "developer", content: "Return only valid JSON. No markdown fences." },
           { role: "user", content: prompt }
@@ -152,15 +152,19 @@ ${intakeNotes}
       }),
     });
 
-    if (!openAIRes.ok) {
-      const errorText = await openAIRes.text();
-      console.error("OpenAI API error:", errorText);
+if (!openAIRes.ok) {
+  const errorText = await openAIRes.text();
+  console.error("OpenAI API error:", errorText);
 
-      return NextResponse.json(
-        { ok: false, error: "OpenAI request failed.", details: errorText },
-        { status: 500 }
-      );
-    }
+  return NextResponse.json(
+    {
+      ok: false,
+      error: "OpenAI request failed.",
+      details: errorText,
+    },
+    { status: 500 }
+  );
+}
 
     const data = await openAIRes.json();
     const rawContent = data?.choices?.[0]?.message?.content;
