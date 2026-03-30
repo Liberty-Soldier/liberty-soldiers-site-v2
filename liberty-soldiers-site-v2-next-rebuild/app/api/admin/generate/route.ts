@@ -28,8 +28,8 @@ export async function POST(req: Request) {
       body: "This is a test draft.",
     };
 
-    const queue = (await kv.get("admin:queue")) || [];
-    const nextQueue = [item, ...queue];
+    const queue = ((await kv.get("admin:queue")) as any[]) || [];
+const nextQueue = [item, ...queue];
 
     await kv.set("admin:queue", nextQueue);
 
