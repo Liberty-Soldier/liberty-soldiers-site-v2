@@ -1,0 +1,496 @@
+// app/war-escalation/page.tsx
+import type { Metadata } from "next";
+import Link from "next/link";
+import { fetchAllHeadlines } from "../../lib/rss";
+import { pickIranRadarHeadlines } from "../../lib/news.select";
+
+export const revalidate = 180;
+
+const SITE = "https://libertysoldiers.com";
+const CANONICAL = `${SITE}/war-escalation`;
+const OG_IMAGE = "/og-iran-war.jpg";
+const HERO_IMAGE = "/hero-war-energy-shipping-2.jpg";
+
+export const metadata: Metadata = {
+  title: "Iran War & Escalation Radar | Liberty Soldiers",
+  description:
+    "Live Iran war escalation tracker covering strikes, proxy activity, Hormuz risk, diplomacy, and strategic signals across the Middle East.",
+  alternates: {
+    canonical: CANONICAL,
+    types: {
+      "application/rss+xml": `${SITE}/war-escalation/rss`,
+    },
+  },
+  openGraph: {
+    title: "Iran War & Escalation Radar | Liberty Soldiers",
+    description:
+      "Live conflict intelligence signals across Iran-related escalation, proxy activity, maritime risk, and regional flashpoints.",
+    url: CANONICAL,
+    siteName: "Liberty Soldiers",
+    type: "website",
+    images: [{ url: OG_IMAGE, width: 1200, height: 630, alt: "War & Escalation Radar" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Iran War & Escalation Radar | Liberty Soldiers",
+    description:
+      "Live conflict intelligence signals across Iran-related escalation, proxy activity, maritime risk, and regional flashpoints.",
+    images: [OG_IMAGE],
+  },
+};
+
+function hostFromUrl(u: string) {
+  try {
+    return new URL(u).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+function cleanSummary(summary?: string): string {
+  if (!summary) return "";
+  return summary
+    .replace(/<[^>]*>/g, " ")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\u00A0/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+function displayTime(ms?: number) {
+  if (!ms) return "";
+  const d = new Date(ms);
+  if (Number.isNaN(d.getTime())) return "";
+
+  return (
+    d.toLocaleString("en-US", {
+      timeZone: "UTC",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    }) + " UTC"
+  );
+}
+
+const SOURCE_OG_MAP: Record<string, string> = {
+  "aljazeera.com": "/og-aljazeera.jpg",
+  "worthynews.com": "/og-worthy-news.jpg",
+  "realclearreligion.org": "/og-real-clear-religion.jpg",
+  "cbn.com": "/og-cbn.jpg",
+  "olivetreeviews.org": "/og-olive-tree-ministries.jpg",
+  "zerohedge.com": "/og-zerohedge.jpg",
+  "endtimeheadlines.org": "/og-endtimeheadlines.jpg",
+};
+
+function sourceFallbackOg(url: string): string | undefined {
+  const h = hostFromUrl(url).toLowerCase();
+  const key = Object.keys(SOURCE_OG_MAP).find((k) => h.includes(k));
+  return key ? SOURCE_OG_MAP[key] : undefined;
+}
+
+function looksRelevant(item: {
+  title: string;
+  summary?: string;
+  category?: string;
+  hardCategory?: string;
+}) {
+  const t = `${item.title} ${item.summary ?? ""}`.toLowerCase();
+
+  // 1) Only allow items already classified into war bucket
+  const hard = (item.hardCategory || "").toLowerCase().trim();
+  if (hard !== "war & geopolitics") return false;
+
+  // 2) Exclude obvious non-war / culture / sports / entertainment noise
+  const excludeTerms = [
+    "oscar",
+    "oscars",
+    "academy awards",
+    "grammy",
+    "grammys",
+    "emmy",
+    "emmys",
+    "festival",
+    "box office",
+    "movie",
+    "film",
+    "celebrity",
+    "red carpet",
+    "fashion week",
+    "premiere",
+    "concert",
+    "album",
+    "sports",
+    "football",
+    "soccer",
+    "nba",
+    "nfl",
+    "mlb",
+    "tennis",
+  ];
+
+  if (excludeTerms.some((k) => t.includes(k))) return false;
+
+  // 3) Strong Iran-core terms
+  const coreIran = [
+    "iran",
+    "tehran",
+    "irgc",
+    "revolutionary guard",
+    "quds force",
+    "khamenei",
+    "fordow",
+    "natanz",
+    "isfahan",
+    "arak",
+    "bushehr",
+    "strait of hormuz",
+    "hormuz",
+    "persian gulf",
+    "iranian missile",
+    "iranian drone",
+    "iranian strike",
+    "iran sanctions",
+  ];
+
+  if (coreIran.some((k) => t.includes(k))) return true;
+
+  // 4) Regional conflict terms must appear with a real escalation signal
+  const regional = [
+    "israel",
+    "hezbollah",
+    "houthi",
+    "lebanon",
+    "syria",
+    "iraq",
+    "yemen",
+    "red sea",
+    "gaza",
+  ];
+
+  const escalation = [
+    "missile",
+    "airstrike",
+    "strike",
+    "retaliat",
+    "drone",
+    "proxy",
+    "escalat",
+    "military",
+    "attack",
+    "ceasefire",
+    "sanction",
+    "naval",
+    "shipping",
+    "tanker",
+    "blockade",
+    "militia",
+  ];
+
+  const hasRegional = regional.some((k) => t.includes(k));
+  const hasEscalation = escalation.some((k) => t.includes(k));
+
+  if (!(hasRegional && hasEscalation)) return false;
+
+  // 5) Require at least one extra strategic signal so generic Gaza/news doesn't leak in
+  const strategic = [
+    "iran",
+    "tehran",
+    "hormuz",
+    "persian gulf",
+    "proxy",
+    "hezbollah",
+    "houthi",
+    "militia",
+    "shipping",
+    "tanker",
+    "sanction",
+    "irgc",
+  ];
+
+  return strategic.some((k) => t.includes(k));
+}
+
+function shareWrapperHref(args: {
+  url: string;
+  title: string;
+  source?: string;
+  publishedAt?: number;
+  image?: string;
+  summary?: string;
+}) {
+  const sp = new URLSearchParams();
+
+  sp.set("u", args.url);
+  sp.set("t", args.title);
+
+  const src = args.source || hostFromUrl(args.url);
+  if (src) sp.set("s", src);
+
+  if (typeof args.publishedAt === "number" && Number.isFinite(args.publishedAt)) {
+    sp.set("p", String(args.publishedAt));
+  }
+
+  if (args.image) sp.set("i", args.image);
+  if (args.summary) sp.set("x", args.summary);
+
+  return `/news/share?${sp.toString()}`;
+}
+
+export default async function WarEscalationPage() {
+  const all = await fetchAllHeadlines();
+
+ const relevant = all.filter((h) =>
+  looksRelevant({
+    title: h.title,
+    summary: h.summary,
+    category: h.category,
+    hardCategory: h.hardCategory,
+  })
+);
+
+  const items = pickIranRadarHeadlines(all, 60);
+
+  const latest = items.find((x) => typeof x.publishedAt === "number")?.publishedAt;
+  const latestIso = latest ? new Date(latest).toISOString() : new Date().toISOString();
+
+  const pageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    dateModified: latestIso,
+    name: "War & Escalation Radar",
+    description:
+      "Real-time monitoring of Iran-related escalation signals, regional conflict, proxy activity, maritime risk, and strategic messaging across key geopolitical flashpoints.",
+    url: CANONICAL,
+    isPartOf: {
+      "@type": "WebSite",
+      name: "Liberty Soldiers",
+      url: SITE,
+    },
+  };
+
+  const feedJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "War & Escalation Radar Feed",
+    itemListOrder: "https://schema.org/ItemListOrderDescending",
+    numberOfItems: items.length,
+    itemListElement: items.map((item, index) => ({
+      "@type": "NewsArticle",
+      position: index + 1,
+      headline: item.title,
+      url: item.url,
+      datePublished: item.publishedAt ? new Date(item.publishedAt).toISOString() : undefined,
+      publisher: {
+        "@type": "Organization",
+        name: item.source || hostFromUrl(item.url) || "External Source",
+      },
+    })),
+  };
+
+  const shareThisPage = shareWrapperHref({
+    url: CANONICAL,
+    title: "War & Escalation Radar | Liberty Soldiers",
+    source: "Liberty Soldiers",
+    image: `${SITE}${OG_IMAGE}`,
+    summary:
+      "Live monitoring of Iran-related escalation signals, proxy activity, maritime risk, and regional flashpoints.",
+  });
+
+  return (
+    <main className="min-h-screen bg-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pageJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(feedJsonLd) }}
+      />
+
+      <section className="relative overflow-hidden border-b border-zinc-200 bg-zinc-900">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${HERO_IMAGE})` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/45" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+
+        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+          <div className="max-w-3xl">
+            <div className="text-xs uppercase tracking-[0.2em] text-red-300">
+              Live Monitor
+            </div>
+
+            <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+              War &amp; Escalation Radar
+            </h1>
+
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-zinc-200 sm:text-lg">
+              Live tracking of Iran-related escalation signals across the Middle East —
+              including strikes, proxy activity, maritime chokepoints, diplomatic pressure,
+              and market-moving strategic developments.
+            </p>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link
+                href="/news"
+                className="inline-flex items-center rounded-xl bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100"
+              >
+                Full news feed →
+              </Link>
+
+              <Link
+                href="/reports"
+                className="inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
+              >
+                Read reports →
+              </Link>
+
+              <a
+                href={shareThisPage}
+                className="inline-flex items-center rounded-xl border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/15"
+              >
+                Share this page →
+              </a>
+            </div>
+
+            <div className="mt-6 text-xs text-zinc-300">
+              Updated:{" "}
+              {latest ? <time dateTime={latestIso}>{displayTime(latest)}</time> : "—"} • Times shown in UTC.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="flex items-start justify-between gap-6">
+            <div className="max-w-3xl">
+              <p className="text-base leading-relaxed text-zinc-700 sm:text-lg">
+                Real-time monitoring of Iran-related escalation signals across the Middle East —
+                including regional conflict, proxy activity, maritime risk, and strategic messaging that
+                can shift the trajectory of war. This page aggregates breaking headlines and provides a
+                single place to track escalation momentum as it develops.
+              </p>
+
+              <div className="mt-6 rounded-2xl border border-zinc-200 bg-zinc-50 p-5">
+                <h2 className="text-lg font-bold text-zinc-900">What this radar tracks</h2>
+                <ul className="mt-3 space-y-2 text-sm text-zinc-700">
+                  <li><span className="font-semibold text-zinc-900">Iran &amp; Tehran:</span> leadership statements, military posture, retaliation cycles, and doctrine.</li>
+                  <li><span className="font-semibold text-zinc-900">Proxy networks:</span> Hezbollah, Houthis, militias, and cross-border escalation indicators.</li>
+                  <li><span className="font-semibold text-zinc-900">Maritime chokepoints:</span> Strait of Hormuz risk, shipping disruptions, drones, and missile threats.</li>
+                  <li><span className="font-semibold text-zinc-900">Regional spillover:</span> Israel, Lebanon, Syria, Iraq, Yemen and wider Middle East dynamics.</li>
+                  <li><span className="font-semibold text-zinc-900">Markets &amp; policy:</span> energy impacts, sanctions, diplomatic moves, and US/UK/EU positioning.</li>
+                </ul>
+              </div>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/" className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50">
+                  ← Home
+                </Link>
+
+                <Link href="/war-escalation/rss" className="inline-flex items-center rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-50">
+                  RSS →
+                </Link>
+              </div>
+
+              <p className="mt-6 text-xs leading-relaxed text-zinc-500">
+                Note: Links below point to external sources. Liberty Soldiers monitors narrative shifts and
+                escalation patterns for situational awareness — not financial advice or operational guidance.
+              </p>
+            </div>
+
+            <div className="hidden whitespace-nowrap text-right text-xs text-zinc-500 sm:block">
+              {items.length ? <>Showing {items.length} signals</> : <>No signals found</>}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-zinc-50/50">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          {items.length === 0 ? (
+            <div className="rounded-2xl border border-zinc-200 bg-white p-6 text-zinc-600">
+              No matching items yet. Check back shortly.
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map((it) => {
+                const og = it.image || sourceFallbackOg(it.url) || OG_IMAGE;
+                const src = it.source || hostFromUrl(it.url);
+                const time = displayTime(it.publishedAt);
+                const summary = cleanSummary(it.summary);
+
+                const shareHref = shareWrapperHref({
+                  url: it.url,
+                  title: it.title,
+                  source: src,
+                  publishedAt: it.publishedAt,
+                  image: og.startsWith("http") ? og : `${SITE}${og}`,
+                  summary,
+                });
+
+                return (
+                  <div
+                    key={it.url}
+                    className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md"
+                  >
+                    <a href={it.url} className="block">
+                      <div className="relative">
+                        <div className="h-40 w-full bg-zinc-100">
+                          <img
+                            src={og}
+                            alt={`${it.title} – War & Escalation Radar | Liberty Soldiers`}
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-black/0 to-black/0" />
+                      </div>
+
+                      <div className="p-4">
+                        <div className="flex items-center gap-2 text-[11px] text-zinc-500">
+                          <span className="truncate">{src}</span>
+                          {time ? <span className="text-zinc-300">•</span> : null}
+                          {time ? <span className="truncate">{time}</span> : null}
+                        </div>
+
+                        <div className="mt-2 line-clamp-3 text-sm font-semibold text-zinc-900 group-hover:underline underline-offset-4">
+                          {it.title}
+                        </div>
+
+                        {summary ? (
+                          <div className="mt-2 line-clamp-3 text-sm text-zinc-600">
+                            {summary}
+                          </div>
+                        ) : null}
+                      </div>
+                    </a>
+
+                    <div className="flex items-center justify-between px-4 pb-4 pt-0">
+                      <a
+                        href={it.url}
+                        className="text-sm font-medium text-zinc-900 hover:underline"
+                      >
+                        Open source →
+                      </a>
+
+                      <a
+                        href={shareHref}
+                        className="text-sm font-semibold text-zinc-900 hover:underline"
+                      >
+                        Share →
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
+    </main>
+  );
+}
