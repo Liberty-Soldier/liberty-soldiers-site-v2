@@ -1,5 +1,5 @@
-import { kv } from "@vercel/kv";
 import { NextResponse } from "next/server";
+import { getQueue, saveQueue } from "@/lib/admin-store";
 
 export const runtime = "nodejs";
 
@@ -220,10 +220,10 @@ if (!openAIRes.ok) {
       body: safeBody,
     };
 
-    const queue = ((await kv.get("admin:queue")) as QueueItem[] | null) || [];
-    const nextQueue = [item, ...queue];
+const queue = await getQueue();
+const nextQueue = [item, ...queue];
 
-    await kv.set("admin:queue", nextQueue);
+await saveQueue(nextQueue);
 
     return NextResponse.json({
       ok: true,
