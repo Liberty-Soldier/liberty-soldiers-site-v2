@@ -47,7 +47,16 @@ export async function POST(req: NextRequest) {
       !process.env.X_ACCESS_TOKEN_SECRET
     ) {
       return NextResponse.json(
-        { ok: false, error: "Missing X API environment variables" },
+        {
+          ok: false,
+          error: "Missing X API environment variables",
+          checks: {
+            X_API_KEY: !!process.env.X_API_KEY,
+            X_API_KEY_SECRET: !!process.env.X_API_KEY_SECRET,
+            X_ACCESS_TOKEN: !!process.env.X_ACCESS_TOKEN,
+            X_ACCESS_TOKEN_SECRET: !!process.env.X_ACCESS_TOKEN_SECRET,
+          },
+        },
         { status: 500 }
       );
     }
@@ -87,14 +96,22 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify(body),
     });
 
-    const data = await res.json();
+    const raw = await res.text();
+
+    let data: any;
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      data = { raw };
+    }
 
     if (!res.ok) {
-      console.error("X post failed:", data);
+      console.error("X post failed:", res.status, data);
       return NextResponse.json(
         {
           ok: false,
           error: "X post failed",
+          status: res.status,
           details: data,
         },
         { status: 500 }
@@ -103,12 +120,16 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ok: true,
+      status: res.status,
       data,
     });
   } catch (error) {
     console.error("POST /api/admin/post-to-x failed:", error);
     return NextResponse.json(
-      { ok: false, error: "Failed to post to X" },
+      {
+        ok: false,
+        error: error instanceof Error ? error.message : "Failed to post to X",
+      },
       { status: 500 }
     );
   }
