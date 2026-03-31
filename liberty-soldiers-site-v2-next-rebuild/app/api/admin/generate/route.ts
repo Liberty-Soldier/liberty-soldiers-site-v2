@@ -221,6 +221,23 @@ if (!openAIRes.ok) {
     };
 
 const queue = await getQueue();
+
+// 🔒 DUPLICATE PROTECTION
+const exists = queue.find(
+  (q) =>
+    q.sourceUrl &&
+    item.sourceUrl &&
+    q.sourceUrl === item.sourceUrl
+);
+
+if (exists) {
+  return NextResponse.json({
+    ok: true,
+    skipped: true,
+    reason: "duplicate",
+  });
+}
+
 const nextQueue = [item, ...queue];
 
 await saveQueue(nextQueue);

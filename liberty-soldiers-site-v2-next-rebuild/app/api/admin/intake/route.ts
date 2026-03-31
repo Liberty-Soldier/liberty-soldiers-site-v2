@@ -46,7 +46,36 @@ export async function GET() {
       }
     }
 
-    const selected = items.slice(0, 5);
+   // 🔍 FILTER FOR RELEVANT SIGNAL ONLY
+const KEYWORDS = [
+  "war",
+  "military",
+  "iran",
+  "israel",
+  "china",
+  "russia",
+  "nato",
+  "missile",
+  "drone",
+  "ai",
+  "surveillance",
+  "economy",
+  "inflation",
+  "energy",
+  "oil",
+  "cyber",
+];
+
+function isRelevant(title: string) {
+  return KEYWORDS.some((k) =>
+    title.toLowerCase().includes(k)
+  );
+}
+
+// first filter, then limit
+const selected = items
+  .filter((i) => isRelevant(i.title))
+  .slice(0, 5);
 
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
