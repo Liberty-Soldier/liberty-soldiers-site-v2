@@ -34,72 +34,6 @@ type QueueItem = {
   body: string;
 };
 
-const INITIAL_QUEUE: QueueItem[] = [
-  {
-    id: "q1",
-    title: "Shipping Insurance Surges as Red Sea Risk Expands",
-    excerpt:
-      "Insurers, shipping routes, and military posture are all moving at once — a signal that market calm may be masking deeper supply stress.",
-    source: "Manual intake",
-    sourceUrl: "https://example.com/source-1",
-    dateISO: "2026-03-27",
-    byline: "Liberty Soldiers",
-    coverImage: "/og-war-geopolitics.jpg",
-    category: "War Risk",
-    hardCategory: "War & Geopolitics",
-    readTime: "6 min",
-    featured: true,
-    priority: 1,
-    kind: "analysis",
-    slug: "shipping-insurance-surges-red-sea-risk-expands",
-    status: "review",
-    body:
-      "The surface narrative still treats instability like a temporary inconvenience. But shipping premiums, route changes, and force posture shifts suggest a deeper structural signal.\n\nWhen freight risk, insurance pricing, and military signaling all move together, the market is no longer reacting to headlines alone. It is reacting to the probability of sustained disruption.\n\nThat is where Liberty Soldiers should focus: not on noise, but on what is changing materially beneath the headline cycle.",
-  },
-  {
-    id: "q2",
-    title: "Digital ID Expansion Advances Under Anti-Fraud Framing",
-    excerpt:
-      "What is marketed as verification and fraud prevention may also normalize a stronger identity-control layer across daily life.",
-    source: "RSS candidate",
-    sourceUrl: "https://example.com/source-2",
-    dateISO: "2026-03-27",
-    byline: "Liberty Soldiers",
-    coverImage: "/og-digital-id.jpg",
-    category: "Digital ID",
-    hardCategory: "Digital ID / Technocracy",
-    readTime: "5 min",
-    featured: false,
-    priority: 2,
-    kind: "report",
-    slug: "digital-id-expansion-anti-fraud-framing",
-    status: "draft",
-    body:
-      "Programs that are introduced as convenience layers rarely stay limited to convenience. Over time, they become expectation, then infrastructure, then requirement.\n\nThe immediate question is not just whether the technology works. The deeper question is what kind of dependency architecture is being normalized while the public is told it is only about safety and efficiency.",
-  },
-  {
-    id: "q3",
-    title: "Oil Volatility Returns as Ceasefire Talk Clashes With Force Posture",
-    excerpt:
-      "Diplomatic language may calm headlines, but asset pricing still reacts to what military positioning implies.",
-    source: "Bot draft",
-    sourceUrl: "https://example.com/source-3",
-    dateISO: "2026-03-26",
-    byline: "Liberty Soldiers",
-    coverImage: "/og-markets-finance.jpg",
-    category: "Energy",
-    hardCategory: "Markets & Finance",
-    readTime: "4 min",
-    featured: false,
-    priority: 3,
-    kind: "brief",
-    slug: "oil-volatility-ceasefire-talk-force-posture",
-    status: "approved",
-    body:
-      "Markets do not price rhetoric alone. They price capability, logistics, and the likelihood that events can outrun the official script.\n\nIf positioning remains elevated while public language softens, traders will keep watching the hard signal instead of the soft narrative.",
-  },
-];
-
 const HARD_CATEGORIES: HardCategory[] = [
   "Power & Control",
   "Markets & Finance",
@@ -250,7 +184,7 @@ ${item.body
 
 export default function AdminPage() {
   const [queue, setQueue] = useState<QueueItem[]>([]);
-  const [selectedId, setSelectedId] = useState<string>(INITIAL_QUEUE[0]?.id ?? "");
+  const [selectedId, setSelectedId] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"queue" | "editor" | "export">("queue");
   const [intakeUrl, setIntakeUrl] = useState("");
   const [intakeTitle, setIntakeTitle] = useState("");
@@ -274,27 +208,28 @@ export default function AdminPage() {
     });
   }, [queue, search]);
 
- async function loadQueue() {
+async function loadQueue() {
   try {
     const res = await fetch("/api/admin/queue");
     const data = await res.json();
 
     if (data.ok) {
-      const nextQueue =
-        Array.isArray(data.queue) && data.queue.length > 0
-          ? data.queue
-          : INITIAL_QUEUE;
+      const nextQueue = Array.isArray(data.queue) ? data.queue : [];
 
       setQueue(nextQueue);
 
-      if (nextQueue.length) {
+      if (nextQueue.length > 0) {
         setSelectedId((prev) => prev || nextQueue[0].id);
-      }
-
-      if (!Array.isArray(data.queue) || data.queue.length === 0) {
-        void saveQueue(nextQueue);
+      } else {
+        setSelectedId("");
       }
     }
+  } catch (err) {
+    console.error("Failed to load queue", err);
+    setQueue([]);
+    setSelectedId("");
+  }
+}
   } catch (err) {
     console.error("Failed to load queue", err);
     setQueue(INITIAL_QUEUE);
@@ -733,7 +668,7 @@ async function handleDelete() {
 </button>
 
 <button
-  onClick={async () => {
+ onClick={async () => {
   if (!selected) return;
 
   const res = await fetch("/api/admin/publish", {
@@ -756,7 +691,11 @@ async function handleDelete() {
 
   if (data.xPost && data.xPost.ok === false) {
     console.warn("X post failed", data.xPost);
-    alert("Article published, but X posting failed.");
+    alert(
+      `Article published, but X posting failed.\n\n` +
+        `${data.xPost.error || "Unknown X error"}\n\n` +
+        `${JSON.stringify(data.xPost.details || data.xPost, null, 2)}`
+    );
   }
 }}
   className="rounded-2xl border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-800 hover:bg-blue-100"
