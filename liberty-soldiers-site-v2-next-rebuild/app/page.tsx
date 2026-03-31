@@ -209,29 +209,33 @@ function PublishedCard({
   return (
     <a
       href={`/published/${article.slug}`}
-      className="group block min-w-[260px] max-w-[260px] shrink-0 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+      className="group block min-w-[260px] max-w-[260px] shrink-0 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md sm:min-w-[285px] sm:max-w-[285px] lg:min-w-[300px] lg:max-w-[300px]"
     >
       <div className="relative h-[170px] w-full overflow-hidden bg-zinc-100">
         <img
           src={article.coverImage}
           alt={article.title}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          loading="lazy"
         />
-        <div className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase text-red-700">
-          Liberty Intel
+        <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-700">
+          <span className="inline-flex h-2 w-2 rounded-full bg-red-600 motion-safe:animate-pulse" />
+          Published
         </div>
       </div>
 
       <div className="p-3.5">
-        <div className="mb-2 text-[11px] text-zinc-500">
-          {article.dateISO} • {article.readTime}
+        <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-wide text-zinc-500">
+          <span>{displayDate(article.dateISO)}</span>
+          {article.readTime ? <span>• {article.readTime}</span> : null}
+          {article.hardCategory ? <span>• {article.hardCategory}</span> : null}
         </div>
 
-        <h3 className="line-clamp-3 font-extrabold text-zinc-900 group-hover:text-red-700">
+        <h3 className="line-clamp-3 text-[1.05rem] font-extrabold leading-[1.15] text-zinc-900 group-hover:text-red-700">
           {article.title}
         </h3>
 
-        <p className="mt-2 line-clamp-2 text-sm text-zinc-600">
+        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-zinc-600">
           {article.excerpt}
         </p>
 
@@ -465,6 +469,36 @@ const latestPublished = published.slice(0, 3);
                 </p>
               </div>
             </div>
+                  <section className="border-t border-zinc-200 py-12 sm:py-16">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="hidden sm:block">
+            <h2 className="text-2xl font-bold text-zinc-900 sm:text-3xl">
+              Liberty Soldiers is an independent investigative media platform for geopolitical analysis.
+            </h2>
+
+            <p className="mt-3 leading-relaxed text-zinc-800">
+              We publish investigative reporting and analytical research on global geopolitics, modern conflict, information warfare, psychological operations, and the power structures and belief systems that shape public perception and policy.
+            </p>
+
+            <p className="mt-3 leading-relaxed text-zinc-700">
+              Our reports connect breaking news and world events to historical patterns, strategic doctrine, and long-term ideological frameworks — separating signal from noise, fact from propaganda, and context from narrative — so readers gain situational awareness and clarity, not partisan opinion.
+            </p>
+
+            <p className="mt-2 text-sm text-zinc-500">
+              Topics include geopolitics, global conflict, media manipulation, surveillance systems, digital identity, financial power, and narrative control.
+            </p>
+          </div>
+
+          <div className="sm:hidden">
+            <h2 className="text-xl font-extrabold text-zinc-900">
+              Independent analysis of power, perception, and control.
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-zinc-700">
+              Liberty Soldiers tracks conflict, systems, narratives, and the emerging signals shaping world events.
+            </p>
+          </div>
+        </div>
+      </section>
 
             <a
               href="/news"
@@ -482,16 +516,6 @@ const latestPublished = published.slice(0, 3);
         </div>
       </section>
 
-          <div className="sm:hidden">
-            <h2 className="text-xl font-extrabold text-zinc-900">
-              Independent analysis of power, perception, and control.
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-zinc-700">
-              Liberty Soldiers tracks conflict, systems, narratives, and the emerging signals shaping world events.
-            </p>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
