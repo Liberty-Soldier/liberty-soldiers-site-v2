@@ -7,7 +7,7 @@ import EmailBand from "./components/EmailBand";
 import IranWarCarousel from "./components/IranWarCarousel";
 
 import { getLatestReports } from "../lib/reports";
-import { getPublished } from "../lib/published-store";
+import { getPublishedForHomepage } from "../lib/published-store";
 import { fetchAllHeadlines } from "../lib/rss";
 import { pickIranRadarHeadlines } from "../lib/news.select";
 
@@ -250,15 +250,15 @@ function PublishedCard({
 export default async function Home() {
   const all = await fetchAllHeadlines();
 
-  const published = await getPublished();
+  const published = await getPublishedForHomepage();
 const latestPublished = published.slice(0, 3);
 
-  const featuredReports = getLatestReports(5);
+  const featuredReports = getLatestReports(4);
   const latestHeadlines = [...all]
     .sort((a, b) => (b.publishedAt ?? 0) - (a.publishedAt ?? 0))
-    .slice(0, 7);
+    .slice(0, 4);
 
-  const iranItems = pickIranRadarHeadlines(all, 7);
+  const iranItems = pickIranRadarHeadlines(all, 4);
 
   const nowIso = new Date().toISOString();
 
@@ -452,7 +452,7 @@ const latestPublished = published.slice(0, 3);
           <IranWarCarousel items={iranItems} />
         </div>
       </section>
-      
+
       <EmailBand />
 
       <section className="border-t border-zinc-200 bg-white py-12 sm:py-16">

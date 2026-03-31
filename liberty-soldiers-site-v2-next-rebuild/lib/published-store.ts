@@ -29,6 +29,11 @@ export async function getPublished(): Promise<PublishedArticle[]> {
   return Array.isArray(articles) ? articles : [];
 }
 
+export async function getPublishedForHomepage(): Promise<PublishedArticle[]> {
+  const articles = await kv.get<PublishedArticle[]>(PUBLISHED_KEY);
+  return Array.isArray(articles) ? articles : [];
+}
+
 export async function savePublished(articles: PublishedArticle[]) {
   await kv.set(PUBLISHED_KEY, articles);
 }
