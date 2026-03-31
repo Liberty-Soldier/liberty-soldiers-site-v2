@@ -230,12 +230,6 @@ async function loadQueue() {
     setSelectedId("");
   }
 }
-  } catch (err) {
-    console.error("Failed to load queue", err);
-setQueue([]);
-setSelectedId("");
-  }
-}
 async function handleDelete() {
   if (!selected) return;
 
