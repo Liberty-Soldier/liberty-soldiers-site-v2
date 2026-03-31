@@ -454,7 +454,6 @@ const latestPublished = published.slice(0, 3);
       </section>
 
       <EmailBand />
-
       <section className="border-t border-zinc-200 bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -469,36 +468,6 @@ const latestPublished = published.slice(0, 3);
                 </p>
               </div>
             </div>
-                  <section className="border-t border-zinc-200 py-12 sm:py-16">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="hidden sm:block">
-            <h2 className="text-2xl font-bold text-zinc-900 sm:text-3xl">
-              Liberty Soldiers is an independent investigative media platform for geopolitical analysis.
-            </h2>
-
-            <p className="mt-3 leading-relaxed text-zinc-800">
-              We publish investigative reporting and analytical research on global geopolitics, modern conflict, information warfare, psychological operations, and the power structures and belief systems that shape public perception and policy.
-            </p>
-
-            <p className="mt-3 leading-relaxed text-zinc-700">
-              Our reports connect breaking news and world events to historical patterns, strategic doctrine, and long-term ideological frameworks — separating signal from noise, fact from propaganda, and context from narrative — so readers gain situational awareness and clarity, not partisan opinion.
-            </p>
-
-            <p className="mt-2 text-sm text-zinc-500">
-              Topics include geopolitics, global conflict, media manipulation, surveillance systems, digital identity, financial power, and narrative control.
-            </p>
-          </div>
-
-          <div className="sm:hidden">
-            <h2 className="text-xl font-extrabold text-zinc-900">
-              Independent analysis of power, perception, and control.
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-zinc-700">
-              Liberty Soldiers tracks conflict, systems, narratives, and the emerging signals shaping world events.
-            </p>
-          </div>
-        </div>
-      </section>
 
             <a
               href="/news"
@@ -516,6 +485,33 @@ const latestPublished = published.slice(0, 3);
         </div>
       </section>
 
-    </div>
-  );
-}
+      <section className="border-t border-zinc-200 py-12 sm:py-16">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="hidden sm:block">
+            <h2 className="text-2xl font-bold text-zinc-900 sm:text-3xl">
+              Liberty Soldiers is an independent investigative media platform for geopolitical analysis.
+            </h2>
+
+            <p className="mt-3 leading-relaxed text-zinc-800">
+              We publish investigative reporting and analytical research on global geopolitics, modern conflict, information warfare, psychological operations, and the power structures and belief systems that shape public perception and policy.
+            </p>
+
+            <p className="mt-3 leading-relaxed text-zinc-700">
+              Our reports connect breaking news and world events to historical patterns, strategic doctrine, and long-term ideological frameworks — separating signal from noise, fact from propaganda, and context from narrative — so readers gain situational awareness and clarity rather than partisan opinion.
+            </p>
+
+            <p className="mt-2 text-sm text-zinc-500">
+              Topics include geopolitics, global conflict, media manipulation, surveillance systems, digital identity, financial power, and narrative control.
+            </p>
+          </div>
+
+          <div className="sm:hidden">
+            <h2 className="text-xl font-extrabold text-zinc-900">
+              Independent analysis of power, perception, and control.
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-zinc-700">
+              Liberty Soldiers tracks conflict, systems, narratives, and the emerging signals shaping world events.
+            </p>
+          </div>
+        </div>
+      </section>
