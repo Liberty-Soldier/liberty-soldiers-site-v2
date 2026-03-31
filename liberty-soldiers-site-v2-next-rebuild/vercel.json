@@ -7,7 +7,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api|_next|favicon.ico|robots.txt|sitemap.xml).*)",
+      "source": "/((?!api|_next|favicon.ico|robots.txt|sitemap.xml|news|reports|published).*)",
       "destination": "/"
     }
   ]
