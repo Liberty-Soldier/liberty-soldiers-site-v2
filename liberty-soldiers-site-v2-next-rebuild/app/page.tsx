@@ -8,6 +8,7 @@ import EmailBand from "./components/EmailBand";
 import IranWarCarousel from "./components/IranWarCarousel";
 
 import { getLatestReports } from "../lib/reports";
+import { getPublished } from "../lib/published-store";
 import { fetchAllHeadlines } from "../lib/rss";
 import { pickIranRadarHeadlines } from "../lib/news.select";
 
@@ -193,9 +194,61 @@ function HeadlineCard({
     </a>
   );
 }
+function PublishedCard({
+  article,
+}: {
+  article: {
+    slug: string;
+    title: string;
+    excerpt: string;
+    coverImage: string;
+    dateISO: string;
+    readTime?: string;
+    hardCategory?: string;
+  };
+}) {
+  return (
+    <a
+      href={`/published/${article.slug}`}
+      className="group block min-w-[260px] max-w-[260px] shrink-0 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+    >
+      <div className="relative h-[170px] w-full overflow-hidden bg-zinc-100">
+        <img
+          src={article.coverImage}
+          alt={article.title}
+          className="h-full w-full object-cover"
+        />
+        <div className="absolute left-3 top-3 rounded-full bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase text-red-700">
+          Liberty Intel
+        </div>
+      </div>
+
+      <div className="p-3.5">
+        <div className="mb-2 text-[11px] text-zinc-500">
+          {article.dateISO} • {article.readTime}
+        </div>
+
+        <h3 className="line-clamp-3 font-extrabold text-zinc-900 group-hover:text-red-700">
+          {article.title}
+        </h3>
+
+        <p className="mt-2 line-clamp-2 text-sm text-zinc-600">
+          {article.excerpt}
+        </p>
+
+        <div className="mt-3 text-sm font-semibold text-zinc-900 group-hover:text-red-700">
+          Read analysis →
+        </div>
+      </div>
+    </a>
+  );
+}
 
 export default async function Home() {
   const all = await fetchAllHeadlines();
+
+  const published = await getPublished();
+const latestPublished = published.slice(0, 5);
 
   const featuredReports = getLatestReports(10);
   const latestHeadlines = [...all]
@@ -267,6 +320,27 @@ export default async function Home() {
       />
 
       <LiveBriefingAuto />
+      <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
+  <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div className="mb-6 flex items-start gap-3">
+      <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 animate-pulse" />
+      <div>
+        <h2 className="text-2xl font-extrabold text-zinc-900 sm:text-3xl">
+          Latest Published
+        </h2>
+        <p className="mt-1 text-sm text-zinc-600 sm:text-base">
+          Fresh Liberty Soldiers analysis from the automated intel pipeline.
+        </p>
+      </div>
+    </div>
+
+    <Carousel title="" subtitle="">
+      {latestPublished.map((article) => (
+        <PublishedCard key={article.slug} article={article} />
+      ))}
+    </Carousel>
+  </div>
+</section>
 
       <section className="relative flex min-h-[38vh] w-full items-center py-12 sm:min-h-[42vh] sm:py-0">
         <div
