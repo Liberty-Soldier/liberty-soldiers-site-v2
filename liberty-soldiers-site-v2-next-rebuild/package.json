@@ -16,6 +16,7 @@
     "@vercel/kv": "^3.0.0",
     "fast-xml-parser": "^4.4.1",
     "next": "14.2.5",
+    "oauth-1.0a": "^2.2.6",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-icons": "^5.0.1",
