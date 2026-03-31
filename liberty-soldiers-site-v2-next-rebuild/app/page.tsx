@@ -320,27 +320,7 @@ const latestPublished = published.slice(0, 5);
       />
 
       <LiveBriefingAuto />
-      <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
-  <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-    <div className="mb-6 flex items-start gap-3">
-      <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 animate-pulse" />
-      <div>
-        <h2 className="text-2xl font-extrabold text-zinc-900 sm:text-3xl">
-          Latest Published
-        </h2>
-        <p className="mt-1 text-sm text-zinc-600 sm:text-base">
-          Fresh Liberty Soldiers analysis from the automated intel pipeline.
-        </p>
-      </div>
-    </div>
 
-    <Carousel title="" subtitle="">
-      {latestPublished.map((article) => (
-        <PublishedCard key={article.slug} article={article} />
-      ))}
-    </Carousel>
-  </div>
-</section>
 
       <section className="relative flex min-h-[38vh] w-full items-center py-12 sm:min-h-[42vh] sm:py-0">
         <div
@@ -390,6 +370,36 @@ const latestPublished = published.slice(0, 5);
           </div>
         </div>
       </section>
+      <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
+  <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="flex items-start gap-3">
+        <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+        <div>
+          <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
+            Latest Published
+          </h2>
+          <p className="mt-1 text-sm text-zinc-600 sm:text-base">
+            Fresh Liberty Soldiers analysis from the admin publishing pipeline.
+          </p>
+        </div>
+      </div>
+
+      <a
+        href="/published"
+        className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
+      >
+        View all published <span className="text-red-600">→</span>
+      </a>
+    </div>
+
+    <Carousel title="" subtitle="">
+      {latestPublished.map((article) => (
+        <PublishedCard key={article.slug} article={article} />
+      ))}
+    </Carousel>
+  </div>
+</section>
 
       <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
