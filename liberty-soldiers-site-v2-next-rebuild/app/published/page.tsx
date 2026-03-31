@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { unstable_noStore as noStore } from "next/cache";
 import { getPublished } from "@/lib/published-store";
 
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
+export const fetchCache = "force-no-store";
 
 export default async function PublishedPage() {
+  noStore();
+
   const articles = await getPublished();
 
   return (

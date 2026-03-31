@@ -1,4 +1,5 @@
 import { kv } from "@vercel/kv";
+import { unstable_noStore as noStore } from "next/cache";
 
 const PUBLISHED_KEY = "lbs:published:articles";
 
@@ -23,6 +24,7 @@ export type PublishedArticle = {
 };
 
 export async function getPublished(): Promise<PublishedArticle[]> {
+  noStore();
   const articles = await kv.get<PublishedArticle[]>(PUBLISHED_KEY);
   return Array.isArray(articles) ? articles : [];
 }
@@ -32,6 +34,7 @@ export async function savePublished(articles: PublishedArticle[]) {
 }
 
 export async function getPublishedBySlug(slug: string) {
+  noStore();
   const articles = await getPublished();
   return articles.find((article) => article.slug === slug) || null;
 }
