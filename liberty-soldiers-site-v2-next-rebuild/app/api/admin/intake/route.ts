@@ -31,7 +31,12 @@ export async function GET() {
           items.push({
             title: item.title,
             link: item.link,
-            contentSnippet: item.contentSnippet || item.content || "",
+            contentSnippet:
+              typeof item.contentSnippet === "string"
+                ? item.contentSnippet
+                : typeof item.content === "string"
+                ? item.content
+                : "",
             isoDate: item.isoDate,
             source: feed.title || feedUrl,
           });
@@ -43,16 +48,14 @@ export async function GET() {
 
     const selected = items.slice(0, 5);
 
+    const baseUrl =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
     const results = [];
 
     for (const item of selected) {
       try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_SITE_URL ||
-          process.env.VERCEL_URL
-            ? `https://${process.env.VERCEL_URL}`
-            : "http://localhost:3000";
-
         const res = await fetch(`${baseUrl}/api/admin/generate`, {
           method: "POST",
           headers: {
@@ -66,21 +69,30 @@ export async function GET() {
         });
 
         const data = await res.json();
+
         results.push({
           title: item.title,
-          ok: data.ok,
+          status: res.status,
+          ok: !!data.ok,
+          error: data.error || null,
+          details: data.details || null,
         });
       } catch (err) {
         console.error("Generate from intake failed:", err);
+
         results.push({
           title: item.title,
+          status: 500,
           ok: false,
+          error: err instanceof Error ? err.message : "Unknown intake error",
+          details: null,
         });
       }
     }
 
     return NextResponse.json({
       ok: true,
+      baseUrl,
       scanned: items.length,
       generated: results,
     });
@@ -88,7 +100,7 @@ export async function GET() {
     console.error("Intake route failed:", error);
 
     return NextResponse.json(
-      { ok: false, error: "Intake failed" },
+      { ok: false, error: error instanceof Error ? error.message : "Intake failed" },
       { status: 500 }
     );
   }
