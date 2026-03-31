@@ -51,6 +51,54 @@ function extractMessageText(content: unknown): string {
   return "";
 }
 
+function mapHardCategory(category: string): string {
+  const lower = category.toLowerCase();
+
+  if (
+    lower.includes("war") ||
+    lower.includes("geopolitic") ||
+    lower.includes("military") ||
+    lower.includes("conflict")
+  ) {
+    return "War & Geopolitics";
+  }
+
+  if (
+    lower.includes("market") ||
+    lower.includes("finance") ||
+    lower.includes("economy") ||
+    lower.includes("inflation") ||
+    lower.includes("energy")
+  ) {
+    return "Markets & Finance";
+  }
+
+  if (
+    lower.includes("digital") ||
+    lower.includes("technocracy") ||
+    lower.includes("surveillance") ||
+    lower.includes("ai") ||
+    lower.includes("biometric")
+  ) {
+    return "Digital ID / Technocracy";
+  }
+
+  if (
+    lower.includes("religion") ||
+    lower.includes("ideology")
+  ) {
+    return "Religion & Ideology";
+  }
+
+  if (
+    lower.includes("prophecy")
+  ) {
+    return "Prophecy Watch";
+  }
+
+  return "Power & Control";
+}
+
 export async function POST(req: Request) {
   try {
     if (!process.env.OPENAI_API_KEY) {
@@ -76,29 +124,67 @@ export async function POST(req: Request) {
     const prompt = `
 You are writing a FIRST-PASS draft for Liberty Soldiers.
 
-Liberty Soldiers tone and style:
-- Serious, investigative, sharp, and direct
-- Focus on signal over noise
-- Always look at structural meaning, incentives, control systems, narrative management, and end-game implications
-- Explain why the development matters, not just what happened
-- Ask hard questions when appropriate, but do not make unsupported claims
-- Do not sound casual, cheerful, corporate, or generic
-- Do not use emojis
-- Do not use sensational tabloid phrasing
-- Do not invent facts, quotes, or events
-- If something is uncertain, frame it as a question or implication, not a fact
-- The output should feel like Liberty Soldiers analysis: what is changing, who benefits, what system is being normalized, and where this could lead
+Liberty Soldiers voice:
+- hard-hitting
+- serious
+- sharp
+- investigative
+- skeptical of official narratives
+- focused on power, control, incentives, manipulation, escalation, and second-order consequences
+- never casual, cheerful, soft, corporate, or generic
+- never write like a neutral wire-service reporter
+- write like an independent geopolitical and systems analyst cutting through noise
 
-Write in this structure:
-1. Strong headline
-2. Sharp excerpt
-3. Multi-paragraph article body
-4. Body should include:
-   - what happened
-   - what stands out
-   - why it matters
-   - what deeper pattern may be emerging
-   - what readers should watch next
+Core framing rules:
+- Do not just describe the event. Explain what it signals.
+- Focus on what is changing, who benefits, what system is being normalized, and what readers should watch next.
+- Highlight contradiction, escalation risk, narrative management, institutional motive, or structural consequence where relevant.
+- Ask hard questions when justified, but do not make unsupported claims.
+- If facts are uncertain, frame them as implications, pressure points, or open questions.
+- Avoid fluff, filler, generic scene-setting, and empty transitions.
+- Do not use emojis.
+- Do not use sensational tabloid phrasing.
+- Do not invent facts, quotes, motives, or events.
+
+Headline rules:
+- Headlines must be strong, sharp, and clickable without sounding fake.
+- Avoid bland headlines like "X happens amid Y."
+- Favor headlines that emphasize escalation, contradiction, pressure, exposure, control, strategic risk, or systemic consequences.
+- Use tension and consequence.
+- Keep the headline clean, direct, and punchy.
+- Do not use clickbait questions.
+- Do not use all caps.
+- Prefer strong Liberty Soldiers-style headline patterns that expose pressure, contradiction, escalation, normalization, or narrative shifts.
+
+Excerpt rules:
+- The excerpt should hit hard in 1-2 sentences.
+- It should tell the reader why this matters now.
+- It should sound like Liberty Soldiers, not a generic news summary.
+- It should frame the stakes, not just summarize the event.
+
+Body rules:
+- Open strong. Do not waste the first paragraph.
+- Paragraph 1 should immediately frame why the development matters.
+- Then explain what happened.
+- Then explain what stands out.
+- Then explain the deeper pattern or structural meaning.
+- End with what to watch next and why it matters.
+- Keep the writing tight, muscular, and readable.
+- Use short-to-medium paragraphs.
+- Avoid repeating the same point in slightly different words.
+- Write with authority and controlled urgency.
+- The article should feel like signal detection, not passive reporting.
+- Where appropriate, contrast the official narrative with the visible strategic reality.
+
+Category rules:
+- Pick the most fitting category based on the story.
+- Favor categories like:
+  Power & Control
+  War & Geopolitics
+  Markets & Finance
+  Digital ID / Technocracy
+  Religion & Ideology
+  Prophecy Watch
 
 Return JSON only in this exact format:
 {
@@ -125,12 +211,18 @@ ${intakeNotes}
         Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
+        model: "gpt-4.1",
         messages: [
-          { role: "developer", content: "Return only valid JSON. No markdown fences." },
-          { role: "user", content: prompt }
+          {
+            role: "developer",
+            content: "Return only valid JSON. No markdown fences.",
+          },
+          {
+            role: "user",
+            content: prompt,
+          },
         ],
-        temperature: 0.4,
+        temperature: 0.5,
         response_format: {
           type: "json_schema",
           json_schema: {
@@ -143,28 +235,28 @@ ${intakeNotes}
                 title: { type: "string" },
                 excerpt: { type: "string" },
                 category: { type: "string" },
-                body: { type: "string" }
+                body: { type: "string" },
               },
-              required: ["title", "excerpt", "category", "body"]
-            }
-          }
-        }
+              required: ["title", "excerpt", "category", "body"],
+            },
+          },
+        },
       }),
     });
 
-if (!openAIRes.ok) {
-  const errorText = await openAIRes.text();
-  console.error("OpenAI API error:", errorText);
+    if (!openAIRes.ok) {
+      const errorText = await openAIRes.text();
+      console.error("OpenAI API error:", errorText);
 
-  return NextResponse.json(
-    {
-      ok: false,
-      error: "OpenAI request failed.",
-      details: errorText,
-    },
-    { status: 500 }
-  );
-}
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "OpenAI request failed.",
+          details: errorText,
+        },
+        { status: 500 }
+      );
+    }
 
     const data = await openAIRes.json();
     const rawContent = data?.choices?.[0]?.message?.content;
@@ -197,8 +289,9 @@ if (!openAIRes.ok) {
 
     const safeTitle = parsed.title?.trim() || intakeTitle || "Generated Draft";
     const safeExcerpt = parsed.excerpt?.trim() || "Auto-generated draft.";
-    const safeCategory = parsed.category?.trim() || "General";
+    const safeCategory = parsed.category?.trim() || "Power & Control";
     const safeBody = parsed.body?.trim() || "No content returned.";
+    const safeHardCategory = mapHardCategory(safeCategory);
 
     const item: QueueItem = {
       id: `q-${Date.now()}`,
@@ -210,7 +303,7 @@ if (!openAIRes.ok) {
       byline: "Liberty Soldiers",
       coverImage: "/og-default.jpg",
       category: safeCategory,
-      hardCategory: "Power & Control",
+      hardCategory: safeHardCategory,
       readTime: "5 min",
       featured: false,
       priority: 3,
@@ -220,27 +313,26 @@ if (!openAIRes.ok) {
       body: safeBody,
     };
 
-const queue = await getQueue();
+    const queue = await getQueue();
 
-// 🔒 DUPLICATE PROTECTION
-const exists = queue.find(
-  (q) =>
-    q.sourceUrl &&
-    item.sourceUrl &&
-    q.sourceUrl === item.sourceUrl
-);
+    const exists = queue.find(
+      (q) =>
+        q.sourceUrl &&
+        item.sourceUrl &&
+        q.sourceUrl === item.sourceUrl
+    );
 
-if (exists) {
-  return NextResponse.json({
-    ok: true,
-    skipped: true,
-    reason: "duplicate",
-  });
-}
+    if (exists) {
+      return NextResponse.json({
+        ok: true,
+        skipped: true,
+        reason: "duplicate",
+      });
+    }
 
-const nextQueue = [item, ...queue];
+    const nextQueue = [item, ...queue];
 
-await saveQueue(nextQueue);
+    await saveQueue(nextQueue);
 
     return NextResponse.json({
       ok: true,

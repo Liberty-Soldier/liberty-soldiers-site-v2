@@ -7,8 +7,15 @@ const parser = new Parser();
 
 const FEEDS = [
   "https://feeds.reuters.com/reuters/worldNews",
+  "https://feeds.reuters.com/reuters/businessNews",
   "https://feeds.bbci.co.uk/news/world/rss.xml",
+  "https://feeds.bbci.co.uk/news/business/rss.xml",
   "https://www.aljazeera.com/xml/rss/all.xml",
+  "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+  "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
+  "https://feeds.skynews.com/feeds/rss/world.xml",
+  "https://feeds.skynews.com/feeds/rss/business.xml",
+  "https://www.cnbc.com/id/100003114/device/rss/rss.html",
 ];
 
 const KEYWORDS = [
@@ -16,22 +23,37 @@ const KEYWORDS = [
   "military",
   "iran",
   "israel",
+  "gaza",
   "china",
   "russia",
+  "ukraine",
   "nato",
   "missile",
   "drone",
+  "strike",
+  "attack",
+  "troops",
+  "sanctions",
   "ai",
   "surveillance",
+  "biometric",
+  "digital id",
   "economy",
   "inflation",
+  "recession",
+  "debt",
+  "market",
+  "stocks",
   "energy",
   "oil",
+  "gas",
+  "shipping",
+  "supply chain",
   "cyber",
 ];
 
-function isRelevant(title: string) {
-  const lower = title.toLowerCase();
+function isRelevant(title: string, snippet = "") {
+  const lower = `${title} ${snippet}`.toLowerCase();
   return KEYWORDS.some((k) => lower.includes(k));
 }
 
@@ -40,7 +62,10 @@ function normalizeTitle(title: string) {
     .toLowerCase()
     .replace(/['"`]/g, "")
     .replace(/[^a-z0-9\s]/g, " ")
-    .replace(/\b(the|a|an|in|on|of|for|to|and|with|over|against|amid|after|under|into|from)\b/g, "")
+    .replace(
+      /\b(the|a|an|in|on|of|for|to|and|with|over|against|amid|after|under|into|from|as|at|by)\b/g,
+      ""
+    )
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -49,8 +74,16 @@ function titleSimilarityKey(title: string) {
   return normalizeTitle(title)
     .split(" ")
     .filter((w) => w.length > 2)
-    .slice(0, 8)
+    .slice(0, 6)
     .join(" ");
+}
+
+function domainFromUrl(url: string) {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return "unknown";
+  }
 }
 
 export async function GET() {
@@ -61,26 +94,30 @@ export async function GET() {
       contentSnippet?: string;
       isoDate?: string;
       source: string;
+      domain: string;
     }> = [];
 
     for (const feedUrl of FEEDS) {
       try {
         const feed = await parser.parseURL(feedUrl);
 
-        for (const item of feed.items.slice(0, 4)) {
+        for (const item of feed.items.slice(0, 8)) {
           if (!item.title || !item.link) continue;
+
+          const contentSnippet =
+            typeof item.contentSnippet === "string"
+              ? item.contentSnippet
+              : typeof item.content === "string"
+              ? item.content
+              : "";
 
           items.push({
             title: item.title,
             link: item.link,
-            contentSnippet:
-              typeof item.contentSnippet === "string"
-                ? item.contentSnippet
-                : typeof item.content === "string"
-                ? item.content
-                : "",
+            contentSnippet,
             isoDate: item.isoDate,
             source: feed.title || feedUrl,
+            domain: domainFromUrl(item.link),
           });
         }
       } catch (err) {
@@ -88,18 +125,25 @@ export async function GET() {
       }
     }
 
-    const seen = new Set<string>();
+    const seenTitles = new Set<string>();
+    const perDomainCount = new Map<string, number>();
 
     const selected = items
-      .filter((i) => isRelevant(i.title))
+      .filter((i) => isRelevant(i.title, i.contentSnippet || ""))
       .filter((i) => {
         const key = titleSimilarityKey(i.title);
         if (!key) return false;
-        if (seen.has(key)) return false;
-        seen.add(key);
+        if (seenTitles.has(key)) return false;
+        seenTitles.add(key);
         return true;
       })
-      .slice(0, 2);
+      .filter((i) => {
+        const count = perDomainCount.get(i.domain) || 0;
+        if (count >= 2) return false;
+        perDomainCount.set(i.domain, count + 1);
+        return true;
+      })
+      .slice(0, 5);
 
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
@@ -127,6 +171,8 @@ export async function GET() {
 
         results.push({
           title: item.title,
+          source: item.source,
+          domain: item.domain,
           status: res.status,
           ok: !!data.ok,
           skipped: data.skipped || false,
@@ -139,6 +185,8 @@ export async function GET() {
 
         results.push({
           title: item.title,
+          source: item.source,
+          domain: item.domain,
           status: 500,
           ok: false,
           skipped: false,
@@ -160,7 +208,10 @@ export async function GET() {
     console.error("Intake route failed:", error);
 
     return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : "Intake failed" },
+      {
+        ok: false,
+        error: error instanceof Error ? error.message : "Intake failed",
+      },
       { status: 500 }
     );
   }
