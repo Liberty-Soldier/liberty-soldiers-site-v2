@@ -734,18 +734,31 @@ async function handleDelete() {
 
 <button
   onClick={async () => {
-    if (!selected) return;
+  if (!selected) return;
 
-    await fetch("/api/admin/publish", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: selected.id }),
-    });
+  const res = await fetch("/api/admin/publish", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ id: selected.id }),
+  });
 
-    await loadQueue();
-  }}
+  const data = await res.json();
+
+  if (!data.ok) {
+    console.error("Publish failed", data);
+    alert(data.error || "Publish failed");
+    return;
+  }
+
+  await loadQueue();
+
+  if (data.xPost && data.xPost.ok === false) {
+    console.warn("X post failed", data.xPost);
+    alert("Article published, but X posting failed.");
+  }
+}}
   className="rounded-2xl border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-800 hover:bg-blue-100"
 >
   Publish
