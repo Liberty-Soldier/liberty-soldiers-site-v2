@@ -232,7 +232,7 @@ async function loadQueue() {
 }
   } catch (err) {
     console.error("Failed to load queue", err);
-    setQueue([]);
+setQueue([]);
 setSelectedId("");
   }
 }
