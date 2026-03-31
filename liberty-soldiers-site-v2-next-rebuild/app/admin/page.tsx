@@ -232,8 +232,8 @@ async function loadQueue() {
 }
   } catch (err) {
     console.error("Failed to load queue", err);
-    setQueue(INITIAL_QUEUE);
-    setSelectedId(INITIAL_QUEUE[0]?.id ?? "");
+    setQueue([]);
+setSelectedId("");
   }
 }
 async function handleDelete() {
