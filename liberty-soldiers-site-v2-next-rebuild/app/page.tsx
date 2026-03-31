@@ -452,8 +452,9 @@ const latestPublished = published.slice(0, 3);
           <IranWarCarousel items={iranItems} />
         </div>
       </section>
-
+      
       <EmailBand />
+
       <section className="border-t border-zinc-200 bg-white py-12 sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -515,3 +516,6 @@ const latestPublished = published.slice(0, 3);
           </div>
         </div>
       </section>
+    </div>
+  );
+}
