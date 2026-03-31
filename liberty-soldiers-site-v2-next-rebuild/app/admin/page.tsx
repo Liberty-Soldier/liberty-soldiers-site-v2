@@ -719,23 +719,44 @@ async function handleDelete() {
 
                   <div className="flex flex-wrap gap-2">
                     <button
-                      onClick={() => updateStatus("review")}
-                      className="rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
-                    >
-                      Mark Review
-                    </button>
-                    <button
-                      onClick={() => updateStatus("approved")}
-                      className="rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-100"
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => updateStatus("rejected")}
-                      className="rounded-2xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-800 hover:bg-red-100"
-                    >
-                      Reject
-                    </button>
+  onClick={() => updateStatus("review")}
+  className="rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+>
+  Mark Review
+</button>
+
+<button
+  onClick={() => updateStatus("approved")}
+  className="rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 hover:bg-emerald-100"
+>
+  Approve
+</button>
+
+<button
+  onClick={async () => {
+    if (!selected) return;
+
+    await fetch("/api/admin/publish", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: selected.id }),
+    });
+
+    await loadQueue();
+  }}
+  className="rounded-2xl border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-800 hover:bg-blue-100"
+>
+  Publish
+</button>
+
+<button
+  onClick={() => updateStatus("rejected")}
+  className="rounded-2xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-medium text-red-800 hover:bg-red-100"
+>
+  Reject
+</button>
                   </div>
                 </div>
 
