@@ -11,42 +11,6 @@ const FEEDS = [
   "https://www.aljazeera.com/xml/rss/all.xml",
 ];
 
-export async function GET() {
-  try {
-    const items: Array<{
-      title: string;
-      link: string;
-      contentSnippet?: string;
-      isoDate?: string;
-      source: string;
-    }> = [];
-
-    for (const feedUrl of FEEDS) {
-      try {
-        const feed = await parser.parseURL(feedUrl);
-
-        for (const item of feed.items.slice(0, 5)) {
-          if (!item.title || !item.link) continue;
-
-          items.push({
-            title: item.title,
-            link: item.link,
-            contentSnippet:
-              typeof item.contentSnippet === "string"
-                ? item.contentSnippet
-                : typeof item.content === "string"
-                ? item.content
-                : "",
-            isoDate: item.isoDate,
-            source: feed.title || feedUrl,
-          });
-        }
-      } catch (err) {
-        console.error(`Failed feed: ${feedUrl}`, err);
-      }
-    }
-
-   // 🔍 FILTER FOR RELEVANT SIGNAL ONLY
 const KEYWORDS = [
   "war",
   "military",
@@ -67,19 +31,81 @@ const KEYWORDS = [
 ];
 
 function isRelevant(title: string) {
-  return KEYWORDS.some((k) =>
-    title.toLowerCase().includes(k)
-  );
+  const lower = title.toLowerCase();
+  return KEYWORDS.some((k) => lower.includes(k));
 }
 
-// first filter, then limit
-const selected = items
-  .filter((i) => isRelevant(i.title))
-  .slice(0, 5);
+function normalizeTitle(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/['"`]/g, "")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\b(the|a|an|in|on|of|for|to|and|with|over|against|amid|after|under|into|from)\b/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function titleSimilarityKey(title: string) {
+  return normalizeTitle(title)
+    .split(" ")
+    .filter((w) => w.length > 2)
+    .slice(0, 8)
+    .join(" ");
+}
+
+export async function GET() {
+  try {
+    const items: Array<{
+      title: string;
+      link: string;
+      contentSnippet?: string;
+      isoDate?: string;
+      source: string;
+    }> = [];
+
+    for (const feedUrl of FEEDS) {
+      try {
+        const feed = await parser.parseURL(feedUrl);
+
+        for (const item of feed.items.slice(0, 4)) {
+          if (!item.title || !item.link) continue;
+
+          items.push({
+            title: item.title,
+            link: item.link,
+            contentSnippet:
+              typeof item.contentSnippet === "string"
+                ? item.contentSnippet
+                : typeof item.content === "string"
+                ? item.content
+                : "",
+            isoDate: item.isoDate,
+            source: feed.title || feedUrl,
+          });
+        }
+      } catch (err) {
+        console.error(`Failed feed: ${feedUrl}`, err);
+      }
+    }
+
+    const seen = new Set<string>();
+
+    const selected = items
+      .filter((i) => isRelevant(i.title))
+      .filter((i) => {
+        const key = titleSimilarityKey(i.title);
+        if (!key) return false;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 2);
 
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000");
 
     const results = [];
 
@@ -103,6 +129,8 @@ const selected = items
           title: item.title,
           status: res.status,
           ok: !!data.ok,
+          skipped: data.skipped || false,
+          reason: data.reason || null,
           error: data.error || null,
           details: data.details || null,
         });
@@ -113,6 +141,8 @@ const selected = items
           title: item.title,
           status: 500,
           ok: false,
+          skipped: false,
+          reason: null,
           error: err instanceof Error ? err.message : "Unknown intake error",
           details: null,
         });
@@ -123,6 +153,7 @@ const selected = items
       ok: true,
       baseUrl,
       scanned: items.length,
+      selected: selected.length,
       generated: results,
     });
   } catch (error) {
