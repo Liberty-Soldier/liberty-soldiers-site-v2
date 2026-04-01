@@ -396,17 +396,7 @@ async function handleDelete() {
       rejected: queue.filter((x) => x.status === "rejected").length,
     };
   }, [queue]);
-
-  if (!selected) {
-    return (
-      <main className="min-h-screen bg-zinc-50 px-4 py-10 text-zinc-900">
-        <div className="mx-auto max-w-5xl rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm">
-          <h1 className="text-3xl font-semibold tracking-tight">LBS Admin</h1>
-          <p className="mt-3 text-zinc-600">No queue items found.</p>
-        </div>
-      </main>
-    );
-  }
+  
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
