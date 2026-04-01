@@ -95,7 +95,7 @@ export const CORE_NEWS_FEEDS: NewsFeed[] = [
   { url: "https://feeds.feedburner.com/zerohedge/feed", category: "finance" },
   { url: "https://www.federalreserve.gov/feeds/press_all.xml", category: "finance" },
   { url: "https://www.rt.com/rss/business/", category: "finance" },
-  {url: "https://www.reutersagency.com/feed/?best-topics=business-finance&post_type=best", category: "finance"},
+  
   
 
   // =========================================================

@@ -810,6 +810,11 @@ async function normalizeFeed(
 
 async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
   const feed = toFeedInput(feedIn);
+  
+  if (feed.url.includes("feeds.reuters.com")) {
+  console.warn("Skipping dead Reuters feed:", feed.url);
+  return [];
+}
 
   try {
     const res = await fetch(feed.url, {
