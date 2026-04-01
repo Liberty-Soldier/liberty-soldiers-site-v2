@@ -61,7 +61,7 @@ export default async function ControlPage() {
       .filter(isControl)
       .map((item) => ({
         ...item,
-        kind: "external",
+        kind: "external" as const,
         isOriginal: false,
       }))
       .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));

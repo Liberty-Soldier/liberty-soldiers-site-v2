@@ -63,7 +63,7 @@ export default async function FinancePage() {
       .filter(isFinance)
       .map((item) => ({
         ...item,
-        kind: "external",
+        kind: "external" as const,
         isOriginal: false,
       }))
       .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));

@@ -68,7 +68,7 @@ export default async function WarPage() {
       .filter(isWar)
       .map((item) => ({
         ...item,
-        kind: "external",
+        kind: "external" as const,
         isOriginal: false,
       }))
       .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
