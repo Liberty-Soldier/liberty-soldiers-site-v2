@@ -1,5 +1,8 @@
 import ShareButton from "../ShareButton";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title:
     "Lockdown 2.0: Energy Crisis Policy Signals a Return to Behavior Control Governance | Liberty Soldiers",

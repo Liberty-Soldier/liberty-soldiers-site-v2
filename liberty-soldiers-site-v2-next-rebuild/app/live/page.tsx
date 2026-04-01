@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import LiveFeedPanel from "../components/LiveFeedPanel";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata: Metadata = {
   title: "Live Global News Monitoring | Liberty Soldiers",
   description:

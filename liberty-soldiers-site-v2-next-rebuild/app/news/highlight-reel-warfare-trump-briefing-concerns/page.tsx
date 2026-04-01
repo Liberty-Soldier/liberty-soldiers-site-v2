@@ -1,5 +1,8 @@
 import ShareButton from "../ShareButton";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title:
     "Highlight-Reel Warfare: Concerns Grow Over Trump’s Strike Montage Briefings | Liberty Soldiers",

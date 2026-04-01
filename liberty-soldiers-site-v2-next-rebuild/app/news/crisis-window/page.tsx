@@ -1,5 +1,8 @@
 // app/news/crisis-window/page.tsx
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title:
     "The Crisis Window: How Fear Accelerates Change and Expands Public Consent | Liberty Soldiers",

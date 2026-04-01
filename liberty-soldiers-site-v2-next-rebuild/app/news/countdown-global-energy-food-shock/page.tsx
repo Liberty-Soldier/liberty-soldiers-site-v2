@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://www.libertysoldiers.com";
 

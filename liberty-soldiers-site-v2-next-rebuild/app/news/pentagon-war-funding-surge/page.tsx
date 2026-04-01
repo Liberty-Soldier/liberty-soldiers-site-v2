@@ -2,6 +2,9 @@
 
 import ShareButton from "../ShareButton";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title:
     "War Funding Surge: Pentagon Seeks $200 Billion as Iran Conflict Expands | Liberty Soldiers",

@@ -1,5 +1,8 @@
 // app/news/dispensationalism-middle-east/page.tsx
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title: "...",
   description: "...",

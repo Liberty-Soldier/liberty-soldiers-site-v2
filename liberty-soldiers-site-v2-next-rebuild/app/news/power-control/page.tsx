@@ -3,6 +3,9 @@ import { getAllReports } from "@/lib/reports";
 import Link from "next/link";
 import NewsFeedClient from "../NewsFeedClient";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title: "Power & Control | Liberty Soldiers",
   description:

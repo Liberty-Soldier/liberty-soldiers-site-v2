@@ -2,6 +2,9 @@
 
 import ShareButton from "../ShareButton";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title:
     "Congress War Powers Showdown: Senate Backs Continued Iran Operations | Liberty Soldiers",

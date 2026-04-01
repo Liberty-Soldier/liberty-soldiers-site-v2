@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata: Metadata = {
   title: "The Doomsday Clock Isn’t a Prediction",
   description:

@@ -2,6 +2,9 @@
 
 import ShareButton from "../ShareButton";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title:
     "Iran’s Global Threat: When War Leaves the Battlefield | Liberty Soldiers",

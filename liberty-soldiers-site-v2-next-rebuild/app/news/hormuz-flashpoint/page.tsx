@@ -1,5 +1,8 @@
 import ShareButton from "../ShareButton";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 const ARTICLE_URL =
   "https://libertysoldiers.com/news/hormuz-flashpoint";
 

@@ -2,6 +2,9 @@
 
 import ShareButton from "../ShareButton";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title:
     "Elite Dissent: Why Did Joseph Kent Resign During an Active War? | Liberty Soldiers",

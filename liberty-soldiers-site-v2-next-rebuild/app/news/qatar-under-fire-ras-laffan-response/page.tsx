@@ -2,6 +2,9 @@
 
 import ShareButton from "../ShareButton";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 export const metadata = {
   title:
     "Qatar Under Fire: Ras Laffan, Retaliation, and Doha’s Public Break | Liberty Soldiers",
