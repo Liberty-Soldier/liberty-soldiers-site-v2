@@ -1,21 +1,19 @@
 import { fetchAllHeadlines } from "@/lib/rss";
-import { getAllReports } from "@/lib/reports";
 import Link from "next/link";
 import NewsFeedClient from "../NewsFeedClient";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const revalidate = 180;
 
 export const metadata = {
-  title: "Markets & Finance | Liberty Soldiers",
+  title: "US | Liberty Soldiers",
   description:
-    "Filtered headlines and reports focused on markets, finance, crypto, oil, monetary shifts, and economic stress signals.",
+    "Filtered headlines focused on the United States, Washington, Congress, federal power, and domestic policy signals.",
   alternates: {
-    canonical: "https://libertysoldiers.com/news/markets-finance",
+    canonical: "https://libertysoldiers.com/news/us",
   },
 };
-
-export const revalidate = 180;
 
 type Item = {
   title: string;
@@ -31,78 +29,42 @@ type Item = {
   isOriginal?: boolean;
 };
 
-function isMarketsFinance(item: Item) {
-  const c = `${item.category || ""} ${item.hardCategory || ""}`.toLowerCase();
+function isUS(item: Item) {
   const t = `${item.title} ${item.summary || ""}`.toLowerCase();
 
-  if (
-    c.includes("finance") ||
-    c.includes("markets") ||
-    c.includes("crypto")
-  ) {
-    return true;
-  }
-
   return (
-    t.includes("market") ||
-    t.includes("stocks") ||
-    t.includes("bond") ||
-    t.includes("yield") ||
-    t.includes("fed") ||
-    t.includes("inflation") ||
-    t.includes("recession") ||
-    t.includes("oil") ||
-    t.includes("crude") ||
-    t.includes("gas prices") ||
-    t.includes("shipping") ||
-    t.includes("tariff") ||
-    t.includes("bitcoin") ||
-    t.includes("ethereum") ||
-    t.includes("crypto")
+    t.includes("u.s.") ||
+    t.includes("u.s ") ||
+    t.includes("united states") ||
+    t.includes("america") ||
+    t.includes("american") ||
+    t.includes("washington") ||
+    t.includes("congress") ||
+    t.includes("white house") ||
+    t.includes("federal") ||
+    t.includes("pentagon") ||
+    t.includes("senate") ||
+    t.includes("house republicans") ||
+    t.includes("house democrats") ||
+    t.includes("supreme court")
   );
 }
 
-export default async function MarketsFinancePage() {
-  let externalItems: Item[] = [];
-  let originalItems: Item[] = [];
+export default async function USPage() {
+  let items: Item[] = [];
 
   try {
-    externalItems = ((await fetchAllHeadlines()) as Item[])
-      .filter(isMarketsFinance)
+    items = ((await fetchAllHeadlines()) as Item[])
+      .filter(isUS)
       .map((item) => ({
         ...item,
         kind: "external",
         isOriginal: false,
-      }));
-  } catch {
-    externalItems = [];
-  }
-
-  try {
-    originalItems = getAllReports()
-      .map((r) => ({
-        title: r.title,
-        url: `/news/${r.slug}`,
-        source: "Liberty Soldiers",
-        publishedAt: r.dateISO
-          ? new Date(`${r.dateISO}T12:00:00Z`).getTime()
-          : 0,
-        image: r.coverImage,
-        summary: r.excerpt,
-        category: r.category,
-        hardCategory: r.hardCategory,
-        kind: r.kind,
-        byline: r.byline,
-        isOriginal: true,
       }))
-      .filter(isMarketsFinance);
+      .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
   } catch {
-    originalItems = [];
+    items = [];
   }
-
-  const items: Item[] = [...originalItems, ...externalItems].sort(
-    (a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)
-  );
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -116,11 +78,11 @@ export default async function MarketsFinancePage() {
               Filtered Lane
             </div>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Markets & Finance
+              US
             </h1>
             <p className="mt-3 text-sm leading-relaxed text-zinc-200 sm:text-base">
-              Monetary stress, market risk, oil shocks, crypto, policy pressure,
-              and the financial signals moving beneath world events.
+              Washington, Congress, federal agencies, domestic power shifts,
+              policy pressure, and internal U.S. developments.
             </p>
           </div>
         </div>
@@ -131,11 +93,14 @@ export default async function MarketsFinancePage() {
           <div className="flex items-center gap-3">
             <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Latest Markets & Finance Signals
+              Latest US Signals
             </h2>
           </div>
 
-          <Link href="/news" className="whitespace-nowrap text-sm text-zinc-700 hover:text-zinc-900">
+          <Link
+            href="/news"
+            className="whitespace-nowrap text-sm text-zinc-700 hover:text-zinc-900"
+          >
             ← All News
           </Link>
         </div>

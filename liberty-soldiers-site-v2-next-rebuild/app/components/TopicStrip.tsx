@@ -3,14 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const TOPIC_LINKS = [
+const TOPICS = [
   { href: "/news", label: "All News" },
-  { href: "/news/geopolitics-war", label: "Geopolitics & War" },
-  { href: "/news/power-control", label: "Power & Control" },
-  { href: "/news/markets-finance", label: "Markets & Finance" },
-  { href: "/news/religion-ideology", label: "Religion & Ideology" },
-  { href: "/news/prophecy-watch", label: "Prophecy Watch" },
-  { href: "/news/biosecurity", label: "Biosecurity" },
+  { href: "/news/us", label: "US" },
+  { href: "/news/global", label: "Global" },
+  { href: "/news/war", label: "War" },
+  { href: "/news/finance", label: "Finance" },
+  { href: "/news/control", label: "Control" },
 ];
 
 export default function TopicStrip() {

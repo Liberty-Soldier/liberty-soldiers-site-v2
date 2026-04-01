@@ -1,21 +1,19 @@
 import { fetchAllHeadlines } from "@/lib/rss";
-import { getAllReports } from "@/lib/reports";
 import Link from "next/link";
 import NewsFeedClient from "../NewsFeedClient";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const revalidate = 180;
 
 export const metadata = {
-  title: "Prophecy Watch | Liberty Soldiers",
+  title: "War | Liberty Soldiers",
   description:
-    "Filtered headlines and reports focused on prophecy-related narratives, eschatology, end-times framing, and interpretation trends.",
+    "Filtered headlines focused on war, military escalation, strategic chokepoints, conflict signals, and geopolitical flashpoints.",
   alternates: {
-    canonical: "https://libertysoldiers.com/news/prophecy-watch",
+    canonical: "https://libertysoldiers.com/news/war",
   },
 };
-
-export const revalidate = 180;
 
 type Item = {
   title: string;
@@ -31,68 +29,52 @@ type Item = {
   isOriginal?: boolean;
 };
 
-function isProphecyWatch(item: Item) {
-  const c = `${item.category || ""} ${item.hardCategory || ""}`.toLowerCase();
+function isWar(item: Item) {
   const t = `${item.title} ${item.summary || ""}`.toLowerCase();
 
-  if (c.includes("prophecy")) return true;
-
   return (
-    t.includes("prophecy") ||
-    t.includes("end time") ||
-    t.includes("end-time") ||
-    t.includes("endtime") ||
-    t.includes("tribulation") ||
-    t.includes("rapture") ||
-    t.includes("antichrist") ||
-    t.includes("mark of the beast") ||
-    t.includes("revelation") ||
-    t.includes("daniel") ||
-    t.includes("eschatology")
+    t.includes("war") ||
+    t.includes("military") ||
+    t.includes("missile") ||
+    t.includes("strike") ||
+    t.includes("airstrike") ||
+    t.includes("troops") ||
+    t.includes("drone") ||
+    t.includes("conflict") ||
+    t.includes("battlefield") ||
+    t.includes("ceasefire") ||
+    t.includes("nato") ||
+    t.includes("iran") ||
+    t.includes("israel") ||
+    t.includes("gaza") ||
+    t.includes("ukraine") ||
+    t.includes("russia") ||
+    t.includes("china") ||
+    t.includes("taiwan") ||
+    t.includes("houthi") ||
+    t.includes("hezbollah") ||
+    t.includes("hormuz") ||
+    t.includes("defense") ||
+    t.includes("defence") ||
+    t.includes("naval")
   );
 }
 
-export default async function ProphecyWatchPage() {
-  let externalItems: Item[] = [];
-  let originalItems: Item[] = [];
+export default async function WarPage() {
+  let items: Item[] = [];
 
   try {
-    externalItems = ((await fetchAllHeadlines()) as Item[])
-      .filter(isProphecyWatch)
+    items = ((await fetchAllHeadlines()) as Item[])
+      .filter(isWar)
       .map((item) => ({
         ...item,
         kind: "external",
         isOriginal: false,
-      }));
-  } catch {
-    externalItems = [];
-  }
-
-  try {
-    originalItems = getAllReports()
-      .map((r) => ({
-        title: r.title,
-        url: `/news/${r.slug}`,
-        source: "Liberty Soldiers",
-        publishedAt: r.dateISO
-          ? new Date(`${r.dateISO}T12:00:00Z`).getTime()
-          : 0,
-        image: r.coverImage,
-        summary: r.excerpt,
-        category: r.category,
-        hardCategory: r.hardCategory,
-        kind: r.kind,
-        byline: r.byline,
-        isOriginal: true,
       }))
-      .filter(isProphecyWatch);
+      .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
   } catch {
-    originalItems = [];
+    items = [];
   }
-
-  const items: Item[] = [...originalItems, ...externalItems].sort(
-    (a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)
-  );
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -106,11 +88,11 @@ export default async function ProphecyWatchPage() {
               Filtered Lane
             </div>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Prophecy Watch
+              War
             </h1>
             <p className="mt-3 text-sm leading-relaxed text-zinc-200 sm:text-base">
-              End-times framing, eschatological narratives, prophetic speculation,
-              and interpretation signals shaping religious and geopolitical discourse.
+              Military escalation, armed conflict, regional flashpoints,
+              strategic risk, and open geopolitical confrontation.
             </p>
           </div>
         </div>
@@ -121,11 +103,14 @@ export default async function ProphecyWatchPage() {
           <div className="flex items-center gap-3">
             <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Latest Prophecy Signals
+              Latest War Signals
             </h2>
           </div>
 
-          <Link href="/news" className="whitespace-nowrap text-sm text-zinc-700 hover:text-zinc-900">
+          <Link
+            href="/news"
+            className="whitespace-nowrap text-sm text-zinc-700 hover:text-zinc-900"
+          >
             ← All News
           </Link>
         </div>

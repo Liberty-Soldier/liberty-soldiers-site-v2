@@ -1,21 +1,19 @@
 import { fetchAllHeadlines } from "@/lib/rss";
-import { getAllReports } from "@/lib/reports";
 import Link from "next/link";
 import NewsFeedClient from "../NewsFeedClient";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const revalidate = 180;
 
 export const metadata = {
-  title: "Religion & Ideology | Liberty Soldiers",
+  title: "Global | Liberty Soldiers",
   description:
-    "Filtered headlines and reports focused on religion, ideology, belief systems, persecution, and culture-shaping narratives.",
+    "Filtered global headlines covering international developments, geopolitical shifts, and major world events.",
   alternates: {
-    canonical: "https://libertysoldiers.com/news/religion-ideology",
+    canonical: "https://libertysoldiers.com/news/global",
   },
 };
-
-export const revalidate = 180;
 
 type Item = {
   title: string;
@@ -31,74 +29,25 @@ type Item = {
   isOriginal?: boolean;
 };
 
-function isReligionIdeology(item: Item) {
-  const c = `${item.category || ""} ${item.hardCategory || ""}`.toLowerCase();
-  const t = `${item.title} ${item.summary || ""}`.toLowerCase();
-
-  if (
-    c.includes("religion") ||
-    c.includes("ideology") ||
-    c.includes("persecution")
-  ) {
-    return true;
-  }
-
-  return (
-    t.includes("church") ||
-    t.includes("christian") ||
-    t.includes("jewish") ||
-    t.includes("mosque") ||
-    t.includes("synagogue") ||
-    t.includes("religion") ||
-    t.includes("pastor") ||
-    t.includes("imam") ||
-    t.includes("persecution") ||
-    t.includes("blasphemy") ||
-    t.includes("religious freedom")
-  );
+function isGlobal(_item: Item) {
+  return true;
 }
 
-export default async function ReligionIdeologyPage() {
-  let externalItems: Item[] = [];
-  let originalItems: Item[] = [];
+export default async function GlobalPage() {
+  let items: Item[] = [];
 
   try {
-    externalItems = ((await fetchAllHeadlines()) as Item[])
-      .filter(isReligionIdeology)
+    items = ((await fetchAllHeadlines()) as Item[])
+      .filter(isGlobal)
       .map((item) => ({
         ...item,
         kind: "external",
         isOriginal: false,
-      }));
-  } catch {
-    externalItems = [];
-  }
-
-  try {
-    originalItems = getAllReports()
-      .map((r) => ({
-        title: r.title,
-        url: `/news/${r.slug}`,
-        source: "Liberty Soldiers",
-        publishedAt: r.dateISO
-          ? new Date(`${r.dateISO}T12:00:00Z`).getTime()
-          : 0,
-        image: r.coverImage,
-        summary: r.excerpt,
-        category: r.category,
-        hardCategory: r.hardCategory,
-        kind: r.kind,
-        byline: r.byline,
-        isOriginal: true,
       }))
-      .filter(isReligionIdeology);
+      .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
   } catch {
-    originalItems = [];
+    items = [];
   }
-
-  const items: Item[] = [...originalItems, ...externalItems].sort(
-    (a, b) => (b.publishedAt || 0) - (a.publishedAt || 0)
-  );
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -112,11 +61,11 @@ export default async function ReligionIdeologyPage() {
               Filtered Lane
             </div>
             <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-              Religion & Ideology
+              Global
             </h1>
             <p className="mt-3 text-sm leading-relaxed text-zinc-200 sm:text-base">
-              Religion, worldview conflict, ideological power, persecution,
-              doctrine, and the narratives shaping identity and allegiance.
+              International developments, cross-border tensions, global political
+              shifts, and the broader world picture.
             </p>
           </div>
         </div>
@@ -127,11 +76,14 @@ export default async function ReligionIdeologyPage() {
           <div className="flex items-center gap-3">
             <span className="inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
             <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-              Latest Religion & Ideology Signals
+              Latest Global Signals
             </h2>
           </div>
 
-          <Link href="/news" className="whitespace-nowrap text-sm text-zinc-700 hover:text-zinc-900">
+          <Link
+            href="/news"
+            className="whitespace-nowrap text-sm text-zinc-700 hover:text-zinc-900"
+          >
             ← All News
           </Link>
         </div>

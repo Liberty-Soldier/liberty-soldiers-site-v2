@@ -1,12 +1,11 @@
 // lib/news.types.ts
 
 export type CanonicalCategorySlug =
-  | "war-geopolitics"
-  | "markets-finance"
-  | "digital-id-technocracy"
-  | "power-control"
-  | "religion-ideology"
-  | "prophecy-watch";
+  | "us"
+  | "global"
+  | "war"
+  | "finance"
+  | "control";
 
 export type Headline = {
   title: string;

@@ -10,52 +10,44 @@ export const CATEGORY_DEFS: {
   href: string;
 }[] = [
   {
-    slug: "war-geopolitics",
-    label: "War & Geopolitics",
+    slug: "us",
+    label: "US",
     description:
-      "Conflict escalation, state power, military posture, diplomacy, and geopolitical instability.",
+      "Washington, Congress, federal agencies, domestic power shifts, and internal U.S. developments.",
+    ogImage: "/og-power-control.jpg",
+    href: "/news/us",
+  },
+  {
+    slug: "global",
+    label: "Global",
+    description:
+      "International developments, geopolitical shifts, diplomatic pressure, and major world events.",
+    ogImage: "/og-default.jpg",
+    href: "/news/global",
+  },
+  {
+    slug: "war",
+    label: "War",
+    description:
+      "Military escalation, strategic chokepoints, armed conflict, regional flashpoints, and geopolitical confrontation.",
     ogImage: "/og-war-geopolitics.jpg",
-    href: "/news/geopolitics-war",
+    href: "/news/war",
   },
   {
-    slug: "markets-finance",
-    label: "Markets & Finance",
+    slug: "finance",
+    label: "Finance",
     description:
-      "Markets, central banking, monetary policy, debt, liquidity, and systemic financial pressure.",
+      "Markets, inflation, recession pressure, debt stress, energy shocks, and financial system instability.",
     ogImage: "/og-markets-finance.jpg",
-    href: "/news/markets-finance",
+    href: "/news/finance",
   },
   {
-    slug: "digital-id-technocracy",
-    label: "Biosecurity",
+    slug: "control",
+    label: "Control",
     description:
-      "Outbreak monitoring, public-health policy, emergency powers, health-security narratives, and biosecurity control signals.",
+      "AI, surveillance, censorship, biometric systems, digital identity, and technocratic control architecture.",
     ogImage: "/og-power-control.jpg",
-    href: "/news/biosecurity",
-  },
-  {
-    slug: "power-control",
-    label: "Power & Control",
-    description:
-      "Narrative management, censorship, biosecurity policy, institutional power, and social control mechanisms.",
-    ogImage: "/og-power-control.jpg",
-    href: "/news/power-control",
-  },
-  {
-    slug: "religion-ideology",
-    label: "Religion & Ideology",
-    description:
-      "Belief systems, institutional religion, ideological conflict, persecution, and worldview narratives.",
-    ogImage: "/og-religion-ideology.jpg",
-    href: "/news/religion-ideology",
-  },
-  {
-    slug: "prophecy-watch",
-    label: "Prophecy Watch",
-    description:
-      "Prophetic framing, eschatology, end-times discourse, and narrative intersections with current events.",
-    ogImage: "/og-prophecy-watch.jpg",
-    href: "/news/prophecy-watch",
+    href: "/news/control",
   },
 ];
 
@@ -70,25 +62,32 @@ export function slugFromHardCategory(
 
   switch (v) {
     case "war & geopolitics":
-      return "war-geopolitics";
+      return "war";
+
     case "markets & finance":
-      return "markets-finance";
+      return "finance";
+
     case "digital id / technocracy":
-      return "digital-id-technocracy";
-    case "religion & ideology":
-      return "religion-ideology";
-    case "prophecy watch":
-      return "prophecy-watch";
+      return "control";
+
     case "power & control":
+      return "control";
+
+    case "religion & ideology":
+      return "global";
+
+    case "prophecy watch":
+      return "global";
+
     default:
-      return "power-control";
+      return "global";
   }
 }
 
 export function labelFromSlug(slug: CanonicalCategorySlug): string {
-  return getCategoryDef(slug)?.label || "Power & Control";
+  return getCategoryDef(slug)?.label || "Global";
 }
 
 export function hrefFromSlug(slug: CanonicalCategorySlug): string {
-  return getCategoryDef(slug)?.href || "/news/power-control";
+  return getCategoryDef(slug)?.href || "/news/global";
 }
