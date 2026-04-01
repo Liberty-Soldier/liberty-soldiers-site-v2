@@ -232,6 +232,28 @@ export default function AdminPage() {
       setSelectedId("");
     }
   }
+  const [loadingIntake, setLoadingIntake] = useState(false);
+
+async function runIntake() {
+  try {
+    setLoadingIntake(true);
+
+    const res = await fetch("/api/admin/intake");
+    const data = await res.json();
+
+    console.log("Intake result:", data);
+
+    alert(`Intake complete\nScanned: ${data.scanned || 0}\nGenerated: ${data.generated || 0}`);
+
+    // Optional: refresh page to show new drafts
+    window.location.reload();
+  } catch (err) {
+    console.error(err);
+    alert("Intake failed");
+  } finally {
+    setLoadingIntake(false);
+  }
+}
 
   async function saveQueue(nextQueue: QueueItem[]) {
     try {
@@ -767,13 +789,21 @@ export default function AdminPage() {
                       </p>
 
                       <div className="mt-4 flex gap-3">
-                        <button
-                          onClick={handleDelete}
-                          className="rounded-2xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
-                        >
-                          Delete Draft
-                        </button>
-                      </div>
+  <button
+    onClick={handleDelete}
+    className="rounded-2xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
+  >
+    Delete Draft
+  </button>
+
+  <button
+    onClick={runIntake}
+    disabled={loadingIntake}
+    className="rounded-2xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 disabled:opacity-50"
+  >
+    {loadingIntake ? "Pulling..." : "Pull New Articles"}
+  </button>
+</div>
 
                       <div className="mt-6 grid gap-5">
                         <Field label="Title">
