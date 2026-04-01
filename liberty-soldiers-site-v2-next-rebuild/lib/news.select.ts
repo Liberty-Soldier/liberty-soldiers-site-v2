@@ -28,7 +28,7 @@ function categoryOf(h: Headline): CanonicalCategorySlug {
 
 function isMoney(h: Headline) {
   const c = categoryOf(h);
-  return c === "markets-finance";
+  return c === "finance";
 }
 
 function isCryptoLike(h: Headline) {
@@ -44,17 +44,17 @@ function isCryptoLike(h: Headline) {
 
 function categoryWeight(slug: CanonicalCategorySlug): number {
   switch (slug) {
-    case "war-geopolitics":
+    case "war":
       return 100;
-    case "prophecy-watch":
+    case "global":
       return 91;
-    case "religion-ideology":
+    case "global":
       return 87;
-    case "digital-id-technocracy":
+    case "control":
       return 84;
-    case "power-control":
+    case "control":
       return 80;
-    case "markets-finance":
+    case "finance":
       return 68;
     default:
       return 70;
@@ -274,17 +274,17 @@ export function pickIranRadarHeadlines(
 
 function freshnessLimitHours(slug: CanonicalCategorySlug): number {
   switch (slug) {
-    case "war-geopolitics":
+    case "war":
       return 72;
-    case "markets-finance":
+    case "finance":
       return 72;
-    case "digital-id-technocracy":
+    case "global":
       return 120;
-    case "power-control":
+    case "control":
       return 120;
-    case "religion-ideology":
+    case "global":
       return 168;
-    case "prophecy-watch":
+    case "global":
       return 168;
     default:
       return 120;
