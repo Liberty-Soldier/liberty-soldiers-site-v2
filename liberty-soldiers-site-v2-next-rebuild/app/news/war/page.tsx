@@ -61,10 +61,13 @@ function isWar(item: Item) {
 }
 
 export default async function WarPage() {
+  let allItems: Item[] = [];
   let items: Item[] = [];
+  let debugError = "";
 
   try {
-    items = ((await fetchAllHeadlines()) as Item[])
+    allItems = (await fetchAllHeadlines()) as Item[];
+    items = allItems
       .filter(isWar)
       .map((item) => ({
         ...item,
@@ -72,7 +75,8 @@ export default async function WarPage() {
         isOriginal: false,
       }))
       .sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
-  } catch {
+  } catch (error) {
+    debugError = error instanceof Error ? error.message : "Unknown error";
     items = [];
   }
 
@@ -93,6 +97,10 @@ export default async function WarPage() {
             <p className="mt-3 text-sm leading-relaxed text-zinc-200 sm:text-base">
               Military escalation, armed conflict, regional flashpoints,
               strategic risk, and open geopolitical confrontation.
+            </p>
+            <p className="mt-4 text-xs text-zinc-300">
+              total: {allItems.length} • matched: {items.length}
+              {debugError ? ` • error: ${debugError}` : ""}
             </p>
           </div>
         </div>
