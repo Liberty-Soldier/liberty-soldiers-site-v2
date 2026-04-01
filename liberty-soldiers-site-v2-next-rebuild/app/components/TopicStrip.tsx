@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const TOPICS = [
+const TOPIC_LINKS = [
   { href: "/news", label: "All News" },
   { href: "/news/us", label: "US" },
   { href: "/news/global", label: "Global" },
@@ -18,10 +18,7 @@ export default function TopicStrip() {
   return (
     <div className="border-b border-zinc-200 bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <nav
-          aria-label="Topic navigation"
-          className="flex gap-2 overflow-x-auto py-3 scrollbar-thin"
-        >
+        <div className="flex gap-2 overflow-x-auto py-3 scrollbar-thin">
           {TOPIC_LINKS.map((item) => {
             const active = pathname === item.href;
 
@@ -30,17 +27,17 @@ export default function TopicStrip() {
                 key={item.href}
                 href={item.href}
                 className={[
-                  "whitespace-nowrap rounded-full border px-3 py-1.5 text-sm font-semibold transition",
+                  "whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition",
                   active
                     ? "border-zinc-900 bg-zinc-900 text-white"
-                    : "border-zinc-200 bg-white text-zinc-800 hover:border-zinc-300 hover:bg-zinc-50",
+                    : "border-zinc-300 bg-white text-zinc-800 hover:border-zinc-400 hover:bg-zinc-50",
                 ].join(" ")}
               >
                 {item.label}
               </Link>
             );
           })}
-        </nav>
+        </div>
       </div>
     </div>
   );
