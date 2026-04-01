@@ -20,7 +20,7 @@ export default async function PublishedPage() {
           </div>
           <h1 className="mt-2 text-4xl font-semibold tracking-tight">Published Articles</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-600 md:text-base">
-            Articles published from the admin workflow.
+            By Liberty Soldiers
           </p>
         </div>
 

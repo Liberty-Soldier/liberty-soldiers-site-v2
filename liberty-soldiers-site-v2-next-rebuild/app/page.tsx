@@ -383,7 +383,7 @@ const latestPublished = published.slice(0, 3);
             Latest Published
           </h2>
           <p className="mt-1 text-sm text-zinc-600 sm:text-base">
-            Fresh Liberty Soldiers analysis from the admin publishing pipeline.
+            Latest briefings by Liberty Soldiers .
           </p>
         </div>
       </div>
