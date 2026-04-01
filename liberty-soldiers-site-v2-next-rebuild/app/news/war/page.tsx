@@ -2,7 +2,7 @@ import { fetchAllHeadlines } from "@/lib/rss";
 import Link from "next/link";
 import NewsFeedClient from "../NewsFeedClient";
 
-export const dynamic = "force-dynamic";
+
 export const runtime = "nodejs";
 export const revalidate = 180;
 
