@@ -576,26 +576,40 @@ async function handleDelete() {
             </div>
           </section>
 
-          <section className="space-y-6">
-            <div className="rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm">
-              <div className="flex flex-wrap gap-2">
-                <TabButton
-                  active={activeTab === "queue"}
-                  onClick={() => setActiveTab("queue")}
-                  label="Overview"
-                />
-                <TabButton
-                  active={activeTab === "editor"}
-                  onClick={() => setActiveTab("editor")}
-                  label="Editor"
-                />
-                <TabButton
-                  active={activeTab === "export"}
-                  onClick={() => setActiveTab("export")}
-                  label="Export"
-                />
-              </div>
-            </div>
+<section className="space-y-6">
+  {!selected ? (
+    <div className="rounded-3xl border border-zinc-200 bg-white p-8 shadow-sm">
+      <h2 className="text-2xl font-semibold tracking-tight">
+        No queue items yet
+      </h2>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-600">
+        Use the Manual Intake panel on the left to create a draft or generate one
+        from a source URL. Once a draft is created, it will appear here.
+      </p>
+    </div>
+  ) : (
+    <>
+      {/* Tabs */}
+      <div className="rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm">
+        <div className="flex flex-wrap gap-2">
+          <TabButton
+            active={activeTab === "queue"}
+            onClick={() => setActiveTab("queue")}
+            label="Overview"
+          />
+          <TabButton
+            active={activeTab === "editor"}
+            onClick={() => setActiveTab("editor")}
+            label="Editor"
+          />
+          <TabButton
+            active={activeTab === "export"}
+            onClick={() => setActiveTab("export")}
+            label="Export"
+          />
+        </div>
+      </div>
+
 
             {activeTab === "queue" && (
               <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
