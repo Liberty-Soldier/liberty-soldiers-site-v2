@@ -212,7 +212,9 @@ export default function AdminPage() {
 
   async function loadQueue() {
     try {
-      const res = await fetch("/api/admin/queue");
+      const res = await fetch("/api/admin/queue", {
+  cache: "no-store",
+});
       const data = await res.json();
 
       if (data.ok) {
@@ -253,7 +255,7 @@ alert(
   `Intake complete\nScanned: ${data.scanned || 0}\nGenerated: ${generatedCount}`
 );
     // Optional: refresh page to show new drafts
-    window.location.reload();
+    await loadQueue();
   } catch (err) {
     console.error(err);
     alert("Intake failed");
@@ -448,6 +450,18 @@ alert(
               <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-4xl">
                 Admin Queue + Draft Workflow
               </h1>
+
+<div className="mt-3">
+  <button
+    onClick={runIntake}
+    disabled={loadingIntake}
+    className="rounded-xl bg-black px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-zinc-800 disabled:opacity-50"
+  >
+    {loadingIntake ? "Pulling..." : "Pull Feed"}
+  </button>
+</div>
+
+
               <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-600 md:text-base">
                 This is the first working admin layer for LBS. It lets you intake
                 story ideas, edit article fields, manage queue status, and export
@@ -656,14 +670,7 @@ alert(
       />
     </div>
 
-    {/* RIGHT: Intake Button */}
-    <button
-      onClick={runIntake}
-      disabled={loadingIntake}
-      className="rounded-xl bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-800 disabled:opacity-50"
-    >
-      {loadingIntake ? "Pulling..." : "Pull Feed"}
-    </button>
+
 
   </div>
 </div>
