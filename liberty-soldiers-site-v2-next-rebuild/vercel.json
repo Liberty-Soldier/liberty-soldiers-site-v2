@@ -1,0 +1,14 @@
+{
+  "crons": [
+    {
+      "path": "/api/admin/intake",
+      "schedule": "0 */6 * * *"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!api|_next|favicon.ico|robots.txt|sitemap.xml|news|reports|published).*)",
+      "destination": "/"
+    }
+  ]
+}

@@ -1,0 +1,1019 @@
+// lib/rss.ts
+import { XMLParser } from "fast-xml-parser";
+import {
+  CORE_NEWS_FEEDS,
+  NOISE_FEEDS,
+  PINNED_LINKS,
+  BLACKLIST,
+} from "./news.config";
+import { toHardCategory } from "./hardCategories";
+import { slugFromHardCategory } from "./news.taxonomy";
+import type { Headline } from "./news.types";
+export type { Headline } from "./news.types";
+
+type FeedInput =
+  | string
+  | {
+      url: string;
+      category?: string;
+    };
+
+const parser = new XMLParser({
+  ignoreAttributes: false,
+  attributeNamePrefix: "@_",
+  trimValues: true,
+});
+
+async function fetchOgImageFromArticle(
+  url: string
+): Promise<string | undefined> {
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "user-agent": "Mozilla/5.0 (LibertySoldiersBot)",
+        accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8",
+      },
+      next: { revalidate: 1800 },
+    });
+
+    if (!res.ok) return undefined;
+
+    const html = await res.text();
+    if (!html) return undefined;
+
+    const patterns = [
+      /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+      /<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image["']/i,
+      /<meta[^>]+name=["']twitter:image:src["'][^>]+content=["']([^"']+)["']/i,
+      /<meta[^>]+content=["']([^"']+)["'][^>]+name=["']twitter:image:src["']/i,
+      /<link[^>]+rel=["']image_src["'][^>]+href=["']([^"']+)["']/i,
+    ];
+
+    for (const rx of patterns) {
+      const m = html.match(rx);
+      if (!m?.[1]) continue;
+
+      const candidate = resolveUrl(m[1], url);
+      if (isGoodImage(candidate)) return candidate;
+    }
+
+    return undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+const ARTICLE_OG_FALLBACK_DOMAINS = [
+  "schneier.com",
+  "christianpost.com",
+  "realclearreligion.org",
+  "endtimeheadlines.org",
+  "religionnews.com",
+  "tass.com",
+  "europeanconservative.com",
+  "middleeasteye.net",
+  "aljazeera.com",
+  "warontherocks.com",
+];
+
+function shouldTryArticleOgFallback(url: string): boolean {
+  const d = host(url).toLowerCase();
+  return ARTICLE_OG_FALLBACK_DOMAINS.some(
+    (domain) => d === domain || d.endsWith(`.${domain}`)
+  );
+}
+
+function arrify<T>(x: T | T[] | undefined | null): T[] {
+  return x == null ? [] : Array.isArray(x) ? x : [x];
+}
+
+function host(u: string): string {
+  try {
+    return new URL(u).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+function normalizeUrl(raw: any): string {
+  const s0 = String(raw ?? "").trim();
+  if (!s0) return "";
+  if (s0.startsWith("//")) return "https:" + s0;
+  if (/^https?:\/\//i.test(s0)) return s0;
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s0)) return "https://" + s0;
+  return "";
+}
+
+function resolveUrl(raw: any, base?: string): string {
+  const s = String(raw ?? "").trim();
+  if (!s) return "";
+
+  if (s.startsWith("//")) return "https:" + s;
+  if (/^https?:\/\//i.test(s)) return s;
+  if (/^[\w.-]+\.[a-z]{2,}([/:?#].*)?$/i.test(s)) return "https://" + s;
+
+  if (base) {
+    try {
+      return new URL(s, base).toString();
+    } catch {}
+  }
+
+  return "";
+}
+
+function canonicalUrl(raw: string): string {
+  try {
+    const u = new URL(raw);
+    u.hash = "";
+
+    const dropParams = [
+      "utm_source",
+      "utm_medium",
+      "utm_campaign",
+      "utm_term",
+      "utm_content",
+      "utm_name",
+      "utm_cid",
+      "utm_reader",
+      "utm_referrer",
+      "utm_social",
+      "utm_social-type",
+      "src",
+      "source",
+      "feature",
+      "features",
+      "ref",
+      "ref_src",
+      "ref_url",
+      "rss",
+      "output",
+      "spm",
+      "fbclid",
+      "gclid",
+      "mc_cid",
+      "mc_eid",
+    ];
+
+    for (const p of dropParams) u.searchParams.delete(p);
+
+    if (
+      (u.protocol === "https:" && u.port === "443") ||
+      (u.protocol === "http:" && u.port === "80")
+    ) {
+      u.port = "";
+    }
+
+    u.hostname = u.hostname.toLowerCase();
+    u.pathname = u.pathname.replace(/\/+$/, "") || "/";
+
+    return u.toString();
+  } catch {
+    return raw.trim();
+  }
+}
+
+function pickDate(it: any): number | undefined {
+  const d =
+    it?.pubDate ||
+    it?.published ||
+    it?.updated ||
+    it?.["dc:date"] ||
+    it?.["dcterms:modified"] ||
+    it?.date;
+
+  const t = Array.isArray(d) ? d[0] : d;
+  if (!t) return undefined;
+
+  const ms = Date.parse(String(t));
+  return Number.isFinite(ms) ? ms : undefined;
+}
+
+function toFeedInput(x: FeedInput): { url: string; category?: string } {
+  if (typeof x === "string") return { url: x };
+  return { url: x.url, category: x.category };
+}
+
+function feedCategoryLabel(cat?: string): string | undefined {
+  if (!cat) return undefined;
+  const c = String(cat).toLowerCase().trim();
+
+  if (c === "crypto") return "Crypto";
+  if (c === "finance") return "Finance";
+  if (c === "world") return "World Briefing";
+  if (c === "middle-east" || c === "middleeast") return "Middle East";
+  if (c === "tech") return "Control Systems";
+  if (c === "health") return "Health";
+  if (c === "prophecy") return "Prophecy Watch";
+  if (c === "iran-war") return "Iran War";
+  if (c === "religion") return "Religion";
+
+  return undefined;
+}
+
+function safeFeedFallback(
+  feedFallback?: string,
+  source?: string,
+  text?: string
+): string | undefined {
+  if (!feedFallback) return undefined;
+
+  const s = (source ?? "").toLowerCase();
+  const t = (text ?? "").toLowerCase();
+
+  if (feedFallback === "Finance") return "Finance";
+  if (feedFallback === "Crypto") return "Crypto";
+  if (feedFallback === "World Briefing") return "World Briefing";
+  if (feedFallback === "Middle East") return "Middle East";
+  if (feedFallback === "Iran War") return "Iran War";
+
+  if (feedFallback === "Control Systems") {
+    const fits =
+      t.includes("ai") ||
+      t.includes("artificial intelligence") ||
+      t.includes("digital id") ||
+      t.includes("biometric") ||
+      t.includes("facial recognition") ||
+      t.includes("surveillance") ||
+      t.includes("social credit") ||
+      t.includes("cbdc") ||
+      t.includes("cashless") ||
+      t.includes("privacy");
+    return fits ? "Control Systems" : undefined;
+  }
+
+  if (feedFallback === "Prophecy Watch") {
+    const fits =
+      s.includes("olivetreeviews") ||
+      s.includes("prophecynewswatch") ||
+      s.includes("endtimeheadlines") ||
+      t.includes("prophecy") ||
+      t.includes("end time") ||
+      t.includes("end-time") ||
+      t.includes("endtime") ||
+      t.includes("rapture") ||
+      t.includes("tribulation") ||
+      t.includes("antichrist") ||
+      t.includes("mark of the beast") ||
+      t.includes("revelation") ||
+      t.includes("daniel") ||
+      t.includes("eschatology");
+    return fits ? "Prophecy Watch" : undefined;
+  }
+
+  if (feedFallback === "Religion") {
+    const fits =
+      t.includes("church") ||
+      t.includes("christianity") ||
+      t.includes("christian ") ||
+      t.startsWith("christian ") ||
+      t.includes("catholic") ||
+      t.includes("vatican") ||
+      t.includes("pope") ||
+      t.includes("pastor") ||
+      t.includes("bishop") ||
+      t.includes("imam") ||
+      t.includes("mosque") ||
+      t.includes("synagogue") ||
+      t.includes("rabbi") ||
+      t.includes("judaism") ||
+      t.includes("islam") ||
+      t.includes("religious freedom") ||
+      t.includes("blasphemy");
+    return fits ? "Religion" : undefined;
+  }
+
+  if (feedFallback === "Health") {
+    const fits =
+      t.includes("pandemic") ||
+      t.includes("outbreak") ||
+      t.includes("public health") ||
+      t.includes("bird flu") ||
+      t.includes("quarantine");
+    return fits ? "Health" : undefined;
+  }
+
+  return undefined;
+}
+
+function categorize(
+  title: string,
+  summary?: string,
+  src?: string,
+  feedFallback?: string
+): string {
+  const t = `${title} ${summary ?? ""}`.toLowerCase();
+  const s = (src ?? "").toLowerCase();
+
+  // -------------------------------------------------------
+  // HARD SOURCE OVERRIDES FIRST
+  // -------------------------------------------------------
+  if (
+    s.includes("warontherocks") ||
+    s.includes("war on the rocks") ||
+    s.includes("timesofisrael") ||
+    s.includes("israel365news") ||
+    s.includes("tehrantimes") ||
+    s.includes("presstv") ||
+    s.includes("antiwar.com") ||
+    s.includes("responsiblestatecraft") ||
+    s.includes("militarytimes") ||
+    s.includes("defensenews")
+  ) {
+    return "Geopolitics & War";
+  }
+
+  if (s.includes("marketwatch")) return "Finance";
+  if (s.includes("bloomberg")) return "Finance";
+  if (s.includes("wsj")) return "Finance";
+  if (s.includes("ft.com")) return "Finance";
+
+  if (
+    s.includes("coindesk") ||
+    s.includes("cointelegraph") ||
+    s.includes("cryptopotato") ||
+    s.includes("thedefiant")
+  ) {
+    return "Crypto";
+  }
+
+  if (s.includes("biometricupdate")) return "Control Systems";
+  if (s.includes("endtimeheadlines")) return "Prophecy Watch";
+  if (s.includes("prophecynewswatch")) return "Prophecy Watch";
+  if (s.includes("reuters")) {
+    if (
+      t.includes("stocks") ||
+      t.includes("bonds") ||
+      t.includes("oil prices") ||
+      t.includes("federal reserve") ||
+      t.includes("inflation") ||
+      t.includes("earnings")
+    ) {
+      return "Finance";
+    }
+    if (
+      t.includes("ai") ||
+      t.includes("chip") ||
+      t.includes("semiconductor") ||
+      t.includes("tech")
+    ) {
+      return "Control Systems";
+    }
+    return "Geopolitics & War";
+  }
+
+  if (s.includes("reclaimthenet")) {
+    if (
+      t.includes("ai") ||
+      t.includes("artificial intelligence") ||
+      t.includes("medical") ||
+      t.includes("health") ||
+      t.includes("records") ||
+      t.includes("privacy") ||
+      t.includes("surveillance") ||
+      t.includes("biometric") ||
+      t.includes("digital id")
+    ) {
+      return "Control Systems";
+    }
+    return "Censorship & Speech";
+  }
+
+  // -------------------------------------------------------
+  // PROPHECY
+  // -------------------------------------------------------
+  const isProphecy =
+    t.includes("prophecy") ||
+    t.includes("end time") ||
+    t.includes("end-time") ||
+    t.includes("endtime") ||
+    t.includes("rapture") ||
+    t.includes("tribulation") ||
+    t.includes("antichrist") ||
+    t.includes("mark of the beast") ||
+    t.includes("revelation") ||
+    t.includes("daniel") ||
+    t.includes("eschatology");
+
+  const isProphecySource =
+    s.includes("olivetreeviews") || s.includes("olivetreeviews.org");
+
+  if (isProphecy || isProphecySource) {
+    return "Prophecy Watch";
+  }
+
+  // -------------------------------------------------------
+  // CONTROL / DIGITAL / AI
+  // -------------------------------------------------------
+  if (
+    t.includes("cbdc") ||
+    t.includes("digital currency") ||
+    t.includes("cashless") ||
+    t.includes("biometric") ||
+    t.includes("digital id") ||
+    (t.includes("digital") && t.includes("id")) ||
+    t.includes("facial recognition") ||
+    t.includes("surveillance") ||
+    t.includes("social credit") ||
+    t.includes("vaccine passport") ||
+    t.includes("qr code")
+  ) {
+    return "Control Systems";
+  }
+
+  if (
+    t.includes("censorship") ||
+    t.includes("censor") ||
+    t.includes("deplatform") ||
+    t.includes("content moderation") ||
+    t.includes("misinformation") ||
+    t.includes("disinformation") ||
+    (t.includes("speech") && t.includes("law"))
+  ) {
+    return "Censorship & Speech";
+  }
+
+  // -------------------------------------------------------
+  // BIO / HEALTH
+  // -------------------------------------------------------
+  if (
+    t.includes("pandemic") ||
+    t.includes("outbreak") ||
+    t.includes("lockdown") ||
+    t.includes("quarantine") ||
+    t.includes("emergency powers") ||
+    t.includes("public health") ||
+    t.includes(" who ") ||
+    t.startsWith("who ") ||
+    t.includes("bird flu")
+  ) {
+    return "Biosecurity";
+  }
+
+  // -------------------------------------------------------
+  // GEOPOLITICS BEFORE RELIGION
+  // -------------------------------------------------------
+  const hasGeo =
+    t.includes("gaza") ||
+    t.includes("israel") ||
+    t.includes("iran") ||
+    t.includes("russia") ||
+    t.includes("ukraine") ||
+    t.includes("china") ||
+    t.includes("taiwan") ||
+    t.includes("missile") ||
+    t.includes("strike") ||
+    t.includes("ceasefire") ||
+    t.includes("nato") ||
+    t.includes("war") ||
+    t.includes("houthi") ||
+    t.includes("hezbollah") ||
+    t.includes("hormuz") ||
+    t.includes("military") ||
+    t.includes("troops") ||
+    t.includes("drone") ||
+    t.includes("airstrike") ||
+    t.includes("naval") ||
+    t.includes("defense") ||
+    t.includes("defence") ||
+    t.includes("conflict") ||
+    t.includes("battlefield");
+
+  if (hasGeo) {
+    return "Geopolitics & War";
+  }
+
+  // -------------------------------------------------------
+  // RELIGION / PERSECUTION - TIGHTER THAN BEFORE
+  // -------------------------------------------------------
+  const hasReligion =
+    t.includes("church") ||
+    t.includes("christianity") ||
+    t.includes("christian ") ||
+    t.startsWith("christian ") ||
+    t.includes("catholic") ||
+    t.includes("vatican") ||
+    t.includes("pope") ||
+    t.includes("pastor") ||
+    t.includes("bishop") ||
+    t.includes("imam") ||
+    t.includes("mosque") ||
+    t.includes("synagogue") ||
+    t.includes("rabbi") ||
+    t.includes("judaism") ||
+    t.includes("islam") ||
+    t.includes("religious freedom") ||
+    t.includes("blasphemy") ||
+    t.includes("worshippers") ||
+    t.includes("worshipers");
+
+  const hasPressure =
+    t.includes("persecution") ||
+    t.includes("arrest") ||
+    t.includes("arrested") ||
+    t.includes("detained") ||
+    t.includes("raid") ||
+    t.includes("ban") ||
+    t.includes("banned") ||
+    t.includes("charged") ||
+    t.includes("sentenced") ||
+    t.includes("hate speech") ||
+    t.includes("blasphemy") ||
+    t.includes("religious freedom") ||
+    t.includes("closed down");
+
+  if (hasPressure && hasReligion) {
+    return "Persecution Watch";
+  }
+
+  if (hasReligion) {
+    return "Religion";
+  }
+
+  // -------------------------------------------------------
+  // FALLBACKS
+  // -------------------------------------------------------
+  let sourceFallback: string | undefined;
+  if (s.includes("bbc")) sourceFallback = "World Briefing";
+  if (s.includes("aljazeera")) sourceFallback = "World Briefing";
+
+  const feedSafe = safeFeedFallback(feedFallback, s, t);
+
+  return sourceFallback || feedSafe || "General";
+}
+
+function stripHtml(s: any): string {
+  const raw = String(s ?? "");
+  return raw
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<\/?[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const BAD_IMAGE_HINTS = ["1x1", "spacer", "tracking", "tracker", "pixel"];
+
+function isGoodImage(url?: string): boolean {
+  if (!url) return false;
+
+  const u = url.trim();
+  if (!u) return false;
+
+  const lower = u.toLowerCase();
+
+  if (lower.startsWith("data:")) return false;
+  if (!/^https?:\/\//i.test(u)) return false;
+  if (BAD_IMAGE_HINTS.some((hint) => lower.includes(hint))) return false;
+
+  const looksLikeImage =
+    /\.(jpg|jpeg|png|webp|gif|avif)(\?|$)/i.test(lower) ||
+    lower.includes("/wp-content/uploads/") ||
+    lower.includes("/uploads/") ||
+    lower.includes("/media/") ||
+    lower.includes("/image/") ||
+    lower.includes("/images/") ||
+    lower.includes("cloudfront") ||
+    lower.includes("cdn") ||
+    lower.includes("img");
+
+  return looksLikeImage;
+}
+
+function pickImage(extracted?: string, base?: string): string | undefined {
+  const u = resolveUrl(extracted, base);
+  return isGoodImage(u) ? u.trim() : undefined;
+}
+
+function extractSummary(it: any): string {
+  const cand =
+    it?.description ??
+    it?.summary ??
+    it?.["content:encoded"] ??
+    it?.content ??
+    "";
+
+  const text = stripHtml(Array.isArray(cand) ? cand[0] : cand);
+  if (!text) return "";
+  return text.length > 360 ? text.slice(0, 357).trimEnd() + "…" : text;
+}
+
+function firstImgFromHtml(html: any, base?: string): string {
+  const raw = String(Array.isArray(html) ? html[0] : html ?? "");
+  if (!raw) return "";
+
+  const patterns = [
+    /<img[^>]+src=["']([^"' >]+)["']/i,
+    /<img[^>]+data-src=["']([^"' >]+)["']/i,
+    /<img[^>]+data-lazy-src=["']([^"' >]+)["']/i,
+    /<img[^>]+srcset=["']([^"']+)["']/i,
+  ];
+
+  for (const rx of patterns) {
+    const m = raw.match(rx);
+    if (!m?.[1]) continue;
+
+    let candidate = m[1];
+
+    if (rx.source.includes("srcset")) {
+      candidate = candidate.split(",")[0]?.trim().split(" ")[0]?.trim() || "";
+    }
+
+    const resolved = resolveUrl(candidate, base);
+    if (resolved) return resolved;
+  }
+
+  return "";
+}
+
+function extractImage(it: any, base?: string): string {
+  const enc = it?.enclosure;
+  const encArr = arrify(enc);
+  for (const e of encArr) {
+    const encUrl = e?.["@_url"] || e?.url;
+    const encType = e?.["@_type"] || e?.type;
+    if (encUrl && (!encType || String(encType).startsWith("image/"))) {
+      const u = normalizeUrl(encUrl);
+      if (u) return u;
+    }
+  }
+
+  const mt = it?.["media:thumbnail"];
+  const mtArr = arrify(mt);
+  for (const m of mtArr) {
+    const u = normalizeUrl(m?.["@_url"] || m?.url);
+    if (u) return u;
+  }
+
+  const mc = it?.["media:content"];
+  const mcArr = arrify(mc);
+  for (const m of mcArr) {
+    const u = normalizeUrl(m?.["@_url"] || m?.url);
+    const t = String(m?.["@_type"] || m?.type || "");
+    if (u && (!t || t.startsWith("image/"))) return u;
+  }
+
+  const mediaGroup = it?.["media:group"];
+  const mediaGroupContent = arrify(mediaGroup?.["media:content"]);
+  for (const m of mediaGroupContent) {
+    const u = normalizeUrl(m?.["@_url"] || m?.url);
+    const t = String(m?.["@_type"] || m?.type || "");
+    if (u && (!t || t.startsWith("image/"))) return u;
+  }
+
+  const imageFields = [
+    it?.image?.url,
+    it?.image,
+    it?.thumbnail,
+    it?.thumb,
+    it?.["itunes:image"]?.["@_href"],
+    it?.["media:credit"],
+  ];
+
+  for (const field of imageFields) {
+    const u = normalizeUrl(field);
+    if (u) return u;
+  }
+
+  const fromContent = firstImgFromHtml(it?.["content:encoded"], base);
+  if (fromContent) return fromContent;
+
+  const fromDescription = firstImgFromHtml(it?.description, base);
+  if (fromDescription) return fromDescription;
+
+  const fromSummary = firstImgFromHtml(it?.summary, base);
+  if (fromSummary) return fromSummary;
+
+  return "";
+}
+
+function extractItems(feedJson: any): any[] {
+  const rssItems = feedJson?.rss?.channel?.item;
+  if (rssItems) return arrify(rssItems);
+
+  const atomItems = feedJson?.feed?.entry;
+  if (atomItems) return arrify(atomItems);
+
+  if (Array.isArray(feedJson?.item)) return feedJson.item;
+  if (Array.isArray(feedJson?.entries)) return feedJson.entries;
+
+  return [];
+}
+
+function extractLink(it: any, feedUrl?: string): string {
+  let raw = "";
+
+  if (typeof it?.link === "string") raw = it.link;
+  else if (it?.link?.["@_href"]) raw = it.link["@_href"];
+  else if (Array.isArray(it?.link)) {
+    const alt = it.link.find(
+      (l: any) => (l?.rel || l?.["@_rel"]) === "alternate"
+    );
+    if (alt?.["@_href"]) raw = alt["@_href"];
+    else {
+      const first = it.link[0];
+      if (first?.["@_href"]) raw = first["@_href"];
+      else if (typeof first === "string") raw = first;
+    }
+  } else if (typeof it?.guid === "string" && /^https?:\/\//i.test(it.guid)) {
+    raw = it.guid;
+  } else if (typeof it?.url === "string") {
+    raw = it.url;
+  } else if (typeof it?.["dc:identifier"] === "string") {
+    raw = it["dc:identifier"];
+  }
+
+  return canonicalUrl(resolveUrl(raw, feedUrl));
+}
+
+function extractSource(feedJson: any, url: string): string {
+  const title = feedJson?.rss?.channel?.title || feedJson?.feed?.title || "";
+  const fromUrl = host(url);
+  return String(title || fromUrl || "").trim();
+}
+
+async function normalizeFeed(
+  feedJson: any,
+  feedUrl: string,
+  feedCategory?: string
+): Promise<Headline[]> {
+  const items = extractItems(feedJson).slice(0, 18);
+  const sourceFallback = extractSource(feedJson, feedUrl);
+  const feedFallbackLabel = feedCategoryLabel(feedCategory);
+
+  const mapped = await Promise.all(
+    items.map(async (it: any) => {
+      const title = stripHtml(it?.title ?? "").trim();
+      const url = extractLink(it, feedUrl);
+      const source = host(url) || sourceFallback;
+
+      const extractedImage = extractImage(it, url || feedUrl) || undefined;
+      let image = pickImage(extractedImage, url || feedUrl);
+
+      if (!image && url && shouldTryArticleOgFallback(url)) {
+        image = await fetchOgImageFromArticle(url);
+      }
+
+      const summary = extractSummary(it) || undefined;
+      const category = categorize(title, summary, source, feedFallbackLabel);
+      let hardCategory = toHardCategory(category);
+
+      const domain = host(url).toLowerCase();
+      const src = (source || "").toLowerCase();
+      const text = `${title} ${summary ?? ""}`.toLowerCase();
+
+      const isOliveTree =
+        domain.includes("olivetreeviews") || src.includes("olivetreeviews");
+
+      const looksProphetic =
+        text.includes("prophecy") ||
+        text.includes("end time") ||
+        text.includes("end-time") ||
+        text.includes("endtime") ||
+        text.includes("rapture") ||
+        text.includes("tribulation") ||
+        text.includes("antichrist") ||
+        text.includes("mark of the beast") ||
+        text.includes("revelation") ||
+        text.includes("daniel");
+
+      if (isOliveTree && looksProphetic) {
+        hardCategory = "Prophecy Watch";
+      }
+
+      return {
+        title,
+        url,
+        source,
+        publishedAt: pickDate(it),
+        image,
+        summary,
+        category,
+        hardCategory,
+        feedCategory,
+        canonicalCategory: slugFromHardCategory(hardCategory),
+      } satisfies Headline;
+    })
+  );
+
+  return mapped.filter((h) => {
+    if (!h.title || !h.url) return false;
+    const d = host(h.url).toLowerCase();
+    return !BLACKLIST.some((b) => d.includes(String(b).toLowerCase()));
+  });
+}
+
+async function fetchOneFeed(feedIn: FeedInput): Promise<Headline[]> {
+  const feed = toFeedInput(feedIn);
+  
+  if (feed.url.includes("feeds.reuters.com")) {
+  console.warn("Skipping dead Reuters feed:", feed.url);
+  return [];
+}
+
+  try {
+    const res = await fetch(feed.url, {
+      headers: {
+        "user-agent": "Mozilla/5.0 (LibertySoldiersBot)",
+        accept: "application/rss+xml, application/xml;q=0.9, */*;q=0.8",
+      },
+      next: { revalidate: 180 },
+    });
+
+    const xml = await res.text();
+    if (!res.ok || !xml) return [];
+
+    const json = parser.parse(xml);
+    return await normalizeFeed(json, feed.url, feed.category);
+  } catch {
+    return [];
+  }
+}
+
+const MAX_PER_SOURCE = 12;
+const MAX_TOTAL = 500;
+
+function normalizeForDedupeTitle(s: string): string {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/&amp;/g, "&")
+    .replace(/&#39;/g, "'")
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function titleTokens(s: string): Set<string> {
+  const stop = new Set([
+    "the",
+    "a",
+    "an",
+    "and",
+    "or",
+    "to",
+    "of",
+    "in",
+    "on",
+    "for",
+    "with",
+    "as",
+    "at",
+    "by",
+    "from",
+    "after",
+    "before",
+    "over",
+    "under",
+    "into",
+    "is",
+    "are",
+    "was",
+    "were",
+    "be",
+    "been",
+    "it",
+    "this",
+    "that",
+  ]);
+
+  const cleaned = normalizeForDedupeTitle(s);
+  const toks = cleaned.split(" ").filter(Boolean).filter((t) => !stop.has(t));
+  return new Set(toks);
+}
+
+function jaccard(a: Set<string>, b: Set<string>): number {
+  if (!a.size || !b.size) return 0;
+  let inter = 0;
+  for (const x of a) if (b.has(x)) inter++;
+  const union = a.size + b.size - inter;
+  return union ? inter / union : 0;
+}
+
+function dedupeBySimilarTitle(items: Headline[]): Headline[] {
+  const FUZZY_THRESHOLD = 0.94;
+  const WINDOW = 50;
+
+  const kept: Headline[] = [];
+  const keptTokens: Set<string>[] = [];
+
+  for (const it of items) {
+    const ts = titleTokens(it.title);
+    let dup = false;
+
+    const currentSource = (it.source || host(it.url) || "").toLowerCase().trim();
+    const start = Math.max(0, kept.length - WINDOW);
+
+    for (let i = kept.length - 1; i >= start; i--) {
+      const compareSource = (
+        kept[i].source ||
+        host(kept[i].url) ||
+        ""
+      ).toLowerCase().trim();
+
+      if (
+        compareSource === currentSource &&
+        jaccard(ts, keptTokens[i]) >= FUZZY_THRESHOLD
+      ) {
+        dup = true;
+        break;
+      }
+    }
+
+    if (!dup) {
+      kept.push(it);
+      keptTokens.push(ts);
+    }
+  }
+
+  return kept;
+}
+
+function capBySource(items: Headline[]): Headline[] {
+  const perSource = new Map<string, number>();
+  const out: Headline[] = [];
+
+  for (const it of items) {
+    const s = (it.source || host(it.url) || "unknown").toLowerCase().trim();
+    const c = perSource.get(s) || 0;
+    if (c >= MAX_PER_SOURCE) continue;
+
+    perSource.set(s, c + 1);
+    out.push(it);
+
+    if (out.length >= MAX_TOTAL) break;
+  }
+
+  return out;
+}
+
+async function fetchHeadlinesFromFeeds(feedsIn: FeedInput[]): Promise<Headline[]> {
+  const settled = await Promise.allSettled(feedsIn.map(fetchOneFeed));
+
+  const all: Headline[] = [];
+  for (const r of settled) {
+    if (r.status === "fulfilled" && Array.isArray(r.value)) {
+      all.push(...r.value);
+    }
+  }
+
+  const seen = new Set<string>();
+  const uniqueByUrl = all.filter((h) => {
+    const key = canonicalUrl(h.url.trim());
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  uniqueByUrl.sort((a, b) => (b.publishedAt || 0) - (a.publishedAt || 0));
+
+  const deduped = dedupeBySimilarTitle(uniqueByUrl);
+  const capped = capBySource(deduped);
+
+  return capped;
+}
+
+export async function fetchAllHeadlines(): Promise<Headline[]> {
+  const feeds = (CORE_NEWS_FEEDS as unknown as FeedInput[]) ?? [];
+  const headlines = await fetchHeadlinesFromFeeds(feeds);
+
+  const pinned: Headline[] = PINNED_LINKS.map((p) => ({
+    title: p.title,
+    url: canonicalUrl(p.url),
+    source: p.source ? String(p.source) : host(p.url),
+    publishedAt: undefined,
+    image: undefined,
+    summary: undefined,
+    category: "Pinned",
+    hardCategory: undefined,
+    feedCategory: undefined,
+    canonicalCategory: undefined,
+  }));
+
+  const seen = new Set<string>();
+
+  const pinnedUnique = pinned.filter((h) => {
+    const key = canonicalUrl(h.url.trim());
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  const restUnique = headlines.filter((h) => {
+    const key = canonicalUrl(h.url.trim());
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+
+  return [...pinnedUnique, ...restUnique];
+}
+
+export async function fetchNoiseHeadlines(): Promise<Headline[]> {
+  const feeds = (NOISE_FEEDS as unknown as FeedInput[]) ?? [];
+  return fetchHeadlinesFromFeeds(feeds);
+}
