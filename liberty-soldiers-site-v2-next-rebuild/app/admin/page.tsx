@@ -241,10 +241,17 @@ async function runIntake() {
     const res = await fetch("/api/admin/intake");
     const data = await res.json();
 
+    console.log("INTAKE RESPONSE:", data);
+
     console.log("Intake result:", data);
 
-    alert(`Intake complete\nScanned: ${data.scanned || 0}\nGenerated: ${data.generated || 0}`);
+   const generatedCount = Array.isArray(data.generated)
+  ? data.generated.filter((r: any) => r.ok && !r.skipped).length
+  : Number(data.generated || 0);
 
+alert(
+  `Intake complete\nScanned: ${data.scanned || 0}\nGenerated: ${generatedCount}`
+);
     // Optional: refresh page to show new drafts
     window.location.reload();
   } catch (err) {

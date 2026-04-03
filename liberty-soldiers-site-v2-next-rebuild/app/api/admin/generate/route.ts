@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getQueue, saveQueue } from "@/lib/admin-store";
 
 export const runtime = "nodejs";
@@ -33,15 +33,15 @@ function slugify(input: string): string {
 }
 
 function extractMessageText(content: unknown): string {
-  if (typeof content === "string") {
-    return content;
-  }
+  if (typeof content === "string") return content;
 
   if (Array.isArray(content)) {
     return content
       .map((part: any) => {
         if (typeof part === "string") return part;
-        if (part?.type === "text" && typeof part.text === "string") return part.text;
+        if (part?.type === "text" && typeof part.text === "string") {
+          return part.text;
+        }
         return "";
       })
       .join("")
@@ -83,23 +83,18 @@ function mapHardCategory(category: string): string {
     return "Digital ID / Technocracy";
   }
 
-  if (
-    lower.includes("religion") ||
-    lower.includes("ideology")
-  ) {
+  if (lower.includes("religion") || lower.includes("ideology")) {
     return "Religion & Ideology";
   }
 
-  if (
-    lower.includes("prophecy")
-  ) {
+  if (lower.includes("prophecy")) {
     return "Prophecy Watch";
   }
 
   return "Power & Control";
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
@@ -262,9 +257,6 @@ ${intakeNotes}
     const rawContent = data?.choices?.[0]?.message?.content;
     const text = extractMessageText(rawContent);
 
-    console.log("RAW OPENAI CONTENT:", JSON.stringify(rawContent, null, 2));
-    console.log("PARSED TEXT:", text);
-
     let parsed: {
       title: string;
       excerpt: string;
@@ -292,34 +284,12 @@ ${intakeNotes}
     const safeCategory = parsed.category?.trim() || "Power & Control";
     const safeBody = parsed.body?.trim() || "No content returned.";
     const safeHardCategory = mapHardCategory(safeCategory);
-
-    const item: QueueItem = {
-      id: `q-${Date.now()}`,
-      title: safeTitle,
-      excerpt: safeExcerpt,
-      source: intakeUrl ? "AI + URL intake" : "AI + notes intake",
-      sourceUrl: intakeUrl || undefined,
-      dateISO: new Date().toISOString().slice(0, 10),
-      byline: "Liberty Soldiers",
-      coverImage: "/og-default.jpg",
-      category: safeCategory,
-      hardCategory: safeHardCategory,
-      readTime: "5 min",
-      featured: false,
-      priority: 3,
-      kind: "report",
-      slug: slugify(safeTitle),
-      status: "draft",
-      body: safeBody,
-    };
+    const safeSlug = slugify(safeTitle);
 
     const queue = await getQueue();
 
     const exists = queue.find(
-      (q) =>
-        q.sourceUrl &&
-        item.sourceUrl &&
-        q.sourceUrl === item.sourceUrl
+      (q) => q.sourceUrl && intakeUrl && q.sourceUrl === intakeUrl
     );
 
     if (exists) {
@@ -330,8 +300,54 @@ ${intakeNotes}
       });
     }
 
-    const nextQueue = [item, ...queue];
+    let coverImage = "/og-default.jpg";
 
+    try {
+      const ogRes = await fetch(`${req.nextUrl.origin}/api/admin/generate-og`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: safeTitle,
+          excerpt: safeExcerpt,
+          hardCategory: safeHardCategory,
+          slug: safeSlug,
+        }),
+      });
+
+      const ogData = await ogRes.json();
+
+      if (ogRes.ok && ogData?.ok && ogData?.url) {
+        coverImage = ogData.url;
+      } else {
+        console.error("OG generation fallback used:", ogData);
+      }
+    } catch (error) {
+      console.error("OG generation request failed:", error);
+    }
+
+    const item: QueueItem = {
+      id: `q-${Date.now()}`,
+      title: safeTitle,
+      excerpt: safeExcerpt,
+      source: intakeUrl ? "AI + URL intake" : "AI + notes intake",
+      sourceUrl: intakeUrl || undefined,
+      dateISO: new Date().toISOString().slice(0, 10),
+      byline: "Liberty Soldiers",
+      coverImage,
+      category: safeCategory,
+      hardCategory: safeHardCategory,
+      readTime: "5 min",
+      featured: false,
+      priority: 3,
+      kind: "report",
+      slug: safeSlug,
+      status: "draft",
+      body: safeBody,
+    };
+
+    const nextQueue = [item, ...queue];
     await saveQueue(nextQueue);
 
     return NextResponse.json({

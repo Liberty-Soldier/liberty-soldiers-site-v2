@@ -6,8 +6,6 @@ export const runtime = "nodejs";
 const parser = new Parser();
 
 const FEEDS = [
-  "https://feeds.reuters.com/reuters/worldNews",
-  "https://feeds.reuters.com/reuters/businessNews",
   "https://feeds.bbci.co.uk/news/world/rss.xml",
   "https://feeds.bbci.co.uk/news/business/rss.xml",
   "https://www.aljazeera.com/xml/rss/all.xml",
@@ -197,13 +195,17 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json({
-      ok: true,
-      baseUrl,
-      scanned: items.length,
-      selected: selected.length,
-      generated: results,
-    });
+const successful = results.filter(r => r.ok && !r.skipped);
+
+return NextResponse.json({
+  ok: true,
+  baseUrl,
+  scanned: items.length,
+  selected: selected.length,
+  generated: successful.length, // ✅ number instead of objects
+  results, // keep full details if you want debugging
+});
+
   } catch (error) {
     console.error("Intake route failed:", error);
 
