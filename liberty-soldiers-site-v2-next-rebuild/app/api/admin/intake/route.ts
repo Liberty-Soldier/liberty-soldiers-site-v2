@@ -2,10 +2,13 @@ import Parser from "rss-parser";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 const parser = new Parser();
 
 const FEEDS = [
+  // Mainstream world/business
   "https://feeds.bbci.co.uk/news/world/rss.xml",
   "https://feeds.bbci.co.uk/news/business/rss.xml",
   "https://www.aljazeera.com/xml/rss/all.xml",
@@ -14,9 +17,13 @@ const FEEDS = [
   "https://feeds.skynews.com/feeds/rss/world.xml",
   "https://feeds.skynews.com/feeds/rss/business.xml",
   "https://www.cnbc.com/id/100003114/device/rss/rss.html",
+
+  // Added: broader Liberty Soldiers-style macro / war / control signal
+  "https://cms.zerohedge.com/fullrss2.xml",
 ];
 
 const KEYWORDS = [
+  // War / geopolitics
   "war",
   "military",
   "iran",
@@ -32,22 +39,94 @@ const KEYWORDS = [
   "attack",
   "troops",
   "sanctions",
-  "ai",
-  "surveillance",
-  "biometric",
-  "digital id",
+  "navy",
+  "carrier",
+  "nuclear",
+  "escalation",
+  "conflict",
+  "ceasefire",
+  "border",
+  "terror",
+  "proxy",
+  "shipping lane",
+  "strait",
+  "hormuz",
+
+  // Markets / finance / energy
   "economy",
   "inflation",
   "recession",
   "debt",
   "market",
+  "markets",
   "stocks",
+  "bank",
+  "banking",
+  "central bank",
+  "cbdc",
+  "digital currency",
+  "credit",
+  "bond",
+  "treasury",
+  "tariff",
+  "trade",
   "energy",
   "oil",
   "gas",
   "shipping",
   "supply chain",
+  "commodity",
+  "commodities",
+  "dollar",
+  "de-dollarization",
+
+  // Control / technocracy / surveillance
+  "ai",
+  "surveillance",
+  "biometric",
+  "digital id",
+  "digital identity",
+  "facial recognition",
+  "tracking",
   "cyber",
+  "technocracy",
+  "platform control",
+  "content moderation",
+  "social credit",
+  "identity",
+  "compliance",
+  "rationing",
+  "lockdown",
+  "mobility restriction",
+  "emergency powers",
+
+  // Narrative / censorship / deception
+  "censorship",
+  "speech",
+  "free speech",
+  "disinformation",
+  "misinformation",
+  "propaganda",
+  "narrative",
+  "narrative management",
+  "psyop",
+  "psychological operations",
+  "influence operation",
+  "media manipulation",
+  "deception",
+
+  // Religion / ideology / persecution
+  "religion",
+  "ideology",
+  "persecution",
+  "church",
+  "christianity",
+  "judaism",
+  "zionism",
+  "globalism",
+  "migration",
+  "refugee",
+  "ngo",
 ];
 
 function isRelevant(title: string, snippet = "") {
@@ -72,7 +151,7 @@ function titleSimilarityKey(title: string) {
   return normalizeTitle(title)
     .split(" ")
     .filter((w) => w.length > 2)
-    .slice(0, 6)
+    .slice(0, 7)
     .join(" ");
 }
 
@@ -99,7 +178,7 @@ export async function GET() {
       try {
         const feed = await parser.parseURL(feedUrl);
 
-        for (const item of feed.items.slice(0, 8)) {
+        for (const item of feed.items.slice(0, 10)) {
           if (!item.title || !item.link) continue;
 
           const contentSnippet =
@@ -137,11 +216,11 @@ export async function GET() {
       })
       .filter((i) => {
         const count = perDomainCount.get(i.domain) || 0;
-        if (count >= 2) return false;
+        if (count >= 3) return false;
         perDomainCount.set(i.domain, count + 1);
         return true;
       })
-      .slice(0, 5);
+      .slice(0, 10);
 
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
@@ -163,6 +242,7 @@ export async function GET() {
             intakeTitle: item.title,
             intakeNotes: item.contentSnippet || "",
           }),
+          cache: "no-store",
         });
 
         const data = await res.json();
@@ -195,17 +275,26 @@ export async function GET() {
       }
     }
 
-const successful = results.filter(r => r.ok && !r.skipped);
+    const successful = results.filter((r) => r.ok && !r.skipped);
 
-return NextResponse.json({
-  ok: true,
-  baseUrl,
-  scanned: items.length,
-  selected: selected.length,
-  generated: successful.length, // ✅ number instead of objects
-  results, // keep full details if you want debugging
-});
-
+    return NextResponse.json(
+      {
+        ok: true,
+        baseUrl,
+        scanned: items.length,
+        selected: selected.length,
+        generated: successful.length,
+        results,
+      },
+      {
+        headers: {
+          "Cache-Control":
+            "no-store, no-cache, must-revalidate, proxy-revalidate",
+          Pragma: "no-cache",
+          Expires: "0",
+        },
+      }
+    );
   } catch (error) {
     console.error("Intake route failed:", error);
 
