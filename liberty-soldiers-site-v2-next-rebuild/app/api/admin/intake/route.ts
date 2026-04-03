@@ -237,11 +237,12 @@ export async function GET() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            intakeUrl: item.link,
-            intakeTitle: item.title,
-            intakeNotes: item.contentSnippet || "",
-          }),
+body: JSON.stringify({
+  intakeUrl: item.link,
+  intakeTitle: item.title,
+  intakeNotes: item.contentSnippet || "",
+  skipOg: true,
+}),
           cache: "no-store",
         });
 

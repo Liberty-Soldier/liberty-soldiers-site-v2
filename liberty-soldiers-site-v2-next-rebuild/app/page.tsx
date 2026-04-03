@@ -380,7 +380,7 @@ const latestPublished = published.slice(0, 3);
         <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
         <div>
           <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
-            Latest Published
+            Latest Signal Briefings
           </h2>
           <p className="mt-1 text-sm text-zinc-600 sm:text-base">
             Latest briefings by Liberty Soldiers .

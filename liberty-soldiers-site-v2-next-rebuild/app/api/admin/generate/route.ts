@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getQueue, saveQueue } from "@/lib/admin-store";
+import { getPublished } from "@/lib/published-store";
 
 export const runtime = "nodejs";
 
@@ -327,17 +328,23 @@ ${intakeNotes}
 
     const queue = await getQueue();
 
-    const exists = queue.find(
-      (q) => q.sourceUrl && intakeUrl && q.sourceUrl === intakeUrl
-    );
+const published = await getPublished();
 
-    if (exists) {
-      return NextResponse.json({
-        ok: true,
-        skipped: true,
-        reason: "duplicate",
-      });
-    }
+const existsInQueue = queue.find(
+  (q) => q.sourceUrl && intakeUrl && q.sourceUrl === intakeUrl
+);
+
+const existsInPublished = published.find(
+  (p) => p.sourceUrl && intakeUrl && p.sourceUrl === intakeUrl
+);
+
+if (existsInQueue || existsInPublished) {
+  return NextResponse.json({
+    ok: true,
+    skipped: true,
+    reason: "duplicate",
+  });
+}
 
     const skipOg = body.skipOg === true;
     

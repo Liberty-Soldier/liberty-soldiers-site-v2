@@ -266,6 +266,47 @@ async function runIntake() {
   }
 }
 
+async function handleGenerateOg() {
+  if (!selected) return;
+
+  try {
+    const res = await fetch("/api/admin/generate-og", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: selected.title,
+        excerpt: selected.excerpt,
+        hardCategory: selected.hardCategory,
+        slug: selected.slug,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok || !data.url) {
+      console.error("Generate OG failed", data);
+      alert(data.error || "Generate OG failed");
+      return;
+    }
+
+    const nextQueue = queue.map((item) =>
+      item.id === selected.id
+        ? { ...item, coverImage: data.url }
+        : item
+    );
+
+    setQueue(nextQueue);
+    await saveQueue(nextQueue);
+
+    alert("OG image generated");
+  } catch (err) {
+    console.error("Failed to generate OG", err);
+    alert("Failed to generate OG");
+  }
+}
+
   async function saveQueue(nextQueue: QueueItem[]) {
     try {
       const res = await fetch("/api/admin/queue", {
@@ -723,6 +764,13 @@ async function runIntake() {
                         >
                           Mark Review
                         </button>
+
+                        <button
+  onClick={handleGenerateOg}
+  className="rounded-2xl border border-zinc-300 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-100"
+>
+  Generate OG
+</button>
 
                         <button
                           onClick={() => updateStatus("approved")}

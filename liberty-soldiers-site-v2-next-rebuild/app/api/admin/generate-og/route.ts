@@ -28,16 +28,28 @@ function buildOgPrompt({
   hardCategory?: string;
 }) {
   const base = `
-Ultra-realistic documentary-style news image.
-Professional editorial photography.
+Ultra-realistic editorial news image.
+Professional photojournalism.
 Natural lighting.
 Balanced exposure.
+Real-world proportions.
+Simple, believable composition.
+One clear focal subject.
+One supporting background element.
+Clean visual hierarchy.
 Visible detail in shadows and highlights.
 Real-world colors.
-Cinematic but believable.
+Subtle atmosphere only.
 Not too dark.
-Not dystopian.
+Not overly cinematic.
+Not stylized.
 Not illustrated.
+Not dystopian art.
+Not concept art.
+Not a movie poster.
+Avoid crowded compositions.
+Avoid multiple competing subjects.
+Avoid surreal symbolism.
 No text.
 No logos.
 No watermark.
@@ -46,39 +58,60 @@ No watermark.
 
   const categoryStyles: Record<string, string> = {
     "War & Geopolitics": `
-Realistic geopolitical tension.
-Modern shipping lanes, military presence, command center, border region, or strategic infrastructure.
-Neutral daylight or soft overcast lighting.
+Realistic breaking-news style image.
+Use a believable geopolitical setting such as cargo ships, a border crossing, military hardware, a government building, a city skyline under tension, or a strategic waterway.
+Keep the scene grounded and editorial.
+Prefer one dominant subject and one supporting background element.
 `,
+
     "Markets & Finance": `
-Realistic financial and energy-market environment.
-Trading screens, cargo shipping, industrial infrastructure, executive briefing room.
-Bright enough to read as real editorial imagery.
+Realistic financial-news image.
+Use a believable setting such as a trader desk, market screens, cargo containers, oil infrastructure, refinery equipment, a port, or a central bank/government finance setting.
+Keep the composition clean and simple.
 `,
+
     "Power & Control": `
-Real-world institutional setting.
-Surveillance systems, checkpoints, policy architecture, government or corporate control environment.
-Grounded realism.
+Realistic institutional image.
+Use a believable setting such as a government building, surveillance camera, checkpoint, official podium, controlled-access gate, or enforcement presence.
+Keep the scene restrained and grounded.
 `,
+
     "Digital ID / Technocracy": `
-Modern biometric scan, smartphone verification, controlled-access setting.
-Clean devices, real human proportions, realistic environment.
+Realistic modern technology image.
+Use a believable setting such as a smartphone identity scan, biometric access gate, surveillance terminal, facial recognition checkpoint, or digital verification screen in a real public environment.
+Keep the composition minimal and believable.
 `,
+
     "Religion & Ideology": `
-Institutional symbolism, public square, media or ideological conflict setting.
-Serious but realistic editorial composition.
+Realistic editorial image related to ideology, public symbolism, protest, religious institution, or cultural power.
+Keep the setting grounded in the real world and avoid fantasy symbolism.
+Prefer one clear focal point.
 `,
+
     "Prophecy Watch": `
-Modern geopolitical scene with symbolic tension.
-Clouds or dramatic atmosphere allowed, but keep realistic brightness and visible detail.
+Realistic world-events image with a tense atmosphere.
+Use a believable modern setting such as a city skyline, geopolitical flashpoint, military movement, or public unrest scene.
+Keep it grounded and editorial, not fantastical.
 `,
   };
 
   const style =
     categoryStyles[hardCategory || ""] ||
-    "Realistic current-events editorial image with natural lighting and believable detail.";
+    "Realistic current-events editorial image with one clear focal subject and a believable modern setting.";
 
-  return `${base}\n${style}\nHeadline inspiration: ${title}\nSupporting context: ${excerpt || ""}`;
+  return `${base}
+${style}
+
+Headline inspiration: ${title}
+Supporting context: ${excerpt || ""}
+
+Final guidance:
+- Make it look like a real premium editorial feature image
+- Keep the scene simple and believable
+- Prefer realism over symbolism
+- Prefer clarity over spectacle
+- Avoid exaggerated drama
+`;
 }
 
 export async function POST(req: NextRequest) {
