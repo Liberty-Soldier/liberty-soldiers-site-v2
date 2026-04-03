@@ -159,12 +159,12 @@ function HeadlineCard({
       rel="noreferrer"
     >
       <div className="relative h-[170px] w-full overflow-hidden bg-zinc-100">
-       <img
-  src={image}
-  alt={item.title}
-  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-  loading="lazy"
-/>
+        <img
+          src={image}
+          alt={item.title}
+          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          loading="lazy"
+        />
         <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-700">
           <span className="inline-flex h-2 w-2 rounded-full bg-red-600 motion-safe:animate-pulse" />
           External Signal
@@ -193,7 +193,8 @@ function HeadlineCard({
     </a>
   );
 }
-function PublishedCard({
+
+function FiledReportCard({
   article,
 }: {
   article: {
@@ -220,7 +221,7 @@ function PublishedCard({
         />
         <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-700">
           <span className="inline-flex h-2 w-2 rounded-full bg-red-600 motion-safe:animate-pulse" />
-          Published
+          Filed Report
         </div>
       </div>
 
@@ -240,18 +241,39 @@ function PublishedCard({
         </p>
 
         <div className="mt-3 text-sm font-semibold text-zinc-900 group-hover:text-red-700">
-          Read analysis →
+          Open report →
         </div>
       </div>
     </a>
   );
 }
 
+function StatCard({
+  label,
+  value,
+  sub,
+}: {
+  label: string;
+  value: string | number;
+  sub: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+        {label}
+      </div>
+      <div className="mt-2 text-2xl font-extrabold tracking-tight text-zinc-900">
+        {value}
+      </div>
+      <div className="mt-1 text-xs leading-relaxed text-zinc-600">{sub}</div>
+    </div>
+  );
+}
+
 export default async function Home() {
   const all = await fetchAllHeadlines();
-
   const published = await getPublishedForHomepage();
-const latestPublished = published.slice(0, 3);
+  const latestPublished = published.slice(0, 4);
 
   const featuredReports = getLatestReports(4);
   const latestHeadlines = [...all]
@@ -259,7 +281,6 @@ const latestPublished = published.slice(0, 3);
     .slice(0, 4);
 
   const iranItems = pickIranRadarHeadlines(all, 4);
-
   const nowIso = new Date().toISOString();
 
   const jsonLd = [
@@ -324,16 +345,15 @@ const latestPublished = published.slice(0, 3);
 
       <LiveBriefingAuto />
 
-
-      <section className="relative flex min-h-[38vh] w-full items-center py-12 sm:min-h-[42vh] sm:py-0">
+      <section className="relative flex min-h-[44vh] w-full items-center py-14 sm:min-h-[52vh] sm:py-0">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/hero.jpg')" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/55 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/60 to-black" />
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 text-white sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-red-400/30 bg-black/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-200 backdrop-blur-sm">
               <span className="inline-flex h-2 w-2 rounded-full bg-red-500 motion-safe:animate-pulse" />
               Live Signals • Active Monitoring
@@ -343,12 +363,14 @@ const latestPublished = published.slice(0, 3);
               LIBERTY SOLDIERS
             </h1>
 
-            <p className="mt-4 max-w-2xl text-xl font-semibold text-white/95 sm:text-2xl">
+            <p className="mt-4 max-w-3xl text-xl font-semibold text-white/95 sm:text-2xl">
               Global escalation is accelerating. Most people are missing it.
             </p>
 
-            <p className="mt-3 max-w-2xl text-base leading-relaxed text-white/80 sm:text-lg">
-              Energy, war, and control systems are converging — and the consequences are already unfolding.
+            <p className="mt-3 max-w-3xl text-base leading-relaxed text-white/80 sm:text-lg">
+              War, energy, financial pressure, and control systems are converging
+              fast. Liberty Soldiers tracks the structural signals beneath the
+              noise.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
@@ -356,7 +378,7 @@ const latestPublished = published.slice(0, 3);
                 href="/reports"
                 className="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100"
               >
-                Read Reports →
+                Enter Reports Desk →
               </a>
 
               <a
@@ -368,41 +390,68 @@ const latestPublished = published.slice(0, 3);
             </div>
 
             <p className="mt-5 max-w-2xl text-sm text-white/70 sm:text-base">
-              Independent situational awareness on conflict, systems, narrative warfare, and the structures shaping world events.
+              Independent situational awareness on conflict, systems, narrative warfare,
+              and the structures shaping world events.
             </p>
           </div>
         </div>
       </section>
-      <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
-  <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-    <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-      <div className="flex items-start gap-3">
-        <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
-        <div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
-            Latest Signal Briefings
-          </h2>
-          <p className="mt-1 text-sm text-zinc-600 sm:text-base">
-            Latest briefings by Liberty Soldiers .
-          </p>
+
+      <section className="border-b border-zinc-200 bg-zinc-50 py-8 sm:py-10">
+        <div className="mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
+          <StatCard
+            label="Filed Reports"
+            value={published.length}
+            sub="Latest bot-published reports in the system."
+          />
+          <StatCard
+            label="Featured Reports"
+            value={featuredReports.length}
+            sub="Curated Liberty Soldiers reporting and analysis."
+          />
+          <StatCard
+            label="Active Headlines"
+            value={latestHeadlines.length}
+            sub="External developments under current monitoring."
+          />
+          <StatCard
+            label="Iran Radar"
+            value={iranItems.length}
+            sub="Conflict escalation, shipping risk, and strike indicators."
+          />
         </div>
-      </div>
+      </section>
 
-      <a
-        href="/published"
-        className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
-      >
-        View all published <span className="text-red-600">→</span>
-      </a>
-    </div>
+      <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+              <div>
+                <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
+                  Latest Filed Reports
+                </h2>
+                <p className="mt-1 text-sm text-zinc-600 sm:text-base">
+                  Newly published Liberty Soldiers reports and analysis.
+                </p>
+              </div>
+            </div>
 
-    <Carousel title="" subtitle="">
-      {latestPublished.map((article) => (
-        <PublishedCard key={article.slug} article={article} />
-      ))}
-    </Carousel>
-  </div>
-</section>
+            <a
+              href="/reports"
+              className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
+            >
+              Open reports desk <span className="text-red-600">→</span>
+            </a>
+          </div>
+
+          <Carousel title="" subtitle="">
+            {latestPublished.map((article) => (
+              <FiledReportCard key={article.slug} article={article} />
+            ))}
+          </Carousel>
+        </div>
+      </section>
 
       <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -414,7 +463,7 @@ const latestPublished = published.slice(0, 3);
                   Featured Reports
                 </h2>
                 <p className="mt-1 max-w-2xl text-sm text-zinc-600 sm:text-base">
-                  Original Liberty Soldiers reporting and analysis.
+                  Original Liberty Soldiers reporting, investigations, and field analysis.
                 </p>
               </div>
             </div>
@@ -435,7 +484,7 @@ const latestPublished = published.slice(0, 3);
         </div>
       </section>
 
-      <section className="border-b border-zinc-200 bg-zinc-50/50 py-10 sm:py-12">
+      <section className="border-b border-zinc-200 bg-zinc-50/60 py-10 sm:py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="mb-4 flex items-start gap-3">
             <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
@@ -444,7 +493,7 @@ const latestPublished = published.slice(0, 3);
                 Escalation Tracker
               </h2>
               <p className="mt-1 text-sm text-zinc-600 sm:text-base">
-                Real-time headlines tied to Iran, regional conflict, shipping risk, and military escalation signals.
+                Monitored headlines tied to Iran, regional conflict, shipping risk, and military escalation.
               </p>
             </div>
           </div>
@@ -486,33 +535,70 @@ const latestPublished = published.slice(0, 3);
         </div>
       </section>
 
-      <section className="border-t border-zinc-200 py-12 sm:py-16">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="hidden sm:block">
-            <h2 className="text-2xl font-bold text-zinc-900 sm:text-3xl">
-              Liberty Soldiers is an independent investigative media platform for geopolitical analysis.
-            </h2>
+      <section className="border-t border-zinc-200 bg-zinc-50 py-12 sm:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-700">
+                <span className="h-2 w-2 rounded-full bg-black" />
+                Mission Profile
+              </div>
 
-            <p className="mt-3 leading-relaxed text-zinc-800">
-              We publish investigative reporting and analytical research on global geopolitics, modern conflict, information warfare, psychological operations, and the power structures and belief systems that shape public perception and policy.
-            </p>
+              <h2 className="mt-4 text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
+                Liberty Soldiers is an independent intelligence-style media platform.
+              </h2>
 
-            <p className="mt-3 leading-relaxed text-zinc-700">
-              Our reports connect breaking news and world events to historical patterns, strategic doctrine, and long-term ideological frameworks — separating signal from noise, fact from propaganda, and context from narrative — so readers gain situational awareness and clarity rather than partisan opinion.
-            </p>
+              <p className="mt-4 leading-relaxed text-zinc-800">
+                We publish investigative reporting and analytical research on global
+                geopolitics, modern conflict, information warfare, psychological
+                operations, and the power structures and belief systems shaping
+                public perception and policy.
+              </p>
 
-            <p className="mt-2 text-sm text-zinc-500">
-              Topics include geopolitics, global conflict, media manipulation, surveillance systems, digital identity, financial power, and narrative control.
-            </p>
-          </div>
+              <p className="mt-3 leading-relaxed text-zinc-700">
+                Our work connects breaking developments to historical patterns,
+                strategic doctrine, and long-term ideological frameworks — separating
+                signal from noise, fact from propaganda, and context from narrative.
+              </p>
+            </div>
 
-          <div className="sm:hidden">
-            <h2 className="text-xl font-extrabold text-zinc-900">
-              Independent analysis of power, perception, and control.
-            </h2>
-            <p className="mt-3 text-sm leading-relaxed text-zinc-700">
-              Liberty Soldiers tracks conflict, systems, narratives, and the emerging signals shaping world events.
-            </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                  Tracks
+                </div>
+                <div className="mt-2 text-sm font-semibold leading-relaxed text-zinc-900">
+                  Geopolitics, conflict, markets, surveillance, digital identity, ideology
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                  Focus
+                </div>
+                <div className="mt-2 text-sm font-semibold leading-relaxed text-zinc-900">
+                  Structural meaning, pressure points, escalation signals, narrative control
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                  Method
+                </div>
+                <div className="mt-2 text-sm font-semibold leading-relaxed text-zinc-900">
+                  Monitor, compare, interpret, and file original analysis
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
+                <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                  Goal
+                </div>
+                <div className="mt-2 text-sm font-semibold leading-relaxed text-zinc-900">
+                  Situational awareness with clarity, context, and signal discipline
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

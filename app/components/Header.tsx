@@ -149,7 +149,7 @@ export default function Header() {
               className="hidden shrink-0 items-center gap-2 rounded-lg bg-zinc-900 px-3 py-2 text-[12px] font-extrabold text-white shadow-sm transition hover:bg-zinc-800 xl:inline-flex"
             >
               <FaBolt className="h-3.5 w-3.5" />
-              Briefings Test
+              Briefings
             </Link>
 
             {/* RIGHT SIDE */}
