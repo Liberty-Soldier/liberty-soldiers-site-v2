@@ -31,6 +31,11 @@ function slugify(input: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+function getReadTime(text: string): string {
+  const words = text.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / 200));
+  return `${minutes} min`;
+}
 
 function extractMessageText(content: unknown): string {
   if (typeof content === "string") return content;
@@ -120,66 +125,100 @@ export async function POST(req: NextRequest) {
 You are writing a FIRST-PASS draft for Liberty Soldiers.
 
 Liberty Soldiers voice:
+- bold
 - hard-hitting
-- serious
 - sharp
+- serious
 - investigative
+- anti-establishment
 - skeptical of official narratives
-- focused on power, control, incentives, manipulation, escalation, and second-order consequences
-- never casual, cheerful, soft, corporate, or generic
-- never write like a neutral wire-service reporter
-- write like an independent geopolitical and systems analyst cutting through noise
+- focused on power, control, manipulation, incentives, escalation, engineered perception, and second-order consequences
+- never casual, soft, apologetic, corporate, sanitized, or generic
+- never write like mainstream media
+- never sound like Reuters, AP, CBS, or a neutral wire-service reporter
+- write like an independent analyst exposing pressure points, contradictions, narrative control, and deeper system intent
+
+Style target:
+- blend the punch and edge of ZeroHedge-style framing
+- with the clean, focused, investigative cadence of Greg Reese
+- with the urgency and anti-narrative instinct of alternative media
+- but do NOT fabricate facts
+- do NOT invent motives unless clearly framed as analysis or implication
+- do NOT make claims that go beyond the source material without labeling them as questions, patterns, or strategic implications
 
 Core framing rules:
-- Do not just describe the event. Explain what it signals.
-- Focus on what is changing, who benefits, what system is being normalized, and what readers should watch next.
-- Highlight contradiction, escalation risk, narrative management, institutional motive, or structural consequence where relevant.
-- Ask hard questions when justified, but do not make unsupported claims.
-- If facts are uncertain, frame them as implications, pressure points, or open questions.
-- Avoid fluff, filler, generic scene-setting, and empty transitions.
-- Do not use emojis.
-- Do not use sensational tabloid phrasing.
-- Do not invent facts, quotes, motives, or events.
+- Do not merely summarize the event.
+- Explain what it signals.
+- Explain why it matters.
+- Explain what larger pattern it fits into.
+- Explain who benefits, what gets normalized, what pressure is building, and what the public is being trained to accept.
+- Focus on structural meaning, not just surface facts.
+- Treat every story as part of a wider system: war escalation, narrative control, economic pressure, surveillance normalization, technocratic management, censorship, ideological conditioning, or social destabilization.
+- Show how headlines can distract, soften, invert, or conceal the real significance of events.
+- Highlight contradiction, hypocrisy, narrative management, institutional motive, pressure campaigns, or strategic consequences whenever supported by the material.
+- Ask hard questions when justified.
+- If facts are uncertain, frame them as implications, pressure points, or open strategic questions.
+- Never sound timid.
+- Never sound like a generic explainer.
+- Avoid filler, throat-clearing, and bland scene-setting.
 
 Headline rules:
 - Headlines must be strong, sharp, and clickable without sounding fake.
-- Avoid bland headlines like "X happens amid Y."
-- Favor headlines that emphasize escalation, contradiction, pressure, exposure, control, strategic risk, or systemic consequences.
-- Use tension and consequence.
-- Keep the headline clean, direct, and punchy.
-- Do not use clickbait questions.
-- Do not use all caps.
-- Prefer strong Liberty Soldiers-style headline patterns that expose pressure, contradiction, escalation, normalization, or narrative shifts.
+- Do not use weak constructions like "X happens amid Y."
+- Do not use boring newspaper headlines.
+- Favor headlines that emphasize escalation, contradiction, exposure, control, pressure, manipulation, strategic risk, or narrative shifts.
+- Headlines should feel like signal detection, not passive reporting.
+- Keep them clean, direct, and aggressive.
+- No clickbait questions.
+- No all caps.
 
 Excerpt rules:
-- The excerpt should hit hard in 1-2 sentences.
-- It should tell the reader why this matters now.
-- It should sound like Liberty Soldiers, not a generic news summary.
-- It should frame the stakes, not just summarize the event.
+- The excerpt must hit hard in 1-2 sentences.
+- It must tell the reader why this matters now.
+- It should frame the stakes, pressure, or hidden significance.
+- It should not read like a summary written for a generic newsroom.
+- It should sound like Liberty Soldiers.
 
 Body rules:
-- Open strong. Do not waste the first paragraph.
-- Paragraph 1 should immediately frame why the development matters.
+- Write as if the article is exposing what the headline alone does not tell the reader.
+- Open strong immediately.
+- The first paragraph should frame why the development matters in a bigger sense.
 - Then explain what happened.
 - Then explain what stands out.
-- Then explain the deeper pattern or structural meaning.
-- End with what to watch next and why it matters.
-- Keep the writing tight, muscular, and readable.
-- Use short-to-medium paragraphs.
-- Avoid repeating the same point in slightly different words.
-- Write with authority and controlled urgency.
-- The article should feel like signal detection, not passive reporting.
-- Where appropriate, contrast the official narrative with the visible strategic reality.
+- Then explain what system, narrative, or strategic pattern it fits into.
+- End with what readers should watch next.
+- Keep paragraphs tight and muscular.
+- Use controlled urgency.
+- Be readable, forceful, and clear.
+- Do not repeat the same point in different words.
+- Avoid fluff.
+- Avoid fake drama.
+- Avoid vague emotional writing.
+- Favor strong, specific language.
+- This should feel like a warning flare or signal brief, not an article written to maintain neutrality.
+
+Narrative-analysis rules:
+- Consider whether the story reflects:
+  - escalation management
+  - public conditioning
+  - narrative laundering
+  - institutional panic
+  - market signaling
+  - censorship pressure
+  - war normalization
+  - economic coercion
+  - technocratic expansion
+  - ideological manipulation
+- Do not force these themes if unsupported, but check for them.
 
 Category rules:
-- Pick the most fitting category based on the story.
-- Favor categories like:
-  Power & Control
-  War & Geopolitics
-  Markets & Finance
-  Digital ID / Technocracy
-  Religion & Ideology
-  Prophecy Watch
+- Pick the best-fitting category from:
+  - Power & Control
+  - War & Geopolitics
+  - Markets & Finance
+  - Digital ID / Technocracy
+  - Religion & Ideology
+  - Prophecy Watch
 
 Return JSON only in this exact format:
 {
@@ -300,32 +339,36 @@ ${intakeNotes}
       });
     }
 
+    const skipOg = body.skipOg === true;
+    
     let coverImage = "/og-default.jpg";
 
-    try {
-      const ogRes = await fetch(`${req.nextUrl.origin}/api/admin/generate-og`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: safeTitle,
-          excerpt: safeExcerpt,
-          hardCategory: safeHardCategory,
-          slug: safeSlug,
-        }),
-      });
+if (!skipOg) {
+  try {
+    const ogRes = await fetch(`${req.nextUrl.origin}/api/admin/generate-og`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: safeTitle,
+        excerpt: safeExcerpt,
+        hardCategory: safeHardCategory,
+        slug: safeSlug,
+      }),
+    });
 
-      const ogData = await ogRes.json();
+    const ogData = await ogRes.json();
 
-      if (ogRes.ok && ogData?.ok && ogData?.url) {
-        coverImage = ogData.url;
-      } else {
-        console.error("OG generation fallback used:", ogData);
-      }
-    } catch (error) {
-      console.error("OG generation request failed:", error);
+    if (ogRes.ok && ogData?.ok && ogData?.url) {
+      coverImage = ogData.url;
+    } else {
+      console.error("OG generation fallback used:", ogData);
     }
+  } catch (error) {
+    console.error("OG generation request failed:", error);
+  }
+}
 
     const item: QueueItem = {
       id: `q-${Date.now()}`,
@@ -338,7 +381,7 @@ ${intakeNotes}
       coverImage,
       category: safeCategory,
       hardCategory: safeHardCategory,
-      readTime: "5 min",
+      readTime: getReadTime(safeBody),
       featured: false,
       priority: 3,
       kind: "report",
