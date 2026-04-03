@@ -52,6 +52,7 @@ type ReportItem = {
   featured?: boolean;
   priority?: number;
   kind?: string;
+  routeType: "news" | "published";
 };
 
 function formatDate(iso: string) {
@@ -80,6 +81,12 @@ function typeLabel(kind?: string) {
 
 function categoryLabel(item: ReportItem) {
   return item.hardCategory || item.category || "General";
+}
+
+function articleHref(item: ReportItem) {
+  return item.routeType === "published"
+    ? `/published/${item.slug}`
+    : `/news/${item.slug}`;
 }
 
 function dedupeBySlug(items: ReportItem[]) {
@@ -118,8 +125,15 @@ function getPriorityReports(items: ReportItem[]) {
 }
 
 export default async function ReportsPage() {
-  const staticReports = getAllReports();
-  const publishedReports = await getPublished();
+  const staticReports: ReportItem[] = getAllReports().map((item) => ({
+    ...item,
+    routeType: "news" as const,
+  }));
+
+  const publishedReports: ReportItem[] = (await getPublished()).map((item) => ({
+    ...item,
+    routeType: "published" as const,
+  }));
 
   const reports: ReportItem[] = dedupeBySlug([
     ...publishedReports,
@@ -252,11 +266,11 @@ export default async function ReportsPage() {
             {featured && (
               <section className="grid gap-8 xl:grid-cols-[1.25fr_0.75fr]">
                 <Link
-                  href={`/news/${featured.slug}`}
+                  href={articleHref(featured)}
                   className="group overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-sm transition hover:border-zinc-300 hover:shadow-md"
                 >
                   <div className="border-b border-zinc-200 bg-zinc-900 px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-white">
-                    Lead Report TEST
+                    Lead Report
                   </div>
 
                   <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
@@ -319,7 +333,7 @@ export default async function ReportsPage() {
                       priorityReports.map((item) => (
                         <Link
                           key={item.slug}
-                          href={`/news/${item.slug}`}
+                          href={articleHref(item)}
                           className="block px-5 py-4 transition hover:bg-zinc-50"
                         >
                           <div className="flex items-start justify-between gap-4">
@@ -359,7 +373,7 @@ export default async function ReportsPage() {
                     latest.map((item) => (
                       <Link
                         key={item.slug}
-                        href={`/news/${item.slug}`}
+                        href={articleHref(item)}
                         className="block px-5 py-4 transition hover:bg-zinc-50"
                       >
                         <div className="flex items-start justify-between gap-4">
@@ -403,7 +417,7 @@ export default async function ReportsPage() {
                     {archive.map((item) => (
                       <Link
                         key={item.slug}
-                        href={`/news/${item.slug}`}
+                        href={articleHref(item)}
                         className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition hover:border-zinc-300 hover:shadow-sm"
                       >
                         <div className="relative aspect-[16/9] bg-zinc-100">
