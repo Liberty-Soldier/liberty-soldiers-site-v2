@@ -150,7 +150,7 @@ export async function POST(req: NextRequest) {
     const imageResult = await openai.images.generate({
       model: "gpt-image-1",
       prompt,
-      size: "1536x1024",
+      size: "1024x1024",
     });
 
     const b64 = imageResult.data?.[0]?.b64_json;
