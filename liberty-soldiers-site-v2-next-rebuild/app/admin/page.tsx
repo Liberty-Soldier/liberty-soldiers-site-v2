@@ -238,27 +238,29 @@ export default function AdminPage() {
 
 async function runIntake() {
   try {
+    console.log("START intake");
+
     setLoadingIntake(true);
 
-    const res = await fetch("/api/admin/intake");
+    const res = await fetch("/api/admin/intake", {
+      method: "GET",
+      cache: "no-store",
+    });
+
+    console.log("FETCH SENT");
+
     const data = await res.json();
 
     console.log("INTAKE RESPONSE:", data);
 
-    console.log("Intake result:", data);
+    alert(
+      `Scanned: ${data.scanned}\nSelected: ${data.selected}\nGenerated: ${data.generated}`
+    );
 
-   const generatedCount = Array.isArray(data.generated)
-  ? data.generated.filter((r: any) => r.ok && !r.skipped).length
-  : Number(data.generated || 0);
-
-alert(
-  `Intake complete\nScanned: ${data.scanned || 0}\nGenerated: ${generatedCount}`
-);
-    // Optional: refresh page to show new drafts
     await loadQueue();
   } catch (err) {
-    console.error(err);
-    alert("Intake failed");
+    console.error("INTAKE ERROR:", err);
+    alert("Intake failed — check console");
   } finally {
     setLoadingIntake(false);
   }
