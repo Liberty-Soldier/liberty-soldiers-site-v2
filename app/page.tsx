@@ -402,7 +402,7 @@ export default async function Home() {
           <StatCard
             label="Filed Reports"
             value={published.length}
-            sub="Latest bot-published reports in the system."
+            sub="Latest intelligence briefings and investigative reports from Liberty Soldiers."
           />
           <StatCard
             label="Featured Reports"
@@ -432,7 +432,7 @@ export default async function Home() {
                   Latest Filed Reports
                 </h2>
                 <p className="mt-1 text-sm text-zinc-600 sm:text-base">
-                  Newly published Liberty Soldiers reports and analysis.
+                  Recently filed Liberty Soldiers reports covering escalation, systems, and narrative control.
                 </p>
               </div>
             </div>
