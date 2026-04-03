@@ -1,6 +1,5 @@
 // app/reports/page.tsx
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { getAllReports } from "@/lib/reports";
 import { getPublished } from "@/lib/published-store";
@@ -311,14 +310,12 @@ export default async function ReportsPage() {
                     </div>
 
                     <div className="relative min-h-[280px] border-t border-zinc-200 bg-zinc-100 lg:min-h-full lg:border-l lg:border-t-0">
-                      <Image
-                        src={featured.coverImage || "/og-default.jpg"}
-                        alt={featured.title}
-                        fill
-                        priority
-                        className="object-cover transition duration-300 group-hover:scale-[1.02]"
-                        sizes="(max-width: 1024px) 100vw, 45vw"
-                      />
+<img
+  src={featured.coverImage || "/og-default.jpg"}
+  alt={featured.title}
+  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+  loading="eager"
+/>
                     </div>
                   </div>
                 </Link>
@@ -421,13 +418,12 @@ export default async function ReportsPage() {
                         className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-white transition hover:border-zinc-300 hover:shadow-sm"
                       >
                         <div className="relative aspect-[16/9] bg-zinc-100">
-                          <Image
-                            src={item.coverImage || "/og-default.jpg"}
-                            alt={item.title}
-                            fill
-                            className="object-cover transition duration-300 group-hover:scale-[1.02]"
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                          />
+<img
+  src={item.coverImage || "/og-default.jpg"}
+  alt={item.title}
+  className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+  loading="lazy"
+/>
                         </div>
 
                         <div className="flex h-full flex-col p-4">
