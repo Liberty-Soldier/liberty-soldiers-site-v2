@@ -1,0 +1,72 @@
+export const runtime = "nodejs";
+export const revalidate = 0;
+
+import { NextResponse } from "next/server";
+import { XMLParser } from "fast-xml-parser";
+import { NEWS_FEEDS } from "@/lib/news.config";
+
+const parser = new XMLParser({
+  ignoreAttributes: false,
+  attributeNamePrefix: "@_",
+  // keep this flexible
+  isArray: (name) => name === "item" || name === "entry",
+});
+
+function tryCount(json: any) {
+  try {
+    const rssItems = json?.rss?.channel?.item;
+    if (Array.isArray(rssItems)) return { path: "rss.channel.item", count: rssItems.length };
+
+    const atomItems = json?.feed?.entry;
+    if (Array.isArray(atomItems)) return { path: "feed.entry", count: atomItems.length };
+
+    const loneItems = json?.item;
+    if (Array.isArray(loneItems)) return { path: "item[] (root)", count: loneItems.length };
+
+    return { path: "none", count: 0 };
+  } catch {
+    return { path: "error", count: 0 };
+  }
+}
+
+export async function GET() {
+  const results = await Promise.allSettled(
+    NEWS_FEEDS.map(async (url) => {
+      const out: any = { url };
+
+      try {
+        const res = await fetch(url, {
+          headers: { "user-agent": "Mozilla/5.0 (LibertySoldiersBot)" },
+          // bypass CDN cache for debugging
+          cache: "no-store",
+        });
+        out.http = res.status;
+        const xml = await res.text();
+        out.xmlLen = xml.length;
+
+        // bail early if blocked/empty
+        if (!res.ok || !xml) return out;
+
+        try {
+          const json = parser.parse(xml);
+          const { path, count } = tryCount(json);
+          out.parsed = true;
+          out.itemsPath = path;
+          out.itemsCount = count;
+        } catch (e: any) {
+          out.parsed = false;
+          out.parseError = e?.message || String(e);
+        }
+      } catch (e: any) {
+        out.error = e?.message || String(e);
+      }
+      return out;
+    })
+  );
+
+  const payload = results.map((r) =>
+    r.status === "fulfilled" ? r.value : { error: r.reason }
+  );
+
+  return NextResponse.json({ ok: true, feeds: payload });
+}
