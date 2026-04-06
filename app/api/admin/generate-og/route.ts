@@ -18,6 +18,81 @@ function slugify(input: string) {
     .slice(0, 120);
 }
 
+function compact(input?: string) {
+  return String(input || "").replace(/\s+/g, " ").trim();
+}
+
+function detectScene(title: string, excerpt?: string) {
+  const text = `${title} ${excerpt || ""}`.toLowerCase();
+
+  if (
+    /sudan/.test(text) &&
+    /hospital/.test(text) &&
+    /(drone|strike|attack|airstrike|blast)/.test(text)
+  ) {
+    return `
+Primary scene:
+A real-world news photo from outside or just inside a damaged hospital in Sudan after a drone strike.
+Show structural damage, shattered windows, smoke residue, emergency responders, civilians evacuating, or medical staff moving quickly.
+If any drone is visible, it must be a realistic military-style drone far from camera, not close, not hovering indoors, not toy-like.
+Do not show a calm patient posing on a bed.
+Do not show a drone flying over a patient indoors.
+Focus on aftermath, urgency, and realism.
+`;
+  }
+
+  if (/(drone|airstrike|missile|blast|explosion|attack)/.test(text)) {
+    return `
+Primary scene:
+A realistic aftermath image connected directly to the reported attack.
+Show damage, responders, debris, smoke residue, emergency activity, or the impacted facility/location.
+Avoid abstract symbolism.
+Avoid staged portrait-like compositions.
+`;
+  }
+
+  if (/(hospital|clinic|medical center|medical centre)/.test(text)) {
+    return `
+Primary scene:
+A real hospital or clinic setting connected to the headline.
+Prefer exterior entrance, emergency corridor, responders, staff, stretchers, or visible damage if the headline implies violence.
+Avoid posed patients looking at camera.
+`;
+  }
+
+  if (/(ship|shipping|port|strait|hormuz|red sea)/.test(text)) {
+    return `
+Primary scene:
+A realistic maritime news image.
+Show one cargo ship, tanker, escort vessel, port, or chokepoint waterway with believable scale and lighting.
+`;
+  }
+
+  if (/(market|stocks|dow|nasdaq|s&p|bonds|yield|oil|inflation|fed)/.test(text)) {
+    return `
+Primary scene:
+A realistic finance or macroeconomic news image.
+Show trader screens, commodities infrastructure, port logistics, central bank setting, or energy infrastructure.
+No fantasy trading graphics.
+`;
+  }
+
+  if (/(surveillance|facial recognition|biometric|digital id|checkpoint)/.test(text)) {
+    return `
+Primary scene:
+A realistic modern control-system image.
+Show a real checkpoint, camera system, scan gate, biometric terminal, or controlled-access environment.
+`;
+  }
+
+  return `
+Primary scene:
+Depict the most literal real-world event described by the headline and excerpt.
+Prefer documentary realism over symbolism.
+Show the place, damage, people, or infrastructure actually implied by the story.
+`;
+}
+
 function buildOgPrompt({
   title,
   excerpt,
@@ -27,90 +102,96 @@ function buildOgPrompt({
   excerpt?: string;
   hardCategory?: string;
 }) {
+  const cleanTitle = compact(title);
+  const cleanExcerpt = compact(excerpt);
+
   const base = `
-Ultra-realistic editorial news image.
-Professional photojournalism.
-Natural lighting.
-Balanced exposure.
-Real-world proportions.
-Simple, believable composition.
-One clear focal subject.
-One supporting background element.
-Clean visual hierarchy.
-Visible detail in shadows and highlights.
-Real-world colors.
-Subtle atmosphere only.
-Not too dark.
-Not overly cinematic.
-Not stylized.
-Not illustrated.
-Not dystopian art.
-Not concept art.
-Not a movie poster.
-Avoid crowded compositions.
-Avoid multiple competing subjects.
-Avoid surreal symbolism.
-No text.
-No logos.
-No watermark.
-16:9 composition.
+Create a single ultra-realistic editorial news image.
+Style: premium photojournalism, believable documentary realism, natural light, balanced exposure, real-world proportions.
+
+Composition rules:
+- one clear focal subject
+- one supporting environment
+- clean hierarchy
+- simple, grounded scene
+- realistic anatomy and scale
+- realistic architecture and objects
+- modern real-world news photography
+- landscape composition suitable for website hero / OG image
+
+Hard rules:
+- no text
+- no logos
+- no watermark
+- no infographic look
+- no illustration
+- no concept art
+- no movie-poster style
+- no surreal symbolism
+- no floating symbolic objects
+- no toy-like objects
+- no miniature-looking vehicles or aircraft
+- no exaggerated cinematic fantasy
+- no staged smiling people looking at camera
+- do not turn the story into metaphor
+- depict the event literally and credibly
 `;
 
   const categoryStyles: Record<string, string> = {
     "War & Geopolitics": `
-Realistic breaking-news style image.
-Use a believable geopolitical setting such as cargo ships, a border crossing, military hardware, a government building, a city skyline under tension, or a strategic waterway.
-Keep the scene grounded and editorial.
-Prefer one dominant subject and one supporting background element.
+Editorial breaking-news realism.
+Show a believable conflict-zone, strategic site, damaged infrastructure, responders, military hardware at realistic scale, or a tense urban environment.
+Avoid glamour shots.
+Avoid propaganda-poster framing.
 `,
-
     "Markets & Finance": `
-Realistic financial-news image.
-Use a believable setting such as a trader desk, market screens, cargo containers, oil infrastructure, refinery equipment, a port, or a central bank/government finance setting.
-Keep the composition clean and simple.
+Editorial financial realism.
+Ground the image in real-world markets, logistics, commodities, energy, or policy environments.
+Keep it restrained and credible.
 `,
-
     "Power & Control": `
-Realistic institutional image.
-Use a believable setting such as a government building, surveillance camera, checkpoint, official podium, controlled-access gate, or enforcement presence.
-Keep the scene restrained and grounded.
+Editorial institutional realism.
+Use a believable state, enforcement, checkpoint, surveillance, or controlled-access setting.
+Minimal and grounded.
 `,
-
     "Digital ID / Technocracy": `
-Realistic modern technology image.
-Use a believable setting such as a smartphone identity scan, biometric access gate, surveillance terminal, facial recognition checkpoint, or digital verification screen in a real public environment.
-Keep the composition minimal and believable.
+Editorial tech-control realism.
+Use a real public environment with biometric or digital access systems.
+Believable, not sci-fi.
 `,
-
     "Religion & Ideology": `
-Realistic editorial image related to ideology, public symbolism, protest, religious institution, or cultural power.
-Keep the setting grounded in the real world and avoid fantasy symbolism.
-Prefer one clear focal point.
+Editorial cultural or institutional realism.
+Use a real-world setting tied to ideology, symbolism, protest, or religious institutions.
+No fantasy elements.
 `,
-
     "Prophecy Watch": `
-Realistic world-events image with a tense atmosphere.
-Use a believable modern setting such as a city skyline, geopolitical flashpoint, military movement, or public unrest scene.
-Keep it grounded and editorial, not fantastical.
+Editorial world-events realism with a tense atmosphere.
+Use a believable urban, military, or geopolitical setting.
+No apocalyptic fantasy imagery.
 `,
   };
 
   const style =
     categoryStyles[hardCategory || ""] ||
-    "Realistic current-events editorial image with one clear focal subject and a believable modern setting.";
+    "Use realistic current-events editorial photography with a literal depiction of the reported event.";
 
-  return `${base}
+  const scene = detectScene(cleanTitle, cleanExcerpt);
+
+  return `
+${base}
+
 ${style}
 
-Headline inspiration: ${title}
-Supporting context: ${excerpt || ""}
+${scene}
 
-Final guidance:
-- Make it look like a real premium editorial feature image
-- Keep the scene simple and believable
-- Prefer realism over symbolism
-- Prefer clarity over spectacle
-- Avoid exaggerated drama
+Headline:
+${cleanTitle}
+
+Supporting context:
+${cleanExcerpt || "No additional excerpt provided."}
+
+Final instruction:
+Generate the most credible news-feature image a major newsroom would use for this exact story.
 `;
 }
 
@@ -147,11 +228,11 @@ export async function POST(req: NextRequest) {
     const slug = slugify(incomingSlug || title);
     const prompt = buildOgPrompt({ title, excerpt, hardCategory });
 
-    const imageResult = await openai.images.generate({
-      model: "gpt-image-1",
-      prompt,
-      size: "1024x1024",
-    });
+ const imageResult = await openai.images.generate({
+  model: "gpt-image-1",
+  prompt,
+  size: "1024x1024",
+});
 
     const b64 = imageResult.data?.[0]?.b64_json;
     if (!b64) {
