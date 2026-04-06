@@ -420,19 +420,24 @@ async function handleGenerateOg() {
     setIntakeNotes("");
   }
 
-  async function handleGenerateDraft() {
-    try {
-      const res = await fetch("/api/admin/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+async function handleGenerateDraft() {
+  try {
+    const res = await fetch("/api/admin/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mode: "manual",
+        intakeUrl,
+        intakeTitle,
+        intakeNotes,
+        intakeMeta: {
+          source: intakeUrl.trim() ? "Manual URL intake" : "Manual notes intake",
         },
-        body: JSON.stringify({
-          intakeUrl,
-          intakeTitle,
-          intakeNotes,
-        }),
-      });
+        skipOg: false,
+      }),
+    });
 
       const data = await res.json();
 
