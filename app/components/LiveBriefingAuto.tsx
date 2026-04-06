@@ -1,53 +1,50 @@
-// app/components/LiveBriefingAuto.tsx
-
 import { fetchAllHeadlines } from "@/lib/rss";
 import { pickLiveBriefingHeadlines } from "@/lib/news.select";
 
 export const revalidate = 300;
 
+type LiveItem = {
+  text: string;
+  url: string;
+  source?: string;
+};
+
 export default async function LiveBriefingAuto() {
   const all = await fetchAllHeadlines();
   const signal = pickLiveBriefingHeadlines(all, 15);
 
-  const items = signal.map((h) => ({
+  const items: LiveItem[] = signal.map((h) => ({
     text: h.title,
     url: h.url,
     source: h.category || "Signal",
   }));
 
+  if (!items.length) return null;
+
   const row = [...items, ...items];
 
   return (
-    <div className="border-b border-white/10 bg-black text-white overflow-hidden">
+    <div className="overflow-hidden border-b border-white/10 bg-black text-white">
       <div className="flex items-center">
-
-        <div className="px-4 py-3 text-xs font-bold uppercase tracking-widest text-red-400">
+        <div className="shrink-0 px-4 py-3 text-xs font-bold uppercase tracking-widest text-red-400">
           LIVE
         </div>
 
-        <div className="overflow-hidden flex-1">
-          <div className="flex gap-8 whitespace-nowrap animate-[scroll_22s_linear_infinite] hover:[animation-play-state:paused]">
-
+        <div className="min-w-0 flex-1 overflow-hidden">
+          <div className="flex w-max gap-8 px-4 py-3 animate-[marquee_22s_linear_infinite] hover:[animation-play-state:paused]">
             {row.map((item, i) => (
               <a
-                key={i}
+                key={`${item.url}-${i}`}
                 href={item.url}
-                className="text-sm text-white/80 hover:text-white"
+                className="whitespace-nowrap text-sm text-white/80 transition hover:text-white"
               >
-                ● {item.text}
+                <span className="mr-2 text-red-500">●</span>
+                {item.text}
               </a>
             ))}
-
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes scroll {
-          from { transform: translateX(0); }
-          to { transform: translateX(-50%); }
-        }
-      `}</style>
     </div>
   );
 }
