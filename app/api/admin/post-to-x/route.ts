@@ -30,22 +30,59 @@ function trimTo(text: string, max: number) {
 function buildThreadParts(title: string, excerpt: string, slug: string) {
   const articleUrl = buildArticleUrl(slug);
 
+  const cleanTitle = cleanText(title);
+  const cleanExcerpt = cleanText(excerpt);
+
+  // 🔥 Dynamic hook pool (rotates automatically)
+  const hooks = [
+    "This isn’t random.",
+    "This is not what it looks like.",
+    "Pay attention to this one.",
+    "Most people will miss this.",
+    "This is where things shift.",
+    "This didn’t happen by accident.",
+  ];
+
+  const reframes = [
+    "They’ll report the event. Not the pattern.",
+    "The headline is the distraction.",
+    "Watch how this is being framed.",
+    "This is how narratives are managed.",
+    "This is where perception gets shaped.",
+  ];
+
+  const closers = [
+    "Most people won’t connect this.",
+    "Once you see it, you can’t unsee it.",
+    "This is bigger than it looks.",
+    "This is where it leads.",
+  ];
+
+  const hook = hooks[Math.floor(Math.random() * hooks.length)];
+  const reframe = reframes[Math.floor(Math.random() * reframes.length)];
+  const closer = closers[Math.floor(Math.random() * closers.length)];
+
+  // 🔥 PART 1 — Article-specific + hook
   const part1 = trimTo(
-    `${title}
+    `${cleanTitle}
 
-New report filed by Liberty Soldiers.`,
+${hook}`,
     260
   );
 
+  // 🔥 PART 2 — Article-specific + narrative framing
   const part2 = trimTo(
-    `${excerpt}
+    `${reframe}
 
-This is the larger signal beneath the headline.`,
+${cleanExcerpt}`,
     260
   );
 
+  // 🔥 PART 3 — Curiosity + link
   const part3 = trimTo(
-    `Read the full report:
+    `${closer}
+
+Full breakdown:
 ${articleUrl}`,
     260
   );
