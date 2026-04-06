@@ -466,7 +466,7 @@ export async function POST(req: NextRequest) {
 const body = await req.json();
 
 const mode = body.mode || "auto";
-
+const id = body.id || "";
 const intakeUrl = body.intakeUrl || "";
 const intakeTitle = body.intakeTitle || "";
 const intakeNotes = body.intakeNotes || "";
@@ -497,6 +497,42 @@ const meta = body.intakeMeta || {};
         reason: "duplicate",
       });
     }
+    if (mode === "auto") {
+  const inferredHardCategory =
+    meta?.hardCategory || "Power & Control";
+
+  const item: QueueItem = {
+    id: `q-${Date.now()}`,
+    title: intakeTitle || "Untitled",
+    excerpt: (intakeNotes || "").replace(/\s+/g, " ").trim().slice(0, 220),
+    source: meta?.source || "AI + URL intake",
+    sourceUrl: intakeUrl || undefined,
+    dateISO: new Date().toISOString().slice(0, 10),
+    byline: "Liberty Soldiers",
+    coverImage: "/og-default.jpg",
+    category: inferredHardCategory,
+    hardCategory: inferredHardCategory,
+    readTime: "1 min",
+    featured: false,
+    priority: scoreToPriority(meta?.score),
+    kind: "report",
+    slug: slugify(intakeTitle || `draft-${Date.now()}`),
+    status: "pending",
+    body: "",
+  };
+
+  const nextQueue = [item, ...queue];
+  await saveQueue(nextQueue);
+
+  return NextResponse.json({
+    ok: true,
+    queued: true,
+    skippedGeneration: true,
+    mode: "auto",
+    item,
+    queue: nextQueue,
+  });
+}
 
     if (mode === "auto") {
   const inferredHardCategory =
@@ -658,30 +694,47 @@ const meta = body.intakeMeta || {};
       });
     }
 
-    const item: QueueItem = {
-      id: `q-${Date.now()}`,
-      title: safeTitle,
-      excerpt: safeExcerpt,
-      source: intakeUrl
-        ? meta.source || meta.feedLabel || "AI + URL intake"
-        : "AI + notes intake",
-      sourceUrl: intakeUrl || undefined,
-      dateISO: new Date().toISOString().slice(0, 10),
-      byline: "Liberty Soldiers",
-      coverImage,
-      category: safeCategory,
-      hardCategory: safeHardCategory,
-      readTime: getReadTime(safeBody),
-      featured: false,
-      priority: scoreToPriority(meta.score),
-      kind: "report",
-      slug: safeSlug,
-      status: "draft",
-      body: safeBody,
-    };
+const generatedItem: QueueItem = {
+  id: id || `q-${Date.now()}`,
+  title: safeTitle,
+  excerpt: safeExcerpt,
+  source: intakeUrl
+    ? meta.source || meta.feedLabel || "AI + URL intake"
+    : "AI + notes intake",
+  sourceUrl: intakeUrl || undefined,
+  dateISO: new Date().toISOString().slice(0, 10),
+  byline: "Liberty Soldiers",
+  coverImage,
+  category: safeCategory,
+  hardCategory: safeHardCategory,
+  readTime: getReadTime(safeBody),
+  featured: false,
+  priority: scoreToPriority(meta.score),
+  kind: "report",
+  slug: safeSlug,
+  status: "draft",
+  body: safeBody,
+};
 
-    const nextQueue = [item, ...queue];
-    await saveQueue(nextQueue);
+let nextQueue: QueueItem[];
+
+if (id) {
+  // 🔥 UPDATE EXISTING ITEM (NO DUPLICATE)
+  nextQueue = queue.map((q) =>
+    q.id === id
+      ? {
+          ...q,
+          ...generatedItem,
+          id: q.id, // preserve original id
+        }
+      : q
+  );
+} else {
+  // fallback (manual intake new draft)
+  nextQueue = [generatedItem, ...queue];
+}
+
+await saveQueue(nextQueue);
 
     return NextResponse.json({
       ok: true,
