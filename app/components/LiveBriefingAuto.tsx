@@ -1,29 +1,19 @@
-"use client";
+// app/components/LiveBriefingAuto.tsx
 
-import { useEffect, useState } from "react";
+import { fetchAllHeadlines } from "@/lib/rss";
+import { pickLiveBriefingHeadlines } from "@/lib/news.select";
 
-type Item = {
-  text: string;
-  url: string;
-  source?: string;
-};
+export const revalidate = 300;
 
-export default function LiveBriefingAuto() {
-  const [items, setItems] = useState<Item[]>([]);
+export default async function LiveBriefingAuto() {
+  const all = await fetchAllHeadlines();
+  const signal = pickLiveBriefingHeadlines(all, 15);
 
-  useEffect(() => {
-    fetch("/api/news") // uses your existing feed
-      .then((res) => res.json())
-      .then((data) => {
-        const mapped = (data || []).slice(0, 10).map((h: any) => ({
-          text: h.title,
-          url: h.url,
-          source: h.category || "Signal",
-        }));
-        setItems(mapped);
-      })
-      .catch(() => {});
-  }, []);
+  const items = signal.map((h) => ({
+    text: h.title,
+    url: h.url,
+    source: h.category || "Signal",
+  }));
 
   const row = [...items, ...items];
 
