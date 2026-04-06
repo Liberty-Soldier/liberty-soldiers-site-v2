@@ -321,11 +321,10 @@ async function handleGenerateOg() {
         intakeUrl: selected.sourceUrl || "",
         intakeTitle: selected.title,
         intakeNotes: selected.excerpt || "",
-        intakeMeta: {
-          source: selected.source,
-          hardCategory: selected.hardCategory,
-          score: selected.priority,
-        },
+intakeMeta: {
+  source: selected.source,
+  hardCategory: selected.hardCategory,
+},
         skipOg: false,
       }),
     });
