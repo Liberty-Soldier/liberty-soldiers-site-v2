@@ -306,6 +306,45 @@ async function handleGenerateOg() {
     alert("Failed to generate OG");
   }
 }
+  async function handleGenerateSelected() {
+  if (!selected) return;
+
+  try {
+    const res = await fetch("/api/admin/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        mode: "manual",
+        id: selected.id,
+        intakeUrl: selected.sourceUrl || "",
+        intakeTitle: selected.title,
+        intakeNotes: selected.excerpt || "",
+        intakeMeta: {
+          source: selected.source,
+          hardCategory: selected.hardCategory,
+          score: selected.priority,
+        },
+        skipOg: false,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!data.ok) {
+      console.error("Generate selected draft failed", data);
+      alert(data.details || data.error || "Generate selected draft failed");
+      return;
+    }
+
+    await loadQueue();
+    alert("Draft generated");
+  } catch (err) {
+    console.error("Failed to generate selected draft", err);
+    alert("Failed to generate selected draft");
+  }
+}
 
   async function saveQueue(nextQueue: QueueItem[]) {
     try {
@@ -769,6 +808,13 @@ async function handleGenerateDraft() {
                         >
                           Mark Review
                         </button>
+                        
+                        <button
+  onClick={handleGenerateSelected}
+  className="rounded-2xl border border-zinc-300 bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+>
+  Generate Draft
+</button>
 
                         <button
   onClick={handleGenerateOg}
