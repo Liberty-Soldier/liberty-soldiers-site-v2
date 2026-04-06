@@ -451,14 +451,6 @@ async function generateOgImage(params: {
   }
 }
 
-function scoreToPriority(score?: number): number {
-  if (!score || !Number.isFinite(score)) return 3;
-  if (score >= 10) return 1;
-  if (score >= 7) return 2;
-  if (score >= 4.5) return 3;
-  return 4;
-}
-
 export async function POST(req: NextRequest) {
   try {
     if (!process.env.OPENAI_API_KEY) {
