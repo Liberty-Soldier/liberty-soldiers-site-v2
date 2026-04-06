@@ -332,14 +332,19 @@ async function handleGenerateOg() {
 
     const data = await res.json();
 
-    if (!data.ok) {
-      console.error("Generate selected draft failed", data);
-      alert(data.details || data.error || "Generate selected draft failed");
-      return;
-    }
+if (!data.ok) {
+  console.error("Generate selected draft failed", data);
+  alert(data.details || data.error || "Generate selected draft failed");
+  return;
+}
 
-    await loadQueue();
-    alert("Draft generated");
+if (data.skipped) {
+  alert(`Skipped: ${data.reason || "unknown reason"}`);
+  return;
+}
+
+await loadQueue();
+alert("Draft generated");
   } catch (err) {
     console.error("Failed to generate selected draft", err);
     alert("Failed to generate selected draft");
