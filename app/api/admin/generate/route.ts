@@ -482,21 +482,25 @@ const meta = body.intakeMeta || {};
     const queue = await getQueue();
     const published = await getPublished();
 
-    const existsInQueue = queue.find(
-      (q) => q.sourceUrl && intakeUrl && q.sourceUrl === intakeUrl
-    );
+const existsInQueue = queue.find(
+  (q) =>
+    q.sourceUrl &&
+    intakeUrl &&
+    q.sourceUrl === intakeUrl &&
+    q.id !== id
+);
 
-    const existsInPublished = published.find(
-      (p) => p.sourceUrl && intakeUrl && p.sourceUrl === intakeUrl
-    );
+const existsInPublished = published.find(
+  (p) => p.sourceUrl && intakeUrl && p.sourceUrl === intakeUrl
+);
 
-    if (existsInQueue || existsInPublished) {
-      return NextResponse.json({
-        ok: true,
-        skipped: true,
-        reason: "duplicate",
-      });
-    }
+if (existsInQueue || existsInPublished) {
+  return NextResponse.json({
+    ok: true,
+    skipped: true,
+    reason: "duplicate",
+  });
+}
     if (mode === "auto") {
   const inferredHardCategory =
     meta?.hardCategory || "Power & Control";
