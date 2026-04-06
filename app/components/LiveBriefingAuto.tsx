@@ -31,7 +31,7 @@ export default async function LiveBriefingAuto() {
         </div>
 
         <div className="min-w-0 flex-1 overflow-hidden">
-          <div className="flex w-max gap-8 px-4 py-3 animate-[marquee_22s_linear_infinite] hover:[animation-play-state:paused]">
+          <div className="flex w-max gap-8 px-4 py-3 animate-[marquee_28s_linear_infinite] hover:[animation-play-state:paused]">
             {row.map((item, i) => (
               <a
                 key={`${item.url}-${i}`}
