@@ -2,7 +2,7 @@
   "crons": [
     {
       "path": "/api/admin/intake",
-      "schedule": "0 */6 * * *"
+      "schedule": "*/10 * * * *"
     }
   ],
   "rewrites": [
