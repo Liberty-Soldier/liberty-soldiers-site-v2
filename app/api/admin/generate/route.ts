@@ -576,14 +576,14 @@ if (existsInQueue || existsInPublished) {
   });
 }
 
-    const rejectReason = shouldReject(meta, intakeTitle, intakeNotes);
-    if (rejectReason) {
-      return NextResponse.json({
-        ok: true,
-        skipped: true,
-        reason: rejectReason,
-      });
-    }
+const rejectReason = shouldReject(meta, intakeTitle, intakeNotes);
+if (mode === "auto" && rejectReason) {
+  return NextResponse.json({
+    ok: true,
+    skipped: true,
+    reason: rejectReason,
+  });
+}
 
     const preferredHardCategory =
       meta.hardCategory ||
