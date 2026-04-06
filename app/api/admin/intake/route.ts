@@ -9,7 +9,8 @@ const parser = new Parser({
   timeout: 15000,
   headers: {
     "User-Agent": "LibertySoldiersBot/1.0 (+https://libertysoldiers.com)",
-    Accept: "application/rss+xml, application/xml, text/xml, application/atom+xml, text/html;q=0.8",
+    Accept:
+      "application/rss+xml, application/xml, text/xml, application/atom+xml, text/html;q=0.8",
   },
 });
 
@@ -64,15 +65,6 @@ type GenerateResult = {
 };
 
 const FEEDS: FeedConfig[] = [
-  // Higher-signal / less sanitized / conflict / macro
-  {
-    url: "https://cms.zerohedge.com/fullrss2.xml",
-    label: "ZeroHedge",
-    kind: "macro",
-    tier: "signal",
-    maxItems: 12,
-    weight: 2.6,
-  },
   {
     url: "https://news.antiwar.com/feed/",
     label: "Antiwar",
@@ -82,12 +74,28 @@ const FEEDS: FeedConfig[] = [
     weight: 2.7,
   },
   {
+    url: "https://cms.zerohedge.com/fullrss2.xml",
+    label: "ZeroHedge",
+    kind: "macro",
+    tier: "signal",
+    maxItems: 12,
+    weight: 2.6,
+  },
+  {
     url: "https://www.middleeasteye.net/rss",
     label: "Middle East Eye",
     kind: "war",
     tier: "signal",
     maxItems: 10,
     weight: 2.2,
+  },
+  {
+    url: "https://feeds.reuters.com/reuters/worldNews",
+    label: "Reuters World",
+    kind: "general",
+    tier: "validation",
+    maxItems: 12,
+    weight: 1.7,
   },
   {
     url: "https://www.aljazeera.com/xml/rss/all.xml",
@@ -129,8 +137,6 @@ const FEEDS: FeedConfig[] = [
     maxItems: 8,
     weight: 1.2,
   },
-
-  // Optional niche / watch carefully if noisy
   {
     url: "https://www.marketwatch.com/rss/topstories",
     label: "MarketWatch",
@@ -139,27 +145,23 @@ const FEEDS: FeedConfig[] = [
     maxItems: 8,
     weight: 1.1,
   },
-
-  // You can toggle this on later if it proves useful
-  // {
-  //   url: "https://www.globalresearch.ca/feed",
-  //   label: "Global Research",
-  //   kind: "macro",
-  //   tier: "noise-risk",
-  //   maxItems: 8,
-  //   weight: 0.9,
-  // },
 ];
 
 const MAX_SELECTED = 12;
+const MIN_SELECTED = 6;
 const MAX_PER_DOMAIN = 2;
 const MAX_PER_FEED = 3;
 
-// Hard freshness controls
-const HARD_MAX_AGE_HOURS = 10;
+// Tighter than before, but not so tight the queue starves
+const HARD_MAX_AGE_HOURS = 6;
 const SOFT_BONUS_HOURS = 2;
+const BREAKING_BONUS_MINUTES = 90;
 
-// Things you actually care about
+// Strong pass thresholds
+const STRICT_MIN_SCORE = 2.8;
+// Fallback pass thresholds to keep queue alive
+const RELAXED_MIN_SCORE = 1.4;
+
 const PRIMARY_SIGNAL_TERMS = [
   "strike",
   "airstrike",
@@ -180,6 +182,7 @@ const PRIMARY_SIGNAL_TERMS = [
   "dead",
   "wounded",
   "explosion",
+  "blast",
   "blasts",
   "shootdown",
   "downed",
@@ -193,6 +196,7 @@ const PRIMARY_SIGNAL_TERMS = [
   "red sea",
   "black sea",
   "cyberattack",
+  "cyber attack",
   "blackout",
   "emergency",
   "martial law",
@@ -365,7 +369,7 @@ function normalizeTitle(title: string) {
     .replace(/['"`’]/g, "")
     .replace(/[^a-z0-9\s]/g, " ")
     .replace(
-      /\b(the|a|an|in|on|of|for|to|and|with|over|against|amid|after|under|into|from|as|at|by|from|is|are)\b/g,
+      /\b(the|a|an|in|on|of|for|to|and|with|over|against|amid|after|under|into|from|as|at|by|is|are)\b/g,
       " "
     )
     .replace(/\s+/g, " ")
@@ -406,14 +410,17 @@ function scoreItem(item: Omit<IntakeItem, "score" | "reasonTags">) {
     reasonTags.push(`secondary:${secondaryHits}`);
   }
 
-  if (item.minutesOld <= SOFT_BONUS_HOURS * 60) {
-    score += 3.5;
+  if (item.minutesOld <= BREAKING_BONUS_MINUTES) {
+    score += 4.2;
+    reasonTags.push("fresh:breaking");
+  } else if (item.minutesOld <= SOFT_BONUS_HOURS * 60) {
+    score += 3.0;
     reasonTags.push("fresh:under2h");
   } else if (item.minutesOld <= 4 * 60) {
-    score += 2.2;
+    score += 1.7;
     reasonTags.push("fresh:under4h");
   } else if (item.minutesOld <= 6 * 60) {
-    score += 1.2;
+    score += 0.8;
     reasonTags.push("fresh:under6h");
   }
 
@@ -421,7 +428,6 @@ function scoreItem(item: Omit<IntakeItem, "score" | "reasonTags">) {
   reasonTags.push(`tier:${item.feedTier}`);
   reasonTags.push(`kind:${item.feedKind}`);
 
-  // Direct title urgency bonus
   const titleLower = item.title.toLowerCase();
   if (
     [
@@ -437,24 +443,22 @@ function scoreItem(item: Omit<IntakeItem, "score" | "reasonTags">) {
       "emergency",
       "blackout",
       "cyberattack",
+      "cyber attack",
     ].some((t) => titleLower.includes(t))
   ) {
     score += 2.4;
     reasonTags.push("urgent-title");
   }
 
-  // Penalize thin snippets
   if (item.contentSnippet.length < 40) {
     score -= 0.6;
     reasonTags.push("thin-snippet");
   }
 
-  // Penalize validation/general sources slightly so alt/signal gets priority
   if (item.feedTier === "validation") {
-    score -= 0.6;
+    score -= 0.4;
   }
 
-  // Penalize known noisy patterns
   if (looksNoisy(item.title, item.contentSnippet)) {
     score -= 4;
     reasonTags.push("noise-penalty");
@@ -469,7 +473,12 @@ function scoreItem(item: Omit<IntakeItem, "score" | "reasonTags">) {
 function inferHardCategory(
   title: string,
   snippet: string
-): "War & Geopolitics" | "Markets & Finance" | "Digital ID / Technocracy" | "Religion & Ideology" | "Power & Control" {
+):
+  | "War & Geopolitics"
+  | "Markets & Finance"
+  | "Digital ID / Technocracy"
+  | "Religion & Ideology"
+  | "Power & Control" {
   const text = normalizeText(`${title} ${snippet}`);
 
   if (
@@ -527,6 +536,7 @@ function inferHardCategory(
       "compliance",
       "identity",
       "cyberattack",
+      "cyber attack",
       "platform control",
     ].some((t) => text.includes(t))
   ) {
@@ -559,8 +569,7 @@ async function parseFeed(feedConfig: FeedConfig) {
   return (feed.items || []).slice(0, feedConfig.maxItems).map((raw) => {
     const title =
       typeof raw.title === "string" ? normalizeWhitespace(raw.title) : "";
-    const link =
-      typeof raw.link === "string" ? canonicalUrl(raw.link) : "";
+    const link = typeof raw.link === "string" ? canonicalUrl(raw.link) : "";
     const contentSnippet = normalizeWhitespace(
       stripHtml(
         typeof raw.contentSnippet === "string"
@@ -573,16 +582,22 @@ async function parseFeed(feedConfig: FeedConfig) {
       )
     );
 
+    let isoDate: string | undefined;
+
+    if (typeof raw.isoDate === "string") {
+      isoDate = raw.isoDate;
+    } else if (typeof raw.pubDate === "string") {
+      const parsed = new Date(raw.pubDate);
+      if (Number.isFinite(parsed.getTime())) {
+        isoDate = parsed.toISOString();
+      }
+    }
+
     return {
       title,
       link,
       contentSnippet,
-      isoDate:
-        typeof raw.isoDate === "string"
-          ? raw.isoDate
-          : typeof raw.pubDate === "string"
-          ? new Date(raw.pubDate).toISOString()
-          : undefined,
+      isoDate,
       source: feedTitle,
       feedLabel: feedConfig.label,
       feedKind: feedConfig.kind,
@@ -593,9 +608,70 @@ async function parseFeed(feedConfig: FeedConfig) {
   });
 }
 
+function buildSignalStats(item: IntakeItem) {
+  const combined = normalizeText(`${item.title} ${item.contentSnippet}`);
+  const primaryHits = countHits(combined, PRIMARY_SIGNAL_TERMS);
+  const secondaryHits = countHits(combined, SECONDARY_SIGNAL_TERMS);
+
+  return {
+    primaryHits,
+    secondaryHits,
+    hasStrongSignal: primaryHits > 0 || secondaryHits >= 2,
+    hasAnySignal: primaryHits > 0 || secondaryHits > 0,
+  };
+}
+
+function pickItems(
+  strictPool: IntakeItem[],
+  relaxedPool: IntakeItem[]
+): IntakeItem[] {
+  const selected: IntakeItem[] = [];
+  const seenLinks = new Set<string>();
+  const seenTitles = new Set<string>();
+  const perDomainCount = new Map<string, number>();
+  const perFeedCount = new Map<string, number>();
+
+  const tryAdd = (item: IntakeItem) => {
+    const canonical = canonicalUrl(item.link);
+    const titleKey = titleSimilarityKey(item.title);
+
+    if (!canonical || !titleKey) return false;
+    if (seenLinks.has(canonical)) return false;
+    if (seenTitles.has(titleKey)) return false;
+
+    const domainCount = perDomainCount.get(item.domain) || 0;
+    if (domainCount >= MAX_PER_DOMAIN) return false;
+
+    const feedCount = perFeedCount.get(item.feedLabel) || 0;
+    if (feedCount >= MAX_PER_FEED) return false;
+
+    seenLinks.add(canonical);
+    seenTitles.add(titleKey);
+    perDomainCount.set(item.domain, domainCount + 1);
+    perFeedCount.set(item.feedLabel, feedCount + 1);
+    selected.push(item);
+    return true;
+  };
+
+  for (const item of strictPool) {
+    if (selected.length >= MAX_SELECTED) break;
+    tryAdd(item);
+  }
+
+  if (selected.length < MIN_SELECTED) {
+    for (const item of relaxedPool) {
+      if (selected.length >= MAX_SELECTED) break;
+      tryAdd(item);
+    }
+  }
+
+  return selected;
+}
+
 export async function GET() {
   try {
-    const collected: Omit<IntakeItem, "score" | "reasonTags" | "minutesOld">[] = [];
+    const collected: Omit<IntakeItem, "score" | "reasonTags" | "minutesOld">[] =
+      [];
     const feedDiagnostics: Array<{
       label: string;
       url: string;
@@ -633,11 +709,6 @@ export async function GET() {
       })
     );
 
-    const seenCanonicalLinks = new Set<string>();
-    const seenTitleKeys = new Set<string>();
-    const perDomainCount = new Map<string, number>();
-    const perFeedCount = new Map<string, number>();
-
     const enriched: IntakeItem[] = collected
       .map((item) => {
         const minutesOld = parseDateToMinutesOld(item.isoDate);
@@ -645,51 +716,29 @@ export async function GET() {
         const { score, reasonTags } = scoreItem(prelim);
         return { ...prelim, score, reasonTags };
       })
-      .filter((item) => {
-        if (!isFreshEnough(item.minutesOld)) return false;
-        if (looksNoisy(item.title, item.contentSnippet)) return false;
-
-        const combined = normalizeText(`${item.title} ${item.contentSnippet}`);
-        const primaryHits = countHits(combined, PRIMARY_SIGNAL_TERMS);
-        const secondaryHits = countHits(combined, SECONDARY_SIGNAL_TERMS);
-
-        // Must have some real signal
-        if (primaryHits === 0 && secondaryHits < 2) return false;
-
-        // Hard floor
-        if (item.score < 2.8) return false;
-
-        return true;
-      })
-      .filter((item) => {
-        const canonical = canonicalUrl(item.link);
-        if (seenCanonicalLinks.has(canonical)) return false;
-        seenCanonicalLinks.add(canonical);
-        return true;
-      })
-      .filter((item) => {
-        const key = titleSimilarityKey(item.title);
-        if (!key) return false;
-        if (seenTitleKeys.has(key)) return false;
-        seenTitleKeys.add(key);
-        return true;
-      })
+      .filter((item) => item.title && item.link)
+      .filter((item) => isFreshEnough(item.minutesOld))
+      .filter((item) => !looksNoisy(item.title, item.contentSnippet))
       .sort((a, b) => {
         if (b.score !== a.score) return b.score - a.score;
-        return (a.minutesOld ?? Infinity) - (b.minutesOld ?? Infinity);
-      })
-      .filter((item) => {
-        const domainCount = perDomainCount.get(item.domain) || 0;
-        if (domainCount >= MAX_PER_DOMAIN) return false;
-        perDomainCount.set(item.domain, domainCount + 1);
+        return a.minutesOld - b.minutesOld;
+      });
 
-        const feedCount = perFeedCount.get(item.feedLabel) || 0;
-        if (feedCount >= MAX_PER_FEED) return false;
-        perFeedCount.set(item.feedLabel, feedCount + 1);
+    const strictPool = enriched.filter((item) => {
+      const stats = buildSignalStats(item);
+      if (!stats.hasStrongSignal) return false;
+      if (item.score < STRICT_MIN_SCORE) return false;
+      return true;
+    });
 
-        return true;
-      })
-      .slice(0, MAX_SELECTED);
+    const relaxedPool = enriched.filter((item) => {
+      const stats = buildSignalStats(item);
+      if (!stats.hasAnySignal) return false;
+      if (item.score < RELAXED_MIN_SCORE) return false;
+      return true;
+    });
+
+    const selectedItems = pickItems(strictPool, relaxedPool);
 
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
@@ -699,7 +748,7 @@ export async function GET() {
 
     const results: GenerateResult[] = [];
 
-    for (const item of enriched) {
+    for (const item of selectedItems) {
       try {
         const hardCategory = inferHardCategory(item.title, item.contentSnippet);
 
@@ -779,12 +828,15 @@ export async function GET() {
         ok: true,
         baseUrl,
         scanned: collected.length,
-        selected: enriched.length,
+        eligible: enriched.length,
+        strictCandidates: strictPool.length,
+        relaxedCandidates: relaxedPool.length,
+        selected: selectedItems.length,
         generated: successful.length,
         skipped: skipped.length,
         failed: failed.length,
         feedDiagnostics,
-        topSelected: enriched.map((item) => ({
+        topSelected: selectedItems.map((item) => ({
           title: item.title,
           domain: item.domain,
           source: item.source,
