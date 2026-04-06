@@ -736,16 +736,16 @@ if (id) {
 
 await saveQueue(nextQueue);
 
-    return NextResponse.json({
-      ok: true,
-      item,
-      queueCount: nextQueue.length,
-      metaUsed: {
-        score: meta.score ?? null,
-        reasonTags: meta.reasonTags ?? [],
-        preferredHardCategory,
-      },
-    });
+return NextResponse.json({
+  ok: true,
+  item: generatedItem,
+  queueCount: nextQueue.length,
+  metaUsed: {
+    score: meta.score ?? null,
+    reasonTags: meta.reasonTags ?? [],
+    preferredHardCategory,
+  },
+});
   } catch (err) {
     console.error("Generate error:", err);
 
