@@ -709,6 +709,7 @@ export async function GET() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            mode: "auto",
             intakeUrl: item.link,
             intakeTitle: item.title,
             intakeNotes: item.contentSnippet || "",
