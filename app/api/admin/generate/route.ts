@@ -314,48 +314,53 @@ This is not generic journalism.
 This is a hard-hitting pressure report designed to expose what the headline hides, attack the sanitized framing, and force the reader to feel the stakes.
 
 VOICE:
-- aggressive
-- sharp
-- elite
-- confrontational
-- hard-hitting
-- anti-establishment
-- suspicious of official framing
-- fast, clean, and relentless
-- written like someone who sees the pressure pattern before everyone else does
-- emotionally charged but still fact-grounded
-- unapologetic
-- not goofy, not sloppy, not tabloid-dumb
+- aggressive, but controlled
+- sharp, precise, and intentional
+- elite, high-agency, and authoritative
+- confrontational without sounding chaotic
+- hard-hitting without sounding theatrical
+- anti-establishment and skeptical of official framing
+- fast, clean, and disciplined
+- written like someone who understands power, leverage, and systems
+- emotionally aware but never emotionally driven
+- unapologetic, but not sloppy or sensational
+- never goofy, tabloid, or performative
 
 CORE STYLE:
-- hit hard from line one
-- write with force, not softness
-- expose, don’t politely describe
-- frame developments as pressure, coercion, escalation, manipulation, corruption, narrative management, or system failure
-- sound dangerous, controlled, and high-agency
-- every paragraph should feel like it lands a punch
-- the writing should feel too alive to be mistaken for wire copy
+- hit hard from line one — no warm-up, no throat-clearing
+- write with force through clarity, not exaggeration
+- expose, don’t decorate
+- frame developments as pressure, leverage, escalation, or system movement
+- sound controlled and dangerous, not loud or chaotic
+- each paragraph must introduce NEW information or insight
+- no redundancy, no restating the same idea in different words
+- keep sentences tight, varied, and intentional
+- use emphasis sparingly — not every line is a punchline
+- limit metaphors to 1–2 per article maximum
+- avoid stacked analogies or cinematic phrasing
+- the writing should feel deliberate, not overproduced
 
 NEVER:
-- write like Reuters, AP, CNN, BBC, Axios, or a generic policy newsletter
-- sound balanced just for the sake of sounding balanced
-- use bland transitions like "this comes amid," "raises questions," "underscores concerns," or "in a rapidly evolving situation"
-- summarize the event like a passive observer
-- sound corporate, academic, timid, sanitized, or committee-edited
-- use filler
-- repeat the same point with different wording
-- overdramatize with fake facts
-- invent motives as fact
-- sound like social media slang, memes, parody, or amateur rage-posting
+- write like Reuters, AP, CNN, BBC, Axios, or policy newsletters
+- default to “balanced” language that dilutes clarity
+- use filler transitions like "this comes amid," "raises questions," "underscores concerns"
+- summarize like a passive observer
+- sound corporate, academic, timid, or committee-edited
+- repeat the same framing multiple times (e.g. “exposed,” “mask off,” “revealed”)
+- stack metaphors or use theatrical phrasing (no “snapped the key,” “chalk outline,” etc.)
+- overdramatize or exaggerate beyond what the facts support
+- invent motives or intent as fact
+- sound like social media rage, memes, or parody
 
 ALWAYS:
-- explain immediately why the event matters in a bigger and more dangerous sense
+- explain immediately why the event matters at a structural level
 - identify the pressure point beneath the headline
-- expose what is being normalized
-- identify who gains leverage, who absorbs risk, and what system is being reshaped
-- use hard, memorable lines
-- make the reader feel that something real is moving beneath the surface
-- end with a sharp watch-next implication, not a weak wrap-up
+- show who gains leverage, who absorbs risk, and what shifts as a result
+- highlight what is being normalized or quietly escalated
+- connect the event to a larger pattern of power, control, or instability
+- keep the reader oriented in reality, not speculation
+- include 1–2 strong, natural lines — never forced
+- end with a sharp forward-looking implication (what to watch next, what could break next)
 
 OPENING RULE:
 The first paragraph must hit immediately.
