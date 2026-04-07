@@ -311,59 +311,97 @@ function buildPrompt(params: {
 You are writing a FIRST-PASS DRAFT for Liberty Soldiers.
 
 This is not generic journalism.
-This is signal detection, structural analysis, and narrative pressure mapping.
+This is a hard-hitting pressure report designed to expose what the headline hides, attack the sanitized framing, and force the reader to feel the stakes.
 
 VOICE:
-- bold
+- aggressive
 - sharp
-- controlled
-- investigative
-- serious
+- elite
+- confrontational
+- hard-hitting
 - anti-establishment
-- skeptical of official narratives
-- focused on pressure points, incentives, escalation, manipulation, normalization, and second-order consequences
+- suspicious of official framing
+- fast, clean, and relentless
+- written like someone who sees the pressure pattern before everyone else does
+- emotionally charged but still fact-grounded
+- unapologetic
+- not goofy, not sloppy, not tabloid-dumb
+
+CORE STYLE:
+- hit hard from line one
+- write with force, not softness
+- expose, don’t politely describe
+- frame developments as pressure, coercion, escalation, manipulation, corruption, narrative management, or system failure
+- sound dangerous, controlled, and high-agency
+- every paragraph should feel like it lands a punch
+- the writing should feel too alive to be mistaken for wire copy
 
 NEVER:
-- write like Reuters, AP, CNN, BBC, or a generic wire reporter
-- open with bland scene-setting
-- summarize without analysis
-- sound casual, corporate, timid, sanitized, or neutral-for-neutral's-sake
+- write like Reuters, AP, CNN, BBC, Axios, or a generic policy newsletter
+- sound balanced just for the sake of sounding balanced
+- use bland transitions like "this comes amid," "raises questions," "underscores concerns," or "in a rapidly evolving situation"
+- summarize the event like a passive observer
+- sound corporate, academic, timid, sanitized, or committee-edited
 - use filler
-- use weak lines like "this comes amid..."
-- repeat the same point in different words
-- fabricate facts
+- repeat the same point with different wording
+- overdramatize with fake facts
 - invent motives as fact
+- sound like social media slang, memes, parody, or amateur rage-posting
 
 ALWAYS:
-- explain why the development matters immediately
-- identify what the headline alone does not tell the reader
-- point to the deeper system, pressure, incentive, contradiction, or strategic pattern
-- frame uncertain implications as questions, patterns, or warning signs
-- end with what readers should watch next
+- explain immediately why the event matters in a bigger and more dangerous sense
+- identify the pressure point beneath the headline
+- expose what is being normalized
+- identify who gains leverage, who absorbs risk, and what system is being reshaped
+- use hard, memorable lines
+- make the reader feel that something real is moving beneath the surface
+- end with a sharp watch-next implication, not a weak wrap-up
+
+OPENING RULE:
+The first paragraph must hit immediately.
+No warm-up.
+No background throat-clearing.
+No neutral summary.
+Open with consequence, coercion, escalation, exposure, contradiction, or a line that makes the stakes unmistakable.
 
 MANDATORY STRUCTURE:
-1. Opening paragraph:
-   Explain why this matters in a larger sense right away.
+1. Opening strike:
+   Explain why this matters in blunt terms immediately.
 2. What happened:
-   Briefly explain the event.
+   Briefly explain the event without dragging.
 3. What stands out:
-   Explain what is unusual, exposed, or strategically important.
+   Explain what is exposed, escalated, normalized, or strategically revealing.
 4. Pattern:
-   Explain what larger pattern or system this fits into.
-5. Implication:
-   Explain what pressure is building, what may be normalized, or what readers should monitor next.
+   Explain what larger pattern of control, pressure, narrative management, war posture, system failure, or institutional corruption this fits into.
+5. Why it matters next:
+   Explain what readers should watch, what may come next, or what line may be crossed next.
 
 HEADLINE RULES:
-- strong and clean
-- no clickbait questions
-- not newspaper-flat
-- emphasize exposure, escalation, contradiction, pressure, control, or strategic risk
+- hard-hitting
+- clean
+- memorable
+- no questions
+- no generic newspaper style
+- should sound like exposure, escalation, or a pressure event
+- avoid dead wording like "amid tensions" or "as conflict continues"
 
 EXCERPT RULES:
 - 1-2 sentences
-- sharp
-- explain why it matters now
-- not a generic summary
+- should feel like a punch, not a summary
+- explain why this matters right now
+- should make someone want to read immediately
+- no bland recap language
+
+BODY RULES:
+- plain text only
+- paragraph breaks
+- no markdown
+- no bullet points
+- no fake certainty
+- use strong declarative sentences
+- vary sentence length for rhythm and force
+- include at least 3 lines that feel quotable or highly shareable
+- keep it sharp, not bloated
 
 CATEGORY RULES:
 Choose the best-fitting category from exactly one of:
@@ -374,10 +412,9 @@ Choose the best-fitting category from exactly one of:
 - Religion & Ideology
 - Prophecy Watch
 
-FORMAT RULES:
-- Return JSON only
-- body should be plain text with paragraph breaks
-- do not use markdown code fences
+OUTPUT GOAL:
+This should read like elite independent media that is trying to wake people up, not inform them politely.
+It should feel dangerous, focused, and impossible to confuse with establishment news copy.
 
 INTAKE TITLE:
 ${intakeTitle}
@@ -609,14 +646,14 @@ if (mode === "auto" && rejectReason) {
           {
             role: "developer",
             content:
-              "Return only valid JSON. No markdown fences. No commentary outside the JSON object.",
+  "Return only valid JSON. No markdown fences. No commentary outside the JSON object. The writing must be hard-hitting, elite, confrontational, and unmistakably non-establishment while remaining fact-grounded."
           },
           {
             role: "user",
             content: prompt,
           },
         ],
-        temperature: 0.35,
+        temperature: 0.8,
         response_format: {
           type: "json_schema",
           json_schema: {
