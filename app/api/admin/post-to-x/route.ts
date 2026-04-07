@@ -82,15 +82,20 @@ ${punch}`,
     260
   );
 
-  const part2 = trimTo(
-    `${reframe}
+  const link = `${closer}\n${articleUrl}`;
 
-${cleanExcerpt}
+const maxTextLength = 260 - link.length - 2; // reserve space for link + spacing
 
-${closer}
-${articleUrl}`,
-    260
-  );
+const trimmedExcerpt = trimTo(
+  `${reframe}
+
+${cleanExcerpt}`,
+  maxTextLength
+);
+
+const part2 = `${trimmedExcerpt}
+
+${link}`;
 
   return [part1, part2];
 }
