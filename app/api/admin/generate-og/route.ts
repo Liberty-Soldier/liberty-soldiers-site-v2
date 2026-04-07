@@ -72,66 +72,6 @@ function getLeaderPreset(title: string, excerpt?: string) {
   return null;
 }
 
-function getStaticTopicFallback(title: string, excerpt?: string) {
-  const text = `${title} ${excerpt || ""}`.toLowerCase();
-
-  if (
-    text.includes("hormuz") ||
-    text.includes("strait of hormuz") ||
-    text.includes("oil chokepoint") ||
-    text.includes("shipping lane") ||
-    text.includes("tanker")
-  ) {
-    return "/og-hormuz.jpg";
-  }
-
-  if (
-    text.includes("iran") ||
-    text.includes("missile") ||
-    text.includes("drone") ||
-    text.includes("strike") ||
-    text.includes("air defense") ||
-    text.includes("military escalation")
-  ) {
-    return "/og-war.jpg";
-  }
-
-  if (
-    text.includes("power grid") ||
-    text.includes("bridge") ||
-    text.includes("dam") ||
-    text.includes("substation") ||
-    text.includes("infrastructure") ||
-    text.includes("blackout")
-  ) {
-    return "/og-infrastructure.jpg";
-  }
-
-  if (
-    text.includes("market") ||
-    text.includes("stocks") ||
-    text.includes("bonds") ||
-    text.includes("dollar") ||
-    text.includes("crash") ||
-    text.includes("recession") ||
-    text.includes("inflation")
-  ) {
-    return "/og-markets.jpg";
-  }
-
-  if (
-    text.includes("un") ||
-    text.includes("security council") ||
-    text.includes("diplomacy") ||
-    text.includes("resolution") ||
-    text.includes("veto")
-  ) {
-    return "/og-diplomacy.jpg";
-  }
-
-  return "/og-default.jpg";
-}
-
 function buildOgPrompt({
   title,
   excerpt,
@@ -158,7 +98,7 @@ Depict a realistic maritime chokepoint scene near the Strait of Hormuz: oil tank
     text.includes("veto")
   ) {
     sceneHint = `
-Depict a realistic geopolitical setting: UN-style chamber exterior or interior environment, diplomatic setting, flags, desks, microphones, documents, architectural seriousness, but no clearly visible people.
+Depict a realistic geopolitical setting: a diplomatic chamber, formal government building, flags, desks, microphones, documents, and institutional architecture, with no visible people.
 `;
   } else if (
     text.includes("bridge") ||
@@ -179,6 +119,17 @@ Depict a realistic infrastructure-focused scene: power lines, substations, bridg
     sceneHint = `
 Depict a realistic military-news environment: launch sites, radar, air defense systems, damaged terrain, industrial zones, naval assets, or equipment in place, but no soldiers, officials, or civilians visible.
 `;
+  } else if (
+    text.includes("market") ||
+    text.includes("stocks") ||
+    text.includes("bonds") ||
+    text.includes("dollar") ||
+    text.includes("crash") ||
+    text.includes("inflation")
+  ) {
+    sceneHint = `
+Depict a realistic financial or economic news setting: stock exchange exterior, financial district skyline, trading screens, currency boards, shipping terminals, freight containers, or industrial infrastructure, with no people visible.
+`;
   }
 
   return `
@@ -195,7 +146,8 @@ Hard rules:
 - no officials
 - no soldiers
 - no civilians
-- no hands holding objects
+- no hands
+- no people holding objects
 - no staged posing
 - no symbolism
 - no allegory
@@ -214,7 +166,7 @@ Composition:
 - simple strong editorial composition
 - horizontal-friendly subject placement
 - suitable for a news website OG image
-- realistic empty-space balance for headline cropping if needed
+- realistic empty-space balance for cropping
 
 Scene guidance:
 ${sceneHint}
@@ -242,8 +194,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 1) Real image preset for named leaders
     const preset = getLeaderPreset(title, excerpt);
+
     if (preset) {
       return NextResponse.json({
         ok: true,
@@ -254,7 +206,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 2) Validate env
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
         { ok: false, error: "Missing OPENAI_API_KEY" },
@@ -272,7 +223,6 @@ export async function POST(req: NextRequest) {
     const slug = slugify(incomingSlug || title);
     const prompt = buildOgPrompt({ title, excerpt });
 
-    // 3) Generate non-human editorial image
     const imageResult = await openai.images.generate({
       model: "gpt-image-1",
       prompt,
@@ -281,16 +231,13 @@ export async function POST(req: NextRequest) {
 
     const b64 = imageResult.data?.[0]?.b64_json;
 
-    // 4) If generation gives nothing, use safe static fallback
     if (!b64) {
-      const fallback = getStaticTopicFallback(title, excerpt);
-
       return NextResponse.json({
         ok: true,
-        url: fallback,
-        pathname: fallback,
+        url: "/og-default.jpg",
+        pathname: "/og-default.jpg",
         preset: true,
-        source: "topic-fallback-no-image-returned",
+        source: "default-fallback-no-image-returned",
       });
     }
 
@@ -312,7 +259,6 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("OG generation failed:", error);
 
-    // 5) Final hard fallback so the article still gets an OG
     return NextResponse.json({
       ok: true,
       url: "/og-default.jpg",
