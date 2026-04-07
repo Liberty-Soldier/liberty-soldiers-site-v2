@@ -33,61 +33,66 @@ function buildThreadParts(title: string, excerpt: string, slug: string) {
   const cleanTitle = cleanText(title);
   const cleanExcerpt = cleanText(excerpt);
 
-  // 🔥 Dynamic hook pool (rotates automatically)
-  const hooks = [
-    "This isn’t random.",
-    "This is not what it looks like.",
-    "Pay attention to this one.",
-    "Most people will miss this.",
-    "This is where things shift.",
-    "This didn’t happen by accident.",
+  const openers = [
+    "This is not diplomacy.",
+    "This is not strategy.",
+    "This is not normal.",
+    "This is not strength.",
+    "This is open coercion.",
+    "This is escalation in plain sight.",
+  ];
+
+  const punches = [
+    "They are normalizing something dangerous in public.",
+    "They are saying the quiet part out loud now.",
+    "This is how insane policy gets packaged as leadership.",
+    "This is how the public gets trained to accept escalation.",
+    "They are moving the line and daring everyone to pretend it is normal.",
+    "This is what it looks like when power stops hiding its intent.",
   ];
 
   const reframes = [
-    "They’ll report the event. Not the pattern.",
-    "The headline is the distraction.",
-    "Watch how this is being framed.",
-    "This is how narratives are managed.",
-    "This is where perception gets shaped.",
+    "The headline is one thing. The real message is worse.",
+    "Most coverage will report the quote and miss the pattern.",
+    "The event matters. The framing around it matters more.",
+    "This is bigger than the headline they are feeding people.",
+    "The words matter because they prepare people for what comes next.",
+    "This is where rhetoric turns into permission.",
   ];
 
   const closers = [
-    "Most people won’t connect this.",
-    "Once you see it, you can’t unsee it.",
-    "This is bigger than it looks.",
-    "This is where it leads.",
+    "Full breakdown:",
+    "Read the full article:",
+    "Full piece here:",
+    "More here:",
+    "Full report:",
+    "Read it here:",
   ];
 
-  const hook = hooks[Math.floor(Math.random() * hooks.length)];
+  const opener = openers[Math.floor(Math.random() * openers.length)];
+  const punch = punches[Math.floor(Math.random() * punches.length)];
   const reframe = reframes[Math.floor(Math.random() * reframes.length)];
   const closer = closers[Math.floor(Math.random() * closers.length)];
 
-  // 🔥 PART 1 — Article-specific + hook
   const part1 = trimTo(
     `${cleanTitle}
 
-${hook}`,
+${opener}
+${punch}`,
     260
   );
 
-  // 🔥 PART 2 — Article-specific + narrative framing
   const part2 = trimTo(
     `${reframe}
 
-${cleanExcerpt}`,
-    260
-  );
+${cleanExcerpt}
 
-  // 🔥 PART 3 — Curiosity + link
-  const part3 = trimTo(
-    `${closer}
-
-Full breakdown:
+${closer}
 ${articleUrl}`,
     260
   );
 
-  return [part1, part2, part3];
+  return [part1, part2];
 }
 
 function createOauth() {
@@ -195,53 +200,50 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const [part1, part2, part3] = buildThreadParts(title, excerpt, slug);
+const [part1, part2] = buildThreadParts(title, excerpt, slug);
 
-    const first = await postTweet(part1);
-    const firstId = first?.data?.id;
+const first = await postTweet(part1);
+const firstId = first?.data?.id;
 
-    if (!firstId) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "First X post succeeded but no post ID was returned",
-          details: first,
-        },
-        { status: 500 }
-      );
-    }
+if (!firstId) {
+  return NextResponse.json(
+    {
+      ok: false,
+      error: "First X post succeeded but no post ID was returned",
+      details: first,
+    },
+    { status: 500 }
+  );
+}
 
-    const second = await postTweet(part2, firstId);
-    const secondId = second?.data?.id;
+const second = await postTweet(part2, firstId);
+const secondId = second?.data?.id;
 
-    if (!secondId) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "Second X post succeeded but no post ID was returned",
-          details: second,
-        },
-        { status: 500 }
-      );
-    }
+if (!secondId) {
+  return NextResponse.json(
+    {
+      ok: false,
+      error: "Second X post succeeded but no post ID was returned",
+      details: second,
+    },
+    { status: 500 }
+  );
+}
 
-    const third = await postTweet(part3, secondId);
-
-    return NextResponse.json({
-      ok: true,
-      mode: "thread",
-      articleUrl: buildArticleUrl(slug),
-      posts: [
-        first?.data || null,
-        second?.data || null,
-        third?.data || null,
-      ],
-      preview: {
-        part1,
-        part2,
-        part3,
-      },
-    });
+return NextResponse.json({
+  ok: true,
+  mode: "thread",
+  articleUrl: buildArticleUrl(slug),
+  posts: [
+    first?.data || null,
+    second?.data || null,
+  ],
+  preview: {
+    part1,
+    part2,
+  },
+});
+    
   } catch (error) {
     console.error("POST /api/admin/post-to-x failed:", error);
     return NextResponse.json(
