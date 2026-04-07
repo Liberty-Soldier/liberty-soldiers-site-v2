@@ -46,7 +46,7 @@ function getLeaderPreset(title: string, excerpt?: string) {
     ]);
   }
 
-  if (text.includes("xi")) {
+  if (text.includes("xi jinping") || /\bxi\b/.test(text)) {
     return pickOne([
       "/Xi_Jinping_1.jpg",
       "/Xi_Jinping_2.jpg",
@@ -72,6 +72,66 @@ function getLeaderPreset(title: string, excerpt?: string) {
   return null;
 }
 
+function getStaticTopicFallback(title: string, excerpt?: string) {
+  const text = `${title} ${excerpt || ""}`.toLowerCase();
+
+  if (
+    text.includes("hormuz") ||
+    text.includes("strait of hormuz") ||
+    text.includes("oil chokepoint") ||
+    text.includes("shipping lane") ||
+    text.includes("tanker")
+  ) {
+    return "/og-hormuz.jpg";
+  }
+
+  if (
+    text.includes("iran") ||
+    text.includes("missile") ||
+    text.includes("drone") ||
+    text.includes("strike") ||
+    text.includes("air defense") ||
+    text.includes("military escalation")
+  ) {
+    return "/og-war.jpg";
+  }
+
+  if (
+    text.includes("power grid") ||
+    text.includes("bridge") ||
+    text.includes("dam") ||
+    text.includes("substation") ||
+    text.includes("infrastructure") ||
+    text.includes("blackout")
+  ) {
+    return "/og-infrastructure.jpg";
+  }
+
+  if (
+    text.includes("market") ||
+    text.includes("stocks") ||
+    text.includes("bonds") ||
+    text.includes("dollar") ||
+    text.includes("crash") ||
+    text.includes("recession") ||
+    text.includes("inflation")
+  ) {
+    return "/og-markets.jpg";
+  }
+
+  if (
+    text.includes("un") ||
+    text.includes("security council") ||
+    text.includes("diplomacy") ||
+    text.includes("resolution") ||
+    text.includes("veto")
+  ) {
+    return "/og-diplomacy.jpg";
+  }
+
+  return "/og-default.jpg";
+}
+
 function buildOgPrompt({
   title,
   excerpt,
@@ -81,28 +141,89 @@ function buildOgPrompt({
 }) {
   const cleanTitle = compact(title);
   const cleanExcerpt = compact(excerpt);
+  const text = `${cleanTitle} ${cleanExcerpt}`.toLowerCase();
+
+  let sceneHint = `
+Depict a realistic news scene centered on places, infrastructure, equipment, terrain, shipping lanes, energy facilities, government buildings, or military hardware relevant to the headline.
+`;
+
+  if (text.includes("hormuz") || text.includes("strait")) {
+    sceneHint = `
+Depict a realistic maritime chokepoint scene near the Strait of Hormuz: oil tankers, cargo vessels, narrow shipping lanes, coastal industrial infrastructure, distant naval presence, tension without fantasy.
+`;
+  } else if (
+    text.includes("un") ||
+    text.includes("security council") ||
+    text.includes("resolution") ||
+    text.includes("veto")
+  ) {
+    sceneHint = `
+Depict a realistic geopolitical setting: UN-style chamber exterior or interior environment, diplomatic setting, flags, desks, microphones, documents, architectural seriousness, but no clearly visible people.
+`;
+  } else if (
+    text.includes("bridge") ||
+    text.includes("power") ||
+    text.includes("grid") ||
+    text.includes("substation") ||
+    text.includes("infrastructure")
+  ) {
+    sceneHint = `
+Depict a realistic infrastructure-focused scene: power lines, substations, bridges, industrial facilities, transport links, smoke or disruption if appropriate, with no people visible.
+`;
+  } else if (
+    text.includes("missile") ||
+    text.includes("drone") ||
+    text.includes("strike") ||
+    text.includes("war")
+  ) {
+    sceneHint = `
+Depict a realistic military-news environment: launch sites, radar, air defense systems, damaged terrain, industrial zones, naval assets, or equipment in place, but no soldiers, officials, or civilians visible.
+`;
+  }
 
   return `
 Create a single ultra-realistic editorial news image.
 
 Style:
-professional photojournalism, documentary realism, natural lighting.
+professional photojournalism, documentary realism, natural lighting, believable scale, grounded textures, realistic lens perspective.
 
-Rules:
-- must depict the real-world event described
-- one clear focal subject
-- no symbolism or abstract interpretation
-- no text or logos
-- no cinematic or movie-poster style
+Hard rules:
+- no people
+- no faces
+- no human figures
+- no crowds
+- no officials
+- no soldiers
+- no civilians
+- no hands holding objects
+- no staged posing
+- no symbolism
+- no allegory
+- no metaphorical imagery
+- no text
+- no logos
+- no propaganda poster style
+- no cinematic movie-poster look
+- no collage
+- no split-screen
+- no surreal or exaggerated elements
+- no objects being displayed to the camera
 
-Scene:
-Depict the real-world situation described in this headline.
+Composition:
+- one clear focal point
+- simple strong editorial composition
+- horizontal-friendly subject placement
+- suitable for a news website OG image
+- realistic empty-space balance for headline cropping if needed
+
+Scene guidance:
+${sceneHint}
 
 Headline:
 ${cleanTitle}
 
 Context:
-${cleanExcerpt || ""}
+${cleanExcerpt || "No extra context provided."}
 `;
 }
 
@@ -121,17 +242,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // 1) Real image preset for named leaders
     const preset = getLeaderPreset(title, excerpt);
-
     if (preset) {
       return NextResponse.json({
         ok: true,
         url: preset,
         pathname: preset,
         preset: true,
+        source: "leader-preset",
       });
     }
 
+    // 2) Validate env
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
         { ok: false, error: "Missing OPENAI_API_KEY" },
@@ -149,6 +272,7 @@ export async function POST(req: NextRequest) {
     const slug = slugify(incomingSlug || title);
     const prompt = buildOgPrompt({ title, excerpt });
 
+    // 3) Generate non-human editorial image
     const imageResult = await openai.images.generate({
       model: "gpt-image-1",
       prompt,
@@ -157,11 +281,17 @@ export async function POST(req: NextRequest) {
 
     const b64 = imageResult.data?.[0]?.b64_json;
 
+    // 4) If generation gives nothing, use safe static fallback
     if (!b64) {
-      return NextResponse.json(
-        { ok: false, error: "No image returned" },
-        { status: 500 }
-      );
+      const fallback = getStaticTopicFallback(title, excerpt);
+
+      return NextResponse.json({
+        ok: true,
+        url: fallback,
+        pathname: fallback,
+        preset: true,
+        source: "topic-fallback-no-image-returned",
+      });
     }
 
     const buffer = Buffer.from(b64, "base64");
@@ -177,16 +307,19 @@ export async function POST(req: NextRequest) {
       url: blob.url,
       pathname: blob.pathname,
       prompt,
+      source: "generated",
     });
   } catch (error) {
     console.error("OG generation failed:", error);
 
-    return NextResponse.json(
-      {
-        ok: false,
-        error: error instanceof Error ? error.message : "Failed",
-      },
-      { status: 500 }
-    );
+    // 5) Final hard fallback so the article still gets an OG
+    return NextResponse.json({
+      ok: true,
+      url: "/og-default.jpg",
+      pathname: "/og-default.jpg",
+      preset: true,
+      source: "error-fallback",
+      error: error instanceof Error ? error.message : "Failed",
+    });
   }
 }
