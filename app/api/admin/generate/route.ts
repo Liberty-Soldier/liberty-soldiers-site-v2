@@ -396,6 +396,9 @@ EXCERPT RULES:
 - explain why this matters right now
 - should make someone want to read immediately
 - no bland recap language
+- avoid phrases like "mask slips", "mask drops", "exposed", "revealed"
+- no metaphor in excerpt unless absolutely necessary
+- prefer literal, blunt phrasing over symbolic language
 
 BODY RULES:
 - plain text only
