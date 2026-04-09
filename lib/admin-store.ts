@@ -18,6 +18,9 @@ export type QueueItem = {
   slug: string;
   status: string;
   body: string;
+  xPost1?: string;
+xPost2?: string;
+xPost3?: string;
 };
 
 const QUEUE_KEY = "lbs:admin:queue";
