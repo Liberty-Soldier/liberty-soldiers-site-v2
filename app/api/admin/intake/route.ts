@@ -50,19 +50,6 @@ type IntakeItem = {
   reasonTags: string[];
 };
 
-type GenerateResult = {
-  title: string;
-  source: string;
-  domain: string;
-  status: number;
-  ok: boolean;
-  skipped: boolean;
-  reason: string | null;
-  error: string | null;
-  details: unknown;
-  score?: number;
-  reasonTags?: string[];
-};
 
 const FEEDS: FeedConfig[] = [
   {
@@ -772,13 +759,11 @@ export async function GET() {
 
     const selectedItems = pickItems(strictPool, relaxedPool);
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      (process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000");
-
-    const results: GenerateResult[] = [];
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000");
 
 return NextResponse.json(
   {
@@ -790,8 +775,7 @@ return NextResponse.json(
     strictCandidates: strictPool.length,
     relaxedCandidates: relaxedPool.length,
     selected: selectedItems.length,
-
-    // 👇 THIS is what you actually need now
+    feedDiagnostics,
     stories: selectedItems.map((item) => ({
       title: item.title,
       link: item.link,
@@ -809,98 +793,20 @@ return NextResponse.json(
     headers: {
       "Cache-Control":
         "no-store, no-cache, must-revalidate, proxy-revalidate",
+      Pragma: "no-cache",
+      Expires: "0",
     },
   }
 );
+} catch (error) {
+  console.error("Intake route failed:", error);
 
-        let data: any = null;
-
-        try {
-          data = await res.json();
-        } catch {
-          data = null;
-        }
-
-        results.push({
-          title: item.title,
-          source: item.source,
-          domain: item.domain,
-          status: res.status,
-          ok: !!data?.ok,
-          skipped: !!data?.skipped,
-          reason: data?.reason || null,
-          error: data?.error || null,
-          details: data?.details || null,
-          score: Number(item.score.toFixed(2)),
-          reasonTags: item.reasonTags,
-        });
-      } catch (error) {
-        console.error("Generate from intake failed:", error);
-
-        results.push({
-          title: item.title,
-          source: item.source,
-          domain: item.domain,
-          status: 500,
-          ok: false,
-          skipped: false,
-          reason: null,
-          error:
-            error instanceof Error ? error.message : "Unknown intake error",
-          details: null,
-          score: Number(item.score.toFixed(2)),
-          reasonTags: item.reasonTags,
-        });
-      }
-    }
-
-    const successful = results.filter((r) => r.ok && !r.skipped);
-    const skipped = results.filter((r) => r.skipped);
-    const failed = results.filter((r) => !r.ok && !r.skipped);
-
-    return NextResponse.json(
-      {
-        ok: true,
-        baseUrl,
-        scanned: collected.length,
-        eligible: enriched.length,
-        strictCandidates: strictPool.length,
-        relaxedCandidates: relaxedPool.length,
-        selected: selectedItems.length,
-        generated: successful.length,
-        skipped: skipped.length,
-        failed: failed.length,
-        feedDiagnostics,
-        topSelected: selectedItems.map((item) => ({
-          title: item.title,
-          domain: item.domain,
-          source: item.source,
-          isoDate: item.isoDate,
-          minutesOld: item.minutesOld,
-          score: Number(item.score.toFixed(2)),
-          reasonTags: item.reasonTags,
-          link: item.link,
-        })),
-        results,
-      },
-      {
-        headers: {
-          "Cache-Control":
-            "no-store, no-cache, must-revalidate, proxy-revalidate",
-          Pragma: "no-cache",
-          Expires: "0",
-        },
-      }
-    );
-  } catch (error) {
-    console.error("Intake route failed:", error);
-
-    return NextResponse.json(
-      {
-        ok: false,
-        error: error instanceof Error ? error.message : "Intake failed",
-      },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    {
+      ok: false,
+      error: error instanceof Error ? error.message : "Intake failed",
+    },
+    { status: 500 }
+  );
+}
 }
