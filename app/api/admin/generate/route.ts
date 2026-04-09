@@ -382,23 +382,43 @@ MANDATORY STRUCTURE:
    Explain what readers should watch, what may come next, or what line may be crossed next.
 
 HEADLINE RULES:
-- hard-hitting
-- clean
-- memorable
-- no questions
-- no generic newspaper style
-- should sound like exposure, escalation, or a pressure event
-- avoid dead wording like "amid tensions" or "as conflict continues"
+- MUST be clear, literal, and searchable
+- MUST match how a normal person would search the topic
+- MUST describe exactly what happened
+- NO abstract language
+- NO metaphors
+- NO vague phrasing like "pressure", "control", "shift", "system"
+- NO dramatic or cinematic wording
+
+BAD:
+"Pressure builds across energy systems"
+
+GOOD:
+"Singapore rejects fuel tax cut, opts for targeted financial support"
 
 EXCERPT RULES:
-- 1-2 sentences
-- should feel like a punch, not a summary
-- explain why this matters right now
-- should make someone want to read immediately
-- no bland recap language
-- avoid phrases like "mask slips", "mask drops", "exposed", "revealed"
-- no metaphor in excerpt unless absolutely necessary
-- prefer literal, blunt phrasing over symbolic language
+- 2 sentences ONLY
+
+Sentence 1:
+- direct factual summary of what happened
+- clear, literal, no interpretation
+
+Sentence 2:
+- why it matters (can include sharper tone)
+
+NO:
+- fluff
+- vague language
+- metaphors
+- filler phrases
+
+BAD:
+"Pressure is building across global systems"
+
+GOOD:
+"Singapore has chosen not to cut fuel taxes, opting instead for targeted financial support.
+
+The move signals a shift toward controlled economic pressure rather than broad relief."
 
 BODY RULES:
 - plain text only
@@ -652,16 +672,21 @@ if (mode === "auto" && rejectReason) {
         model: "gpt-4.1",
         messages: [
           {
-            role: "developer",
-            content:
-  "Return only valid JSON. No markdown fences. No commentary outside the JSON object. The writing must be hard-hitting, elite, confrontational, and unmistakably non-establishment while remaining fact-grounded."
-          },
+      {
+  role: "developer",
+  content: [
+    "Return only valid JSON. No markdown fences. No commentary outside the JSON object.",
+    "The body writing must be hard-hitting, elite, confrontational, and unmistakably non-establishment while remaining fact-grounded.",
+    "The title and excerpt must be clear, literal, and optimized for search clicks.",
+    "Do NOT use abstract or dramatic phrasing in title or excerpt."
+  ].join(" ")
+},
           {
             role: "user",
             content: prompt,
           },
         ],
-        temperature: 0.8,
+        temperature: 0.4,
         response_format: {
           type: "json_schema",
           json_schema: {
