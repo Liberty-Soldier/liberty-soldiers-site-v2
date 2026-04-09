@@ -510,7 +510,7 @@ export async function POST(req: NextRequest) {
 
 const body = await req.json();
 
-const mode = body.mode || "auto";
+const mode = body.mode || "manual";
 const id = body.id || "";
 const intakeUrl = body.intakeUrl || "";
 const intakeTitle = body.intakeTitle || "";
