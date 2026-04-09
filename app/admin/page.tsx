@@ -928,7 +928,51 @@ async function handleGenerateDraft() {
   >
     Delete Draft
   </button>
+                        
+{/* X THREAD EDITOR */}
+<div className="mt-6 rounded-2xl border border-black bg-white p-4">
+  <div className="mb-3 text-sm font-semibold text-black">
+    X Thread (What actually gets seen)
+  </div>
 
+  <div className="space-y-3">
+    <Field label="X Post 1">
+      <textarea
+        value={selected.xPost1 || ""}
+        onChange={(e) => updateSelected("xPost1", e.target.value)}
+        rows={3}
+        className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+      />
+      <div className="text-xs text-zinc-500 mt-1">
+        {(selected.xPost1 || "").length}/280
+      </div>
+    </Field>
+
+    <Field label="X Post 2">
+      <textarea
+        value={selected.xPost2 || ""}
+        onChange={(e) => updateSelected("xPost2", e.target.value)}
+        rows={3}
+        className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+      />
+      <div className="text-xs text-zinc-500 mt-1">
+        {(selected.xPost2 || "").length}/280
+      </div>
+    </Field>
+
+    <Field label="X Post 3 (optional)">
+      <textarea
+        value={selected.xPost3 || ""}
+        onChange={(e) => updateSelected("xPost3", e.target.value)}
+        rows={2}
+        className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+      />
+      <div className="text-xs text-zinc-500 mt-1">
+        {(selected.xPost3 || "").length}/280
+      </div>
+    </Field>
+  </div>
+</div>
 </div>
 
                       <div className="mt-6 grid gap-5">
