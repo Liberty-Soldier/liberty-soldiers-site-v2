@@ -417,7 +417,7 @@ export default function AdminPage() {
           intakeMeta: {
             source: intakeUrl.trim() ? "Manual URL intake" : "Manual notes intake",
           },
-          skipOg: false,
+          skipOg: true,
         }),
       });
 
@@ -468,7 +468,7 @@ export default function AdminPage() {
             reasonTags: story.reasonTags || [],
             hardCategory: story.hardCategory || "Power & Control",
           },
-          skipOg: false,
+          skipOg: true,
         }),
       });
 
@@ -515,7 +515,7 @@ export default function AdminPage() {
             source: selected.source,
             hardCategory: selected.hardCategory,
           },
-          skipOg: false,
+          skipOg: true,
         }),
       });
 
