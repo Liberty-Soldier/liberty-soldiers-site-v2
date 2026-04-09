@@ -32,6 +32,9 @@ type QueueItem = {
   slug: string;
   status: QueueStatus;
   body: string;
+  xPost1?: string;
+  xPost2?: string;
+  xPost3?: string;
 };
 
 const HARD_CATEGORIES: HardCategory[] = [
@@ -448,6 +451,9 @@ alert("Draft generated");
       body:
         intakeNotes.trim() ||
         "Paste source notes here, then refine into Liberty Soldiers format. Focus on signal, not noise.",
+      xPost1: "",
+      xPost2: "",
+      xPost3: "",
     };
 
     setQueue((prev) => {
