@@ -346,6 +346,99 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const articleUrl = buildArticleUrl(slug);
+    const [autoPart1, autoPart2] = buildThreadParts(title, excerpt, slug);
+
+    const part1 = xPost1?.trim() || autoPart1;
+    const rawPart2 = xPost2?.trim() || autoPart2;
+    const rawPart3 = xPost3?.trim();
+
+    function appendLink(text: string, url: string) {
+      const cleaned = cleanText(text);
+      if (!cleaned) return url;
+      if (cleaned.includes(url)) return cleaned;
+
+      const linkBlock = `Read more:\n${url}`;
+      const maxBody = 280 - linkBlock.length - 2;
+      const trimmed = trimTo(cleaned, maxBody);
+
+      return `${trimmed}\n\n${linkBlock}`;
+    }
+
+    const part2 = rawPart3 ? rawPart2 : appendLink(rawPart2, articleUrl);
+    const part3 = rawPart3 ? appendLink(rawPart3, articleUrl) : "";
+
+    const first = await postTweet(part1);
+    const firstId = first?.data?.id;
+
+    if (!firstId) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "First X post succeeded but no post ID was returned",
+          details: first,
+        },
+        { status: 500 }
+      );
+    }
+
+    const second = await postTweet(part2, firstId);
+    const secondId = second?.data?.id;
+
+    if (!secondId) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: "Second X post succeeded but no post ID was returned",
+          details: second,
+        },
+        { status: 500 }
+      );
+    }
+
+    let third: any = null;
+
+    if (part3) {
+      third = await postTweet(part3, secondId);
+      const thirdId = third?.data?.id;
+
+      if (!thirdId) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "Third X post succeeded but no post ID was returned",
+            details: third,
+          },
+          { status: 500 }
+        );
+      }
+    }
+
+    return NextResponse.json({
+      ok: true,
+      mode: part3 ? "thread-3" : "thread-2",
+      articleUrl,
+      posts: [first?.data || null, second?.data || null, third?.data || null],
+      preview: {
+        part1,
+        part2,
+        part3: part3 || null,
+      },
+    });
+  } catch (error) {
+    console.error("POST /api/admin/post-to-x failed:", error);
+
+    return NextResponse.json(
+      {
+        ok: false,
+        error:
+          error instanceof Error ? error.message : "Failed to post thread to X",
+      },
+      { status: 500 }
+    );
+  }
+}
+
     const [autoPart1, autoPart2] = buildThreadParts(title, excerpt, slug);
 
     const part1 = xPost1?.trim() || autoPart1;
