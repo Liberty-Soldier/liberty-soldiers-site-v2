@@ -780,35 +780,38 @@ export async function GET() {
 
     const results: GenerateResult[] = [];
 
-    for (const item of selectedItems) {
-      try {
-        const hardCategory = inferHardCategory(item.title, item.contentSnippet);
+return NextResponse.json(
+  {
+    ok: true,
+    mode: "scan-only",
+    baseUrl,
+    scanned: collected.length,
+    eligible: enriched.length,
+    strictCandidates: strictPool.length,
+    relaxedCandidates: relaxedPool.length,
+    selected: selectedItems.length,
 
-        const res = await fetch(`${baseUrl}/api/admin/generate`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            mode: "auto",
-            intakeUrl: item.link,
-            intakeTitle: item.title,
-            intakeNotes: item.contentSnippet || "",
-            intakeMeta: {
-              source: item.source,
-              domain: item.domain,
-              isoDate: item.isoDate,
-              score: item.score,
-              reasonTags: item.reasonTags,
-              feedLabel: item.feedLabel,
-              feedKind: item.feedKind,
-              feedTier: item.feedTier,
-              hardCategory,
-            },
-            skipOg: true,
-          }),
-          cache: "no-store",
-        });
+    // 👇 THIS is what you actually need now
+    stories: selectedItems.map((item) => ({
+      title: item.title,
+      link: item.link,
+      source: item.source,
+      domain: item.domain,
+      isoDate: item.isoDate,
+      minutesOld: item.minutesOld,
+      score: Number(item.score.toFixed(2)),
+      reasonTags: item.reasonTags,
+      hardCategory: inferHardCategory(item.title, item.contentSnippet),
+      snippet: item.contentSnippet,
+    })),
+  },
+  {
+    headers: {
+      "Cache-Control":
+        "no-store, no-cache, must-revalidate, proxy-revalidate",
+    },
+  }
+);
 
         let data: any = null;
 
