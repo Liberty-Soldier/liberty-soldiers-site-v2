@@ -23,52 +23,53 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // get published list
     const published = await getPublished();
 
-    // add to published (top)
     const newPublished = [
       { ...item, status: "published" },
       ...published,
     ];
 
-await savePublished(newPublished);
+    await savePublished(newPublished);
 
-// try auto-post to X, but do not fail publishing if X fails
-const base =
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+    const base =
+      process.env.NEXT_PUBLIC_SITE_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000");
 
-let xPostResult: any = null;
+    let xPostResult: any = null;
 
-try {
-  const xRes = await fetch(`${base}/api/admin/post-to-x`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      title: item.title,
-      excerpt: item.excerpt,
-      slug: item.slug,
-    }),
-  });
+    try {
+      const xRes = await fetch(`${base}/api/admin/post-to-x`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: item.title,
+          excerpt: item.excerpt,
+          slug: item.slug,
+          xPost1: item.xPost1 || "",
+          xPost2: item.xPost2 || "",
+          xPost3: item.xPost3 || "",
+        }),
+      });
 
-  xPostResult = await xRes.json();
-} catch (err) {
-  console.error("Auto-post to X failed:", err);
-}
+      xPostResult = await xRes.json();
+    } catch (err) {
+      console.error("Auto-post to X failed:", err);
+    }
 
-// remove from queue
-const newQueue = queue.filter((q) => q.id !== id);
-await saveQueue(newQueue);
+    const newQueue = queue.filter((q) => q.id !== id);
+    await saveQueue(newQueue);
 
-return NextResponse.json({
-  ok: true,
-  published: newPublished,
-  queue: newQueue,
-  xPost: xPostResult,
-});
+    return NextResponse.json({
+      ok: true,
+      published: newPublished,
+      queue: newQueue,
+      xPost: xPostResult,
+    });
   } catch (err) {
     console.error("Publish error:", err);
 
