@@ -21,6 +21,9 @@ export type PublishedArticle = {
   slug: string;
   status: string;
   body: string;
+  xPost1?: string;
+  xPost2?: string;
+  xPost3?: string;
 };
 
 export async function getPublished(): Promise<PublishedArticle[]> {
