@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 type ReportKind = "report" | "analysis" | "brief" | "news";
-
 type QueueStatus = "draft" | "review" | "approved" | "rejected";
 
 type HardCategory =
@@ -35,6 +34,19 @@ type QueueItem = {
   xPost1?: string;
   xPost2?: string;
   xPost3?: string;
+};
+
+type FeedStory = {
+  title: string;
+  link?: string;
+  source?: string;
+  domain?: string;
+  isoDate?: string;
+  minutesOld?: number;
+  score?: number;
+  reasonTags?: string[];
+  hardCategory?: HardCategory;
+  snippet?: string;
 };
 
 const HARD_CATEGORIES: HardCategory[] = [
@@ -187,6 +199,7 @@ ${item.body
 
 export default function AdminPage() {
   const [queue, setQueue] = useState<QueueItem[]>([]);
+  const [feedStories, setFeedStories] = useState<FeedStory[]>([]);
   const [selectedId, setSelectedId] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"queue" | "editor" | "export">(
     "queue"
@@ -195,6 +208,11 @@ export default function AdminPage() {
   const [intakeTitle, setIntakeTitle] = useState("");
   const [intakeNotes, setIntakeNotes] = useState("");
   const [search, setSearch] = useState("");
+  const [loadingIntake, setLoadingIntake] = useState(false);
+  const [loadingGenerateDraft, setLoadingGenerateDraft] = useState(false);
+  const [loadingGenerateSelected, setLoadingGenerateSelected] = useState(false);
+  const [loadingGenerateOg, setLoadingGenerateOg] = useState(false);
+  const [loadingPublish, setLoadingPublish] = useState(false);
 
   const selected = useMemo(() => {
     return queue.find((item) => item.id === selectedId) ?? queue[0];
@@ -213,16 +231,25 @@ export default function AdminPage() {
     });
   }, [queue, search]);
 
+  const counts = useMemo(() => {
+    return {
+      total: queue.length,
+      draft: queue.filter((x) => x.status === "draft").length,
+      review: queue.filter((x) => x.status === "review").length,
+      approved: queue.filter((x) => x.status === "approved").length,
+      rejected: queue.filter((x) => x.status === "rejected").length,
+    };
+  }, [queue]);
+
   async function loadQueue() {
     try {
       const res = await fetch("/api/admin/queue", {
-  cache: "no-store",
-});
+        cache: "no-store",
+      });
       const data = await res.json();
 
       if (data.ok) {
         const nextQueue = Array.isArray(data.queue) ? data.queue : [];
-
         setQueue(nextQueue);
 
         if (nextQueue.length > 0) {
@@ -237,121 +264,6 @@ export default function AdminPage() {
       setSelectedId("");
     }
   }
-  const [loadingIntake, setLoadingIntake] = useState(false);
-
-async function runIntake() {
-  try {
-    console.log("START intake");
-
-    setLoadingIntake(true);
-
-    const res = await fetch("/api/admin/intake", {
-      method: "GET",
-      cache: "no-store",
-    });
-
-    console.log("FETCH SENT");
-
-    const data = await res.json();
-
-    console.log("INTAKE RESPONSE:", data);
-
-    alert(
-      `Scanned: ${data.scanned}\nSelected: ${data.selected}\nGenerated: ${data.generated}`
-    );
-
-    await loadQueue();
-  } catch (err) {
-    console.error("INTAKE ERROR:", err);
-    alert("Intake failed — check console");
-  } finally {
-    setLoadingIntake(false);
-  }
-}
-
-async function handleGenerateOg() {
-  if (!selected) return;
-
-  try {
-    const res = await fetch("/api/admin/generate-og", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title: selected.title,
-        excerpt: selected.excerpt,
-        hardCategory: selected.hardCategory,
-        slug: selected.slug,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!data.ok || !data.url) {
-      console.error("Generate OG failed", data);
-      alert(data.error || "Generate OG failed");
-      return;
-    }
-
-    const nextQueue = queue.map((item) =>
-      item.id === selected.id
-        ? { ...item, coverImage: data.url }
-        : item
-    );
-
-    setQueue(nextQueue);
-    await saveQueue(nextQueue);
-
-    alert("OG image generated");
-  } catch (err) {
-    console.error("Failed to generate OG", err);
-    alert("Failed to generate OG");
-  }
-}
-  async function handleGenerateSelected() {
-  if (!selected) return;
-
-  try {
-    const res = await fetch("/api/admin/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        mode: "manual",
-        id: selected.id,
-        intakeUrl: selected.sourceUrl || "",
-        intakeTitle: selected.title,
-        intakeNotes: selected.excerpt || "",
-intakeMeta: {
-  source: selected.source,
-  hardCategory: selected.hardCategory,
-},
-        skipOg: false,
-      }),
-    });
-
-    const data = await res.json();
-
-if (!data.ok) {
-  console.error("Generate selected draft failed", data);
-  alert(data.details || data.error || "Generate selected draft failed");
-  return;
-}
-
-if (data.skipped) {
-  alert(`Skipped: ${data.reason || "unknown reason"}`);
-  return;
-}
-
-await loadQueue();
-alert("Draft generated");
-  } catch (err) {
-    console.error("Failed to generate selected draft", err);
-    alert("Failed to generate selected draft");
-  }
-}
 
   async function saveQueue(nextQueue: QueueItem[]) {
     try {
@@ -364,7 +276,6 @@ alert("Draft generated");
       });
 
       const data = await res.json();
-
       if (!data.ok) {
         console.error("Save failed", data);
       }
@@ -373,57 +284,34 @@ alert("Draft generated");
     }
   }
 
-  async function handleDelete() {
-    if (!selected) return;
+  async function runIntake() {
+    try {
+      setLoadingIntake(true);
 
-    const confirmed = window.confirm("Delete this draft?");
-    if (!confirmed) return;
-
-    const nextQueue = queue.filter((item) => item.id !== selected.id);
-
-    setQueue(nextQueue);
-
-    if (nextQueue.length > 0) {
-      setSelectedId(nextQueue[0].id);
-    } else {
-      setSelectedId("");
-    }
-
-    await saveQueue(nextQueue);
-  }
-
-  useEffect(() => {
-    void loadQueue();
-  }, []);
-
-  function updateSelected<K extends keyof QueueItem>(
-    key: K,
-    value: QueueItem[K]
-  ) {
-    if (!selected) return;
-
-    setQueue((prev) => {
-      const nextQueue = prev.map((item) => {
-        if (item.id !== selected.id) return item;
-
-        const next: QueueItem = { ...item, [key]: value };
-
-        if (key === "title") {
-          next.slug = slugify(String(value));
-        }
-
-        if (key === "hardCategory") {
-          next.coverImage = getHardCategoryDefaultImage(
-            value as HardCategory
-          );
-        }
-
-        return next;
+      const res = await fetch("/api/admin/intake", {
+        method: "GET",
+        cache: "no-store",
       });
 
-      void saveQueue(nextQueue);
-      return nextQueue;
-    });
+      const data = await res.json();
+
+      if (!data.ok) {
+        alert(data.error || "Pull Feed failed");
+        return;
+      }
+
+      const stories = Array.isArray(data.stories) ? data.stories : [];
+      setFeedStories(stories);
+
+      alert(
+        `Scanned: ${data.scanned}\nSelected: ${data.selected}\nStories loaded: ${stories.length}`
+      );
+    } catch (err) {
+      console.error("INTAKE ERROR:", err);
+      alert("Pull Feed failed — check console");
+    } finally {
+      setLoadingIntake(false);
+    }
   }
 
   function handleAddIntake() {
@@ -469,24 +357,69 @@ alert("Draft generated");
     setIntakeNotes("");
   }
 
-async function handleGenerateDraft() {
-  try {
-    const res = await fetch("/api/admin/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        mode: "manual",
-        intakeUrl,
-        intakeTitle,
-        intakeNotes,
-        intakeMeta: {
-          source: intakeUrl.trim() ? "Manual URL intake" : "Manual notes intake",
-        },
-        skipOg: false,
-      }),
+  function handleAddFeedStory(story: FeedStory) {
+    const title = (story.title || "").trim() || "Untitled Draft";
+    const slug = slugify(title);
+
+    const newItem: QueueItem = {
+      id: `q-${Date.now()}`,
+      title,
+      excerpt:
+        story.snippet || "Scanned from feed. Review before publishing.",
+      source: story.source || "Feed Intake",
+      sourceUrl: story.link || undefined,
+      dateISO:
+        typeof story.isoDate === "string" && story.isoDate
+          ? story.isoDate.slice(0, 10)
+          : new Date().toISOString().slice(0, 10),
+      byline: "Liberty Soldiers",
+      coverImage: getHardCategoryDefaultImage(
+        story.hardCategory || "Power & Control"
+      ),
+      category: story.hardCategory || "Power & Control",
+      hardCategory: story.hardCategory || "Power & Control",
+      readTime: "3 min",
+      featured: false,
+      priority: 3,
+      kind: "report",
+      slug,
+      status: "draft",
+      body: story.snippet || "Expand this scanned story into a full draft.",
+      xPost1: "",
+      xPost2: "",
+      xPost3: "",
+    };
+
+    setQueue((prev) => {
+      const nextQueue = [newItem, ...prev];
+      void saveQueue(nextQueue);
+      return nextQueue;
     });
+
+    setSelectedId(newItem.id);
+    setActiveTab("editor");
+  }
+
+  async function handleGenerateDraft() {
+    try {
+      setLoadingGenerateDraft(true);
+
+      const res = await fetch("/api/admin/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mode: "manual",
+          intakeUrl,
+          intakeTitle,
+          intakeNotes,
+          intakeMeta: {
+            source: intakeUrl.trim() ? "Manual URL intake" : "Manual notes intake",
+          },
+          skipOg: false,
+        }),
+      });
 
       const data = await res.json();
 
@@ -496,44 +429,257 @@ async function handleGenerateDraft() {
         return;
       }
 
-      if (Array.isArray(data.queue)) {
-        setQueue(data.queue);
-        if (data.item?.id) {
-          setSelectedId(data.item.id);
-        } else if (data.queue[0]?.id) {
-          setSelectedId(data.queue[0].id);
-        }
-      } else {
-        await loadQueue();
-        if (data.item?.id) {
-          setSelectedId(data.item.id);
-        }
+      await loadQueue();
+
+      if (data.item?.id) {
+        setSelectedId(data.item.id);
       }
 
       setActiveTab("editor");
       setIntakeUrl("");
       setIntakeTitle("");
       setIntakeNotes("");
+      alert("Draft generated");
     } catch (err) {
       console.error("Failed to generate draft", err);
       alert("Failed to generate draft");
+    } finally {
+      setLoadingGenerateDraft(false);
     }
+  }
+
+  async function handleGenerateFeedStory(story: FeedStory) {
+    try {
+      const res = await fetch("/api/admin/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mode: "manual",
+          intakeUrl: story.link || "",
+          intakeTitle: story.title || "",
+          intakeNotes: story.snippet || "",
+          intakeMeta: {
+            source: story.source || "Feed Intake",
+            domain: story.domain,
+            isoDate: story.isoDate,
+            score: story.score,
+            reasonTags: story.reasonTags || [],
+            hardCategory: story.hardCategory || "Power & Control",
+          },
+          skipOg: false,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.ok) {
+        console.error("Generate feed story failed", data);
+        alert(data.details || data.error || "Generate failed");
+        return;
+      }
+
+      await loadQueue();
+
+      if (data.item?.id) {
+        setSelectedId(data.item.id);
+      }
+
+      setActiveTab("editor");
+      alert("Draft generated from feed story");
+    } catch (err) {
+      console.error("Failed to generate feed story", err);
+      alert("Failed to generate feed story");
+    }
+  }
+
+  async function handleGenerateSelected() {
+    if (!selected) return;
+
+    try {
+      setLoadingGenerateSelected(true);
+
+      const res = await fetch("/api/admin/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mode: "manual",
+          id: selected.id,
+          intakeUrl: selected.sourceUrl || "",
+          intakeTitle: selected.title,
+          intakeNotes: selected.excerpt || "",
+          intakeMeta: {
+            source: selected.source,
+            hardCategory: selected.hardCategory,
+          },
+          skipOg: false,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.ok) {
+        console.error("Generate selected draft failed", data);
+        alert(data.details || data.error || "Generate selected draft failed");
+        return;
+      }
+
+      if (data.skipped) {
+        alert(`Skipped: ${data.reason || "unknown reason"}`);
+        return;
+      }
+
+      await loadQueue();
+      setSelectedId(selected.id);
+      setActiveTab("editor");
+      alert("Draft regenerated");
+    } catch (err) {
+      console.error("Failed to generate selected draft", err);
+      alert("Failed to generate selected draft");
+    } finally {
+      setLoadingGenerateSelected(false);
+    }
+  }
+
+  async function handleGenerateOg() {
+    if (!selected) return;
+
+    try {
+      setLoadingGenerateOg(true);
+
+      const res = await fetch("/api/admin/generate-og", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: selected.title,
+          excerpt: selected.excerpt,
+          hardCategory: selected.hardCategory,
+          slug: selected.slug,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.ok || !data.url) {
+        console.error("Generate OG failed", data);
+        alert(data.error || "Generate OG failed");
+        return;
+      }
+
+      const nextQueue = queue.map((item) =>
+        item.id === selected.id ? { ...item, coverImage: data.url } : item
+      );
+
+      setQueue(nextQueue);
+      await saveQueue(nextQueue);
+
+      alert("OG image generated");
+    } catch (err) {
+      console.error("Failed to generate OG", err);
+      alert("Failed to generate OG");
+    } finally {
+      setLoadingGenerateOg(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (!selected) return;
+
+    const confirmed = window.confirm("Delete this draft?");
+    if (!confirmed) return;
+
+    const nextQueue = queue.filter((item) => item.id !== selected.id);
+    setQueue(nextQueue);
+
+    if (nextQueue.length > 0) {
+      setSelectedId(nextQueue[0].id);
+    } else {
+      setSelectedId("");
+    }
+
+    await saveQueue(nextQueue);
+  }
+
+  async function handlePublish() {
+    if (!selected) return;
+
+    try {
+      setLoadingPublish(true);
+
+      const res = await fetch("/api/admin/publish", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: selected.id }),
+      });
+
+      const data = await res.json();
+
+      if (!data.ok) {
+        console.error("Publish failed", data);
+        alert(data.error || "Publish failed");
+        return;
+      }
+
+      await loadQueue();
+
+      if (data.xPost && data.xPost.ok === false) {
+        console.warn("X post failed", data.xPost);
+        alert(
+          `Article published, but X posting failed.\n\n${
+            data.xPost.error || "Unknown X error"
+          }`
+        );
+        return;
+      }
+
+      alert("Published successfully");
+    } catch (err) {
+      console.error("Publish failed", err);
+      alert("Publish failed");
+    } finally {
+      setLoadingPublish(false);
+    }
+  }
+
+  useEffect(() => {
+    void loadQueue();
+  }, []);
+
+  function updateSelected<K extends keyof QueueItem>(
+    key: K,
+    value: QueueItem[K]
+  ) {
+    if (!selected) return;
+
+    setQueue((prev) => {
+      const nextQueue = prev.map((item) => {
+        if (item.id !== selected.id) return item;
+
+        const next: QueueItem = { ...item, [key]: value };
+
+        if (key === "title") {
+          next.slug = slugify(String(value));
+        }
+
+        return next;
+      });
+
+      void saveQueue(nextQueue);
+      return nextQueue;
+    });
   }
 
   function updateStatus(status: QueueStatus) {
     if (!selected) return;
     updateSelected("status", status);
   }
-
-  const counts = useMemo(() => {
-    return {
-      total: queue.length,
-      draft: queue.filter((x) => x.status === "draft").length,
-      review: queue.filter((x) => x.status === "review").length,
-      approved: queue.filter((x) => x.status === "approved").length,
-      rejected: queue.filter((x) => x.status === "rejected").length,
-    };
-  }, [queue]);
 
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900">
@@ -548,22 +694,20 @@ async function handleGenerateDraft() {
                 Admin Queue + Draft Workflow
               </h1>
 
-<div className="mt-3">
-  <button
-    onClick={runIntake}
-    disabled={loadingIntake}
-    className="rounded-xl bg-black px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-zinc-800 disabled:opacity-50"
-  >
-    {loadingIntake ? "Pulling..." : "Pull Feed"}
-  </button>
-</div>
-
+              <div className="mt-3 flex flex-wrap gap-3">
+                <button
+                  onClick={runIntake}
+                  disabled={loadingIntake}
+                  className="rounded-xl bg-black px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-zinc-800 disabled:opacity-50"
+                >
+                  {loadingIntake ? "Pulling..." : "Pull Feed"}
+                </button>
+              </div>
 
               <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-600 md:text-base">
-                This is the first working admin layer for LBS. It lets you intake
-                story ideas, edit article fields, manage queue status, and export
-                content in your exact report object format and self-contained page
-                pattern.
+                Scan fresh stories, generate drafts one at a time, manually edit
+                every field, regenerate or override OG images, and publish to
+                the site and X from one place.
               </p>
             </div>
 
@@ -577,12 +721,13 @@ async function handleGenerateDraft() {
           </div>
         </div>
 
-        <div className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
+        <div className="grid gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
           <section className="space-y-6">
             <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
               <h2 className="text-lg font-semibold">Manual Intake</h2>
               <p className="mt-1 text-sm text-zinc-600">
-                Add a source URL, story title, or notes to create a draft.
+                Add a source URL, story title, or notes to create or generate a
+                draft manually.
               </p>
 
               <div className="mt-4 space-y-3">
@@ -594,7 +739,7 @@ async function handleGenerateDraft() {
                     value={intakeUrl}
                     onChange={(e) => setIntakeUrl(e.target.value)}
                     placeholder="https://..."
-                    className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm outline-none ring-0 transition focus:border-zinc-500"
+                    className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
                   />
                 </div>
 
@@ -633,11 +778,43 @@ async function handleGenerateDraft() {
 
                   <button
                     onClick={handleGenerateDraft}
-                    className="w-full rounded-2xl bg-zinc-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800"
+                    disabled={loadingGenerateDraft}
+                    className="w-full rounded-2xl bg-zinc-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-zinc-800 disabled:opacity-50"
                   >
-                    Generate Draft
+                    {loadingGenerateDraft ? "Generating..." : "Generate Draft"}
                   </button>
                 </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-zinc-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-lg font-semibold">Feed Stories</h2>
+                <span className="text-xs text-zinc-500">
+                  {feedStories.length} loaded
+                </span>
+              </div>
+
+              <p className="mt-1 text-sm text-zinc-600">
+                Pull fresh scanned stories, then choose which ones to add to the
+                queue or turn directly into drafts.
+              </p>
+
+              <div className="mt-4 max-h-[420px] space-y-3 overflow-y-auto pr-1">
+                {feedStories.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500">
+                    No scanned stories loaded yet. Click Pull Feed.
+                  </div>
+                ) : (
+                  feedStories.map((story, idx) => (
+                    <FeedStoryCard
+                      key={`${story.link || story.title || "story"}-${idx}`}
+                      story={story}
+                      onAdd={() => handleAddFeedStory(story)}
+                      onGenerate={() => handleGenerateFeedStory(story)}
+                    />
+                  ))
+                )}
               </div>
             </div>
 
@@ -660,7 +837,8 @@ async function handleGenerateDraft() {
 
               <div className="mt-4 max-h-[720px] space-y-3 overflow-y-auto pr-1">
                 {filteredQueue.map((item) => {
-                  const isActive = item.id === selectedId || (!selectedId && item.id === queue[0]?.id);
+                  const isActive =
+                    item.id === selectedId || (!selectedId && item.id === queue[0]?.id);
 
                   return (
                     <button
@@ -738,39 +916,32 @@ async function handleGenerateDraft() {
                   No queue items yet
                 </h2>
                 <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-600">
-                  Use the Manual Intake panel on the left to create a draft or
-                  generate one from a source URL. Once a draft is created, it
-                  will appear here.
+                  Use Manual Intake or Pull Feed on the left to create a draft.
                 </p>
               </div>
             ) : (
               <>
-             <div className="rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm">
-  <div className="flex flex-wrap items-center justify-between gap-2">
-    
-    {/* LEFT: Tabs */}
-    <div className="flex flex-wrap gap-2">
-      <TabButton
-        active={activeTab === "queue"}
-        onClick={() => setActiveTab("queue")}
-        label="Overview"
-      />
-      <TabButton
-        active={activeTab === "editor"}
-        onClick={() => setActiveTab("editor")}
-        label="Editor"
-      />
-      <TabButton
-        active={activeTab === "export"}
-        onClick={() => setActiveTab("export")}
-        label="Export"
-      />
-    </div>
-
-
-
-  </div>
-</div>
+                <div className="rounded-3xl border border-zinc-200 bg-white p-3 shadow-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="flex flex-wrap gap-2">
+                      <TabButton
+                        active={activeTab === "queue"}
+                        onClick={() => setActiveTab("queue")}
+                        label="Overview"
+                      />
+                      <TabButton
+                        active={activeTab === "editor"}
+                        onClick={() => setActiveTab("editor")}
+                        label="Editor"
+                      />
+                      <TabButton
+                        active={activeTab === "export"}
+                        onClick={() => setActiveTab("export")}
+                        label="Export"
+                      />
+                    </div>
+                  </div>
+                </div>
 
                 {activeTab === "queue" && (
                   <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
@@ -818,20 +989,34 @@ async function handleGenerateDraft() {
                         >
                           Mark Review
                         </button>
-                        
-                        <button
-  onClick={handleGenerateSelected}
-  className="rounded-2xl border border-zinc-300 bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
->
-  Generate Draft
-</button>
 
                         <button
-  onClick={handleGenerateOg}
-  className="rounded-2xl border border-zinc-300 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-100"
->
-  Generate OG
-</button>
+                          onClick={handleGenerateSelected}
+                          disabled={loadingGenerateSelected}
+                          className="rounded-2xl border border-zinc-300 bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
+                        >
+                          {loadingGenerateSelected ? "Generating..." : "Regenerate Draft"}
+                        </button>
+
+                        <button
+                          onClick={handleGenerateOg}
+                          disabled={loadingGenerateOg}
+                          className="rounded-2xl border border-zinc-300 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-100 disabled:opacity-50"
+                        >
+                          {loadingGenerateOg ? "Generating OG..." : "Generate OG"}
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            updateSelected(
+                              "coverImage",
+                              getHardCategoryDefaultImage(selected.hardCategory)
+                            );
+                          }}
+                          className="rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+                        >
+                          Use Default OG
+                        </button>
 
                         <button
                           onClick={() => updateStatus("approved")}
@@ -841,41 +1026,11 @@ async function handleGenerateDraft() {
                         </button>
 
                         <button
-                          onClick={async () => {
-                            const res = await fetch("/api/admin/publish", {
-                              method: "POST",
-                              headers: {
-                                "Content-Type": "application/json",
-                              },
-                              body: JSON.stringify({ id: selected.id }),
-                            });
-
-                            const data = await res.json();
-
-                            if (!data.ok) {
-                              console.error("Publish failed", data);
-                              alert(data.error || "Publish failed");
-                              return;
-                            }
-
-                            await loadQueue();
-
-                            if (data.xPost && data.xPost.ok === false) {
-                              console.warn("X post failed", data.xPost);
-                              alert(
-                                `Article published, but X posting failed.\n\n` +
-                                  `${data.xPost.error || "Unknown X error"}\n\n` +
-                                  `${JSON.stringify(
-                                    data.xPost.details || data.xPost,
-                                    null,
-                                    2
-                                  )}`
-                              );
-                            }
-                          }}
-                          className="rounded-2xl border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-800 hover:bg-blue-100"
+                          onClick={handlePublish}
+                          disabled={loadingPublish}
+                          className="rounded-2xl border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-medium text-blue-800 hover:bg-blue-100 disabled:opacity-50"
                         >
-                          Publish
+                          {loadingPublish ? "Publishing..." : "Publish"}
                         </button>
 
                         <button
@@ -923,63 +1078,68 @@ async function handleGenerateDraft() {
                         Article Editor
                       </h2>
                       <p className="mt-1 text-sm text-zinc-600">
-                        Edit this draft before export or later API-based
-                        publishing.
+                        Edit the draft, override X thread copy, and manually set
+                        the OG file path if needed.
                       </p>
 
                       <div className="mt-4 flex gap-3">
-  <button
-    onClick={handleDelete}
-    className="rounded-2xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
-  >
-    Delete Draft
-  </button>
-                        
-{/* X THREAD EDITOR */}
-<div className="mt-6 rounded-2xl border border-black bg-white p-4">
-  <div className="mb-3 text-sm font-semibold text-black">
-    X Thread (What actually gets seen)
-  </div>
+                        <button
+                          onClick={handleDelete}
+                          className="rounded-2xl border border-red-300 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100"
+                        >
+                          Delete Draft
+                        </button>
+                      </div>
 
-  <div className="space-y-3">
-    <Field label="X Post 1">
-      <textarea
-        value={selected.xPost1 || ""}
-        onChange={(e) => updateSelected("xPost1", e.target.value)}
-        rows={3}
-        className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
-      />
-      <div className="text-xs text-zinc-500 mt-1">
-        {(selected.xPost1 || "").length}/280
-      </div>
-    </Field>
+                      <div className="mt-6 rounded-2xl border border-black bg-white p-4">
+                        <div className="mb-3 text-sm font-semibold text-black">
+                          X Thread (What actually gets seen)
+                        </div>
 
-    <Field label="X Post 2">
-      <textarea
-        value={selected.xPost2 || ""}
-        onChange={(e) => updateSelected("xPost2", e.target.value)}
-        rows={3}
-        className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
-      />
-      <div className="text-xs text-zinc-500 mt-1">
-        {(selected.xPost2 || "").length}/280
-      </div>
-    </Field>
+                        <div className="space-y-4">
+                          <Field label="X Post 1">
+                            <textarea
+                              value={selected.xPost1 || ""}
+                              onChange={(e) =>
+                                updateSelected("xPost1", e.target.value)
+                              }
+                              rows={3}
+                              className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+                            />
+                            <div className="mt-1 text-xs text-zinc-500">
+                              {(selected.xPost1 || "").length}/280
+                            </div>
+                          </Field>
 
-    <Field label="X Post 3 (optional)">
-      <textarea
-        value={selected.xPost3 || ""}
-        onChange={(e) => updateSelected("xPost3", e.target.value)}
-        rows={2}
-        className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
-      />
-      <div className="text-xs text-zinc-500 mt-1">
-        {(selected.xPost3 || "").length}/280
-      </div>
-    </Field>
-  </div>
-</div>
-</div>
+                          <Field label="X Post 2">
+                            <textarea
+                              value={selected.xPost2 || ""}
+                              onChange={(e) =>
+                                updateSelected("xPost2", e.target.value)
+                              }
+                              rows={3}
+                              className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+                            />
+                            <div className="mt-1 text-xs text-zinc-500">
+                              {(selected.xPost2 || "").length}/280
+                            </div>
+                          </Field>
+
+                          <Field label="X Post 3 (optional)">
+                            <textarea
+                              value={selected.xPost3 || ""}
+                              onChange={(e) =>
+                                updateSelected("xPost3", e.target.value)
+                              }
+                              rows={2}
+                              className="w-full rounded-xl border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-500"
+                            />
+                            <div className="mt-1 text-xs text-zinc-500">
+                              {(selected.xPost3 || "").length}/280
+                            </div>
+                          </Field>
+                        </div>
+                      </div>
 
                       <div className="mt-6 grid gap-5">
                         <Field label="Title">
@@ -999,6 +1159,17 @@ async function handleGenerateDraft() {
                               updateSelected("excerpt", e.target.value)
                             }
                             rows={4}
+                            className="w-full rounded-2xl border border-zinc-300 px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                          />
+                        </Field>
+
+                        <Field label="Body">
+                          <textarea
+                            value={selected.body}
+                            onChange={(e) =>
+                              updateSelected("body", e.target.value)
+                            }
+                            rows={18}
                             className="w-full rounded-2xl border border-zinc-300 px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
                           />
                         </Field>
@@ -1125,13 +1296,35 @@ async function handleGenerateDraft() {
                               }
                               className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
                             >
-                              <option value="false">false</option>
-                              <option value="true">true</option>
+                              <option value="false">False</option>
+                              <option value="true">True</option>
                             </select>
                           </Field>
                         </div>
 
-                        <Field label="Cover Image">
+                        <div className="grid gap-5 md:grid-cols-2">
+                          <Field label="Source">
+                            <input
+                              value={selected.source}
+                              onChange={(e) =>
+                                updateSelected("source", e.target.value)
+                              }
+                              className="w-full rounded-2xl border border-zinc-300 px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                            />
+                          </Field>
+
+                          <Field label="Source URL">
+                            <input
+                              value={selected.sourceUrl || ""}
+                              onChange={(e) =>
+                                updateSelected("sourceUrl", e.target.value)
+                              }
+                              className="w-full rounded-2xl border border-zinc-300 px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
+                            />
+                          </Field>
+                        </div>
+
+                        <Field label="Cover Image Path / URL">
                           <input
                             value={selected.coverImage}
                             onChange={(e) =>
@@ -1140,56 +1333,7 @@ async function handleGenerateDraft() {
                             className="w-full rounded-2xl border border-zinc-300 px-4 py-3 text-sm outline-none transition focus:border-zinc-500"
                           />
                         </Field>
-
-                        <Field label="Body">
-                          <textarea
-                            value={selected.body}
-                            onChange={(e) =>
-                              updateSelected("body", e.target.value)
-                            }
-                            rows={16}
-                            className="w-full rounded-2xl border border-zinc-300 px-4 py-3 text-sm leading-7 outline-none transition focus:border-zinc-500"
-                          />
-                        </Field>
                       </div>
-                    </div>
-
-                    <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-                      <h3 className="text-lg font-semibold">
-                        Live Article Preview
-                      </h3>
-
-                      <article className="mt-5 overflow-hidden rounded-3xl border border-zinc-200 bg-white">
-                        <div className="aspect-[16/7] bg-zinc-100">
-                          <img
-                            src={selected.coverImage}
-                            alt={selected.title}
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-
-                        <div className="p-6 md:p-8">
-                          <div className="inline-flex rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-700">
-                            {selected.hardCategory}
-                          </div>
-
-                          <h1 className="mt-4 text-3xl font-semibold tracking-tight md:text-4xl">
-                            {selected.title}
-                          </h1>
-
-                          <p className="mt-4 text-lg leading-7 text-zinc-600">
-                            {selected.excerpt}
-                          </p>
-
-                          <div className="mt-4 text-sm text-zinc-500">
-                            By {selected.byline} · {selected.readTime}
-                          </div>
-
-                          <div className="mt-8 whitespace-pre-line text-[15px] leading-8 text-zinc-800">
-                            {selected.body}
-                          </div>
-                        </div>
-                      </article>
                     </div>
                   </div>
                 )}
@@ -1198,10 +1342,10 @@ async function handleGenerateDraft() {
                   <div className="space-y-6">
                     <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
                       <h2 className="text-xl font-semibold tracking-tight">
-                        Reports Array Entry
+                        reports.ts Object
                       </h2>
                       <p className="mt-1 text-sm text-zinc-600">
-                        This matches your required reports object format.
+                        Copy this into your reports array entry.
                       </p>
 
                       <CodeBlock code={formatReportsObject(selected)} />
@@ -1217,27 +1361,6 @@ async function handleGenerateDraft() {
 
                       <CodeBlock code={formatPageTsxTemplate(selected)} />
                     </div>
-
-                    <div className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-                      <h2 className="text-xl font-semibold tracking-tight">
-                        Next Build Targets
-                      </h2>
-                      <div className="mt-4 space-y-3 text-sm leading-6 text-zinc-700">
-                        <p>
-                          1. Add simple route protection so only you can access{" "}
-                          <code>/admin</code>.
-                        </p>
-                        <p>2. Replace mock queue state with real persistence.</p>
-                        <p>
-                          3. Add API routes for intake, save draft, approve, and
-                          publish.
-                        </p>
-                        <p>
-                          4. Add bot generation later so sources become
-                          first-pass LBS drafts automatically.
-                        </p>
-                      </div>
-                    </div>
                   </div>
                 )}
               </>
@@ -1246,6 +1369,73 @@ async function handleGenerateDraft() {
         </div>
       </div>
     </main>
+  );
+}
+
+function FeedStoryCard({
+  story,
+  onAdd,
+  onGenerate,
+}: {
+  story: FeedStory;
+  onAdd: () => void;
+  onGenerate: () => void;
+}) {
+  return (
+    <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+      <div className="text-xs text-zinc-500">{story.source || "Unknown source"}</div>
+
+      <div className="mt-1 text-sm font-semibold leading-5 text-zinc-900">
+        {story.title}
+      </div>
+
+      <div className="mt-2 line-clamp-3 text-xs leading-5 text-zinc-600">
+        {story.snippet}
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2 text-[11px] text-zinc-500">
+        <span>{story.hardCategory || "Uncategorized"}</span>
+        {typeof story.score === "number" ? (
+          <>
+            <span>•</span>
+            <span>Score {story.score}</span>
+          </>
+        ) : null}
+        {story.domain ? (
+          <>
+            <span>•</span>
+            <span>{story.domain}</span>
+          </>
+        ) : null}
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          onClick={onAdd}
+          className="rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-50"
+        >
+          Add to Queue
+        </button>
+
+        <button
+          onClick={onGenerate}
+          className="rounded-2xl border border-zinc-300 bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+        >
+          Generate Draft
+        </button>
+
+        {story.link ? (
+          <a
+            href={story.link}
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-2xl border border-zinc-300 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-800 hover:bg-zinc-100"
+          >
+            Open Source
+          </a>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -1313,7 +1503,7 @@ function TabButton({
         "rounded-2xl px-4 py-2 text-sm font-medium transition",
         active
           ? "bg-zinc-900 text-white"
-          : "border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50"
+          : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200"
       )}
     >
       {label}
@@ -1322,9 +1512,34 @@ function TabButton({
 }
 
 function CodeBlock({ code }: { code: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1200);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  }
+
   return (
-    <pre className="mt-4 overflow-x-auto rounded-2xl border border-zinc-200 bg-zinc-950 p-4 text-sm leading-6 text-zinc-100">
-      <code>{code}</code>
-    </pre>
+    <div className="mt-4 rounded-2xl border border-zinc-200 bg-zinc-950">
+      <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
+        <div className="text-xs font-medium uppercase tracking-wide text-zinc-400">
+          Code
+        </div>
+        <button
+          onClick={handleCopy}
+          className="rounded-xl border border-zinc-700 px-3 py-1 text-xs font-medium text-zinc-200 hover:bg-zinc-800"
+        >
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
+      <pre className="overflow-x-auto p-4 text-xs leading-6 text-zinc-100">
+        <code>{code}</code>
+      </pre>
+    </div>
   );
 }
