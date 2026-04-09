@@ -209,7 +209,10 @@ function buildSecondPost(title: string, excerpt: string, slug: string) {
     );
   });
 
-  if (support && support.toLowerCase() === sentenceCase(stripLeadLabel(title)).toLowerCase()) {
+  if (
+    support &&
+    support.toLowerCase() === sentenceCase(stripLeadLabel(title)).toLowerCase()
+  ) {
     support = "";
   }
 
@@ -303,7 +306,17 @@ export async function POST(req: NextRequest) {
       title,
       excerpt,
       slug,
-    }: { title?: string; excerpt?: string; slug?: string } = await req.json();
+      xPost1,
+      xPost2,
+      xPost3,
+    }: {
+      title?: string;
+      excerpt?: string;
+      slug?: string;
+      xPost1?: string;
+      xPost2?: string;
+      xPost3?: string;
+    } = await req.json();
 
     if (!title || !excerpt || !slug) {
       return NextResponse.json(
@@ -333,7 +346,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const [part1, part2] = buildThreadParts(title, excerpt, slug);
+    const [autoPart1, autoPart2] = buildThreadParts(title, excerpt, slug);
+
+    const part1 = xPost1?.trim() || autoPart1;
+    const part2 = xPost2?.trim() || autoPart2;
+    const part3 = xPost3?.trim();
 
     const first = await postTweet(part1);
     const firstId = first?.data?.id;
@@ -363,14 +380,33 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    let third: any = null;
+
+    if (part3) {
+      third = await postTweet(part3, secondId);
+      const thirdId = third?.data?.id;
+
+      if (!thirdId) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "Third X post succeeded but no post ID was returned",
+            details: third,
+          },
+          { status: 500 }
+        );
+      }
+    }
+
     return NextResponse.json({
       ok: true,
-      mode: "thread",
+      mode: part3 ? "thread-3" : "thread-2",
       articleUrl: buildArticleUrl(slug),
-      posts: [first?.data || null, second?.data || null],
+      posts: [first?.data || null, second?.data || null, third?.data || null],
       preview: {
         part1,
         part2,
+        part3: part3 || null,
       },
     });
   } catch (error) {
