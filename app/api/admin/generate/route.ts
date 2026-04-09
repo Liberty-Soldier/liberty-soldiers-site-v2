@@ -670,22 +670,21 @@ if (mode === "auto" && rejectReason) {
       },
       body: JSON.stringify({
         model: "gpt-4.1",
-        messages: [
-          {
-      {
-  role: "developer",
-  content: [
-    "Return only valid JSON. No markdown fences. No commentary outside the JSON object.",
-    "The body writing must be hard-hitting, elite, confrontational, and unmistakably non-establishment while remaining fact-grounded.",
-    "The title and excerpt must be clear, literal, and optimized for search clicks.",
-    "Do NOT use abstract or dramatic phrasing in title or excerpt."
-  ].join(" ")
-},
-          {
-            role: "user",
-            content: prompt,
-          },
-        ],
+       messages: [
+  {
+    role: "developer",
+    content: [
+      "Return only valid JSON. No markdown fences. No commentary outside the JSON object.",
+      "The body writing must be hard-hitting, elite, confrontational, and unmistakably non-establishment while remaining fact-grounded.",
+      "The title and excerpt must be clear, literal, and optimized for search clicks.",
+      "Do NOT use abstract or dramatic phrasing in title or excerpt."
+    ].join(" "),
+  },
+  {
+    role: "user",
+    content: prompt,
+  },
+],
         temperature: 0.4,
         response_format: {
           type: "json_schema",
