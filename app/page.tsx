@@ -1,4 +1,3 @@
-// app/page.tsx
 import type { Metadata } from "next";
 
 import Carousel from "./components/Carousel";
@@ -50,6 +49,57 @@ export const metadata: Metadata = {
   },
 };
 
+const CATEGORY_STYLES: Record<
+  string,
+  { bg: string; text: string; border: string }
+> = {
+  "War & Geopolitics": {
+    bg: "bg-red-50/95",
+    text: "text-red-700",
+    border: "border-red-200",
+  },
+  "Markets & Finance": {
+    bg: "bg-green-50/95",
+    text: "text-green-700",
+    border: "border-green-200",
+  },
+  "Power & Control": {
+    bg: "bg-purple-50/95",
+    text: "text-purple-700",
+    border: "border-purple-200",
+  },
+  "Strategic Signals": {
+    bg: "bg-indigo-50/95",
+    text: "text-indigo-700",
+    border: "border-indigo-200",
+  },
+  "Digital ID / Technocracy": {
+    bg: "bg-blue-50/95",
+    text: "text-blue-700",
+    border: "border-blue-200",
+  },
+  "Religion & Ideology": {
+    bg: "bg-amber-50/95",
+    text: "text-amber-700",
+    border: "border-amber-200",
+  },
+  "Prophecy Watch": {
+    bg: "bg-zinc-100/95",
+    text: "text-zinc-700",
+    border: "border-zinc-300",
+  },
+};
+
+function getCategoryStyle(category?: string) {
+  return (
+    (category ? CATEGORY_STYLES[category] : null) || {
+      bg: "bg-white/95",
+      text: "text-zinc-700",
+      border: "border-zinc-200",
+    }
+  );
+}
+
 function hostFromUrl(u: string) {
   try {
     return new URL(u).hostname.replace(/^www\./, "");
@@ -93,6 +143,9 @@ function ReportCard({
     category?: string;
   };
 }) {
+  const category = report.category || "Report";
+  const style = getCategoryStyle(report.category);
+
   return (
     <a
       href={`/news/${report.slug}`}
@@ -105,9 +158,11 @@ function ReportCard({
           className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
           loading="lazy"
         />
-        <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-700">
-          <span className="inline-flex h-2 w-2 rounded-full bg-red-600 motion-safe:animate-pulse" />
-          Liberty Soldiers
+        <div
+          className={`absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide backdrop-blur-sm ${style.bg} ${style.text} ${style.border}`}
+        >
+          <span className="inline-flex h-2 w-2 rounded-full bg-current" />
+          {category}
         </div>
       </div>
 
@@ -207,6 +262,9 @@ function FiledReportCard({
     hardCategory?: string;
   };
 }) {
+  const category = article.hardCategory || "Report";
+  const style = getCategoryStyle(article.hardCategory);
+
   return (
     <a
       href={`/published/${article.slug}`}
@@ -219,9 +277,11 @@ function FiledReportCard({
           className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
           loading="lazy"
         />
-        <div className="absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border border-red-200 bg-white/95 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-red-700">
-          <span className="inline-flex h-2 w-2 rounded-full bg-red-600 motion-safe:animate-pulse" />
-          Filed Report
+        <div
+          className={`absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide backdrop-blur-sm ${style.bg} ${style.text} ${style.border}`}
+        >
+          <span className="inline-flex h-2 w-2 rounded-full bg-current" />
+          {category}
         </div>
       </div>
 
@@ -248,32 +308,154 @@ function FiledReportCard({
   );
 }
 
-function StatCard({
-  label,
-  value,
-  sub,
+function LatestLeadSection({
+  lead,
+  rest,
 }: {
-  label: string;
-  value: string | number;
-  sub: string;
+  lead?: {
+    slug: string;
+    title: string;
+    excerpt: string;
+    coverImage: string;
+    dateISO: string;
+    readTime?: string;
+    hardCategory?: string;
+  };
+  rest: {
+    slug: string;
+    title: string;
+    excerpt: string;
+    coverImage: string;
+    dateISO: string;
+    readTime?: string;
+    hardCategory?: string;
+  }[];
 }) {
+  if (!lead) return null;
+
+  const leadStyle = getCategoryStyle(lead.hardCategory);
+  const leadCategory = lead.hardCategory || "Report";
+
   return (
-    <div className="rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm">
-      <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-500">
-        {label}
+    <section className="border-b border-zinc-200 bg-white py-8 sm:py-10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex items-start gap-3">
+            <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
+            <div>
+              <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
+                Latest Report
+              </h2>
+              <p className="mt-1 text-sm text-zinc-600 sm:text-base">
+                The newest Liberty Soldiers report gets top placement.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="/reports"
+            className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
+          >
+            View all reports <span className="text-red-600">→</span>
+          </a>
+        </div>
+
+        <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
+          <a
+            href={`/published/${lead.slug}`}
+            className="group block overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm"
+          >
+            <div className="relative aspect-[16/9] w-full overflow-hidden bg-zinc-100">
+              <img
+                src={lead.coverImage}
+                alt={lead.title}
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+              />
+              <div
+                className={`absolute left-3 top-3 inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide backdrop-blur-sm ${leadStyle.bg} ${leadStyle.text} ${leadStyle.border}`}
+              >
+                <span className="inline-flex h-2 w-2 rounded-full bg-current" />
+                {leadCategory}
+              </div>
+            </div>
+
+            <div className="p-5 sm:p-6">
+              <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-wide text-zinc-500">
+                <span>{displayDate(lead.dateISO)}</span>
+                {lead.readTime ? <span>• {lead.readTime}</span> : null}
+                {lead.hardCategory ? <span>• {lead.hardCategory}</span> : null}
+              </div>
+
+              <h3 className="text-2xl font-extrabold leading-[1.05] tracking-tight text-zinc-900 group-hover:text-red-700 sm:text-3xl lg:text-[2.15rem]">
+                {lead.title}
+              </h3>
+
+              <p className="mt-4 max-w-3xl text-sm leading-relaxed text-zinc-700 sm:text-base">
+                {lead.excerpt}
+              </p>
+
+              <div className="mt-5 text-sm font-semibold text-zinc-900 group-hover:text-red-700">
+                Open report →
+              </div>
+            </div>
+          </a>
+
+          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+            {rest.map((article, idx) => {
+              const style = getCategoryStyle(article.hardCategory);
+              const category = article.hardCategory || "Report";
+
+              return (
+                <a
+                  key={article.slug}
+                  href={`/published/${article.slug}`}
+                  className={`group flex gap-4 p-4 transition hover:bg-zinc-50 ${
+                    idx !== rest.length - 1 ? "border-b border-zinc-200" : ""
+                  }`}
+                >
+                  <div className="h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-zinc-100 sm:h-24 sm:w-32">
+                    <img
+                      src={article.coverImage}
+                      alt={article.title}
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
+                      loading="lazy"
+                    />
+                  </div>
+
+                  <div className="min-w-0">
+                    <div
+                      className={`mb-2 inline-flex items-center gap-2 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${style.bg} ${style.text} ${style.border}`}
+                    >
+                      <span className="inline-flex h-2 w-2 rounded-full bg-current" />
+                      {category}
+                    </div>
+
+                    <h3 className="line-clamp-3 text-base font-extrabold leading-[1.1] text-zinc-900 group-hover:text-red-700">
+                      {article.title}
+                    </h3>
+
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-wide text-zinc-500">
+                      <span>{displayDate(article.dateISO)}</span>
+                      {article.readTime ? <span>• {article.readTime}</span> : null}
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </div>
       </div>
-      <div className="mt-2 text-2xl font-extrabold tracking-tight text-zinc-900">
-        {value}
-      </div>
-      <div className="mt-1 text-xs leading-relaxed text-zinc-600">{sub}</div>
-    </div>
+    </section>
   );
 }
 
 export default async function Home() {
   const all = await fetchAllHeadlines();
   const published = await getPublishedForHomepage();
-  const latestPublished = published.slice(0, 4);
+
+  const latestPublished = published.slice(0, 5);
+  const leadPublished = latestPublished[0];
+  const sidePublished = latestPublished.slice(1, 5);
 
   const featuredReports = getLatestReports(4);
   const latestHeadlines = [...all]
@@ -345,113 +527,49 @@ export default async function Home() {
 
       <LiveBriefingAuto />
 
-      <section className="relative flex min-h-[44vh] w-full items-center py-14 sm:min-h-[52vh] sm:py-0">
+      <section className="relative flex min-h-[24vh] w-full items-center py-8 sm:min-h-[28vh] sm:py-10">
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: "url('/hero.jpg')" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/60 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/65 to-black/85" />
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-4 text-white sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-red-400/30 bg-black/30 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-red-200 backdrop-blur-sm">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-red-400/30 bg-black/35 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-red-200 backdrop-blur-sm">
               <span className="inline-flex h-2 w-2 rounded-full bg-red-500 motion-safe:animate-pulse" />
               Live Signals • Active Monitoring
             </div>
 
-            <h1 className="mt-5 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
               LIBERTY SOLDIERS
             </h1>
 
-            <p className="mt-4 max-w-3xl text-xl font-semibold text-white/95 sm:text-2xl">
-              Global escalation is accelerating. Most people are missing it.
-            </p>
-
-            <p className="mt-3 max-w-3xl text-base leading-relaxed text-white/80 sm:text-lg">
-              War, energy, financial pressure, and control systems are converging
-              fast. Liberty Soldiers tracks the structural signals beneath the
-              noise.
-            </p>
-
-            <div className="mt-7 flex flex-wrap gap-3">
-              <a
-                href="/reports"
-                className="inline-flex items-center rounded-xl bg-white px-5 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100"
-              >
-                Enter Reports Desk →
-              </a>
-
-              <a
-                href="/war-escalation"
-                className="inline-flex items-center rounded-xl border border-white/40 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
-              >
-                View Escalation Tracker →
-              </a>
-            </div>
-
-            <p className="mt-5 max-w-2xl text-sm text-white/70 sm:text-base">
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/85 sm:text-base">
               Independent situational awareness on conflict, systems, narrative warfare,
               and the structures shaping world events.
             </p>
-          </div>
-        </div>
-      </section>
 
-      <section className="border-b border-zinc-200 bg-zinc-50 py-8 sm:py-10">
-        <div className="mx-auto grid max-w-6xl gap-4 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
-          <StatCard
-            label="Filed Reports"
-            value={published.length}
-            sub="Latest intelligence briefings and investigative reports from Liberty Soldiers."
-          />
-          <StatCard
-            label="Featured Reports"
-            value={featuredReports.length}
-            sub="Curated Liberty Soldiers reporting and analysis."
-          />
-          <StatCard
-            label="Active Headlines"
-            value={latestHeadlines.length}
-            sub="External developments under current monitoring."
-          />
-          <StatCard
-            label="Iran Radar"
-            value={iranItems.length}
-            sub="Conflict escalation, shipping risk, and strike indicators."
-          />
-        </div>
-      </section>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <a
+                href="/reports"
+                className="inline-flex items-center rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100"
+              >
+                Latest reports →
+              </a>
 
-      <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <div className="flex items-start gap-3">
-              <span className="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-red-600 motion-safe:animate-pulse" />
-              <div>
-                <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
-                  Latest Filed Reports
-                </h2>
-                <p className="mt-1 text-sm text-zinc-600 sm:text-base">
-                  Recently filed Liberty Soldiers reports covering escalation, systems, and narrative control.
-                </p>
-              </div>
+              <a
+                href="/news"
+                className="inline-flex items-center rounded-xl border border-white/40 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
+              >
+                Full feed →
+              </a>
             </div>
-
-            <a
-              href="/reports"
-              className="inline-flex items-center gap-2 rounded-xl border border-zinc-300 bg-white px-4 py-2 text-sm font-semibold text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
-            >
-              Open reports desk <span className="text-red-600">→</span>
-            </a>
           </div>
-
-          <Carousel title="" subtitle="">
-            {latestPublished.map((article) => (
-              <FiledReportCard key={article.slug} article={article} />
-            ))}
-          </Carousel>
         </div>
       </section>
+
+      <LatestLeadSection lead={leadPublished} rest={sidePublished} />
 
       <section className="border-b border-zinc-200 bg-white py-10 sm:py-12">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
